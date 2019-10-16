@@ -2,6 +2,13 @@ image: "gableroux/unity3d:2019.1.14f1"
 
 stages:
 - build
+- deploy 
+
+# triggers an update of the Narupa unity plugin repo.
+trigger_plugin_update:
+  stage: deploy
+  script:
+    - "curl -X POST -F token=${NARUPA_UNITY_PLUGIN_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/14856986/trigger/pipeline"
 
 variables:
   BUILD_NAME: NarupaXR
