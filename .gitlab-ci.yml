@@ -1,0 +1,46 @@
+image: "gableroux/unity3d:2019.1.14f1"
+
+stages:
+- build
+
+variables:
+  BUILD_NAME: NarupaXR
+
+.unity_before_script: &unity_before_script
+  before_script:
+  - chmod +x ./ci/before_script.sh && ./ci/before_script.sh
+
+.test: &test
+  stage: build
+  <<: *unity_before_script
+  script:
+  - chmod +x ./ci/test.sh && ./ci/test.sh
+  artifacts:
+    paths:
+    - $(pwd)/$TEST_PLATFORM-results.xml
+    when: always
+
+test-editmode:
+  <<: *test
+  variables:
+    TEST_PLATFORM: editmode
+
+test-playmode:
+  <<: *test
+  variables:
+    TEST_PLATFORM: playmode
+
+.build: &build
+  stage: build
+  <<: *unity_before_script
+  script:
+  - chmod +x ./ci/build.sh && ./ci/build.sh
+
+  artifacts:
+    paths:
+    - ./Builds/
+
+build-StandaloneWindows64:
+  <<: *build
+  variables:
+    BUILD_TARGET: StandaloneWindows64
