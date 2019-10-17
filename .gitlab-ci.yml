@@ -1,4 +1,4 @@
-image: "gableroux/unity3d:2019.2.8f1"
+image: "gableroux/unity3d:2019.2.8f1-windows"
 
 stages:
 - build
