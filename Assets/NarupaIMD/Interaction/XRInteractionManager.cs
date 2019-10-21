@@ -2,9 +2,11 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using Narupa.Core.Math;
+using Narupa.Frontend.Controllers;
 using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.XR;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Valve.VR;
 
 namespace NarupaXR.Interaction
@@ -29,26 +31,64 @@ namespace NarupaXR.Interaction
         private SteamVR_Action_Pose controllerPose;
 #pragma warning restore 0649
 
-        private Manipulator leftManipulator, rightManipulator;
+        private Manipulator leftToolManipulator;
+        private Manipulator leftControllerManipulator;
+        
+        private Manipulator rightToolManipulator;
+        private Manipulator rightControllerManipulator;
+        
+        [SerializeField]
+        private ControllerManager controllerManager;
 
-        private void Start()
+        private void Awake()
         {
-            leftManipulator = CreateManipulator(SteamVR_Input_Sources.LeftHand);
-            rightManipulator = CreateManipulator(SteamVR_Input_Sources.RightHand);
+            Assert.IsNotNull(controllerManager, $"{nameof(controllerManager)} was not set.");
+            controllerManager.LeftController.ControllerReset += () =>
+            {
+                CreateManipulator(ref leftToolManipulator, 
+                                  ref leftControllerManipulator,
+                                  controllerManager.LeftController,
+                                  SteamVR_Input_Sources.LeftHand);
+            };
+            
+            controllerManager.RightController.ControllerReset += () =>
+            {
+                CreateManipulator(ref rightToolManipulator, 
+                                  ref rightControllerManipulator,
+                                  controllerManager.RightController,
+                                  SteamVR_Input_Sources.RightHand);
+            };
         }
-
-        private Manipulator CreateManipulator(SteamVR_Input_Sources source)
+        private void CreateManipulator(ref Manipulator toolManipulator,
+                                       ref Manipulator controllerManipulator,
+                                       VrController controller,
+                                       SteamVR_Input_Sources source)
         {
-            var poser = controllerPose.WrapAsPosedObject(source);
-            var manipulator = new Manipulator(poser);
+            // End manipulations if controller has been removed/replaced
+            if (toolManipulator != null)
+            {
+                toolManipulator.EndActiveManipulation();
+                toolManipulator = null;
+            }
+            if (controllerManipulator != null)
+            {
+                controllerManipulator.EndActiveManipulation();
+                controllerManipulator = null;
+            }
+
+            if (!controller.IsControllerActive)
+                return;
+            
+            var controllerPoser = controllerPose.WrapAsPosedObject(source);
+            var toolPoser = controller.Cursor;
+            controllerManipulator = new Manipulator(controllerPoser);
+            toolManipulator = new Manipulator(toolPoser);
 
             var grabSpaceButton = controllerGrabSpaceAction.WrapAsButton(source);
             var grabObjectButton = controllerGrabObjectAction.WrapAsButton(source);
 
-            manipulator.BindButtonToManipulation(grabSpaceButton, AttemptGrabSpace);
-            manipulator.BindButtonToManipulation(grabObjectButton, AttemptGrabObject);
-
-            return manipulator;
+            controllerManipulator.BindButtonToManipulation(grabSpaceButton, AttemptGrabSpace);
+            toolManipulator.BindButtonToManipulation(grabObjectButton, AttemptGrabObject);
         }
 
         private IActiveManipulation AttemptGrabObject(Transformation grabberPose)
