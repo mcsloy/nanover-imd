@@ -1,4 +1,5 @@
 {
+  "app_key": "application.generated.unity.narupaxr.exe",
   "bindings": {
     "/actions/buggy": {
       "chords": [],
@@ -14,6 +15,70 @@
       "sources": [],
       "skeleton": []
     },
+    "/actions/narupa": {
+      "chords": [],
+      "poses": [],
+      "haptics": [],
+      "sources": [],
+      "skeleton": []
+    },
+    "/actions/narupaimd": {
+      "chords": [],
+      "poses": [
+        {
+          "output": "/actions/narupaimd/in/pose",
+          "path": "/user/hand/left/pose/raw"
+        },
+        {
+          "output": "/actions/narupaimd/in/pose",
+          "path": "/user/hand/right/pose/raw"
+        }
+      ],
+      "haptics": [],
+      "sources": [
+        {
+          "path": "/user/hand/left/input/grip",
+          "mode": "button",
+          "parameters": {},
+          "inputs": {
+            "click": {
+              "output": "/actions/narupaimd/in/grabspace"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/grip",
+          "mode": "button",
+          "parameters": {},
+          "inputs": {
+            "click": {
+              "output": "/actions/narupaimd/in/grabspace"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/trigger",
+          "mode": "button",
+          "parameters": {},
+          "inputs": {
+            "click": {
+              "output": "/actions/narupaimd/in/interact"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/trigger",
+          "mode": "button",
+          "parameters": {},
+          "inputs": {
+            "click": {
+              "output": "/actions/narupaimd/in/interact"
+            }
+          }
+        }
+      ],
+      "skeleton": []
+    },
     "/actions/platformer": {
       "chords": [],
       "poses": [],
@@ -24,5 +89,5 @@
   },
   "controller_type": "oculus_touch",
   "description": "",
-  "name": "oculus_touch"
+  "name": "Narupa iMD [Oculus Touch]"
 }
