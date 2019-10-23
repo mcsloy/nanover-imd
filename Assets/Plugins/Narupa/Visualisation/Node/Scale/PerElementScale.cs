@@ -22,18 +22,20 @@ namespace Narupa.Visualisation.Node.Scale
         /// </summary>
         public IProperty<Element[]> Elements => elements;
 
-        /// <inheritdoc cref="VisualiserScale.Refresh" />
-        public override void Refresh()
+        /// <inheritdoc cref="GenericOutputNode.IsInputDirty"/>
+        protected override bool IsInputDirty => elements.IsDirty;
+
+        /// <inheritdoc cref="GenericOutputNode.IsInputValid"/>
+        protected override bool IsInputValid => elements.HasNonEmptyValue();
+
+        /// <inheritdoc cref="GenericOutputNode.ClearDirty"/>
+        protected override void ClearDirty()
         {
-            if (elements.IsDirty && elements.HasValue)
-            {
-                RefreshScales();
-
-                elements.IsDirty = false;
-            }
+            elements.IsDirty = false;
         }
-
-        private void RefreshScales()
+        
+        /// <inheritdoc cref="GenericOutputNode.UpdateOutput"/>
+        protected override void UpdateOutput()
         {
             var elementArray = elements.Value;
             var scaleArray = scales.HasValue ? scales.Value : new float[0];
@@ -42,6 +44,12 @@ namespace Narupa.Visualisation.Node.Scale
                 scaleArray[i] = GetScale(elementArray[i]);
 
             scales.Value = scaleArray;
+        }
+        
+        /// <inheritdoc cref="GenericOutputNode.ClearOutput"/>
+        protected override void ClearOutput()
+        {
+            scales.UndefineValue();
         }
 
         /// <summary>

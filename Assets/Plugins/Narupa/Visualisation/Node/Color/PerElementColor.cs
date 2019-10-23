@@ -22,16 +22,20 @@ namespace Narupa.Visualisation.Node.Color
         /// </summary>
         public IProperty<Element[]> Elements => elements;
 
-        public override void Refresh()
-        {
-            if (elements.IsDirty && elements.HasValue)
-            {
-                RefreshColors();
-                elements.IsDirty = false;
-            }
-        }
+        /// <inheritdoc cref="GenericOutputNode.IsInputDirty"/>
+        protected override bool IsInputDirty => elements.IsDirty;
 
-        private void RefreshColors()
+        /// <inheritdoc cref="GenericOutputNode.IsInputValid"/>
+        protected override bool IsInputValid => elements.HasNonEmptyValue();
+
+        /// <inheritdoc cref="GenericOutputNode.ClearDirty"/>
+        protected override void ClearDirty()
+        {
+            elements.IsDirty = false;
+        }
+        
+        /// <inheritdoc cref="GenericOutputNode.UpdateOutput"/>
+        protected override void UpdateOutput()
         {
             var elementArray = elements.Value;
             var colorArray = colors.HasValue ? colors.Value : new UnityEngine.Color[0];
@@ -40,6 +44,12 @@ namespace Narupa.Visualisation.Node.Color
                 colorArray[i] = GetColor(elementArray[i]);
 
             colors.Value = colorArray;
+        }
+
+        /// <inheritdoc cref="GenericOutputNode.ClearOutput"/>
+        protected override void ClearOutput()
+        {
+            colors.UndefineValue();
         }
 
         /// <summary>

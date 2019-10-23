@@ -18,7 +18,23 @@ namespace Narupa.Visualisation.Node.Color
         [SerializeField]
         private ElementColorMappingProperty mapping = new ElementColorMappingProperty();
 
+        /// <summary>
+        /// The color mapping between elements and colors.
+        /// </summary>
         public IProperty<ElementColorMapping> Mapping => mapping;
+
+        /// <inheritdoc cref="GenericOutputNode.IsInputDirty"/>
+        protected override bool IsInputDirty => base.IsInputDirty || mapping.IsDirty;
+
+        /// <inheritdoc cref="GenericOutputNode.IsInputValid"/>
+        protected override bool IsInputValid => base.IsInputValid && mapping.HasNonNullValue();
+
+        /// <inheritdoc cref="GenericOutputNode.ClearDirty"/>
+        protected override void ClearDirty()
+        {
+            base.ClearDirty();
+            mapping.IsDirty = false;
+        }
 
         /// <inheritdoc cref="PerElementColor.GetColor" />
         protected override UnityEngine.Color GetColor(Element element)
