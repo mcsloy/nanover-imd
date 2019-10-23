@@ -9,7 +9,7 @@ using NarupaXR.Interaction;
 using System.Collections;
 using Narupa.Frame;
 using Narupa.Frontend.XR;
-
+using UnityEngine.Serialization;
 using Text = TMPro.TextMeshProUGUI;
 
 namespace NarupaXR
@@ -37,8 +37,9 @@ namespace NarupaXR
         [SerializeField]
         private Text debugText;
 
+        [FormerlySerializedAs("xrInteraction")]
         [SerializeField]
-        private XRInteractionManager xrInteraction;
+        private XRBoxInteractionManager xrBoxInteraction;
 
         [SerializeField]
         private NarupaXRAvatarManager avatars;
