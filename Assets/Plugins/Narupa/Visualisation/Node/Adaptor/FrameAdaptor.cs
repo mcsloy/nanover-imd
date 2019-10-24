@@ -1,4 +1,5 @@
 using System;
+using Narupa.Core;
 using Narupa.Core.Science;
 using Narupa.Frame;
 using Narupa.Frame.Event;
@@ -68,6 +69,13 @@ namespace Narupa.Visualisation.Node.Adaptor
         public IReadOnlyProperty<string[]> ResidueNames => residueNames;
 
         private StringArrayProperty residueNames = new StringArrayProperty();
+        
+        /// <summary>
+        /// Array of particle charges of the provided frame.
+        /// </summary>
+        public IReadOnlyProperty<float[]> ParticleCharges => particleCharges;
+
+        private FloatArrayProperty particleCharges = new FloatArrayProperty();
 
         [SerializeField]
         private FrameAdaptorProperty parentAdaptor = new FrameAdaptorProperty();
@@ -88,6 +96,7 @@ namespace Narupa.Visualisation.Node.Adaptor
                     bondOrders.LinkedProperty = parentAdaptor.Value.Adaptor.bondOrders;
                     bondPairs.LinkedProperty = parentAdaptor.Value.Adaptor.bondPairs;
                     residueNames.LinkedProperty = parentAdaptor.Value.Adaptor.residueNames;
+                    particleCharges.LinkedProperty = parentAdaptor.Value.Adaptor.particleCharges;
                 }
                 else
                 {
@@ -98,6 +107,7 @@ namespace Narupa.Visualisation.Node.Adaptor
                     bondOrders.LinkedProperty = null;
                     bondPairs.LinkedProperty = null;
                     residueNames.LinkedProperty = null;
+                    particleCharges.LinkedProperty = null;
                 }
 
                 parentAdaptor.IsDirty = false;
@@ -136,6 +146,12 @@ namespace Narupa.Visualisation.Node.Adaptor
             
             if (changes?.HaveResidueNamesChanged ?? true)
                 residueNames.Value = FrameSource.CurrentFrame.ResidueNames;
+
+            if (changes?.GetIsChanged("particle.charges") ?? true)
+            {
+                particleCharges.Value =
+                    FrameSource.CurrentFrame.Data.GetArrayOrEmpty<float>("particle.charges");
+            }
         }
 
         private ITrajectorySnapshot source;
