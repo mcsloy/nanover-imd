@@ -34,11 +34,6 @@ test-editmode:
   variables:
     TEST_PLATFORM: editmode
 
-test-playmode:
-  <<: *test
-  variables:
-    TEST_PLATFORM: playmode
-
 .build: &build
   stage: build
   <<: *unity_before_script
