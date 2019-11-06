@@ -45,7 +45,13 @@ namespace Narupa.Frontend.UI
             Vector3? worldPoint;
             worldPoint = GetProjectedCursorPoint();
 
-            isCursorOnCanvas = worldPoint.HasValue;
+            var newCursorState = worldPoint.HasValue;
+            if (!newCursorState && isCursorOnCanvas)
+            {
+                (EventSystem.current.currentInputModule as NarupaInputModule).ClearSelection();
+            }
+            isCursorOnCanvas = newCursorState;
+            
             if (worldPoint.HasValue)
             {
                 screenPosition = camera.WorldToScreenPoint(worldPoint.Value);
@@ -100,6 +106,8 @@ namespace Narupa.Frontend.UI
         /// </summary>
         private Vector3? GetProjectedCursorPoint()
         {
+            if (canvas == null)
+                return null;
             if (cursor?.Pose == null)
                 return null;
             var cursorRadius = cursor.Pose.Value.Scale.x * 1.5f;
