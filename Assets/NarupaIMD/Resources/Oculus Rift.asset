@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 147d743152d75b346866ef0a4600e9ae, type: 3}
-  m_Name: Valve Index
+  m_Name: Oculus Rift
   m_EditorClassIdentifier: 
-  controllerId: knuckles
+  controllerId: oculus_touch
   leftController:
-    prefab: {fileID: 6899497067853069755, guid: 977be6926046a4a4d80d291d6aaa1244,
+    prefab: {fileID: 2543036398859962509, guid: 5c0b8b9861f24c64888a21f4f580cfc1,
       type: 3}
-    hideSteamVrModel: 0
+    hideSteamVrModel: 1
   rightController:
-    prefab: {fileID: 9036256438583217342, guid: e4f78c2b374903640abba36899d2973f,
+    prefab: {fileID: 3552374343134065379, guid: 13803d8877859d74d9247eb700a2db7e,
       type: 3}
-    hideSteamVrModel: 0
+    hideSteamVrModel: 1
