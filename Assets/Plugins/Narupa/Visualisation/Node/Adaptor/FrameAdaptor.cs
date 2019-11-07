@@ -75,6 +75,8 @@ namespace Narupa.Visualisation.Node.Adaptor
         [SerializeField]
         private IntArrayProperty particleFilter = new IntArrayProperty();
 
+        public IProperty<int[]> ParticleFilter => particleFilter;
+
         public void Refresh()
         {
             if (parentAdaptor.IsDirty)
