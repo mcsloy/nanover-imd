@@ -15,7 +15,7 @@ namespace NarupaXR.UI
 
         [SerializeField]
         private VrController controller;
-        
+
         private void Awake()
         {
             Assert.IsNotNull(camera);
@@ -42,7 +42,7 @@ namespace NarupaXR.UI
                 currentScene.SetController(controller);
             }
         }
-        
+
         public void CloseScene()
         {
             GotoScene(null);
