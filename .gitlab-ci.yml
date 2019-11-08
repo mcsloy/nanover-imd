@@ -10,6 +10,7 @@ trigger_plugin_update:
   only:
     - master
   script:
+    - apt-get update && apt-get install curl 
     - "curl -X POST -F token=${NARUPA_UNITY_PLUGIN_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/14856986/trigger/pipeline"
 
 variables:
@@ -33,11 +34,6 @@ test-editmode:
   <<: *test
   variables:
     TEST_PLATFORM: editmode
-
-test-playmode:
-  <<: *test
-  variables:
-    TEST_PLATFORM: playmode
 
 .build: &build
   stage: build
