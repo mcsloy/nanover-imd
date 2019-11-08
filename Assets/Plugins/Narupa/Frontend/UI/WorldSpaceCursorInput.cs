@@ -37,6 +37,7 @@ namespace Narupa.Frontend.UI
         protected override void Start()
         {
             base.Start();
+            Assert.IsNotNull(camera);
             StartCoroutine(InitialiseWhenInputModuleReady());
         }
 
@@ -74,15 +75,6 @@ namespace Narupa.Frontend.UI
             Instance.canvas = canvas;
             Instance.cursor = cursor;
             Instance.clickButton = click;
-        }
-
-        /// <summary>
-        /// Unregister the current canvas.
-        /// </summary>
-        public void UnregisterCanvas()
-        {
-            canvas = null;
-            cursor = null;
         }
 
         /// <summary>
@@ -143,6 +135,16 @@ namespace Narupa.Frontend.UI
         public override bool GetMouseButtonUp(int button)
         {
             return button == 0 && !currentClickState && previousClickState;
+        }
+
+        public static void ReleaseCanvas(Canvas canvas)
+        {
+            Assert.IsNotNull(Instance);
+            if (Instance.canvas == canvas)
+            {
+                Instance.canvas = null;
+                Instance.cursor = null;
+            }
         }
     }
 }

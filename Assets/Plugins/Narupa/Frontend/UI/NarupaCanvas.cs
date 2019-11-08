@@ -1,3 +1,4 @@
+using System;
 using Narupa.Frontend.Controllers;
 using Narupa.Frontend.Input;
 using Narupa.Frontend.XR;
@@ -43,19 +44,16 @@ namespace Narupa.Frontend.UI
         [SerializeField]
         private SteamVR_Input_Sources inputSource;
 
-        [SerializeField]
         private Canvas canvas;
 
         private void Awake()
         {
-            if (canvas == null)
-                canvas = GetComponent<Canvas>();
-            Assert.IsNotNull(canvas);
+            Assert.IsNotNull(controller);
+            canvas = GetComponent<Canvas>();
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            Assert.IsNotNull(controller);
             RegisterCanvas();
         }
 
@@ -65,18 +63,13 @@ namespace Narupa.Frontend.UI
         protected virtual void RegisterCanvas()
         {
             WorldSpaceCursorInput.SetCanvasAndCursor(canvas,
-                                                     controller.CursorPose,
+                                                     controller.HeadPose,
                                                      inputAction.WrapAsButton(inputSource));
         }
 
-        public void SetCamera(Camera camera)
+        private void OnDisable()
         {
-            canvas.worldCamera = camera;
-        }
-
-        public void SetController(VrController controller)
-        {
-            this.controller = controller;
+            WorldSpaceCursorInput.ReleaseCanvas(canvas);
         }
     }
 }
