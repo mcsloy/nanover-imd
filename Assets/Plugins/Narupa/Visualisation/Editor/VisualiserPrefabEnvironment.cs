@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Intangible Realities Lab. All rights reserved.
+// Licensed under the GPL. See License.txt in the project root for license information.
+
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -76,6 +79,9 @@ namespace Narupa.Visualisation.Editor
             Handles.EndGUI();
         }
 
+        /// <summary>
+        /// Is the current prefab a valid visualiser.
+        /// </summary>
         private static bool isValidPrefabForVisualisation = false;
 
         private static void OnPrefabStageOpened(PrefabStage prefabStage)
@@ -96,6 +102,7 @@ namespace Narupa.Visualisation.Editor
             catch (Exception e)
             {
                 // Need to catch all exceptions here, otherwise Editor can bug out.
+                isValidPrefabForVisualisation = false;
                 Debug.LogException(e);
             }
         }

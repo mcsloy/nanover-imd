@@ -1,3 +1,6 @@
+// Copyright (c) Intangible Realities Lab. All rights reserved.
+// Licensed under the GPL. See License.txt in the project root for license information.
+
 using System.Collections;
 using Narupa.Frontend.Input;
 using UnityEngine;
@@ -31,6 +34,7 @@ namespace Narupa.Frontend.UI
         protected override void Awake()
         {
             base.Awake();
+            Assert.IsNull(Instance);
             Instance = this;
         }
 
@@ -139,8 +143,7 @@ namespace Narupa.Frontend.UI
 
         public static void ReleaseCanvas(Canvas canvas)
         {
-            Assert.IsNotNull(Instance);
-            if (Instance.canvas == canvas)
+            if (Instance != null && Instance.canvas == canvas)
             {
                 Instance.canvas = null;
                 Instance.cursor = null;
