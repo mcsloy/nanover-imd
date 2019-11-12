@@ -3,6 +3,7 @@
 
 using JetBrains.Annotations;
 using Narupa.Core.Science;
+using Narupa.Frame.Topology;
 using UnityEngine;
 
 namespace Narupa.Frame
@@ -11,8 +12,9 @@ namespace Narupa.Frame
     /// A particle which exists only as an index, pointing to various arrays which
     /// contain information such as name and type
     /// </summary>
-    internal class ParticleReference : IParticle
+    public class ParticleReference : IParticle
     {
+        private readonly Frame frame;
         private readonly int index;
 
         /// <summary>
@@ -20,7 +22,7 @@ namespace Narupa.Frame
         /// </summary>
         public ParticleReference([NotNull] Frame frame, int index)
         {
-            Frame = frame;
+            this.frame = frame;
             this.index = index;
         }
 
@@ -28,7 +30,7 @@ namespace Narupa.Frame
         /// The topology the particle is a part of
         /// </summary>
         [NotNull]
-        public Frame Frame { get; }
+        public Frame Frame => frame;
 
         /// <inheritdoc />
         public int Index => index;
@@ -41,5 +43,7 @@ namespace Narupa.Frame
         public Vector3 Position => Frame.ParticlePositions[index];
 
         public Element? Element => Frame.ParticleElements?[index];
+
+        public ResidueReference Residue => frame.GetResidue(Frame.ParticleResidues[index]);
     }
 }

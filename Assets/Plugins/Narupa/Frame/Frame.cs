@@ -2,9 +2,11 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Data.Common;
 using JetBrains.Annotations;
 using Narupa.Core;
 using Narupa.Core.Science;
+using Narupa.Frame.Topology;
 using Narupa.Protocol.Trajectory;
 using UnityEngine;
 
@@ -17,15 +19,8 @@ namespace Narupa.Frame
     /// </summary>
     public class Frame : IFrame
     {
-        /// <summary>
-        /// Internal representation of an IParticle list by references arrays
-        /// </summary>
-        [NotNull]
-        private readonly ParticleReferenceList particles;
-
         public Frame()
         {
-            particles = new ParticleReferenceList(this);
         }
 
         /// <summary>
@@ -156,14 +151,49 @@ namespace Narupa.Frame
         /// </summary>
         public static Frame ShallowCopy([NotNull] Frame originalFrame)
         {
-            var copiedFrame = new Frame
+            var copiedFrame = new Frame();
+            foreach (var (key, _) in originalFrame.Data)
             {
-                ParticlePositions = originalFrame.ParticlePositions,
-                ParticleTypes = originalFrame.ParticleTypes,
-                ParticleElements = originalFrame.ParticleElements,
-                BondPairs = originalFrame.BondPairs
-            };
+                copiedFrame.Data[key] = originalFrame.Data[key];
+            }
             return copiedFrame;
+        }
+
+        private ResidueReference[] residues = new ResidueReference[0];
+        
+        private ParticleReference[] particles = new ParticleReference[0];
+        
+        private EntityReference[] entities = new EntityReference[0];
+
+        public ParticleReference GetParticle(int index)
+        {
+            return particles[index];
+        }
+
+        public ResidueReference GetResidue(int index)
+        {
+            return residues[index];
+        }
+        
+        public EntityReference GetEntity(int index)
+        {
+            return entities[index];
+        }
+
+        public void PopulateResidues()
+        {
+            for (var i = 0; i < particles.Length; i++)
+            {
+                residues[ParticleResidues[i]].AddParticleIndex(i);
+            }
+        }
+        
+        public void PopulateEntities()
+        {
+            for (var i = 0; i < residues.Length; i++)
+            {
+                entities[ResidueEntities[i]].AddResidueIndex(i);
+            }
         }
     }
 }
