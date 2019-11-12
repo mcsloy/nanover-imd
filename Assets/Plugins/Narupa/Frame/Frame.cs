@@ -90,6 +90,18 @@ namespace Narupa.Frame
             get => Data.GetValueOrDefault<string[]>(FrameData.ResidueNameArrayKey);
             set => Data[FrameData.ResidueNameArrayKey] = value;
         }
+        
+        /// <summary>
+        /// Array of entity indices for each residue.
+        /// </summary>
+        /// <remarks>
+        /// Entities are groupings of residues, such as polypeptide chains or strands of DNA.
+        /// </remarks>
+        public int[] ResidueEntities
+        {
+            get => Data.GetValueOrDefault<int[]>(FrameData.ResidueChainArrayKey);
+            set => Data[FrameData.ResidueChainArrayKey] = value;
+        }
 
         /// <summary>
         /// Array of particle names.
@@ -98,15 +110,6 @@ namespace Narupa.Frame
         {
             get => Data.GetValueOrDefault<string[]>(FrameData.ParticleNameArrayKey);
             set => Data[FrameData.ParticleNameArrayKey] = value;
-        }
-        
-        /// <summary>
-        /// Array of entity indices for residues.
-        /// </summary>
-        public int[] ResidueEntities
-        {
-            get => Data.GetValueOrDefault<int[]>(FrameData.ResidueChainArrayKey);
-            set => Data[FrameData.ResidueChainArrayKey] = value;
         }
         
         /// <summary>
