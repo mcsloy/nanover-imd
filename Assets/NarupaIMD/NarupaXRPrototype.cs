@@ -9,7 +9,6 @@ using NarupaXR.Interaction;
 using System.Collections;
 using Narupa.Frame;
 using Narupa.Frontend.XR;
-using UnityEditor;
 using UnityEngine.Serialization;
 using Text = TMPro.TextMeshProUGUI;
 
@@ -129,42 +128,6 @@ namespace NarupaXR
             FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
             FrameSynchronizer.FrameSource = Sessions.Trajectory;
             visualiser.GetComponent<IFrameConsumer>().FrameSource = FrameSynchronizer;
-        }
-
-        /// <summary>
-        /// Play the current server.
-        /// </summary>
-        [MenuItem("Narupa/Play")]
-        public static void PlayServer()
-        {
-            FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Play();
-        }
-        
-        /// <summary>
-        /// Pause the current server.
-        /// </summary>
-        [MenuItem("Narupa/Pause")]
-        public static void PauseServer()
-        {
-            FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Pause();
-        }
-        
-        /// <summary>
-        /// Reset the current server.
-        /// </summary>
-        [MenuItem("Narupa/Reset")]
-        public static void ResetServer()
-        {
-            FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Reset();
-        }
-        
-        /// <summary>
-        /// Step the current server.
-        /// </summary>
-        [MenuItem("Narupa/Step")]
-        public static void StepServer()
-        {
-            FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Step();
         }
     }
 }
