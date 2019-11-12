@@ -3,28 +3,28 @@ using System.Linq;
 
 namespace Narupa.Frame.Topology
 {
-    public class EntityReference
+    internal class EntityReference : ObjectReference
     {
-        private readonly Frame frame;
-
-        private readonly int index;
+        public EntityReference(Topology topology, int index) : base(topology, index)
+        {
+        }
         
-        private List<int> residueIndices = new List<int>();
+        private List<ResidueReference> residues = new List<ResidueReference>();
 
-        public EntityReference(Frame frame, int index)
+        public string Name => Frame.ResidueNames[Index];
+
+        public IEnumerable<ResidueReference> Residues => residues;
+
+        public void AddResidueIndex(ResidueReference i)
         {
-            this.frame = frame;
-            this.index = index;
+            residues.Add(i);
         }
 
-        public string Name => frame.ResidueNames[index];
-
-        public IEnumerable<ResidueReference> Residues =>
-            residueIndices.Select(frame.GetResidue);
-
-        public void AddResidueIndex(int i)
+        public void ClearResidues()
         {
-            residueIndices.Add(i);
+            residues.Clear();
         }
+
+        
     }
 }
