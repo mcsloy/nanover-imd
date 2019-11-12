@@ -157,7 +157,11 @@ namespace Narupa.Visualisation.Node.Adaptor
                 if ((changes?.GetIsChanged(key) ?? true)
                  && FrameSource.CurrentFrame.Data.TryGetValue(key, out var value))
                     property.TrySetValue(value);
+
+            topology.Value = source.CurrentTopology;
         }
+
+        private TopologyProperty topology = new TopologyProperty();
 
         private ITrajectorySnapshot source;
 

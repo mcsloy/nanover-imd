@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Narupa.Core.Science;
 using Narupa.Frame;
+using Narupa.Frame.Topology;
 using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Node.Color;
 using UnityEngine;
@@ -44,6 +45,14 @@ namespace Narupa.Visualisation.Property
     {
     }
 
+    /// <summary>
+    /// Serializable <see cref="Property" /> for a <see cref="IReadOnlyTopology" /> value.
+    /// </summary>
+    [Serializable]
+    public class TopologyProperty : Property<IReadOnlyTopology>
+    {
+    }
+    
     /// <summary>
     /// Serializable <see cref="Property" /> for a <see cref="string" /> value.
     /// </summary>
