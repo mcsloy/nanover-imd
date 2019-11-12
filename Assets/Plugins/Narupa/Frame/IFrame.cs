@@ -12,11 +12,6 @@ namespace Narupa.Frame
     public interface IFrame
     {
         /// <summary>
-        /// List of bonds between particles.
-        /// </summary>
-        IReadOnlyList<BondPair> Bonds { get; }
-
-        /// <summary>
         /// General data associated with the current frame.
         /// </summary>
         IDictionary<string, object> Data { get; }

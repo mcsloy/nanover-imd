@@ -8,27 +8,16 @@ namespace Narupa.Frame
         /// <summary>
         /// Recenter particles about the origin.
         /// </summary>
-        public static void RecenterAroundOrigin(this Frame frame, bool massWeighted = false)
+        public static void RecenterAroundOrigin(this Frame frame)
         {
-            if (frame.Particles.Count == 0)
+            if (frame.ParticlePositions.Length == 0)
                 return;
 
-            var total = frame.Particles
-                             .Select(p => massWeighted
-                                              ? p.Position * GetMass(p)
-                                              : p.Position)
+            var total = frame.ParticlePositions
                              .Aggregate((v, w) => v + w);
-            total /= frame.Particles
-                          .Select(p => massWeighted ? GetMass(p) : 1).Sum();
+            total /= frame.ParticlePositions.Length;
             for (var i = 0; i < frame.ParticlePositions.Length; i++)
                 frame.ParticlePositions[i] -= total;
-        }
-
-        private static float GetMass(IParticle particle)
-        {
-            if (particle is ParticleReference reference)
-                return reference.Element?.GetStandardAtomicWeight() ?? 1;
-            return 1;
         }
     }
 }

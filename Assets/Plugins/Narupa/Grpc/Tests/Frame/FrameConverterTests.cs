@@ -73,7 +73,7 @@ namespace Narupa.Grpc.Tests.Frame
 
             var frame = FrameConverter.ConvertFrame(data).Frame;
 
-            Assert.AreEqual(0, frame.Particles.Count);
+            Assert.AreEqual(0, frame.ParticlePositions.Length);
         }
 
         [Test]
@@ -106,9 +106,9 @@ namespace Narupa.Grpc.Tests.Frame
             var frame2 = FrameConverter.ConvertFrame(data2, frame1).Frame;
             var frame3 = FrameConverter.ConvertFrame(data3, frame2).Frame;
 
-            Assert.AreEqual(3, frame1.Particles.Count);
-            Assert.AreEqual(3, frame2.Particles.Count);
-            Assert.AreEqual(3, frame3.Particles.Count);
+            Assert.AreEqual(3, frame1.ParticlePositions.Length);
+            Assert.AreEqual(3, frame2.ParticlePositions.Length);
+            Assert.AreEqual(3, frame3.ParticlePositions.Length);
 
             Assert.AreEqual(new Vector3(0f, 0f, 1f), frame1.ParticlePositions[0]);
             Assert.AreEqual(new Vector3(0f, 1f, 1f), frame1.ParticlePositions[1]);

@@ -2,14 +2,14 @@ namespace Narupa.Frame.Topology
 {
     internal abstract class ObjectReference
     {
-        private readonly Topology topology;
+        private readonly FrameTopology topology;
         private readonly Frame frame;
         private readonly int index;
 
-        protected ObjectReference(Topology topology, int index)
+        protected ObjectReference(FrameTopology topology, int index)
         {
             this.topology = topology;
-            this.frame = topology.Frame;
+            frame = topology.Frame;
             this.index = index;
         }
 
@@ -17,6 +17,6 @@ namespace Narupa.Frame.Topology
 
         public int Index => index;
 
-        public Topology Topology => topology;
+        public FrameTopology Topology => topology;
     }
 }

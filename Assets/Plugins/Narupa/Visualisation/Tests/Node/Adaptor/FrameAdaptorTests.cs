@@ -12,19 +12,7 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
 {
     public class FrameAdaptorTests
     {
-        public class FrameSnapshot : ITrajectorySnapshot
-        {
-            public void Update(Frame.Frame frame, FrameChanges changes)
-            {
-                CurrentFrame = frame;
-                FrameChanged?.Invoke(frame, changes);
-            }
-
-            public Frame.Frame CurrentFrame { get; private set; }
-            public event FrameChanged FrameChanged;
-        }
-
-        private FrameSnapshot source;
+        private TrajectorySnapshot source;
 
         private FrameAdaptor adaptor;
 
@@ -35,7 +23,7 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
         [SetUp]
         public void Setup()
         {
-            source = new FrameSnapshot();
+            source = new TrajectorySnapshot();
             adaptor = new FrameAdaptor { FrameSource = source };
             positionsChangedHandler = Substitute.For<Action>();
             adaptor.ParticlePositions.ValueChanged += positionsChangedHandler;
@@ -49,7 +37,7 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
         public void PositionUpdated()
         {
             var positionArray = new[] { Vector3.up, Vector3.down };
-            source.Update(new Frame.Frame
+            source.SetCurrentFrame(new Frame.Frame
                           {
                               ParticlePositions = positionArray
                           },
@@ -69,7 +57,7 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
         public void ElementsUpdated()
         {
             var elementArray = new[] { Element.Hydrogen, Element.Carbon };
-            source.Update(new Frame.Frame
+            source.SetCurrentFrame(new Frame.Frame
                           {
                               ParticleElements = elementArray
                           },
@@ -89,7 +77,7 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
         public void BondsUpdated()
         {
             var bondArray = new[] { new BondPair(0, 1), new BondPair(1, 2) };
-            source.Update(new Frame.Frame
+            source.SetCurrentFrame(new Frame.Frame
                           {
                               BondPairs = bondArray
                           },

@@ -1,17 +1,22 @@
 namespace Narupa.Frame.Topology
 {
-    internal class BondReference : ObjectReference
+    internal class BondReference : ObjectReference, IReadOnlyBond
     {
-        public BondReference(Topology topology, int index) : base(topology, index)
+        int IReadOnlyBond.Index => Index;
+        int IReadOnlyBond.Order => Order;
+        IReadOnlyParticle IReadOnlyBond.A => A;
+        IReadOnlyParticle IReadOnlyBond.B => B;
+
+        public BondReference(FrameTopology topology, int index) : base(topology, index)
         {
         }
 
         public int Order => Frame.BondOrders?[Index] ?? 1;
 
         public BondPair Bond => Frame.Bonds[Index];
-        
+
         public ParticleReference A { get; private set; }
-        
+
         public ParticleReference B { get; private set; }
 
         public void ClearParticles()

@@ -24,7 +24,7 @@ namespace Narupa.Visualisation.Editor
         
         private static string structureId = "";
         private static string currentMoleculeFilepath = "";
-        private static FrameSource currentMolecule = null;
+        private static TrajectorySnapshot currentMolecule = null;
 
         /// <summary>
         /// Show a progress message.
@@ -272,7 +272,10 @@ namespace Narupa.Visualisation.Editor
 
 
             frame.RecenterAroundOrigin();
-            currentMolecule = new FrameSource(frame);
+            
+            var currentMolecule = new TrajectorySnapshot();
+            currentMolecule.SetCurrentFrame(frame);
+            
 
             UpdateRenderer(currentMolecule);
 
@@ -294,17 +297,6 @@ namespace Narupa.Visualisation.Editor
                 return;
             renderer.FrameSource = molecule;
             root.gameObject.SendMessage("Update");
-        }
-
-        private class FrameSource : ITrajectorySnapshot
-        {
-            public FrameSource(Frame.Frame frame)
-            {
-                CurrentFrame = frame;
-            }
-
-            public Frame.Frame CurrentFrame { get; }
-            public event FrameChanged FrameChanged;
         }
     }
 }

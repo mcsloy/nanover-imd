@@ -13,18 +13,28 @@ namespace Narupa.Frame
     /// A particle which exists only as an index, pointing to various arrays which
     /// contain information such as name and type
     /// </summary>
-    internal class ParticleReference : ObjectReference, IParticle
+    internal class ParticleReference : ObjectReference, IReadOnlyParticle
     {
-        public ParticleReference(Topology.Topology topology, int index) : base(topology, index)
+        string IReadOnlyParticle.Name => Name;
+
+        IReadOnlyCollection<IReadOnlyBond> IReadOnlyParticle.Bonds => bonds;
+
+        IReadOnlyCollection<IReadOnlyParticle> IReadOnlyParticle.BondedParticles => bondedParticles;
+
+        IReadOnlyResidue IReadOnlyParticle.Residue => Residue;
+
+        public ParticleReference(FrameTopology topology, int index) : base(topology, index)
         {
         }
-        
+
         private List<ParticleReference> bondedParticles = new List<ParticleReference>();
         private List<BondReference> bonds = new List<BondReference>();
 
         /// <inheritdoc />
         [CanBeNull]
         public string Type => Frame.ParticleTypes?[Index];
+
+        public string Name => Frame.ParticleNames?[Index];
 
         /// <inheritdoc />
         public Vector3 Position => Frame.ParticlePositions[Index];

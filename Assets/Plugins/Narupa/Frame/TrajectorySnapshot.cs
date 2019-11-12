@@ -3,6 +3,7 @@
 
 using System;
 using Narupa.Frame.Event;
+using Narupa.Frame.Topology;
 
 namespace Narupa.Frame
 {
@@ -16,7 +17,7 @@ namespace Narupa.Frame
         /// <inheritdoc cref="ITrajectorySnapshot.CurrentFrame" />
         public Frame CurrentFrame { get; private set; }
 
-        public FrameChanges CurrentFrameChanges { get; private set; }
+        public IReadOnlyTopology CurrentTopology => new FrameTopology(CurrentFrame);
 
         /// <summary>
         /// Set the current frame, replacing the existing one.
@@ -24,8 +25,7 @@ namespace Narupa.Frame
         public void SetCurrentFrame(Frame frame, FrameChanges changes = null)
         {
             CurrentFrame = frame;
-            CurrentFrameChanges = changes ?? new FrameChanges();
-            FrameChanged?.Invoke(CurrentFrame, CurrentFrameChanges);
+            FrameChanged?.Invoke(CurrentFrame, changes);
         }
 
         /// <inheritdoc cref="ITrajectorySnapshot.FrameChanged" />

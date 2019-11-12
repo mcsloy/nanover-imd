@@ -1,6 +1,7 @@
 using System;
 using Narupa.Core.Async;
 using Narupa.Frame;
+using Narupa.Frame.Topology;
 using Narupa.Grpc.Frame;
 using Narupa.Grpc.Stream;
 using Narupa.Protocol.Trajectory;
@@ -16,6 +17,8 @@ namespace Narupa.Grpc.Trajectory
     {
         /// <inheritdoc cref="ITrajectorySnapshot.CurrentFrame" />
         public Narupa.Frame.Frame CurrentFrame => trajectorySnapshot.CurrentFrame;
+
+        public IReadOnlyTopology CurrentTopology => trajectorySnapshot.CurrentTopology;
         
         public int CurrentFrameIndex { get; private set; }
 

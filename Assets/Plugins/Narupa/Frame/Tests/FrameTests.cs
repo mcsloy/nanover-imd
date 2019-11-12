@@ -24,23 +24,6 @@ namespace Narupa.Frame.Tests
         }
 
         [Test]
-        public void ParticlesIteration()
-        {
-            var positions = new[] { Vector3.one, Vector3.left };
-            var frame = new Frame()
-            {
-                ParticlePositions = positions
-            };
-
-            var index = 0;
-            foreach (var particle in frame.Particles)
-            {
-                Assert.AreEqual(positions[index], particle.Position);
-                index++;
-            }
-        }
-
-        [Test]
         public void SetFloatValue()
         {
             var frame = new Frame();
@@ -72,27 +55,7 @@ namespace Narupa.Frame.Tests
                 ParticlePositions = new[] { Vector3.zero },
                 ParticleElements = new[] { Element.Carbon }
             };
-            Assert.AreEqual(Element.Carbon, frame.Particles[0].Element);
-        }
-
-        [Test]
-        public void Element_Missing()
-        {
-            var frame = new Frame()
-            {
-                ParticlePositions = new[] { Vector3.zero }
-            };
-            Assert.IsNull(frame.Particles[0].Element);
-        }
-
-        [Test]
-        public void Index()
-        {
-            var frame = new Frame()
-            {
-                ParticlePositions = new[] { Vector3.zero }
-            };
-            Assert.AreEqual(0, frame.Particles[0].Index);
+            Assert.AreEqual(Element.Carbon, frame.ParticleElements[0]);
         }
 
         [Test]
@@ -103,30 +66,9 @@ namespace Narupa.Frame.Tests
                 ParticlePositions = new[] { Vector3.zero },
                 ParticleTypes = new[] { "type" }
             };
-            Assert.AreEqual("type", frame.Particles[0].Type);
+            Assert.AreEqual("type", frame.ParticleTypes[0]);
         }
 
-        [Test]
-        public void Type_Missing()
-        {
-            var frame = new Frame()
-            {
-                ParticlePositions = new[] { Vector3.zero }
-            };
-            Assert.IsNull(frame.Particles[0].Type);
-        }
-
-
-        [Test]
-        public void Particles_AsIEnumerable()
-        {
-            var frame = new Frame()
-            {
-                ParticlePositions = new[] { Vector3.zero, Vector3.one },
-            };
-            CollectionAssert.IsNotEmpty(frame.Particles);
-        }
-        
         [Test]
         public void ParticleNames_Assignment()
         {

@@ -4,6 +4,7 @@
 using System;
 using Narupa.Frame;
 using Narupa.Frame.Event;
+using Narupa.Frame.Topology;
 using UnityEngine;
 
 namespace Narupa.Visualisation
@@ -20,6 +21,8 @@ namespace Narupa.Visualisation
     {
         /// <inheritdoc cref="ITrajectorySnapshot.CurrentFrame" />
         public Frame.Frame CurrentFrame => snapshot.CurrentFrame;
+
+        public IReadOnlyTopology CurrentTopology => snapshot.CurrentTopology;
 
         /// <inheritdoc cref="ITrajectorySnapshot.FrameChanged" />
         public event FrameChanged FrameChanged;

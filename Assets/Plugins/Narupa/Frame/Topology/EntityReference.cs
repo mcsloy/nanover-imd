@@ -1,19 +1,22 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Narupa.Frame.Topology
 {
-    internal class EntityReference : ObjectReference
+    internal class EntityReference : ObjectReference, IReadOnlyEntity
     {
-        public EntityReference(Topology topology, int index) : base(topology, index)
+        IReadOnlyCollection<IReadOnlyResidue> IReadOnlyEntity.Residues => residues;
+
+        string IReadOnlyEntity.Name => Name;
+
+        int IReadOnlyEntity.Index => Index;
+
+        public EntityReference(FrameTopology topology, int index) : base(topology, index)
         {
         }
-        
+
         private List<ResidueReference> residues = new List<ResidueReference>();
 
         public string Name => Frame.ResidueNames[Index];
-
-        public IEnumerable<ResidueReference> Residues => residues;
 
         public void AddResidueIndex(ResidueReference i)
         {
@@ -24,7 +27,5 @@ namespace Narupa.Frame.Topology
         {
             residues.Clear();
         }
-
-        
     }
 }

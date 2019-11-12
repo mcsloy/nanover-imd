@@ -26,7 +26,7 @@ namespace Narupa.Frame
         /// </summary>
         public Vector3[] ParticlePositions
         {
-            get => Data.GetValueOrDefault<Vector3[]>(FrameData.ParticlePositionArrayKey);
+            get => Data.GetArrayOrEmpty<Vector3>(FrameData.ParticlePositionArrayKey);
             set => Data[FrameData.ParticlePositionArrayKey] = value;
         }
 
@@ -53,7 +53,7 @@ namespace Narupa.Frame
         /// </summary>
         public BondPair[] BondPairs
         {
-            get => Data.GetValueOrDefault<BondPair[]>(FrameData.BondArrayKey);
+            get => Data.GetArrayOrEmpty<BondPair>(FrameData.BondArrayKey);
             set => Data[FrameData.BondArrayKey] = value;
         }
 

@@ -2,7 +2,9 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using Narupa.Frame.Event;
+using Narupa.Frame.Topology;
 
 namespace Narupa.Frame
 {
@@ -18,6 +20,11 @@ namespace Narupa.Frame
         /// Current frame.
         /// </summary>
         Frame CurrentFrame { get; }
+        
+        /// <summary>
+        /// Current topology.
+        /// </summary>
+        IReadOnlyTopology CurrentTopology { get; }
 
         /// <summary>
         /// Event invoked when the frame is changed.

@@ -2,9 +2,17 @@ using System.Collections.Generic;
 
 namespace Narupa.Frame.Topology
 {
-    internal class ResidueReference : ObjectReference
+    internal class ResidueReference : ObjectReference, IReadOnlyResidue
     {
-        public ResidueReference(Topology topology, int index) : base(topology, index)
+        int IReadOnlyResidue.Index => Index;
+
+        string IReadOnlyResidue.Name => Name;
+
+        IReadOnlyEntity IReadOnlyResidue.Entity => Entity;
+
+        IReadOnlyList<IReadOnlyParticle> IReadOnlyResidue.Particles => particles;
+
+        public ResidueReference(FrameTopology topology, int index) : base(topology, index)
         {
         }
 
@@ -12,8 +20,6 @@ namespace Narupa.Frame.Topology
 
         public string Name => Frame.ResidueNames[Index];
 
-        public IEnumerable<ParticleReference> Particles => particles;
-        
         public EntityReference Entity { get; private set; }
 
         public void AddParticle(ParticleReference i)
