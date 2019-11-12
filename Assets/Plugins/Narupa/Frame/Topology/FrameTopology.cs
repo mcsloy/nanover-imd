@@ -2,55 +2,61 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frame.Event;
-using UnityEngine.Playables;
-using FrameData = Narupa.Protocol.Trajectory.FrameData;
+using Narupa.Protocol.Trajectory;
 
 namespace Narupa.Frame.Topology
 {
+    /// <summary>
+    /// A representation of the n-body system derived from data provided in a
+    /// <see cref="Frame" />.
+    /// </summary>
     public class FrameTopology : IReadOnlyTopology
     {
+        /// <inheritdoc cref="IReadOnlyTopology.Bonds" />
         IReadOnlyList<IReadOnlyBond> IReadOnlyTopology.Bonds => bonds;
 
+        /// <inheritdoc cref="IReadOnlyTopology.Particles" />
         IReadOnlyList<IReadOnlyParticle> IReadOnlyTopology.Particles => particles;
 
+        /// <inheritdoc cref="IReadOnlyTopology.Residues" />
         IReadOnlyList<IReadOnlyResidue> IReadOnlyTopology.Residues => residues;
 
+        /// <inheritdoc cref="IReadOnlyTopology.Entities" />
         IReadOnlyList<IReadOnlyEntity> IReadOnlyTopology.Entities => entities;
 
-        private readonly Frame frame;
-
+        /// <summary>
+        /// Create an empty topology.
+        /// </summary>
+        public FrameTopology()
+        {
+            
+        }
+        
+        
+        /// <summary>
+        /// Create a topology representation of a given frame.
+        /// </summary>
         public FrameTopology(Frame frame)
         {
-            this.frame = frame;
-            ResetTopology();
-            UpdateTopology();
+            OnFrameUpdate(frame, null);
         }
 
-        public Frame Frame => frame;
+        /// <summary>
+        /// The frame that this topology is derived form.
+        /// </summary>
+        public Frame Frame { get; private set; }
 
-        private ResidueReference[] residues = new ResidueReference[0];
+        private FrameResidue[] residues = new FrameResidue[0];
 
-        private ParticleReference[] particles = new ParticleReference[0];
+        private FrameParticle[] particles = new FrameParticle[0];
 
-        private EntityReference[] entities = new EntityReference[0];
+        private FrameEntity[] entities = new FrameEntity[0];
 
-        private BondReference[] bonds = new BondReference[0];
+        private FrameBond[] bonds = new FrameBond[0];
 
-        internal ParticleReference GetParticle(int index)
-        {
-            return particles[index];
-        }
-
-        internal ResidueReference GetResidue(int index)
-        {
-            return residues[index];
-        }
-
-        internal EntityReference GetEntity(int index)
-        {
-            return entities[index];
-        }
-
+        /// <summary>
+        /// Reset all arrays and fill them with blank references.
+        /// </summary>
         public void ResetTopology()
         {
             var bondCount = Frame.Bonds.Count;
@@ -62,15 +68,18 @@ namespace Narupa.Frame.Topology
             Array.Resize(ref residues, residueCount);
             Array.Resize(ref entities, entityCount);
             for (var i = 0; i < bondCount; i++)
-                bonds[i] = new BondReference(this, i);
+                bonds[i] = new FrameBond(this, i);
             for (var i = 0; i < particleCount; i++)
-                particles[i] = new ParticleReference(this, i);
+                particles[i] = new FrameParticle(this, i);
             for (var i = 0; i < residueCount; i++)
-                residues[i] = new ResidueReference(this, i);
+                residues[i] = new FrameResidue(this, i);
             for (var i = 0; i < entityCount; i++)
-                entities[i] = new EntityReference(this, i);
+                entities[i] = new FrameEntity(this, i);
         }
 
+        /// <summary>
+        /// Update the references for all the parts of the topology.
+        /// </summary>
         public void UpdateTopology()
         {
             AssignBonds();
@@ -78,7 +87,10 @@ namespace Narupa.Frame.Topology
             AssignResidueEntities();
         }
 
-        public void AssignBonds()
+        /// <summary>
+        /// Assign bonds between particles.
+        /// </summary>
+        private void AssignBonds()
         {
             foreach (var particle in particles)
                 particle.ClearBonds();
@@ -95,7 +107,10 @@ namespace Narupa.Frame.Topology
             }
         }
 
-        public void AssignParticleResidues()
+        /// <summary>
+        /// Assign particles to their residues.
+        /// </summary>
+        private void AssignParticleResidues()
         {
             foreach (var residue in residues)
                 residue.ClearParticles();
@@ -103,13 +118,16 @@ namespace Narupa.Frame.Topology
             for (var i = 0; i < particles.Length; i++)
             {
                 var particle = particles[i];
-                var residue = residues[frame.ParticleResidues[i]];
+                var residue = residues[Frame.ParticleResidues[i]];
                 residue.AddParticle(particle);
                 particle.SetResidue(residue);
             }
         }
 
-        public void AssignResidueEntities()
+        /// <summary>
+        /// Assign residues to their entities.
+        /// </summary>
+        private void AssignResidueEntities()
         {
             foreach (var entity in entities)
                 entity.ClearResidues();
@@ -117,15 +135,20 @@ namespace Narupa.Frame.Topology
             for (var i = 0; i < residues.Length; i++)
             {
                 var residue = residues[i];
-                var entity = entities[frame.ResidueEntities[i]];
-                entity.AddResidueIndex(residue);
+                var entity = entities[Frame.ResidueEntities[i]];
+                entity.AddResidue(residue);
                 residue.SetEntity(entity);
             }
         }
 
-        public void OnFrameUpdate(FrameChanges changes)
+        /// <summary>
+        /// Update the topology based on frame changes.
+        /// </summary>
+        public void OnFrameUpdate(Frame frame, FrameChanges changes)
         {
-            if (changes.GetIsChanged(FrameData.BondArrayKey)
+            Frame = frame;
+            if (changes == null
+             || changes.GetIsChanged(FrameData.BondArrayKey)
              || changes.GetIsChanged(FrameData.ParticleResidueArrayKey)
              || changes.GetIsChanged(FrameData.ResidueChainArrayKey))
             {

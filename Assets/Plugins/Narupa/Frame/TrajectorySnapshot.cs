@@ -1,7 +1,6 @@
 // Copyright (c) Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System;
 using Narupa.Frame.Event;
 using Narupa.Frame.Topology;
 
@@ -17,7 +16,10 @@ namespace Narupa.Frame
         /// <inheritdoc cref="ITrajectorySnapshot.CurrentFrame" />
         public Frame CurrentFrame { get; private set; }
 
-        public IReadOnlyTopology CurrentTopology => new FrameTopology(CurrentFrame);
+        /// <inheritdoc cref="ITrajectorySnapshot.CurrentTopology" />
+        public IReadOnlyTopology CurrentTopology => topology;
+
+        private FrameTopology topology = new FrameTopology();
 
         /// <summary>
         /// Set the current frame, replacing the existing one.
@@ -25,6 +27,7 @@ namespace Narupa.Frame
         public void SetCurrentFrame(Frame frame, FrameChanges changes = null)
         {
             CurrentFrame = frame;
+            topology.OnFrameUpdate(frame, changes);
             FrameChanged?.Invoke(CurrentFrame, changes);
         }
 

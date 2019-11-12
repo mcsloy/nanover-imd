@@ -17,10 +17,6 @@ namespace Narupa.Frame
     /// </summary>
     public class Frame : IFrame
     {
-        public Frame()
-        {
-        }
-
         /// <summary>
         /// Array of particle positions
         /// </summary>
