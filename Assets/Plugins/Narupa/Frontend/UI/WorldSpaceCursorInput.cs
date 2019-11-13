@@ -34,14 +34,14 @@ namespace Narupa.Frontend.UI
         protected override void Awake()
         {
             base.Awake();
-            Assert.IsNull(Instance);
+            Assert.IsNull(Instance, $"Only one instance of {nameof(WorldSpaceCursorInput)} should exist in the scene.");
             Instance = this;
         }
 
         protected override void Start()
         {
             base.Start();
-            Assert.IsNotNull(camera);
+            Assert.IsNotNull(camera, $"{nameof(WorldSpaceCursorInput)} must have a non-null {nameof(camera)}");
             StartCoroutine(InitialiseWhenInputModuleReady());
         }
 
@@ -75,7 +75,7 @@ namespace Narupa.Frontend.UI
                                               IPosedObject cursor,
                                               IButton click)
         {
-            Assert.IsNotNull(Instance);
+            Assert.IsNotNull(Instance, $"There is no instance of {nameof(WorldSpaceCursorInput)} in the scene.");
             Instance.canvas = canvas;
             Instance.cursor = cursor;
             Instance.clickButton = click;
