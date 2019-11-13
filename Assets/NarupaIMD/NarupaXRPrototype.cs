@@ -26,9 +26,6 @@ namespace NarupaXR
         private Transform simulationSpaceTransform;
 
         [SerializeField]
-        private GameObject visualiser;
-
-        [SerializeField]
         private Slider forceScaleSlider;
 
         [SerializeField]
@@ -127,7 +124,6 @@ namespace NarupaXR
         {
             FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
             FrameSynchronizer.FrameSource = Sessions.Trajectory;
-            visualiser.GetComponent<IFrameConsumer>().FrameSource = FrameSynchronizer;
         }
     }
 }

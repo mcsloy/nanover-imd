@@ -1,0 +1,70 @@
+using Narupa.Frontend.Controllers;
+using Narupa.Frontend.UI;
+using UnityEngine;
+using UnityEngine.Assertions;
+using Valve.VR;
+
+namespace NarupaXR.UI
+{
+    public class VisualiserRadialMenu : MonoBehaviour
+    {
+        [SerializeField]
+        private GameObject radialMenuPrefab;
+
+        [SerializeField]
+        private SteamVR_Action_Boolean visualiserMenuAction;
+
+        [SerializeField]
+        private VrController controller;
+
+        [SerializeField]
+        private VisualisationManager visualisationManager;
+
+        private void Start()
+        {
+            Assert.IsNotNull(radialMenuPrefab, "Missing radial menu prefab");
+            Assert.IsNotNull(visualiserMenuAction,
+                             "Missing action to trigger visualiser radial menu");
+            Assert.IsNotNull(controller, "Missing VR controller");
+            visualiserMenuAction.onStateDown += VisualiserMenuActionOnStateDown;
+            visualiserMenuAction.onStateUp += VisualiserMenuActionOnStateUp;
+        }
+
+        private void VisualiserMenuActionOnStateUp(SteamVR_Action_Boolean fromaction,
+                                                   SteamVR_Input_Sources fromsource)
+        {
+            CloseMenu();
+        }
+
+        private void VisualiserMenuActionOnStateDown(SteamVR_Action_Boolean fromaction,
+                                                     SteamVR_Input_Sources fromsource)
+        {
+            ShowMenu();
+        }
+
+        private GameObject menu;
+
+        private void ShowMenu()
+        {
+            menu = Instantiate(radialMenuPrefab);
+            menu.GetComponent<HoverCanvas>().SetCamera(Camera.main);
+            menu.GetComponent<HoverCanvas>().SetController(controller);
+            menu.SetActive(true);
+            
+            var dynamic = menu.GetComponentInChildren<DynamicMenu>();
+            foreach (var prefab in visualisationManager.GetVisualiserPrefabs())
+                dynamic.AddItem(prefab.name, null,
+                                () => visualisationManager.SpawnVisualiser(prefab));
+            menu.transform.position = controller.HeadPose.Pose.Value.Position;
+            menu.transform.rotation =
+                Quaternion.LookRotation(menu.transform.position - Camera.main.transform.position,
+                                        Vector3.up);
+        }
+
+        private void CloseMenu()
+        {
+            WorldSpaceCursorInput.TriggerClick();
+            Destroy(menu);
+        }
+    }
+}

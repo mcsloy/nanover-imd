@@ -40,5 +40,13 @@ namespace Valve.VR
                 return SteamVR_Actions.narupaIMD_Pose;
             }
         }
+        
+        public virtual SteamVR_Action_Boolean VisualiserMenu
+        {
+            get
+            {
+                return SteamVR_Actions.narupaIMD_VisualiserMenu;
+            }
+        }
     }
 }

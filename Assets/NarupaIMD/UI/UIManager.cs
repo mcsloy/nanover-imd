@@ -36,10 +36,10 @@ namespace NarupaXR.UI
                 Destroy(currentScene.gameObject);
             if (scenePrefab != null)
             {
-                currentScene = Instantiate(scenePrefab, this.transform);
-                currentScene.gameObject.SetActive(true);
+                currentScene = Instantiate(scenePrefab, transform);
                 currentScene.SetCamera(camera);
                 currentScene.SetController(controller);
+                currentScene.gameObject.SetActive(true);
             }
         }
 

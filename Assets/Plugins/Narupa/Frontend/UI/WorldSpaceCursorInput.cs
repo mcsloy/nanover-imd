@@ -2,6 +2,7 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System.Collections;
+using JetBrains.Annotations;
 using Narupa.Frontend.Input;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -22,6 +23,8 @@ namespace Narupa.Frontend.UI
 
         private IPosedObject cursor;
         private Canvas canvas;
+
+        [CanBeNull]
         private IButton clickButton;
 
         private float distanceToCanvas;
@@ -34,20 +37,30 @@ namespace Narupa.Frontend.UI
         protected override void Awake()
         {
             base.Awake();
-            Assert.IsNull(Instance, $"Only one instance of {nameof(WorldSpaceCursorInput)} should exist in the scene.");
+            Assert.IsNull(
+                Instance,
+                $"Only one instance of {nameof(WorldSpaceCursorInput)} should exist in the scene.");
             Instance = this;
         }
 
         protected override void Start()
         {
             base.Start();
-            Assert.IsNotNull(camera, $"{nameof(WorldSpaceCursorInput)} must have a non-null {nameof(camera)}");
+            Assert.IsNotNull(
+                camera, $"{nameof(WorldSpaceCursorInput)} must have a non-null {nameof(camera)}");
             StartCoroutine(InitialiseWhenInputModuleReady());
+        }
+
+        private Vector3? worldPoint;
+
+        private void OnDrawGizmos()
+        {
+            if (worldPoint.HasValue)
+                Gizmos.DrawWireSphere(worldPoint.Value, 0.05f);
         }
 
         private void Update()
         {
-            Vector3? worldPoint;
             worldPoint = GetProjectedCursorPoint();
 
             var newCursorState = worldPoint.HasValue;
@@ -55,15 +68,16 @@ namespace Narupa.Frontend.UI
             {
                 (EventSystem.current.currentInputModule as NarupaInputModule).ClearSelection();
             }
+
             isCursorOnCanvas = newCursorState;
-            
+
             if (worldPoint.HasValue)
             {
                 screenPosition = camera.WorldToScreenPoint(worldPoint.Value);
             }
 
             previousClickState = currentClickState;
-            currentClickState = mousePresent && clickButton.IsPressed;
+            currentClickState = mousePresent && (clickButton?.IsPressed ?? false);
         }
 
         /// <summary>
@@ -75,7 +89,8 @@ namespace Narupa.Frontend.UI
                                               IPosedObject cursor,
                                               IButton click)
         {
-            Assert.IsNotNull(Instance, $"There is no instance of {nameof(WorldSpaceCursorInput)} in the scene.");
+            Assert.IsNotNull(
+                Instance, $"There is no instance of {nameof(WorldSpaceCursorInput)} in the scene.");
             Instance.canvas = canvas;
             Instance.cursor = cursor;
             Instance.clickButton = click;
@@ -147,6 +162,17 @@ namespace Narupa.Frontend.UI
             {
                 Instance.canvas = null;
                 Instance.cursor = null;
+            }
+        }
+
+        public static void TriggerClick()
+        {
+            var hovered = (EventSystem.current.currentInputModule as NarupaInputModule)
+                .CurrentHoverTarget;
+            if (hovered != null)
+            {
+                ExecuteEvents.ExecuteHierarchy(hovered, new BaseEventData(EventSystem.current),
+                                      ExecuteEvents.submitHandler);
             }
         }
     }
