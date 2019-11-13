@@ -3,12 +3,14 @@
   "applications": [
     {
       "app_key": "application.generated.unity.narupaxr.exe",
+      "app_key": "application.generated.unity.narupaimd.exe",
       "launch_type": "url",
       "url": "steam://launch/",
       "action_manifest_path": "C:\\Users\\Alex-Binnie\\Projects\\Narupa\\narupaXR\\actions.json",
       "strings": {
         "en_us": {
           "name": "NarupaXR [Testing]"
+          "name": "Narupa iMD [Testing]"
         }
       }
     }
