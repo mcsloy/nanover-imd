@@ -17,6 +17,9 @@ namespace Narupa.Visualisation.Node.Calculator
         private BondArrayProperty bonds = new BondArrayProperty();
 
         [SerializeField]
+        private IntArrayProperty bindingResidues = new IntArrayProperty();
+
+        [SerializeField]
         private IntProperty ligandEntityIndex = new IntProperty
         {
             Value = 1
@@ -27,27 +30,28 @@ namespace Narupa.Visualisation.Node.Calculator
 
         protected override bool IsInputValid => topology.HasNonNullValue()
                                              && ligandEntityIndex.HasValue
-                                             && particlePositions.HasNonNullValue();
+                                             && particlePositions.HasNonNullValue()
+                                             && bindingResidues.HasNonNullValue();
 
         protected override bool IsInputDirty => topology.IsDirty
                                              || ligandEntityIndex.IsDirty
-                                             || particlePositions.IsDirty;
+                                             || particlePositions.IsDirty
+                                             || bindingResidues.IsDirty;
 
         protected override void ClearDirty()
         {
             topology.IsDirty = false;
             ligandEntityIndex.IsDirty = false;
             particlePositions.IsDirty = false;
+            bindingResidues.IsDirty = false;
         }
 
         protected override void UpdateOutput()
         {
             var bondPairs = new List<BondPair>();
             var ligand = topology.Value.Entities[ligandEntityIndex];
-            foreach (var entity in topology.Value.Entities)
+            foreach (var proteinResidue in bindingResidues.Value.Select(i => topology.Value.Residues[i]))
             {
-                if (entity == ligand)
-                    continue;
                 foreach (var ligandResidue in ligand.Residues)
                 foreach (var ligandParticle in ligandResidue.Particles)
                 {
@@ -57,7 +61,6 @@ namespace Narupa.Visualisation.Node.Calculator
                                                              && p.Element != Element.Carbon))
                         continue;
                     var ligandPos = particlePositions.Value[ligandParticle.Index];
-                    foreach (var proteinResidue in entity.Residues)
                     foreach (var proteinParticle in proteinResidue.Particles)
                     {
                         if (proteinParticle.Element != Element.Carbon)

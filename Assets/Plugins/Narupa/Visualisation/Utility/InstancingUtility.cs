@@ -45,8 +45,16 @@ namespace Narupa.Visualisation.Utility
         /// </summary>
         public static void SetFilter(IndirectMeshDrawCommand command, int[] filter)
         {
-            command.SetKeyword("FILTER_ARRAY");
-            command.SetDataBuffer("FilterArray", filter);
+            if (filter.Length == 0)
+            {
+                command.SetKeyword("FILTER_ARRAY", false);
+            }
+            else
+            {
+                command.SetKeyword("FILTER_ARRAY");
+                command.SetDataBuffer("FilterArray", filter);  
+            }
+
         }
 
         /// <summary>

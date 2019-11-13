@@ -1,5 +1,211 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7850456037021826481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6303675154627095894}
+  - component: {fileID: 1816614210855474008}
+  - component: {fileID: 9219483313951247592}
+  - component: {fileID: 7874225274743576829}
+  - component: {fileID: 9128298486622121136}
+  - component: {fileID: 4179405902657019534}
+  m_Layer: 0
+  m_Name: Ligand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6303675154627095894
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7850456037021826481}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8528582866378757812}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1816614210855474008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7850456037021826481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3debffbae2948ccb8f413f906e7e8a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    parentAdaptor:
+      isValueProvided: 1
+      value: {fileID: 8528582866378757811}
+--- !u!114 &9219483313951247592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7850456037021826481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77dca4808cee46739d195a07de782600, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 1816614210855474008}
+    sourceFieldName: topology
+    destinationFieldName: topology
+  node:
+    topology:
+      isValueProvided: 0
+    entityIndex:
+      isValueProvided: 1
+      value: 1
+--- !u!114 &7874225274743576829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7850456037021826481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f2b3de3cca14b4c9cfc612f0e1d254b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 1816614210855474008}
+    sourceFieldName: particle.elements
+    destinationFieldName: elements
+  node:
+    elements:
+      isValueProvided: 0
+      value: 
+    mapping:
+      isValueProvided: 1
+      value: {fileID: 11400000, guid: f1a9c849f018f42adbab12e856c0da60, type: 2}
+--- !u!114 &9128298486622121136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7850456037021826481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73992ab43ebd415eb814845a706956c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 1816614210855474008}
+    sourceFieldName: particle.positions
+    destinationFieldName: particlePositions
+  - sourceComponent: {fileID: 9219483313951247592}
+    sourceFieldName: particleFilter
+    destinationFieldName: particleFilter
+  - sourceComponent: {fileID: 7874225274743576829}
+    sourceFieldName: colors
+    destinationFieldName: particleColors
+  node:
+    particlePositions:
+      isValueProvided: 0
+      value: []
+    particleColors:
+      isValueProvided: 0
+      value: []
+    particleScales:
+      isValueProvided: 0
+      value: []
+    rendererColor:
+      isValueProvided: 1
+      value: {r: 1, g: 1, b: 1, a: 1}
+    rendererScale:
+      isValueProvided: 1
+      value: 0.08
+    particleFilter:
+      isValueProvided: 0
+      value: 
+    mesh:
+      isValueProvided: 1
+      value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    material:
+      isValueProvided: 1
+      value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
+--- !u!114 &4179405902657019534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7850456037021826481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1037303cc04e46cf8d744d8b25d4d244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 1816614210855474008}
+    sourceFieldName: bond.pairs
+    destinationFieldName: bondPairs
+  - sourceComponent: {fileID: 1816614210855474008}
+    sourceFieldName: particle.positions
+    destinationFieldName: particlePositions
+  - sourceComponent: {fileID: 7874225274743576829}
+    sourceFieldName: colors
+    destinationFieldName: particleColors
+  - sourceComponent: {fileID: 1816614210855474008}
+    sourceFieldName: bond.orders
+    destinationFieldName: bondOrders
+  - sourceComponent: {fileID: 9219483313951247592}
+    sourceFieldName: particleFilter
+    destinationFieldName: particleFilter
+  node:
+    material:
+      isValueProvided: 1
+      value: {fileID: 2100000, guid: 8ab524378960e644f9a238927b43e467, type: 2}
+    mesh:
+      isValueProvided: 1
+      value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    particleFilter:
+      isValueProvided: 0
+      value: 
+    bondScale:
+      isValueProvided: 1
+      value: 1
+    bondPairs:
+      isValueProvided: 0
+      value: []
+    particlePositions:
+      isValueProvided: 0
+      value: []
+    particleColors:
+      isValueProvided: 0
+      value: []
+    particleScales:
+      isValueProvided: 0
+      value: []
+    rendererColor:
+      isValueProvided: 1
+      value: {r: 1, g: 1, b: 1, a: 1}
+    particleScale:
+      isValueProvided: 1
+      value: 0.08
+    bondOrders:
+      isValueProvided: 0
+      value: 
 --- !u!1 &8528582866378757822
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,13 +216,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8528582866378757812}
   - component: {fileID: 8528582866378757811}
-  - component: {fileID: 397105478419057534}
-  - component: {fileID: 6089087228771831228}
-  - component: {fileID: 8528582866378757810}
-  - component: {fileID: 8528582866378757809}
-  - component: {fileID: 8528582866378757823}
+  - component: {fileID: 6530343754327631731}
   - component: {fileID: 1785654344643674113}
   - component: {fileID: 8528582866378757808}
+  - component: {fileID: 5878755358130080301}
+  - component: {fileID: 3566964656868207575}
   m_Layer: 0
   m_Name: Ligand Binding
   m_TagString: Untagged
@@ -34,7 +238,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1294177074234863928}
+  - {fileID: 6303675154627095894}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -55,7 +261,7 @@ MonoBehaviour:
     parentAdaptor:
       isValueProvided: 0
       value: {fileID: 0}
---- !u!114 &397105478419057534
+--- !u!114 &6530343754327631731
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,129 +270,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 8528582866378757822}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection: []
-  node:
-    name: sphere.scale
-    input:
-      isValueProvided: 1
-      value: 0.7
---- !u!114 &6089087228771831228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8528582866378757822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection: []
-  node:
-    name: bond.scale
-    input:
-      isValueProvided: 1
-      value: 0.05
---- !u!114 &8528582866378757810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8528582866378757822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f2b3de3cca14b4c9cfc612f0e1d254b, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a573e1d0dcd486ab2a12ada35fe713c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inputLinkCollection:
   - sourceComponent: {fileID: 8528582866378757811}
-    sourceFieldName: particle.elements
-    destinationFieldName: elements
-  node:
-    elements:
-      isValueProvided: 0
-      value: 
-    mapping:
-      isValueProvided: 1
-      value: {fileID: 11400000, guid: f1a9c849f018f42adbab12e856c0da60, type: 2}
---- !u!114 &8528582866378757809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8528582866378757822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53e308a4d7b44dc8ae8f209b6e9ba088, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection:
-  - sourceComponent: {fileID: 8528582866378757811}
-    sourceFieldName: particle.elements
-    destinationFieldName: elements
-  node:
-    elements:
-      isValueProvided: 0
-      value: 
-    scale:
-      isValueProvided: 1
-      value: 1
---- !u!114 &8528582866378757823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8528582866378757822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73992ab43ebd415eb814845a706956c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection:
+    sourceFieldName: topology
+    destinationFieldName: topology
   - sourceComponent: {fileID: 8528582866378757811}
     sourceFieldName: particle.positions
-    destinationFieldName: particlePositions
-  - sourceComponent: {fileID: 8528582866378757810}
-    sourceFieldName: colors
-    destinationFieldName: particleColors
-  - sourceComponent: {fileID: 8528582866378757809}
-    sourceFieldName: scales
-    destinationFieldName: particleScales
-  - sourceComponent: {fileID: 397105478419057534}
-    sourceFieldName: input
-    destinationFieldName: rendererScale
+    destinationFieldName: positions
   node:
-    particlePositions:
+    topology:
+      isValueProvided: 0
+    positions:
       isValueProvided: 0
       value: []
-    particleColors:
-      isValueProvided: 0
-      value: []
-    particleScales:
-      isValueProvided: 0
-      value: []
-    rendererColor:
+    ligandEntityIndex:
       isValueProvided: 1
-      value: {r: 1, g: 1, b: 1, a: 1}
-    rendererScale:
-      isValueProvided: 0
       value: 1
-    particleFilter:
-      isValueProvided: 0
-      value: 
-    mesh:
+    maximumDistance:
       isValueProvided: 1
-      value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    material:
+      value: 5
+    minimumDistance:
       isValueProvided: 1
-      value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
+      value: 2
 --- !u!114 &1785654344643674113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,9 +314,15 @@ MonoBehaviour:
   - sourceComponent: {fileID: 8528582866378757811}
     sourceFieldName: topology
     destinationFieldName: topology
+  - sourceComponent: {fileID: 6530343754327631731}
+    sourceFieldName: nearbyResidues
+    destinationFieldName: bindingResidues
   node:
     topology:
       isValueProvided: 0
+    bindingResidues:
+      isValueProvided: 0
+      value: 
     ligandEntityIndex:
       isValueProvided: 1
       value: 1
@@ -241,6 +355,9 @@ MonoBehaviour:
     mesh:
       isValueProvided: 1
       value: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    particleFilter:
+      isValueProvided: 0
+      value: 
     bondScale:
       isValueProvided: 1
       value: 0.04
@@ -265,3 +382,273 @@ MonoBehaviour:
     bondOrders:
       isValueProvided: 0
       value: 
+--- !u!114 &5878755358130080301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 912354b8b83441e4b7f19eeb74ad6760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: topology
+    destinationFieldName: topology
+  - sourceComponent: {fileID: 6530343754327631731}
+    sourceFieldName: nearbyResidues
+    destinationFieldName: bindingResidues
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.positions
+    destinationFieldName: particlePositions
+  node:
+    topology:
+      isValueProvided: 0
+    bindingResidues:
+      isValueProvided: 0
+      value: 
+    ligandEntityIndex:
+      isValueProvided: 1
+      value: 1
+    particlePositions:
+      isValueProvided: 0
+      value: []
+--- !u!114 &3566964656868207575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1037303cc04e46cf8d744d8b25d4d244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.positions
+    destinationFieldName: particlePositions
+  - sourceComponent: {fileID: 5878755358130080301}
+    sourceFieldName: bonds
+    destinationFieldName: bondPairs
+  node:
+    material:
+      isValueProvided: 1
+      value: {fileID: 2100000, guid: 83c9cf4769ff3f945b306bb6168a22ab, type: 2}
+    mesh:
+      isValueProvided: 1
+      value: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+    particleFilter:
+      isValueProvided: 0
+      value: 
+    bondScale:
+      isValueProvided: 1
+      value: 0.03
+    bondPairs:
+      isValueProvided: 0
+      value: []
+    particlePositions:
+      isValueProvided: 0
+      value: []
+    particleColors:
+      isValueProvided: 0
+      value: []
+    particleScales:
+      isValueProvided: 0
+      value: []
+    rendererColor:
+      isValueProvided: 1
+      value: {r: 0.21560161, g: 0.8962264, b: 0.8962264, a: 1}
+    particleScale:
+      isValueProvided: 1
+      value: 0.1
+    bondOrders:
+      isValueProvided: 0
+      value: 
+--- !u!1 &8937905782083633409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1294177074234863928}
+  - component: {fileID: 7921448508451044483}
+  - component: {fileID: 8857065298789736849}
+  - component: {fileID: 2427668643852720822}
+  - component: {fileID: 6760688509016246456}
+  m_Layer: 0
+  m_Name: Protein
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1294177074234863928
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8937905782083633409}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8528582866378757812}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7921448508451044483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8937905782083633409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3debffbae2948ccb8f413f906e7e8a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    parentAdaptor:
+      isValueProvided: 1
+      value: {fileID: 8528582866378757811}
+--- !u!114 &8857065298789736849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8937905782083633409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c435587a717749d5a8d39c7e63224679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.residues
+    destinationFieldName: particleResidues
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.elements
+    destinationFieldName: particleElements
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: residue.names
+    destinationFieldName: residueNames
+  node:
+    includeHydrogens:
+      isValueProvided: 1
+      value: 0
+    includeWater:
+      isValueProvided: 1
+      value: 0
+    includeNonStandardResidues:
+      isValueProvided: 1
+      value: 0
+    particleResidues:
+      isValueProvided: 0
+      value: 
+    particleElements:
+      isValueProvided: 0
+      value: 
+    residueNames:
+      isValueProvided: 0
+      value: []
+--- !u!114 &2427668643852720822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8937905782083633409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f2b3de3cca14b4c9cfc612f0e1d254b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.elements
+    destinationFieldName: elements
+  node:
+    elements:
+      isValueProvided: 0
+      value: 
+    mapping:
+      isValueProvided: 1
+      value: {fileID: 11400000, guid: 600872bc39dd94544ad16ffe5c932f9e, type: 2}
+--- !u!114 &6760688509016246456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8937905782083633409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67f80847e54744a7905fa40e6cc379f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.positions
+    destinationFieldName: particlePositions
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.residues
+    destinationFieldName: particleResidues
+  - sourceComponent: {fileID: 8857065298789736849}
+    sourceFieldName: particleFilter
+    destinationFieldName: particleFilter
+  - sourceComponent: {fileID: 2427668643852720822}
+    sourceFieldName: colors
+    destinationFieldName: particleColors
+  node:
+    particlePositions:
+      isValueProvided: 0
+      value: []
+    particleColors:
+      isValueProvided: 0
+      value: []
+    particleResidues:
+      isValueProvided: 0
+      value: 
+    particleFilter:
+      isValueProvided: 0
+      value: 
+    cameraEvent: 11
+    shader: {fileID: 4800000, guid: 450c17dddf234aa5bd210a808a8c316b, type: 3}
+    renderer:
+      particlePositions:
+        isValueProvided: 0
+        value: []
+      particleColors:
+        isValueProvided: 0
+        value: []
+      particleScales:
+        isValueProvided: 0
+        value: []
+      rendererColor:
+        isValueProvided: 1
+        value: {r: 1, g: 1, b: 1, a: 1}
+      rendererScale:
+        isValueProvided: 1
+        value: 0.4
+      particleFilter:
+        isValueProvided: 0
+        value: 
+      mesh:
+        isValueProvided: 1
+        value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+      material:
+        isValueProvided: 1
+        value: {fileID: 2100000, guid: ae9185f7e43b911488d6df6391ab9b65, type: 2}
+      particleResidues:
+        isValueProvided: 0
+        value: 

@@ -2,6 +2,8 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Narupa.Frame;
 using Narupa.Visualisation.Property;
 using Narupa.Visualisation.Utility;
@@ -64,6 +66,9 @@ namespace Narupa.Visualisation.Node.Renderer
         public IProperty<Mesh> Mesh => mesh;
 
         public IProperty<Material> Material => material;
+
+        [SerializeField]
+        private IntArrayProperty particleFilter = new IntArrayProperty();
 
         /// <summary>
         /// Scale of the bonds.
@@ -128,6 +133,7 @@ namespace Narupa.Visualisation.Node.Renderer
                 UpdateColorsIfDirty();
                 UpdateScalesIfDirty();
                 UpdateBondsIfDirty();
+                UpdateFilterIfDirty();
 
                 drawCommand.MarkForRenderingThisFrame(camera);
             }
@@ -191,7 +197,7 @@ namespace Narupa.Visualisation.Node.Renderer
             drawCommand.SetMesh(mesh);
             drawCommand.SetMaterial(material);
         }
-        
+
         /// <summary>
         /// Indicate that a deserialisation or other event which resets buffers has occured.
         /// </summary>
@@ -202,7 +208,26 @@ namespace Narupa.Visualisation.Node.Renderer
             particlePositions.IsDirty = true;
             particleScales.IsDirty = true;
             bondPairs.IsDirty = true;
+            particleFilter.IsDirty = true;
         }
 
+        private void UpdateFilterIfDirty()
+        {
+            if (particleFilter.IsDirty && particleFilter.HasNonEmptyValue())
+            {
+                var filteredBonds = new List<int>();
+                var i = 0;
+                foreach (var bond in bondPairs.Value)
+                {
+                    if (particleFilter.Value.Contains(bond.A) &&
+                        particleFilter.Value.Contains(bond.B))
+                        filteredBonds.Add(i);
+                    i++;
+                }
+
+                InstancingUtility.SetFilter(drawCommand, filteredBonds.ToArray());
+                particleFilter.IsDirty = false;
+            }
+        }
     }
 }

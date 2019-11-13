@@ -130,11 +130,13 @@ namespace Narupa.Visualisation.Node.Adaptor
                         property.TrySetLinkedProperty(parentAdaptor.Value
                                                                    .Adaptor
                                                                    .GetExistingProperty(key));
+                    topology.LinkedProperty = parentAdaptor.Value.Adaptor.topology;
                 }
                 else
                 {
                     foreach (var (key, property) in properties)
                         property.TrySetLinkedProperty(null);
+                    topology.LinkedProperty = null;
                 }
 
                 parentAdaptor.IsDirty = false;
