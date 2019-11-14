@@ -3,6 +3,7 @@
 
 using System;
 using System.Text;
+using Plugins.Narupa.Frontend;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Valve.VR;
@@ -53,7 +54,7 @@ namespace Narupa.Frontend.Controllers
             if (currentPrefab != null)
                 Destroy(currentPrefab);
 
-            var definition = SteamVrControllerDefinition.GetControllerDefinition(type);
+            var definition = NarupaApplication.Instance.FindControllerDefinition(type);
             if (definition == null)
                 Debug.LogWarning($"Unsupported controller type: {type}");
             var prefab = definition.GetPrefab(input);

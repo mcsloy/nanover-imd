@@ -14,30 +14,22 @@ namespace Valve.VR
     using UnityEngine;
     
     
-    public class SteamVR_Input_ActionSet_NarupaIMD : Valve.VR.SteamVR_ActionSet
+    public class SteamVR_Input_ActionSet_Interactive : Valve.VR.SteamVR_ActionSet
     {
-        
-        public virtual SteamVR_Action_Boolean Interact
-        {
-            get
-            {
-                return SteamVR_Actions.narupaIMD_Interact;
-            }
-        }
         
         public virtual SteamVR_Action_Boolean GrabSpace
         {
             get
             {
-                return SteamVR_Actions.narupaIMD_GrabSpace;
+                return SteamVR_Actions.interactive_GrabSpace;
             }
         }
         
-        public virtual SteamVR_Action_Pose Pose
+        public virtual SteamVR_Action_Boolean Interact
         {
             get
             {
-                return SteamVR_Actions.narupaIMD_Pose;
+                return SteamVR_Actions.interactive_Interact;
             }
         }
         
@@ -45,7 +37,7 @@ namespace Valve.VR
         {
             get
             {
-                return SteamVR_Actions.narupaIMD_VisualiserMenu;
+                return SteamVR_Actions.interactive_VisualiserMenu;
             }
         }
     }

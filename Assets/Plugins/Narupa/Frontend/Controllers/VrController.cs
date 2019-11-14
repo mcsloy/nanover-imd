@@ -4,6 +4,7 @@
 using System;
 using Narupa.Frontend.Input;
 using UnityEngine;
+using Valve.VR;
 
 namespace Narupa.Frontend.Controllers
 {
@@ -97,17 +98,22 @@ namespace Narupa.Frontend.Controllers
         /// </summary>
         public bool IsControllerActive { get; private set; } = false;
 
+        [SerializeField]
+        private SteamVR_Input_Sources inputSource;
+        
+        public SteamVR_Input_Sources InputSource => inputSource;
+
         public event Action ControllerReset;
 
         private GameObject cursorGizmo = null;
 
-        public void InstantiateCursorGizmo(GameObject interactionGizmo)
+        public void InstantiateCursorGizmo(GameObject gizmo)
         {
             if (cursorGizmo != null)
                 Destroy(cursorGizmo);
-            if (cursor != null)
+            if (cursor != null && gizmo != null)
             {
-                cursorGizmo = Instantiate(interactionGizmo, cursor.transform);
+                cursorGizmo = Instantiate(gizmo, cursor.transform);
             }
         }
     }

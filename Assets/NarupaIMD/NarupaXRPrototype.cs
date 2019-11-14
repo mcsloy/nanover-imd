@@ -8,8 +8,12 @@ using UnityEngine.UI;
 using NarupaXR.Interaction;
 using System.Collections;
 using Narupa.Frame;
+using Narupa.Frontend.Controllers;
 using Narupa.Frontend.XR;
+using Plugins.Narupa.Frontend;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
+using Valve.VR;
 using Text = TMPro.TextMeshProUGUI;
 
 namespace NarupaXR
@@ -22,6 +26,9 @@ namespace NarupaXR
     public sealed class NarupaXRPrototype : MonoBehaviour
     {
 #pragma warning disable 0649
+        [SerializeField]
+        private NarupaApplication application;
+        
         [SerializeField]
         private Transform simulationSpaceTransform;
 
@@ -40,6 +47,12 @@ namespace NarupaXR
 
         [SerializeField]
         private NarupaXRAvatarManager avatars;
+
+        [SerializeField]
+        private InteractionMode interactionMode;
+
+        [SerializeField]
+        private UIMode uiMode;
 #pragma warning restore 0649
 
         public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
@@ -64,7 +77,10 @@ namespace NarupaXR
         /// Connect to remote trajectory and IMD services.
         /// </summary>
         public void Connect(string address, int? trajectoryPort, int? imdPort, int? multiplayerPort)
-            => Sessions.Connect(address, trajectoryPort, imdPort, multiplayerPort);
+        {
+            Sessions.Connect(address, trajectoryPort, imdPort, multiplayerPort);
+            GotoInteractionMode();
+        }
 
         /// <summary>
         /// Called from UI to quit the application.
@@ -76,6 +92,9 @@ namespace NarupaXR
 
         private void Awake()
         {
+            Assert.IsNotNull(application, "Narupa iMD script is missing reference to application");
+            NarupaApplication.SetApplication(application);
+            
             ManipulableSimulationSpace = new ManipulableScenePose(simulationSpaceTransform,
                                                                   Sessions.Multiplayer,
                                                                   this);
@@ -124,6 +143,19 @@ namespace NarupaXR
         {
             FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
             FrameSynchronizer.FrameSource = Sessions.Trajectory;
+        }
+
+        public void GotoInteractionMode()
+        {
+            uiMode.gameObject.SetActive(false);
+            interactionMode.gameObject.SetActive(true);
+        }
+
+        public void GotoUiMode(SteamVR_Input_Sources defaultInput)
+        {
+            interactionMode.gameObject.SetActive(false);
+            uiMode.gameObject.SetActive(true);
+            uiMode.SetInputSource(defaultInput);
         }
     }
 }

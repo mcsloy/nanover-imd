@@ -1,28 +1,46 @@
 {
   "actions": [
     {
-      "name": "/actions/NarupaIMD/in/Interact",
-      "type": "boolean",
-      "requirement": "mandatory"
-    },
-    {
-      "name": "/actions/NarupaIMD/in/GrabSpace",
-      "type": "boolean",
-      "requirement": "mandatory"
-    },
-    {
-      "name": "/actions/NarupaIMD/in/Pose",
+      "name": "/actions/Controller/in/Pose",
       "type": "pose",
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/NarupaIMD/in/VisualiserMenu",
+      "name": "/actions/UI/in/Click",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/UI/in/SwitchCursor",
+      "type": "boolean",
+      "requirement": "suggested"
+    },
+    {
+      "name": "/actions/Interactive/in/GrabSpace",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Interactive/in/Interact",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Interactive/in/VisualiserMenu",
       "type": "boolean"
     }
   ],
   "action_sets": [
     {
-      "name": "/actions/NarupaIMD",
+      "name": "/actions/Controller",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/UI",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/Interactive",
       "usage": "single"
     }
   ],
@@ -79,10 +97,12 @@
   "localization": [
     {
       "language_tag": "en_US",
-      "/actions/NarupaIMD/in/Interact": "Interact",
-      "/actions/NarupaIMD/in/GrabSpace": "Grab Space",
-      "/actions/NarupaIMD/in/Pose": "Pose",
-      "/actions/NarupaIMD/in/VisualiserMenu": "Visualiser Menu"
+      "/actions/UI/in/Click": "Click",
+      "/actions/Interactive/in/GrabSpace": "Grab Space",
+      "/actions/Interactive/in/Interact": "Interact",
+      "/actions/Interactive/in/VisualiserMenu": "Visualiser Menu",
+      "/actions/UI/in/SwitchCursor": "Switch Cursor",
+      "/actions/Controller/in/Pose": "Pose"
     }
   ]
 }

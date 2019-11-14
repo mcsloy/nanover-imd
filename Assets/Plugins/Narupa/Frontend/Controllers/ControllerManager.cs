@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using System;
 using UnityEngine;
+using Valve.VR;
 
 namespace Narupa.Frontend.Controllers
 {
@@ -16,6 +18,9 @@ namespace Narupa.Frontend.Controllers
         [SerializeField]
         private VrController rightController;
 
+        [SerializeField]
+        private SteamVR_ActionSet controllerActionSet;
+
         /// <summary>
         /// The left <see cref="VrController" />.
         /// </summary>
@@ -25,5 +30,11 @@ namespace Narupa.Frontend.Controllers
         /// The right <see cref="VrController" />.
         /// </summary>
         public VrController RightController => rightController;
+
+        private void Awake()
+        {
+            controllerActionSet.Initialize();
+            controllerActionSet.Activate();
+        }
     }
 }

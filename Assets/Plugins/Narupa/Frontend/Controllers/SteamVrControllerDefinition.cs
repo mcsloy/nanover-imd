@@ -40,14 +40,7 @@ namespace Narupa.Frontend.Controllers
         [Tooltip("How to handle the right controller.")]
         private ControllerDefinition rightController;
 
-        /// <summary>
-        /// Get the controller definition for a given SteamVR id.
-        /// </summary>
-        public static SteamVrControllerDefinition GetControllerDefinition(string id)
-        {
-            return Resources.LoadAll<SteamVrControllerDefinition>("")
-                            .FirstOrDefault(type => type.controllerId == id);
-        }
+        public string ControllerId => controllerId;
 
         /// <summary>
         /// Get the prefab for the given input source.

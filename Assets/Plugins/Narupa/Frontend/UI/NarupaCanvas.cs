@@ -26,31 +26,16 @@ namespace Narupa.Frontend.UI
     public class NarupaCanvas : MonoBehaviour
     {
         /// <summary>
-        /// The controller that can interact with this canvas.
-        /// </summary>
-        /// <remarks>
-        /// Currently, only one controller can interact with a given canvas.
-        /// </remarks>
-        [SerializeField]
-        private VrController controller;
-
-        /// <summary>
-        /// The SteamVR action that triggers a virtual mouse click for the UI.
+        /// The current cursor.
         /// </summary>
         [SerializeField]
-        private SteamVR_Action_Boolean inputAction;
-
-        /// <summary>
-        /// The input source to use for <see cref="inputAction" />.
-        /// </summary>
-        [SerializeField]
-        private SteamVR_Input_Sources inputSource;
+        private CursorProvider cursor;
 
         private Canvas canvas;
 
         private void Awake()
         {
-            Assert.IsNotNull(controller, $"{nameof(NarupaCanvas)} must have a pointer to the {nameof(VrController)} that will control it.");
+            Assert.IsNotNull(cursor, $"{nameof(NarupaCanvas)} must have a pointer to the {nameof(CursorProvider)} that will control it.");
             canvas = GetComponent<Canvas>();
         }
 
@@ -65,8 +50,7 @@ namespace Narupa.Frontend.UI
         protected virtual void RegisterCanvas()
         {
             WorldSpaceCursorInput.SetCanvasAndCursor(canvas,
-                                                     controller.HeadPose,
-                                                     inputAction.WrapAsButton(inputSource));
+                                                     cursor);
         }
 
         private void OnDisable()
@@ -81,9 +65,9 @@ namespace Narupa.Frontend.UI
             canvas.worldCamera = camera;
         }
 
-        public void SetController(VrController vrController)
+        public void SetCursor(CursorProvider cursor)
         {
-            controller = vrController;
+            this.cursor = cursor;
         }
     }
 }

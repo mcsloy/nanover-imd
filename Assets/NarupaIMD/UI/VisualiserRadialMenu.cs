@@ -15,17 +15,23 @@ namespace NarupaXR.UI
         private SteamVR_Action_Boolean visualiserMenuAction;
 
         [SerializeField]
-        private VrController controller;
+        private VisualisationManager visualisationManager;
 
         [SerializeField]
-        private VisualisationManager visualisationManager;
+        private CursorProvider cursorProvider;
+
+        [SerializeField]
+        private NarupaXRPrototype prototype;
+
+        [SerializeField]
+        private SteamVR_Input_Sources inputSource;
 
         private void Start()
         {
             Assert.IsNotNull(radialMenuPrefab, "Missing radial menu prefab");
             Assert.IsNotNull(visualiserMenuAction,
                              "Missing action to trigger visualiser radial menu");
-            Assert.IsNotNull(controller, "Missing VR controller");
+            Assert.IsNotNull(cursorProvider, "Missing VR controller");
             visualiserMenuAction.onStateDown += VisualiserMenuActionOnStateDown;
             visualiserMenuAction.onStateUp += VisualiserMenuActionOnStateUp;
         }
@@ -48,23 +54,26 @@ namespace NarupaXR.UI
         {
             menu = Instantiate(radialMenuPrefab);
             menu.GetComponent<HoverCanvas>().SetCamera(Camera.main);
-            menu.GetComponent<HoverCanvas>().SetController(controller);
+            menu.GetComponent<HoverCanvas>().SetCursor(cursorProvider);
             menu.SetActive(true);
             
             var dynamic = menu.GetComponentInChildren<DynamicMenu>();
             foreach (var prefab in visualisationManager.GetVisualiserPrefabs())
                 dynamic.AddItem(prefab.name, null,
                                 () => visualisationManager.SpawnVisualiser(prefab));
-            menu.transform.position = controller.HeadPose.Pose.Value.Position;
+            menu.transform.position = cursorProvider.Pose.Value.Position;
             menu.transform.rotation =
                 Quaternion.LookRotation(menu.transform.position - Camera.main.transform.position,
                                         Vector3.up);
+
+            prototype.GotoUiMode(inputSource);
         }
 
         private void CloseMenu()
         {
             WorldSpaceCursorInput.TriggerClick();
             Destroy(menu);
+            prototype.GotoInteractionMode();
         }
     }
 }

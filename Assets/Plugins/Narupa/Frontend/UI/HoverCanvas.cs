@@ -18,19 +18,16 @@ namespace Narupa.Frontend.UI
     public class HoverCanvas : MonoBehaviour
     {
         /// <summary>
-        /// The controller that can interact with this canvas.
+        /// The cursor that controls this canvas.
         /// </summary>
-        /// <remarks>
-        /// Currently, only one controller can interact with a given canvas.
-        /// </remarks>
         [SerializeField]
-        private VrController controller;
+        private CursorProvider cursor;
 
         private Canvas canvas;
 
         private void Awake()
         {
-            Assert.IsNotNull(controller, $"{nameof(NarupaCanvas)} must have a pointer to the {nameof(VrController)} that will control it.");
+            Assert.IsNotNull(cursor, $"{nameof(NarupaCanvas)} must have a pointer to the {nameof(CursorProvider)} that will control it.");
             canvas = GetComponent<Canvas>();
         }
 
@@ -45,8 +42,7 @@ namespace Narupa.Frontend.UI
         protected virtual void RegisterCanvas()
         {
             WorldSpaceCursorInput.SetCanvasAndCursor(canvas,
-                                                     controller.HeadPose,
-                                                     null);
+                                                     cursor);
         }
 
         private void OnDisable()
@@ -61,9 +57,9 @@ namespace Narupa.Frontend.UI
             canvas.worldCamera = camera;
         }
 
-        public void SetController(VrController vrController)
+        public void SetCursor(CursorProvider cursor)
         {
-            controller = vrController;
+            this.cursor = cursor;
         }
     }
 }

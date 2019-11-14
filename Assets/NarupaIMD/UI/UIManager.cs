@@ -14,12 +14,12 @@ namespace NarupaXR.UI
         private Camera camera;
 
         [SerializeField]
-        private VrController controller;
+        private CursorProvider cursorProvider;
 
         private void Awake()
         {
             Assert.IsNotNull(camera);
-            Assert.IsNotNull(controller);
+            Assert.IsNotNull(cursorProvider);
         }
 
         private NarupaCanvas currentScene;
@@ -38,7 +38,7 @@ namespace NarupaXR.UI
             {
                 currentScene = Instantiate(scenePrefab, transform);
                 currentScene.SetCamera(camera);
-                currentScene.SetController(controller);
+                currentScene.SetCursor(cursorProvider);
                 currentScene.gameObject.SetActive(true);
             }
         }

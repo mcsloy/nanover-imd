@@ -21,11 +21,9 @@ namespace Narupa.Frontend.UI
         [SerializeField]
         private Camera camera;
 
-        private IPosedObject cursor;
         private Canvas canvas;
 
-        [CanBeNull]
-        private IButton clickButton;
+        private ICursorProvider cursor;
 
         private float distanceToCanvas;
         private Vector2 screenPosition;
@@ -77,7 +75,7 @@ namespace Narupa.Frontend.UI
             }
 
             previousClickState = currentClickState;
-            currentClickState = mousePresent && (clickButton?.IsPressed ?? false);
+            currentClickState = mousePresent && (cursor?.IsPressed ?? false);
         }
 
         /// <summary>
@@ -86,14 +84,12 @@ namespace Narupa.Frontend.UI
         /// if a click is occuring.
         /// </summary>
         public static void SetCanvasAndCursor(Canvas canvas,
-                                              IPosedObject cursor,
-                                              IButton click)
+                                              ICursorProvider cursor)
         {
             Assert.IsNotNull(
                 Instance, $"There is no instance of {nameof(WorldSpaceCursorInput)} in the scene.");
             Instance.canvas = canvas;
             Instance.cursor = cursor;
-            Instance.clickButton = click;
         }
 
         /// <summary>
@@ -119,7 +115,7 @@ namespace Narupa.Frontend.UI
         {
             if (canvas == null)
                 return null;
-            if (cursor?.Pose == null)
+            if (!cursor.IsCursorActive || cursor?.Pose == null)
                 return null;
             var cursorRadius = cursor.Pose.Value.Scale.x * 1.5f;
             var planeTransform = canvas.transform;
