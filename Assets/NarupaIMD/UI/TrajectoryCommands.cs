@@ -5,6 +5,10 @@ using UnityEngine;
 
 namespace NarupaXR
 {
+    /// <summary>
+    /// Component that exposes the trajectory playback commands to Unity UI
+    /// components.
+    /// </summary>
     public sealed class TrajectoryCommands : MonoBehaviour
     {
 #pragma warning disable 0649
