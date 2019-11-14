@@ -64,5 +64,10 @@ namespace Narupa.Visualisation.Components.Adaptor
         {
             return true;
         }
+
+        private void OnDestroy()
+        {
+            node.Destroy();
+        }
     }
 }

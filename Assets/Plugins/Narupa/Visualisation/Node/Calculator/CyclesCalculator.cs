@@ -96,7 +96,7 @@ namespace Narupa.Visualisation.Node.Calculator
         /// </summary>
         private IEnumerable<Cycle> FindCycles(IReadOnlyList<BondPair> graph)
         {
-            if (graph.Count > 48)
+            if (graph.Count > 128)
                 return new Cycle[0];
 
             var list = new List<Cycle>();

@@ -1,93 +1,106 @@
 {
-  "app_key": "application.generated.unity.narupaxr.exe",
-  "bindings": {
-    "/actions/buggy": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    },
-    "/actions/default": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    },
-    "/actions/narupa": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    },
-    "/actions/narupaimd": {
-      "chords": [],
-      "poses": [
-        {
-          "output": "/actions/narupaimd/in/pose",
-          "path": "/user/hand/left/pose/raw"
-        },
-        {
-          "output": "/actions/narupaimd/in/pose",
-          "path": "/user/hand/right/pose/raw"
-        }
-      ],
-      "haptics": [],
-      "sources": [
-        {
-          "path": "/user/hand/left/input/grip",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/narupaimd/in/grabspace"
+   "action_manifest_version" : 0,
+   "alias_info" : {},
+   "app_key" : "narupa.imd.exe",
+   "bindings" : {
+      "/actions/buggy" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/default" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/narupa" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/narupaimd" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [
+            {
+               "output" : "/actions/narupaimd/in/pose",
+               "path" : "/user/hand/left/pose/raw"
+            },
+            {
+               "output" : "/actions/narupaimd/in/pose",
+               "path" : "/user/hand/right/pose/raw"
             }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/grip",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/narupaimd/in/grabspace"
+         ],
+         "skeleton" : [],
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/narupaimd/in/grabspace"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/narupaimd/in/grabspace"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/narupaimd/in/interact"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/narupaimd/in/interact"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "south" : {
+                     "output" : "/actions/narupaimd/in/visualisermenu"
+                  }
+               },
+               "mode" : "dpad",
+               "parameters" : {
+                  "sub_mode" : "touch"
+               },
+               "path" : "/user/hand/left/input/joystick"
             }
-          }
-        },
-        {
-          "path": "/user/hand/left/input/trigger",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/narupaimd/in/interact"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/trigger",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/narupaimd/in/interact"
-            }
-          }
-        }
-      ],
-      "skeleton": []
-    },
-    "/actions/platformer": {
-      "chords": [],
-      "poses": [],
-      "haptics": [],
-      "sources": [],
-      "skeleton": []
-    }
-  },
-  "controller_type": "oculus_touch",
-  "description": "",
-  "name": "Narupa iMD [Oculus Touch]"
+         ]
+      },
+      "/actions/platformer" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      }
+   },
+   "category" : "steamvr_input",
+   "controller_type" : "oculus_touch",
+   "description" : "",
+   "name" : "Narupa iMD [Oculus Touch]",
+   "options" : {},
+   "simulated_actions" : []
 }

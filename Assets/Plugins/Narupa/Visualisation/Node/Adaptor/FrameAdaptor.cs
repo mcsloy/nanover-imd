@@ -177,5 +177,11 @@ namespace Narupa.Visualisation.Node.Adaptor
                 }
             }
         }
+
+        public void Destroy()
+        {
+            // Need to unregister listener on frame changes
+            FrameSource = null;
+        }
     }
 }
