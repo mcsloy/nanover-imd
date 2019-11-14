@@ -183,7 +183,7 @@ namespace Narupa.Visualisation
                                              0);
         }
 
-        private void UpdateDataBuffers()
+        public void UpdateDataBuffers()
         {
             dataBuffers.ApplyDirtyBuffersToShader(shaderProgram);
             dataBuffers.ClearDirtyBuffers();

@@ -145,6 +145,7 @@ namespace Narupa.Visualisation.Node.Renderer
                 }
 
                 InstancingUtility.SetTransform(drawCommand, Transform);
+                drawCommand.UpdateDataBuffers();
 
                 return true;
             }
