@@ -7,13 +7,17 @@ namespace Narupa.Grpc.Selection
     {
         public string ID { get; }
 
-        public IReadOnlyList<int> Selection { get; }
+        public IReadOnlyList<int> Selection { get; } = null;
 
         public string Name { get; private set; }
 
         private List<int> selection = new List<int>();
 
         private Dictionary<string, object> properties;
+
+        public ParticleSelection()
+        {
+        }
 
         public ParticleSelection(Dictionary<string, object> obj)
         {
@@ -37,5 +41,14 @@ namespace Narupa.Grpc.Selection
         }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        public static ParticleSelection CreateRootSelection()
+        {
+            return new ParticleSelection
+            {
+                selection = null,
+                Name = "Base"
+            };
+        }
     }
 }

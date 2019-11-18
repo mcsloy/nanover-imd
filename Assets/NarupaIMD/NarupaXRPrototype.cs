@@ -1,15 +1,15 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using UnityEngine;
-using Narupa.Frontend.Manipulation;
-using Narupa.Visualisation;
-using UnityEngine.UI;
-using NarupaXR.Interaction;
 using System.Collections;
 using Narupa.Frame;
+using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.XR;
+using Narupa.Visualisation;
+using NarupaXR.Interaction;
+using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Text = TMPro.TextMeshProUGUI;
 
 namespace NarupaXR
@@ -24,9 +24,6 @@ namespace NarupaXR
 #pragma warning disable 0649
         [SerializeField]
         private Transform simulationSpaceTransform;
-
-        [SerializeField]
-        private GameObject visualiser;
 
         [SerializeField]
         private Slider forceScaleSlider;
@@ -52,7 +49,7 @@ namespace NarupaXR
         /// gestures to perform translation, rotation, and scaling.
         /// </summary>
         public ManipulableScenePose ManipulableSimulationSpace { get; private set; }
-        
+
         /// <summary>
         /// The route through which simulated particles can be manipulated with
         /// grabs.
@@ -74,7 +71,7 @@ namespace NarupaXR
         /// </summary>
         public void Quit() => Application.Quit();
 
-        private bool HaveBoxLock => !Sessions.Multiplayer.IsOpen 
+        private bool HaveBoxLock => !Sessions.Multiplayer.IsOpen
                                  && Sessions.Multiplayer.HasSimulationPoseLock;
 
         private void Awake()
@@ -85,7 +82,7 @@ namespace NarupaXR
             ManipulableParticles = new ManipulableParticles(simulationSpaceTransform,
                                                             Sessions.Trajectory,
                                                             Sessions.Imd);
-            
+
             SetupVisualisation();
 
             StartCoroutine(AttemptLockTest());
@@ -107,7 +104,7 @@ namespace NarupaXR
         {
             if (Sessions.Multiplayer.HasPlayer && !Sessions.Multiplayer.HasSimulationPoseLock)
                 Sessions.Multiplayer.LockSimulationPose()
-                    .ContinueWith(task => Debug.Log($"Got Lock? {task.Result}"));
+                        .ContinueWith(task => Debug.Log($"Got Lock? {task.Result}"));
         }
 
         private IEnumerator AttemptLockTest()
@@ -125,9 +122,10 @@ namespace NarupaXR
 
         private void SetupVisualisation()
         {
-            FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
+            FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
+            if (FrameSynchronizer == null)
+                FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
             FrameSynchronizer.FrameSource = Sessions.Trajectory;
-            visualiser.GetComponent<IFrameConsumer>().FrameSource = FrameSynchronizer;
         }
     }
 }
