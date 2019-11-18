@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Narupa.Frame;
 using Narupa.Grpc.Selection;
 using Narupa.Visualisation;
+using NarupaXR;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -11,6 +14,9 @@ namespace NarupaIMD.Selection
         private List<RenderableLayer> layers = new List<RenderableLayer>();
 
         [SerializeField]
+        private NarupaXRPrototype narupaIMD;
+
+        [SerializeField]
         private SynchronisedFrameSource frameSource;
 
         [SerializeField]
@@ -18,6 +24,8 @@ namespace NarupaIMD.Selection
 
         [SerializeField]
         private GameObject defaultVisualiser;
+
+        public GameObject DefaultVisualiser => defaultVisualiser;
 
         public int ParticleCount => frameSource.CurrentFrame?.ParticleCount ?? 0;
 
@@ -33,10 +41,30 @@ namespace NarupaIMD.Selection
 
         private void Start()
         {
+            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyChanged +=
+                MultiplayerOnSharedStateDictionaryKeyChanged;
             var baseLayer = AddLayer();
             var baseSelection = ParticleSelection.CreateRootSelection();
             var baseRenderableSelection = baseLayer.AddSelection(baseSelection);
             baseRenderableSelection.SetVisualiser(defaultVisualiser);
+        }
+
+        private void MultiplayerOnSharedStateDictionaryKeyChanged(string key, object value)
+        {
+            if (key.StartsWith("selection."))
+            {
+                var layer = layers.First();
+                layer.UpdateOrCreateSelection(key, value);
+            }
+        }
+
+        [SerializeField]
+        private GameObject[] visualiserPrefabs;
+
+        public GameObject GetVisualiser(string name)
+        {
+            return visualiserPrefabs.FirstOrDefault(
+                v => v.name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

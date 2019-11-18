@@ -7,7 +7,7 @@ namespace Narupa.Grpc.Selection
     {
         public string ID { get; }
 
-        public IReadOnlyList<int> Selection { get; } = null;
+        public IReadOnlyList<int> Selection => selection;
 
         public string Name { get; private set; }
 
@@ -33,11 +33,11 @@ namespace Narupa.Grpc.Selection
             var ids = selectedDict["particle_ids"] as List<object>;
             selection.Clear();
             foreach (var id in ids)
-                selection.Add((int) id);
+                selection.Add((int) (double) id);
 
             CollectionChanged?.Invoke(
                 this,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace));
+                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
