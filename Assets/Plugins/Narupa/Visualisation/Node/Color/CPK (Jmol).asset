@@ -46,3 +46,5 @@ MonoBehaviour:
     color: {r: 0.81568635, g: 0.81568635, b: 0.87843144, a: 1}
   - atomicNumber: 27
     color: {r: 0.9411765, g: 0.5647059, b: 0.627451, a: 1}
+  - atomicNumber: 14
+    color: {r: 0.94117653, g: 0.7843138, b: 0.627451, a: 1}
