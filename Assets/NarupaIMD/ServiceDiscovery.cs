@@ -17,6 +17,8 @@ namespace NarupaIMD
         [SerializeField]
         private NarupaXRPrototype prototype;
 
+        public IEnumerable<ServiceHub> Services => services;
+
         private void Start()
         {
             var client = new Client();

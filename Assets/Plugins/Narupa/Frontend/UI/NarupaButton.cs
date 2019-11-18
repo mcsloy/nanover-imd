@@ -20,11 +20,11 @@ namespace Narupa.Frontend.UI
         {
             add
             {
-                button.onClick.AddListener(() => value());
+                button?.onClick.AddListener(() => value());
             }
             remove
             {
-                button.onClick.RemoveListener(() => value());
+                button?.onClick.RemoveListener(() => value());
             }
         }
 
