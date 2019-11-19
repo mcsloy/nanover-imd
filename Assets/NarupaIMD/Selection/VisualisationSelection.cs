@@ -9,14 +9,14 @@ using UnityEngine;
 
 namespace NarupaIMD.Selection
 {
-    public class RenderableSelection : MonoBehaviour
+    public class VisualisationSelection : MonoBehaviour
     {
         [SerializeField]
-        private RenderableLayer layer;
+        private VisualisationLayer layer;
 
         private void Awake()
         {
-            layer = GetComponentInParent<RenderableLayer>();
+            layer = GetComponentInParent<VisualisationLayer>();
         }
 
         public ParticleSelection Selection
@@ -52,7 +52,7 @@ namespace NarupaIMD.Selection
 
         private int[] unfilteredIndices = new int[0];
 
-        public void Strip(RenderableSelection upperSelection, int maxCount)
+        public void CalculateFilteredIndices(VisualisationSelection upperSelection, int maxCount)
         {
             if (Selection.Selection != null)
             {

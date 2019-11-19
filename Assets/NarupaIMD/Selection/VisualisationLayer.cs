@@ -5,24 +5,27 @@ using UnityEngine;
 
 namespace NarupaIMD.Selection
 {
-    public class RenderableLayer : MonoBehaviour
+    /// <summary>
+    /// A group of <see cref="VisualisationSelection"/>s which are mutually exclusive.
+    /// </summary>
+    public class VisualisationLayer : MonoBehaviour
     {
         [SerializeField]
-        private VisualisationManager visualisationManager;
+        private VisualisationScene visualisationManager;
 
-        public VisualisationManager VisualisationManager => visualisationManager;
+        public VisualisationScene VisualisationManager => visualisationManager;
 
         private void Awake()
         {
-            visualisationManager = GetComponentInParent<VisualisationManager>();
+            visualisationManager = GetComponentInParent<VisualisationScene>();
         }
 
-        private List<RenderableSelection> selections = new List<RenderableSelection>();
+        private List<VisualisationSelection> selections = new List<VisualisationSelection>();
 
         [SerializeField]
-        private RenderableSelection selectionPrefab;
+        private VisualisationSelection selectionPrefab;
 
-        public RenderableSelection AddSelection(ParticleSelection selection)
+        public VisualisationSelection AddSelection(ParticleSelection selection)
         {
             var renderableSelection = Instantiate(selectionPrefab, transform);
             renderableSelection.Selection = selection;
@@ -33,7 +36,7 @@ namespace NarupaIMD.Selection
             return renderableSelection;
         }
 
-        private void UpdateSelection(RenderableSelection selection)
+        private void UpdateSelection(VisualisationSelection selection)
         {
             var index = selections.IndexOf(selection);
             if (index < 0)
@@ -41,7 +44,7 @@ namespace NarupaIMD.Selection
                     "Tried to update selection no longer in layer.");
             for (var i = index; i >= 0; i--)
             {
-                selections[i].Strip(i == selections.Count-1 ? null : selections[i + 1],
+                selections[i].CalculateFilteredIndices(i == selections.Count-1 ? null : selections[i + 1],
                                     visualisationManager.ParticleCount);
             }
         }
