@@ -10,7 +10,7 @@ using UnityEngine;
 namespace NarupaIMD
 {
     /// <summary>
-    /// Autoconnect to the first server we find.
+    /// Tracks what services are available.
     /// </summary>
     public class ServiceDiscovery : MonoBehaviour
     {

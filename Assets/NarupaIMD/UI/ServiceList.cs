@@ -8,7 +8,7 @@ using UnityEngine;
 public class ServiceList : MonoBehaviour
 {
     [SerializeField]
-    private NarupaButton prefab;
+    private UiButton prefab;
 
     [SerializeField]
     private ServiceDiscovery services;
@@ -26,7 +26,6 @@ public class ServiceList : MonoBehaviour
         button.gameObject.SetActive(true);
         button.Text = obj.Name;
         button.OnClick += () => services.Connect(obj);
-        button.transform.GetComponentsInChildren<TMP_Text>()
-              .FirstOrDefault(t => t.name.Contains("Address")).text = obj.Address;
+        button.Subtext = obj.Address;
     }
 }

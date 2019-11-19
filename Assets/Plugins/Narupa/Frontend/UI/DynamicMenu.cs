@@ -6,7 +6,7 @@ namespace Narupa.Frontend.UI
     public class DynamicMenu : MonoBehaviour
     {
         [SerializeField]
-        private NarupaButton buttonPrefab;
+        private UiButton buttonPrefab;
 
         public void AddItem(string name, Sprite icon, Action callback)
         {
@@ -16,7 +16,7 @@ namespace Narupa.Frontend.UI
             button.OnClick += callback;
         }
 
-        private NarupaButton CreateButton()
+        private UiButton CreateButton()
         {
             var button = Instantiate(buttonPrefab, transform);
             button.gameObject.SetActive(true);

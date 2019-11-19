@@ -4,7 +4,10 @@ using Valve.VR;
 
 namespace NarupaIMD
 {
-    public class ApplicationMode : MonoBehaviour
+    /// <summary>
+    /// In-scene driver of the current application mode.
+    /// </summary>
+    public abstract class ApplicationMode : MonoBehaviour
     {
         [SerializeField]
         private ControllerManager controller;
