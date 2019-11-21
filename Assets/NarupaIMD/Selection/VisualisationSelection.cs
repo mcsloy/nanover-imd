@@ -1,11 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using Narupa.Core;
+using Narupa.Core.Math;
 using Narupa.Frame;
 using Narupa.Grpc.Selection;
+using Narupa.Utility;
+using Narupa.Visualisation.Components;
+using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Components.Input;
+using Narupa.Visualisation.Components.Renderer;
 using Narupa.Visualisation.Property;
 using UnityEngine;
+using Color = System.Drawing.Color;
 
 namespace NarupaIMD.Selection
 {
@@ -34,6 +42,7 @@ namespace NarupaIMD.Selection
         private void SelectionOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UnderlyingSelectionChanged?.Invoke();
+            UpdateRenderer();
         }
 
         private ParticleSelection selection;
@@ -64,10 +73,12 @@ namespace NarupaIMD.Selection
                 var filteredIndex = 0;
                 var unfilteredIndex = 0;
 
+                var selectionIndices = Selection.Selection;
+
                 foreach (var unhandledIndex in upperSelection?.unfilteredIndices ??
                                                Enumerable.Range(0, maxCount))
                 {
-                    if (Selection.Selection.Contains(unhandledIndex))
+                    if (SearchAlgorithms.BinarySearch(unhandledIndex, selectionIndices))
                         filteredIndices[filteredIndex++] = unhandledIndex;
                     else
                         unfilteredIndices[unfilteredIndex++] = unhandledIndex;
@@ -102,15 +113,80 @@ namespace NarupaIMD.Selection
 
         private GameObject visualiser;
 
-        public void SetVisualiser(GameObject visualiserPrefab)
+
+        public void UpdateRenderer()
+        {
+            var rendererInfo = selection.Properties["narupa.rendering.renderer"];
+            GameObject visualiser = null;
+            bool prefab = true;
+            if (rendererInfo is string visName)
+            {
+                visualiser =
+                    layer.VisualisationManager.GetVisualiser(visName);
+            }
+            else if (rendererInfo is Dictionary<string, object> dict)
+            {
+                visualiser = new GameObject();
+                var adaptor = visualiser.AddComponent<FrameAdaptor>();
+                var dynamic = visualiser.AddComponent<DynamicComponent>();
+                dynamic.FrameAdaptor = adaptor;
+
+                var filterInput = visualiser.AddComponent<IntArrayInput>();
+                filterInput.Node.Name = "particle.filter";
+
+                if (dict.ContainsKey("color") && dict["color"] is string colorName)
+                {
+                    var htmlColor = Color.FromName(colorName);
+                    var color = new UnityEngine.Color(htmlColor.R / 255f,
+                                                      htmlColor.G / 255f,
+                                                      htmlColor.B / 255f,
+                                                      htmlColor.A / 255f);
+                    var input = visualiser.AddComponent<ColorInput>();
+                    input.Node.Name = "color";
+                    input.Node.Input.Value = color;
+                }
+
+                var renderName = dict.GetValueOrDefault<string>("render");
+                var render =
+                    layer.VisualisationManager.GetRenderSubgraph(renderName ?? "ball and stick");
+
+                dynamic.SetSubgraphs(render);
+
+                prefab = false;
+            }
+
+
+            if (visualiser != null)
+            {
+                var index = layer.Selections.IndexOf(this);
+                if(index == 0)
+                    foreach (var renderer in visualiser
+                        .GetComponentsInChildren<ParticleBondRenderer>())
+                        renderer.Node.BondToNonFiltered = true;
+                SetVisualiser(visualiser, prefab);
+            }
+        }
+
+
+        public void SetVisualiser(GameObject visualiserPrefab, bool isPrefab = true)
         {
             if (visualiser != null)
                 Destroy(visualiser);
-            visualiser = Instantiate(visualiserPrefab, transform);
+            
+            if (isPrefab)
+                visualiser = Instantiate(visualiserPrefab, transform);
+            else
+            {
+                visualiser = visualiserPrefab;
+                visualiser.transform.parent = transform;
+                visualiser.transform.localPosition = Vector3.zero;
+                visualiser.transform.localRotation = Quaternion.identity;
+            }
+
             visualiser.GetComponent<IFrameConsumer>().FrameSource =
                 layer.VisualisationManager.FrameSource;
             var filter = visualiser.GetComponents<IntArrayInput>()
-                                   .FirstOrDefault(p => p.Node.Name == "filter");
+                                   .FirstOrDefault(p => p.Node.Name == "filter" || p.Node.Name == "particle.filter");
             if (filter != null)
                 filter.Node.Input.LinkedProperty = FilteredIndices;
         }

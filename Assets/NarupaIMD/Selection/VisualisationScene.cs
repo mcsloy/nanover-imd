@@ -49,10 +49,26 @@ namespace NarupaIMD.Selection
         {
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyChanged +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
+            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=
+                MultiplayerOnSharedStateDictionaryKeyRemoved;
             var baseLayer = AddLayer("Base Layer");
             rootSelection = ParticleSelection.CreateRootSelection();
+            rootSelection.Properties["narupa.rendering.renderer"] = "ball and stick";
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
-            baseRenderableSelection.SetVisualiser(defaultVisualiser);
+            baseRenderableSelection.UpdateRenderer();
+        }
+
+        private void MultiplayerOnSharedStateDictionaryKeyRemoved(string key)
+        {
+            if (key == "selection.root")
+            {
+                // Reset root selection
+            }
+            else if (key.StartsWith("selection."))
+            {
+                var layer = layers.First();
+                layer.RemoveSelection(key);
+            }
         }
 
         private void MultiplayerOnSharedStateDictionaryKeyChanged(string key, object value)
@@ -67,9 +83,18 @@ namespace NarupaIMD.Selection
         [SerializeField]
         private GameObject[] visualiserPrefabs;
 
+        [SerializeField]
+        private GameObject[] renderSubgraphs;
+
         public GameObject GetVisualiser(string name)
         {
             return visualiserPrefabs.FirstOrDefault(
+                v => v.name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public GameObject GetRenderSubgraph(string name)
+        {
+            return renderSubgraphs.FirstOrDefault(
                 v => v.name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
     }

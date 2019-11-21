@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Narupa.Grpc.Selection;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace NarupaIMD.Selection
         private VisualisationScene visualisationManager;
 
         public VisualisationScene VisualisationManager => visualisationManager;
+        public IReadOnlyList<VisualisationSelection> Selections => selections;
 
         private void Awake()
         {
@@ -44,8 +46,9 @@ namespace NarupaIMD.Selection
                     "Tried to update selection no longer in layer.");
             for (var i = index; i >= 0; i--)
             {
-                selections[i].CalculateFilteredIndices(i == selections.Count-1 ? null : selections[i + 1],
-                                    visualisationManager.ParticleCount);
+                selections[i].CalculateFilteredIndices(
+                    i == selections.Count - 1 ? null : selections[i + 1],
+                    visualisationManager.ParticleCount);
             }
         }
 
@@ -65,8 +68,25 @@ namespace NarupaIMD.Selection
 
             var newSelection = new ParticleSelection(dict);
             var selec = AddSelection(newSelection);
-            if(visualisationManager.GetVisualiser("liquorice") is GameObject visualiserPrefab)
-                selec.SetVisualiser(visualiserPrefab);
+            selec.UpdateRenderer();
+        }
+        
+        public void RemoveSelection(string key)
+        {
+            var selection = selections.FirstOrDefault(s => s.Selection.ID == key);
+            if (selection == null)
+                return;
+            
+            Destroy(selection.gameObject);
+            selections.Remove(selection);
+            
+            // Refresh all selections
+            for (var i = selections.Count-1; i >= 0; i--)
+            {
+                selections[i].CalculateFilteredIndices(
+                    i == selections.Count - 1 ? null : selections[i + 1],
+                    visualisationManager.ParticleCount);
+            }
         }
     }
 }

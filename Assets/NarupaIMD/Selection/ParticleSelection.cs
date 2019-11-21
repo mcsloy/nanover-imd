@@ -11,9 +11,11 @@ namespace Narupa.Grpc.Selection
 
         public string Name { get; private set; }
 
+        public IDictionary<string, object> Properties => properties;
+
         private List<int> selection = new List<int>();
 
-        private Dictionary<string, object> properties;
+        private Dictionary<string, object> properties = new Dictionary<string, object>();
 
         public ParticleSelection()
         {
@@ -34,6 +36,7 @@ namespace Narupa.Grpc.Selection
             selection.Clear();
             foreach (var id in ids)
                 selection.Add((int) (double) id);
+            selection.Sort();
 
             CollectionChanged?.Invoke(
                 this,
