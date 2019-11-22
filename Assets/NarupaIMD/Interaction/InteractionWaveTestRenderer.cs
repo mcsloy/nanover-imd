@@ -40,7 +40,7 @@ namespace NarupaXR.Interaction
                 var particlePositionWorld = transform.TransformPoint(particlePositionSim);
                 renderer.EndPosition = particlePositionWorld;
 
-                renderer.CurrentForceMagnitude = 1;
+                renderer.CurrentForceMagnitude = .5f;
             }
 
             var remove = renderers.Keys.Where(interactionId => !interactions.ContainsKey(interactionId)).ToList();
