@@ -4,9 +4,14 @@ using Narupa.Core;
 using Narupa.Core.Science;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Components.Adaptor;
-using Narupa.Visualisation.Components.Input;
 using Narupa.Visualisation.Node.Color;
+using Narupa.Visualisation.Node.Input;
 using UnityEngine;
+using ColorInput = Narupa.Visualisation.Components.Input.ColorInput;
+using ElementColorMappingInput = Narupa.Visualisation.Components.Input.ElementColorMappingInput;
+using FloatInput = Narupa.Visualisation.Components.Input.FloatInput;
+using GradientInput = Narupa.Visualisation.Components.Input.GradientInput;
+using IntArrayInput = Narupa.Visualisation.Components.Input.IntArrayInput;
 
 namespace NarupaIMD.Selection
 {
@@ -40,8 +45,7 @@ namespace NarupaIMD.Selection
                           .ToArray(),
                     new[]
                     {
-                        new GradientAlphaKey(1, 0),
-                        new GradientAlphaKey(1, 1)
+                        new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1)
                     });
                 return true;
             }
@@ -198,76 +202,69 @@ namespace NarupaIMD.Selection
 
             if (data is string visName)
             {
-                // Look for a visualiser prefab
+                // A renderer specified by a single string is assumed
+                // to be a predefined visualiser
                 visualiser = GetPredefinedVisualiser(visName);
             }
             else if (data is Dictionary<string, object> dict)
             {
+                // Create a basic dynamic visualiser, with a FrameAdaptor to
+                // read in frames and a DynamicComponent to contain the dynamic nodes
                 visualiser = new GameObject();
                 var adaptor = visualiser.AddComponent<FrameAdaptor>();
                 var dynamic = visualiser.AddComponent<DynamicComponent>();
                 dynamic.FrameAdaptor = adaptor;
 
-                var list = new List<GameObject>();
+                var subgraphs = new List<GameObject>();
 
                 // Particle filter for selections
                 var filterInput = visualiser.AddComponent<IntArrayInput>();
                 filterInput.Node.Name = "particle.filter";
 
+                var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
+                var globalParameters = dict;
+
+                // Parse the color keyword if it is a struct, and hence describes 
+                // a color subgraph
                 if (dict.ContainsKey("color"))
                 {
-                    if (TryParseColor(dict["color"], out var color))
-                    {
-                        var input = visualiser.AddComponent<ColorInput>();
-                        input.Node.Name = "color";
-                        input.Node.Input.Value = color;
-                    }
-                    else if (dict["color"] is Dictionary<string, object> colorStruct)
+                    if (dict["color"] is Dictionary<string, object> colorStruct)
                     {
                         if (colorStruct.TryGetValue("type", out var type) && type is string str)
                         {
                             var colorSubgraph = GetColorSubgraph(str);
                             if (colorSubgraph != null)
                             {
-                                list.Add(colorSubgraph);
-                            }
-
-                            if (colorStruct.TryGetValue("gradient", out var gradientObject)
-                             && TryParseGradient(gradientObject, out var gradient))
-                            {
-                                var input = visualiser.AddComponent<GradientInput>();
-                                input.Node.Name = "gradient";
-                                input.Node.Input.Value = gradient;
-                            }
-
-                            if (str == "cpk"
-                             && colorStruct.TryGetValue("scheme", out var schemeObject)
-                             && TryParseElementColorMapping(schemeObject, out var scheme))
-                            {
-                                var input = visualiser.AddComponent<ElementColorMappingInput>();
-                                input.Node.Name = "scheme";
-                                input.Node.Input.Value = scheme;
+                                subgraphs.Add(colorSubgraph);
+                                subgraphParameters.Add(colorSubgraph, colorStruct);
                             }
                         }
                     }
-                }
-
-                if (dict.TryGetValue("scale", out var scaleValue) && scaleValue is double scale)
-                {
-                    var input = visualiser.AddComponent<FloatInput>();
-                    input.Node.Name = "scale";
-                    input.Node.Input.Value = (float) scale;
                 }
 
                 var renderName = dict.GetValueOrDefault<string>("render");
                 var render = GetRenderSubgraph(renderName ?? "ball and stick");
 
                 if (render != null)
+                    subgraphs.Add(render);
+
+                // Find all possible inputs for the subgraphs, and then check to see if
+                foreach (var subgraph in subgraphs)
                 {
-                    list.Add(render);
+                    foreach (var input in FindInputNodes(subgraph))
+                    {
+                        var name = input.Name;
+                        if (subgraphParameters.ContainsKey(subgraph)
+                         && FindParameter(name, subgraphParameters[subgraph], input, visualiser))
+                            continue;
+                        if (FindParameter(name, globalParameters, input, visualiser))
+                            continue;
+                    }
+                }
 
-                    dynamic.SetSubgraphs(list.ToArray());
-
+                if (render != null)
+                {
+                    dynamic.SetSubgraphs(subgraphs.ToArray());
                     prefab = false;
                 }
                 else
@@ -277,6 +274,100 @@ namespace NarupaIMD.Selection
             }
 
             return (visualiser, prefab);
+        }
+
+        /// <summary>
+        /// Create an InputNode on the root visualiser.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="parameters"></param>
+        /// <param name="input"></param>
+        /// <param name="visualiser"></param>
+        /// <returns></returns>
+        private static bool FindParameter(string name,
+                                          IReadOnlyDictionary<string, object> parameters,
+                                          IInputNode input,
+                                          GameObject visualiser)
+        {
+            switch (input)
+            {
+                case Narupa.Visualisation.Node.Input.GradientInput _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.GradientInput>(
+                        visualiser, name))
+                        return true;
+                    if (parameters.TryGetValue(name, out var gradientObject)
+                     && TryParseGradient(gradientObject, out var gradient))
+                    {
+                        var inputNode = visualiser.AddComponent<GradientInput>();
+                        inputNode.Node.Name = name;
+                        inputNode.Node.Input.Value = gradient;
+                    }
+
+                    return true;
+
+                case Narupa.Visualisation.Node.Input.ColorInput _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.ColorInput>(
+                        visualiser, name))
+                        return true;
+                    if (parameters.TryGetValue(name, out var colorObject)
+                     && TryParseColor(colorObject, out var color))
+                    {
+                        var inputNode = visualiser.AddComponent<ColorInput>();
+                        inputNode.Node.Name = name;
+                        inputNode.Node.Input.Value = color;
+                    }
+
+                    return true;
+
+                case Narupa.Visualisation.Node.Input.FloatInput _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.FloatInput>(
+                        visualiser, name))
+                        return true;
+                    if (parameters.TryGetValue(name, out var scaleObject)
+                     && scaleObject is double scale)
+                    {
+                        var inputNode = visualiser.AddComponent<FloatInput>();
+                        inputNode.Node.Name = name;
+                        inputNode.Node.Input.Value = (float) scale;
+                    }
+
+                    return true;
+
+                case Narupa.Visualisation.Node.Input.ElementColorMappingInput _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.ElementColorMappingInput>(
+                        visualiser, name))
+                        return true;
+                    if (parameters.TryGetValue(name, out var schemeObject)
+                     && TryParseElementColorMapping(schemeObject, out var scheme))
+                    {
+                        var inputNode = visualiser.AddComponent<ElementColorMappingInput>();
+                        inputNode.Node.Name = name;
+                        inputNode.Node.Input.Value = scheme;
+                    }
+
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<IInputNode> FindInputNodes(GameObject subgraph)
+        {
+            return subgraph.GetComponents<VisualisationComponent>()
+                           .Where(vis => vis.GetWrappedVisualisationNode() is IInputNode)
+                           .Select(vis => vis.GetWrappedVisualisationNode() as IInputNode);
+        }
+
+        /// <summary>
+        /// Find the visualisation node which wraps an input node type of TType and the provided name.
+        /// </summary>
+        private static VisualisationComponent FindInputNodeWithName<TType>(
+            GameObject obj,
+            string name) where TType : IInputNode
+        {
+            return obj.GetComponents<VisualisationComponent>()
+                      .FirstOrDefault(vis => vis.GetWrappedVisualisationNode() is TType type
+                                          && type.Name == name);
         }
     }
 }

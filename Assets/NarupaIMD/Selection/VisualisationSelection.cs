@@ -114,9 +114,25 @@ namespace NarupaIMD.Selection
         /// </summary>
         public void UpdateVisualiser()
         {
-            var data = Selection.Properties["narupa.rendering.renderer"];
+            if (Selection.Properties.TryGetValue("narupa.rendering.hide", out var hide) 
+              && hide is bool b && b)
+            {
+                SetVisualiser(null, false);
+                return;
+            }
 
-            var (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
+            GameObject visualiser = null;
+            bool isPrefab = true;
+
+            if(Selection.Properties.TryGetValue("narupa.rendering.renderer", out var data))
+                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
+
+            // Switch to ball and stick as default
+            if (visualiser == null)
+            {
+                isPrefab = true;
+                visualiser = VisualiserFactory.GetPredefinedVisualiser("ball and stick");
+            }
 
             if (visualiser != null)
             {
@@ -140,6 +156,9 @@ namespace NarupaIMD.Selection
         {
             if (visualiser != null)
                 Destroy(visualiser);
+
+            if (newVisualiser == null)
+                return;
 
             if (isPrefab)
                 visualiser = Instantiate(newVisualiser, transform);

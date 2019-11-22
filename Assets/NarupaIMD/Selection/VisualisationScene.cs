@@ -74,7 +74,11 @@ namespace NarupaIMD.Selection
         {
             if (key == "selection.root")
             {
-                // TODO: Reset root selection
+                rootSelection.UpdateFromObject(new Dictionary<string, object>
+                {
+                    ["name"] = "Base",
+                    ["id"] = "selection.root"
+                });
             }
             else if (key.StartsWith("selection."))
             {
