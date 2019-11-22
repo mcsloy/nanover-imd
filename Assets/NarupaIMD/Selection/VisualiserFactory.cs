@@ -291,8 +291,8 @@ namespace NarupaIMD.Selection
         {
             switch (input)
             {
-                case Narupa.Visualisation.Node.Input.GradientInput _:
-                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.GradientInput>(
+                case Narupa.Visualisation.Node.Input.GradientInputNode _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.GradientInputNode>(
                         visualiser, name))
                         return true;
                     if (parameters.TryGetValue(name, out var gradientObject)
@@ -305,8 +305,8 @@ namespace NarupaIMD.Selection
 
                     return true;
 
-                case Narupa.Visualisation.Node.Input.ColorInput _:
-                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.ColorInput>(
+                case Narupa.Visualisation.Node.Input.ColorInputNode _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.ColorInputNode>(
                         visualiser, name))
                         return true;
                     if (parameters.TryGetValue(name, out var colorObject)
@@ -319,8 +319,8 @@ namespace NarupaIMD.Selection
 
                     return true;
 
-                case Narupa.Visualisation.Node.Input.FloatInput _:
-                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.FloatInput>(
+                case Narupa.Visualisation.Node.Input.FloatInputNode _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.FloatInputNode>(
                         visualiser, name))
                         return true;
                     if (parameters.TryGetValue(name, out var scaleObject)
@@ -333,8 +333,8 @@ namespace NarupaIMD.Selection
 
                     return true;
 
-                case Narupa.Visualisation.Node.Input.ElementColorMappingInput _:
-                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.ElementColorMappingInput>(
+                case Narupa.Visualisation.Node.Input.ElementColorMappingInputNode _:
+                    if (FindInputNodeWithName<Narupa.Visualisation.Node.Input.ElementColorMappingInputNode>(
                         visualiser, name))
                         return true;
                     if (parameters.TryGetValue(name, out var schemeObject)
