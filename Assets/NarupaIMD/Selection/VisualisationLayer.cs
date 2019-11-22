@@ -12,14 +12,21 @@ namespace NarupaIMD.Selection
     public class VisualisationLayer : MonoBehaviour
     {
         [SerializeField]
-        private VisualisationScene visualisationManager;
+        private VisualisationScene scene;
 
-        public VisualisationScene VisualisationManager => visualisationManager;
+        /// <summary>
+        /// The <see cref="VisualisationScene"/> to which this layer belongs.
+        /// </summary>
+        public VisualisationScene Scene => scene;
+
+        /// <summary>
+        /// The set of selections that form this layer.
+        /// </summary>
         public IReadOnlyList<VisualisationSelection> Selections => selections;
 
         private void Awake()
         {
-            visualisationManager = GetComponentInParent<VisualisationScene>();
+            scene = GetComponentInParent<VisualisationScene>();
         }
 
         private List<VisualisationSelection> selections = new List<VisualisationSelection>();
@@ -27,31 +34,40 @@ namespace NarupaIMD.Selection
         [SerializeField]
         private VisualisationSelection selectionPrefab;
 
+        /// <summary>
+        /// Add a selection to this visualisation, based upon a <see cref="ParticleSelection"/>.
+        /// </summary>
         public VisualisationSelection AddSelection(ParticleSelection selection)
         {
-            var renderableSelection = Instantiate(selectionPrefab, transform);
-            renderableSelection.Selection = selection;
-            renderableSelection.gameObject.name = selection.Name;
-            renderableSelection.UnderlyingSelectionChanged +=
-                () => UpdateSelection(renderableSelection);
-            selections.Add(renderableSelection);
-            return renderableSelection;
+            var visualisationSelection = Instantiate(selectionPrefab, transform);
+            visualisationSelection.Selection = selection;
+            visualisationSelection.gameObject.name = selection.Name;
+            visualisationSelection.UnderlyingSelectionChanged +=
+                () => OnSelectionUpdated(visualisationSelection);
+            selections.Add(visualisationSelection);
+            return visualisationSelection;
         }
 
-        private void UpdateSelection(VisualisationSelection selection)
+        /// <summary>
+        /// Refresh all selections that are lower down the layer than the given selection.
+        /// </summary>
+        private void OnSelectionUpdated(VisualisationSelection selection)
         {
             var index = selections.IndexOf(selection);
             if (index < 0)
-                throw new InvalidOperationException(
-                    "Tried to update selection no longer in layer.");
+                throw new ArgumentException(
+                    "Tried to update selection not in layer.");
             for (var i = index; i >= 0; i--)
             {
                 selections[i].CalculateFilteredIndices(
                     i == selections.Count - 1 ? null : selections[i + 1],
-                    visualisationManager.ParticleCount);
+                    scene.ParticleCount);
             }
         }
 
+        /// <summary>
+        /// Either update an existing selection with the given key or add a new selection with the given key.
+        /// </summary>
         public void UpdateOrCreateSelection(string key, object value)
         {
             if (!(value is Dictionary<string, object> dict))
@@ -68,25 +84,22 @@ namespace NarupaIMD.Selection
 
             var newSelection = new ParticleSelection(dict);
             var selec = AddSelection(newSelection);
-            selec.UpdateRenderer();
+            selec.UpdateVisualiser();
         }
-        
+
+        /// <summary>
+        /// Remove the selection with the given key.
+        /// </summary>
         public void RemoveSelection(string key)
         {
             var selection = selections.FirstOrDefault(s => s.Selection.ID == key);
             if (selection == null)
                 return;
-            
+
             Destroy(selection.gameObject);
             selections.Remove(selection);
-            
-            // Refresh all selections
-            for (var i = selections.Count-1; i >= 0; i--)
-            {
-                selections[i].CalculateFilteredIndices(
-                    i == selections.Count - 1 ? null : selections[i + 1],
-                    visualisationManager.ParticleCount);
-            }
+
+            OnSelectionUpdated(selections.Last());
         }
     }
 }

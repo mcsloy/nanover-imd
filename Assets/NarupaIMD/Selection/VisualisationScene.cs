@@ -10,10 +10,13 @@ using UnityEngine;
 namespace NarupaIMD.Selection
 {
     /// <summary>
-    /// Core visualisation class, that manages layers and selections.
+    /// A set of layers and selections that render a system.
     /// </summary>
     public class VisualisationScene : MonoBehaviour
     {
+        /// <summary>
+        /// The <see cref="VisualisationLayer"/>s that make up this scene.
+        /// </summary>
         private List<VisualisationLayer> layers = new List<VisualisationLayer>();
 
         [SerializeField]
@@ -25,15 +28,23 @@ namespace NarupaIMD.Selection
         [SerializeField]
         private VisualisationLayer layerPrefab = null;
 
-        [SerializeField]
-        private GameObject defaultVisualiser;
-
+        /// <summary>
+        /// The number of particles in the current frame, or 0 if there are none.
+        /// </summary>
         public int ParticleCount => frameSource.CurrentFrame?.ParticleCount ?? 0;
 
+        /// <summary>
+        /// The source of the frames that this scene will render.
+        /// </summary>
         public ITrajectorySnapshot FrameSource => frameSource;
 
         /// <summary>
-        /// Create a layer with the given name.
+        /// The root selection of the scene
+        /// </summary>
+        private ParticleSelection rootSelection;
+
+        /// <summary>
+        /// Create a visualisation layer with the given name.
         /// </summary>
         public VisualisationLayer AddLayer(string name)
         {
@@ -42,8 +53,6 @@ namespace NarupaIMD.Selection
             layers.Add(layer);
             return layer;
         }
-
-        private ParticleSelection rootSelection;
 
         private void Start()
         {
@@ -55,47 +64,37 @@ namespace NarupaIMD.Selection
             rootSelection = ParticleSelection.CreateRootSelection();
             rootSelection.Properties["narupa.rendering.renderer"] = "ball and stick";
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
-            baseRenderableSelection.UpdateRenderer();
+            baseRenderableSelection.UpdateVisualiser();
         }
 
+        /// <summary>
+        /// Callback for when a key is removed from the multiplayer shared state.
+        /// </summary>
         private void MultiplayerOnSharedStateDictionaryKeyRemoved(string key)
         {
             if (key == "selection.root")
             {
-                // Reset root selection
+                // TODO: Reset root selection
             }
             else if (key.StartsWith("selection."))
             {
+                // TODO: Work out which layer the selection is on.
                 var layer = layers.First();
                 layer.RemoveSelection(key);
             }
         }
 
+        /// <summary>
+        /// Callback for when a key is modified in the multiplayer shared state.
+        /// </summary>
         private void MultiplayerOnSharedStateDictionaryKeyChanged(string key, object value)
         {
             if (key.StartsWith("selection."))
             {
+                // TODO: Work out which layer the selection is on.
                 var layer = layers.First();
                 layer.UpdateOrCreateSelection(key, value);
             }
-        }
-
-        [SerializeField]
-        private GameObject[] visualiserPrefabs;
-
-        [SerializeField]
-        private GameObject[] renderSubgraphs;
-
-        public GameObject GetVisualiser(string name)
-        {
-            return visualiserPrefabs.FirstOrDefault(
-                v => v.name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        public GameObject GetRenderSubgraph(string name)
-        {
-            return renderSubgraphs.FirstOrDefault(
-                v => v.name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }
