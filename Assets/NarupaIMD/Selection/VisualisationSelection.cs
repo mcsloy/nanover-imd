@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Linq;
+using Narupa.Core;
 using Narupa.Core.Math;
 using Narupa.Frame;
 using Narupa.Grpc.Selection;
@@ -27,8 +28,11 @@ namespace NarupaIMD.Selection
             get => selection;
             set
             {
+                if (selection != null)
+                    selection.CollectionChanged -= SelectionOnCollectionChanged;
                 selection = value;
-                selection.CollectionChanged += SelectionOnCollectionChanged;
+                if(selection != null)
+                    selection.CollectionChanged += SelectionOnCollectionChanged;
             }
         }
 
@@ -108,26 +112,28 @@ namespace NarupaIMD.Selection
 
         private GameObject visualiser;
 
+        private const string KeyHideProperty = "narupa.rendering.hide";
+        private const string KeyRendererProperty = "narupa.rendering.renderer";
 
         /// <summary>
         /// Update the visualiser based upon the data stored in the selection.
         /// </summary>
         public void UpdateVisualiser()
         {
-            if (Selection.Properties.TryGetValue("narupa.rendering.hide", out var hide) 
-              && hide is bool b && b)
+            if (Selection.Properties.GetValueOrDefault(KeyHideProperty, 
+                                                             defaultValue: false))
             {
                 SetVisualiser(null, false);
                 return;
             }
 
             GameObject visualiser = null;
-            bool isPrefab = true;
+            var isPrefab = true;
 
-            if(Selection.Properties.TryGetValue("narupa.rendering.renderer", out var data))
+            if(Selection.Properties.TryGetValue(KeyRendererProperty, out var data))
                 (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
 
-            // Switch to ball and stick as default
+            // Use the predefined ball and stick renderer as a default
             if (visualiser == null)
             {
                 isPrefab = true;
