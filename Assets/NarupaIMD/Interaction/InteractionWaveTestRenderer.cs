@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frontend.Manipulation;
+using Narupa.Session;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -22,43 +23,53 @@ namespace NarupaXR.Interaction
         private InteractionWaveRenderer waveTemplate;
 #pragma warning restore 0649
 
-        private Dictionary<ManipulableParticles.ActiveParticleGrab, InteractionWaveRenderer> renderers
-            = new Dictionary<ManipulableParticles.ActiveParticleGrab, InteractionWaveRenderer>();
+        private Dictionary<string, InteractionWaveRenderer> renderers
+            = new Dictionary<string, InteractionWaveRenderer>();
 
         private void Update()
         {
-            var grabs = narupaXR.ManipulableParticles.ActiveGrabs.ToList();
+            var interactions = narupaXR.Sessions.Imd.Interactions;
             var frame = narupaXR.FrameSynchronizer.CurrentFrame;
             
-            foreach (var grab in grabs)
+            foreach (var interaction in interactions.Values)
             {
-                var renderer = GetRenderer(grab);
-                renderer.StartPosition = grab.GrabPosition;
+                var renderer = GetRenderer(interaction.InteractionId);
+                renderer.StartPosition = transform.TransformPoint(interaction.Position);
 
-                var particlePositionSim = frame.ParticlePositions[grab.ParticleIndex];
-                var particlePositionWorld = transform.TransformPoint(frame.ParticlePositions[grab.ParticleIndex]);
+                var particlePositionSim = computeParticleCentroid(interaction.ParticleIds);
+                var particlePositionWorld = transform.TransformPoint(particlePositionSim);
                 renderer.EndPosition = particlePositionWorld;
 
                 renderer.CurrentForceMagnitude = 1;
             }
 
-            var remove = renderers.Keys.Where(grab => !grabs.Contains(grab)).ToList();
+            var remove = renderers.Keys.Where(interactionId => !interactions.ContainsKey(interactionId)).ToList();
 
-            foreach (var grab in remove)
+            foreach (var interactionId in remove)
             {
-                Destroy(renderers[grab].gameObject);
-                renderers.Remove(grab);
+                Destroy(renderers[interactionId].gameObject);
+                renderers.Remove(interactionId);
+            }
+
+            Vector3 computeParticleCentroid(int[] particleIds)
+            {
+                var centroid = Vector3.zero;
+
+                for (int i = 0; i < particleIds.Length; ++i)
+                    centroid += frame.ParticlePositions[particleIds[i]];
+
+                return centroid / particleIds.Length;
             }
         }
 
-        private InteractionWaveRenderer GetRenderer(ManipulableParticles.ActiveParticleGrab grab)
+        private InteractionWaveRenderer GetRenderer(string interactionId)
         {
-            if (!renderers.TryGetValue(grab, out var renderer))
+            if (!renderers.TryGetValue(interactionId, out var renderer))
             {
                 renderer = Instantiate(waveTemplate);
                 renderer.gameObject.SetActive(true);
                 renderer.transform.SetParent(transform);
-                renderers.Add(grab, renderer);
+                renderers.Add(interactionId, renderer);
             }
 
             return renderer;
