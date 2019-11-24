@@ -61,7 +61,6 @@ namespace NarupaIMD.Selection
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
             var baseLayer = AddLayer("Base Layer");
             rootSelection = ParticleSelection.CreateRootSelection();
-            rootSelection.Properties["narupa.rendering.renderer"] = "ball and stick";
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
             baseRenderableSelection.UpdateVisualiser();
         }

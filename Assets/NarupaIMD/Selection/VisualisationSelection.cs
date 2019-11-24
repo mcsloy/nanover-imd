@@ -6,8 +6,11 @@ using Narupa.Core.Math;
 using Narupa.Frame;
 using Narupa.Grpc.Selection;
 using Narupa.Utility;
+using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Components.Input;
 using Narupa.Visualisation.Components.Renderer;
+using Narupa.Visualisation.Node.Input;
+using Narupa.Visualisation.Node.Renderer;
 using Narupa.Visualisation.Property;
 using UnityEngine;
 
@@ -31,7 +34,7 @@ namespace NarupaIMD.Selection
                 if (selection != null)
                     selection.CollectionChanged -= SelectionOnCollectionChanged;
                 selection = value;
-                if(selection != null)
+                if (selection != null)
                     selection.CollectionChanged += SelectionOnCollectionChanged;
             }
         }
@@ -120,8 +123,8 @@ namespace NarupaIMD.Selection
         /// </summary>
         public void UpdateVisualiser()
         {
-            if (Selection.Properties.GetValueOrDefault(KeyHideProperty, 
-                                                             defaultValue: false))
+            if (Selection.Properties.GetValueOrDefault(KeyHideProperty,
+                                                       defaultValue: false))
             {
                 SetVisualiser(null, false);
                 return;
@@ -130,7 +133,7 @@ namespace NarupaIMD.Selection
             GameObject visualiser = null;
             var isPrefab = true;
 
-            if(Selection.Properties.TryGetValue(KeyRendererProperty, out var data))
+            if (Selection.Properties.TryGetValue(KeyRendererProperty, out var data))
                 (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
 
             // Use the predefined ball and stick renderer as a default
@@ -147,8 +150,8 @@ namespace NarupaIMD.Selection
                 var index = layer.Selections.IndexOf(this);
                 if (index == 0)
                     foreach (var renderer in visualiser
-                        .GetComponentsInChildren<ParticleBondRenderer>())
-                        renderer.Node.BondToNonFiltered = true;
+                        .GetVisualisationNodesInChildren<ParticleBondRendererNode>())
+                        renderer.BondToNonFiltered = true;
 
                 SetVisualiser(visualiser, isPrefab);
             }
@@ -179,12 +182,11 @@ namespace NarupaIMD.Selection
             visualiser.GetComponent<IFrameConsumer>().FrameSource = layer.Scene.FrameSource;
 
             // Setup any filters so the visualiser only draws this selection.
-            var filter = visualiser.GetComponents<IntArrayInput>()
-                                   .FirstOrDefault(
-                                       p => p.Node.Name == "filter" ||
-                                            p.Node.Name == "particle.filter");
+            var filter = visualiser.GetVisualisationNodes<IntArrayInputNode>()
+                .FirstOrDefault(p => p.Name == "filter" ||
+                                     p.Name == "particle.filter");
             if (filter != null)
-                filter.Node.Input.LinkedProperty = FilteredIndices;
+                filter.Input.LinkedProperty = FilteredIndices;
         }
     }
 }
