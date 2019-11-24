@@ -80,8 +80,7 @@ namespace NarupaXR
             var components = narupa.Sessions.Multiplayer
                 .Avatars.Values
                 .SelectMany(avatar => avatar.Components.Select(pair => new { avatar.PlayerId, Name = pair.Key, Pose = pair.Value }))
-                .Where(component => component.PlayerId != localPlayerId
-                                 || component.Name != MultiplayerSession.HeadsetName)
+                .Where(component => component.PlayerId != localPlayerId)
                 .Select(component => component.Pose)
                 .OfType<Transformation>();
 

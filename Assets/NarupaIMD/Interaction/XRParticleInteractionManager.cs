@@ -66,7 +66,7 @@ namespace NarupaXR.Interaction
             if (!controller.IsControllerActive)
                 return;
             
-            var toolPoser = controller.Cursor;
+            var toolPoser = controller.CursorPose;
             manipulator = new Manipulator(toolPoser);
 
             var button = grabObjectAction.WrapAsButton(source);
