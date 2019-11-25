@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frame;
-using Narupa.Grpc.Selection;
 using Narupa.Visualisation;
 using NarupaXR;
 using UnityEngine;
@@ -9,14 +8,15 @@ using UnityEngine;
 namespace NarupaIMD.Selection
 {
     /// <summary>
-    /// A set of layers and selections that render a system.
+    /// A set of layers and selections that are used to render a system using multiple
+    /// visualisers.
     /// </summary>
     public class VisualisationScene : MonoBehaviour
     {
         /// <summary>
-        /// The <see cref="VisualisationLayer"/>s that make up this scene.
+        /// The <see cref="VisualisationLayer" />s that make up this scene.
         /// </summary>
-        private List<VisualisationLayer> layers = new List<VisualisationLayer>();
+        private readonly List<VisualisationLayer> layers = new List<VisualisationLayer>();
 
         [SerializeField]
         private NarupaXRPrototype narupaIMD;
@@ -25,7 +25,7 @@ namespace NarupaIMD.Selection
         private SynchronisedFrameSource frameSource;
 
         [SerializeField]
-        private VisualisationLayer layerPrefab = null;
+        private VisualisationLayer layerPrefab;
 
         /// <summary>
         /// The number of particles in the current frame, or 0 if there are none.
@@ -38,7 +38,7 @@ namespace NarupaIMD.Selection
         public ITrajectorySnapshot FrameSource => frameSource;
 
         /// <summary>
-        /// The root selection of the scene
+        /// The root selection of the scene.
         /// </summary>
         private ParticleSelection rootSelection;
 

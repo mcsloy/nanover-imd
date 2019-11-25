@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -20,7 +19,9 @@ namespace NarupaIMD.Selection
     public static class VisualiserFactory
     {
         /// <summary>
-        /// Parse a gradient from a generic C# object. Possible values include a Unity gradient or a list of items which can be interpreted as colors using <see cref="TryParseColor"/>.
+        /// Parse a gradient from a generic C# object. Possible values include a Unity
+        /// gradient or a list of items which can be interpreted as colors using
+        /// <see cref="TryParseColor" />.
         /// </summary>
         private static bool TryParseGradient(object value, out Gradient gradient)
         {
@@ -28,14 +29,17 @@ namespace NarupaIMD.Selection
 
             switch (value)
             {
+                // Object is already a Gradient
                 case Gradient g:
                     gradient = g;
                     return true;
-                
+
+                // Object is a list of colors
                 case IReadOnlyList<object> list:
                 {
                     var colors = new List<Color>();
-                    
+
+                    // Parse each item of the list as a color
                     foreach (var item in list)
                     {
                         if (!TryParseColor(item, out var color))
@@ -43,7 +47,8 @@ namespace NarupaIMD.Selection
                         colors.Add(color);
                     }
 
-                    if (colors.Count > 0)
+                    // Construct a gradient from two or more colors
+                    if (colors.Count >= 2)
                     {
                         gradient = new Gradient();
                         gradient.SetKeys(
@@ -74,14 +79,17 @@ namespace NarupaIMD.Selection
 
             switch (value)
             {
+                // Object is already a mapping of elements to colors
                 case IMapping<Element, Color> actualValue:
                     mapping = actualValue;
                     return true;
-                
+
+                // Object is a string name of a predefined mapping
                 case string str:
                     mapping = Resources.Load<ElementColorMapping>($"CPK/{str}");
                     return true;
-                
+
+                // Object is a dictionary, to be interpreted as element symbols to colors
                 case Dictionary<string, object> dict:
                 {
                     var mappingDictionary = new Dictionary<Element, Color>();
@@ -95,7 +103,7 @@ namespace NarupaIMD.Selection
                     mapping = mappingDictionary.AsMapping();
                     return true;
                 }
-                
+
                 default:
                     return false;
             }
@@ -110,6 +118,7 @@ namespace NarupaIMD.Selection
 
             switch (value)
             {
+                // Object is potentially an atomic symbol
                 case string str:
                 {
                     var potentialElement = ElementSymbols.GetFromSymbol(str);
@@ -121,6 +130,18 @@ namespace NarupaIMD.Selection
 
                     break;
                 }
+
+                // Object is an atomic number
+                case int atomicNumber:
+                    if (atomicNumber >= 1 && atomicNumber <= 118)
+                    {
+                        element = (Element) atomicNumber;
+                        return true;
+                    }
+
+                    break;
+
+                // Object is an atomic number, but in float form
                 case double d:
                 {
                     var atomicNumber = (int) d;
@@ -137,6 +158,9 @@ namespace NarupaIMD.Selection
             return false;
         }
 
+        /// <summary>
+        /// Regex for parsing strings such as E4F924 and #24fac8
+        /// </summary>
         private const string RegexRgbHex =
             @"^#?([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])$";
 
@@ -149,6 +173,12 @@ namespace NarupaIMD.Selection
 
             switch (value)
             {
+                // Object is already a color
+                case Color c:
+                    color = c;
+                    return true;
+
+                // Object could be either a predefined color or a hex string
                 case string str:
                 {
                     var htmlColor = System.Drawing.Color.FromName(str);
@@ -166,23 +196,27 @@ namespace NarupaIMD.Selection
 
                     if (match.Success)
                     {
-                        color = new Color(int.Parse(match.Groups[1].Value, 
-                                                      NumberStyles.HexNumber) / 255f,
-                                          int.Parse(match.Groups[2].Value, 
+                        color = new Color(int.Parse(match.Groups[1].Value,
                                                     NumberStyles.HexNumber) / 255f,
-                                          int.Parse(match.Groups[3].Value, 
+                                          int.Parse(match.Groups[2].Value,
+                                                    NumberStyles.HexNumber) / 255f,
+                                          int.Parse(match.Groups[3].Value,
                                                     NumberStyles.HexNumber) / 255f,
                                           1);
                         return true;
                     }
-                    
+
                     break;
                 }
+
+                // Object could be a list of RGB values
                 case List<object> list when list.Count == 3 && list.All(item => item is double):
                     color = new Color((float) (double) list[0],
                                       (float) (double) list[1],
                                       (float) (double) list[2]);
                     return true;
+
+                // Object could be a list of RGBA values
                 case List<object> list when list.Count == 4 && list.All(item => item is double):
                     color = new Color((float) (double) list[0],
                                       (float) (double) list[1],
@@ -203,12 +237,21 @@ namespace NarupaIMD.Selection
 
             switch (value)
             {
+                // Object is a float
                 case float flt:
                     number = flt;
                     return true;
+
+                // Object is a double
                 case double dbl:
                     number = (float) dbl;
                     return true;
+
+                // Object is an int
+                case int it:
+                    number = it;
+                    return true;
+
                 default:
                     return false;
             }
@@ -255,23 +298,27 @@ namespace NarupaIMD.Selection
             else if (data is Dictionary<string, object> dict)
             {
                 // Create a basic dynamic visualiser, with a FrameAdaptor to
-                // read in frames and a DynamicComponent to contain the dynamic nodes
+                // read in frames and a DynamicVisualiserSubgraphs to contain the dynamic nodes
                 visualiser = new GameObject();
                 var adaptor = visualiser.AddComponent<FrameAdaptor>();
                 var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
                 dynamic.FrameAdaptor = adaptor;
 
+                // Set of subgraphs to be used in the visualiser
                 var subgraphs = new List<GameObject>();
 
-                // Particle filter for selections
+                // Create input for the selection's particle filter
                 var filterInput = visualiser.AddComponent<IntArrayInput>();
                 filterInput.Node.Name = "particle.filter";
 
+                // Mapping of subgraph object to its dictionary representation
                 var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
+
+                // The root dictionary
                 var globalParameters = dict;
 
-                // Parse the color keyword if it is a struct, and hence describes 
-                // a color subgraph
+                // Parse the color keyword if it is a struct with the 'type' field, and hence
+                // describes a color subgraph
                 if (dict.TryGetValue<Dictionary<string, object>>("color", out var colorStruct))
                     if (colorStruct.TryGetValue<string>("type", out var type))
                     {
@@ -283,24 +330,26 @@ namespace NarupaIMD.Selection
                         }
                     }
 
+                // Get the render subgraph from the render key
                 var renderName = dict.GetValueOrDefault<string>("render");
                 var render = GetRenderSubgraph(renderName ?? "ball and stick");
 
                 if (render != null)
                     subgraphs.Add(render);
 
-                // Find all possible inputs for the subgraphs, and then check to see if
+                // For each input of each subgraph, see if either the subgraph's dictionary
+                // or the root dictionary have an item which could be the value for that input
                 foreach (var subgraph in subgraphs)
-                foreach (var input in FindInputNodes(subgraph))
+                foreach (var input in subgraph.GetVisualisationNodes<IInputNode>())
                 {
-                    var name = input.Name;
                     if (subgraphParameters.ContainsKey(subgraph)
-                        && FindParameter(name, subgraphParameters[subgraph], input, visualiser))
+                        && FindParameter(input, subgraphParameters[subgraph], visualiser))
                         continue;
-                    if (FindParameter(name, globalParameters, input, visualiser))
+                    if (FindParameter(input, globalParameters, visualiser))
                         continue;
                 }
 
+                // Only return a valid visualiser if it has a render subgraph
                 if (render != null)
                 {
                     dynamic.SetSubgraphs(subgraphs.ToArray());
@@ -330,7 +379,7 @@ namespace NarupaIMD.Selection
             where TInputNodeType : IInputNode
             where TInputComponentType : Component, IVisualisationComponent<TInputNodeType>
         {
-            if (FindInputNodeWithName<TInputNodeType>(visualiser, name))
+            if (FindInputNodeWithName<TInputNodeType>(visualiser, name) != null)
                 return true;
 
             if (parameters.TryGetValue(name, out var valueObject)
@@ -346,23 +395,18 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
-        /// Create an InputNode on the root visualiser.
+        /// For an input node, look through the dictionary of parameters to see if a value
+        /// was provided.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="parameters"></param>
-        /// <param name="input"></param>
-        /// <param name="visualiser"></param>
-        /// <returns></returns>
-        private static bool FindParameter(string name,
+        private static bool FindParameter(IInputNode input,
                                           IReadOnlyDictionary<string, object> parameters,
-                                          IInputNode input,
                                           GameObject visualiser)
         {
             switch (input)
             {
                 case GradientInputNode _:
                     return FindParameter<Gradient, GradientInputNode, GradientInput>(
-                        name,
+                        input.Name,
                         parameters,
                         TryParseGradient,
                         visualiser
@@ -370,7 +414,7 @@ namespace NarupaIMD.Selection
 
                 case ColorInputNode _:
                     return FindParameter<Color, ColorInputNode, ColorInput>(
-                        name,
+                        input.Name,
                         parameters,
                         TryParseColor,
                         visualiser
@@ -378,7 +422,7 @@ namespace NarupaIMD.Selection
 
                 case FloatInputNode _:
                     return FindParameter<float, FloatInputNode, FloatInput>(
-                        name,
+                        input.Name,
                         parameters,
                         TryParseFloat,
                         visualiser
@@ -387,7 +431,7 @@ namespace NarupaIMD.Selection
                 case ElementColorMappingInputNode _:
                     return FindParameter<IMapping<Element, Color>, ElementColorMappingInputNode,
                         ElementColorMappingInput>(
-                        name,
+                        input.Name,
                         parameters,
                         TryParseElementColorMapping,
                         visualiser
@@ -397,24 +441,15 @@ namespace NarupaIMD.Selection
             return false;
         }
 
-        private static IEnumerable<IInputNode> FindInputNodes(GameObject subgraph)
-        {
-            return subgraph.GetComponents<VisualisationComponent>()
-                .Where(vis => vis.GetWrappedVisualisationNode() is IInputNode)
-                .Select(vis => vis.GetWrappedVisualisationNode() as IInputNode);
-        }
-
         /// <summary>
         /// Find the visualisation node which wraps an input node type of TType and the
         /// provided name.
         /// </summary>
-        private static VisualisationComponent FindInputNodeWithName<TType>(
+        private static TType FindInputNodeWithName<TType>(
             GameObject obj,
             string name) where TType : IInputNode
         {
-            return obj.GetComponents<VisualisationComponent>()
-                .FirstOrDefault(vis => vis.GetWrappedVisualisationNode() is TType type
-                                       && type.Name == name);
+            return obj.GetVisualisationNodes<TType>().FirstOrDefault(vis => vis.Name == name);
         }
     }
 }
