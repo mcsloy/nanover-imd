@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Narupa.Core;
 using Narupa.Core.Science;
 using Narupa.Visualisation.Components;
@@ -134,6 +137,9 @@ namespace NarupaIMD.Selection
             return false;
         }
 
+        private const string RegexRgbHex =
+            @"^#?([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])$";
+
         /// <summary>
         /// Attempt to parse a color, from a name, hex code or array of rgba values.
         /// </summary>
@@ -155,7 +161,21 @@ namespace NarupaIMD.Selection
                         return true;
                     }
 
-                    // TODO: conversion from hex code
+                    // Match hex color
+                    var match = Regex.Match(str, RegexRgbHex);
+
+                    if (match.Success)
+                    {
+                        color = new Color(int.Parse(match.Groups[1].Value, 
+                                                      NumberStyles.HexNumber) / 255f,
+                                          int.Parse(match.Groups[2].Value, 
+                                                    NumberStyles.HexNumber) / 255f,
+                                          int.Parse(match.Groups[3].Value, 
+                                                    NumberStyles.HexNumber) / 255f,
+                                          1);
+                        return true;
+                    }
+                    
                     break;
                 }
                 case List<object> list when list.Count == 3 && list.All(item => item is double):
