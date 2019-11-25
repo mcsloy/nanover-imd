@@ -125,17 +125,13 @@ namespace NarupaIMD.Selection
 
         private GameObject currentVisualiser;
 
-        private const string KeyHideProperty = "narupa.rendering.hide";
-        private const string KeyRendererProperty = "narupa.rendering.renderer";
-
         /// <summary>
         /// Update the visualiser based upon the data stored in the selection.
         /// </summary>
         public void UpdateVisualiser()
         {
             // The hide property turns off any visualiser
-            if (Selection.Properties.GetValueOrDefault(KeyHideProperty,
-                                                       false))
+            if (Selection.HideRenderer)
             {
                 SetVisualiser(null, false);
                 return;
@@ -145,7 +141,7 @@ namespace NarupaIMD.Selection
             var isPrefab = true;
 
             // Construct a visualiser from any provided renderer info
-            if (Selection.Properties.TryGetValue(KeyRendererProperty, out var data))
+            if (Selection.Renderer is object data)
                 (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
 
             // Use the predefined ball and stick renderer as a default

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Narupa.Core;
 
 namespace NarupaIMD.Selection
 {
@@ -56,11 +57,11 @@ namespace NarupaIMD.Selection
         {
             Name = obj["name"] as string;
             properties = obj.TryGetValue("properties", out var propertiesValue)
-                ? propertiesValue as Dictionary<string, object>
-                : new Dictionary<string, object>();
+                             ? propertiesValue as Dictionary<string, object>
+                             : new Dictionary<string, object>();
             var selectedDict = obj.TryGetValue("selected", out var selectedValue)
-                ? selectedValue as Dictionary<string, object>
-                : null;
+                                   ? selectedValue as Dictionary<string, object>
+                                   : null;
             if (selectedDict != null)
             {
                 var ids = selectedDict["particle_ids"] as List<object>;
@@ -100,5 +101,22 @@ namespace NarupaIMD.Selection
                 Name = "Base"
             };
         }
+
+        private const string KeyHideProperty = "narupa.rendering.hide";
+        private const string KeyRendererProperty = "narupa.rendering.renderer";
+        private const string KeyInteractionMethod = "narupa.interaction.method";
+        private const string KeyResetVelocities = "narupa.interaction.velocity_reset";
+
+        public const string InteractionMethodSingle = "single";
+        public const string InteractionMethodGroup = "group";
+
+        public bool HideRenderer => Properties.GetValueOrDefault(KeyHideProperty, false);
+
+        public object Renderer => Properties.GetValueOrDefault<object>(KeyRendererProperty, null);
+
+        public string InteractionMethod
+            => Properties.GetValueOrDefault(KeyInteractionMethod, InteractionMethodSingle);
+
+        public bool ResetVelocities => Properties.GetValueOrDefault(KeyResetVelocities, false);
     }
 }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
@@ -19,17 +21,33 @@ namespace NarupaXR.Interaction
 
         public ActiveParticleGrab GetParticleGrab(Transformation grabberPose)
         {
-            var particleIndex = GetNearestParticle(grabberPose.Position);
+            var particleIndex = GetClosestParticleToWorldPosition(grabberPose.Position);
             var selection = visualisationScene.GetSelectionForParticle(particleIndex);
-            var indices = selection.Selection ?? new[]
-            {
-                particleIndex
-            };
+            var indices = GetSelectedIndices(selection, particleIndex);
+
             var grab = new ActiveParticleGrab(indices);
+            if (selection.Selection.ResetVelocities)
+                grab.ResetVelocities = true;
             return grab;
         }
         
-        private int GetNearestParticle(Vector3 worldPosition)
+        private IReadOnlyList<int> GetSelectedIndices(VisualisationSelection selection,
+                                                      int particleIndex)
+        {
+            switch (selection.Selection.InteractionMethod)
+            {
+                case ParticleSelection.InteractionMethodGroup:
+                    if (selection.FilteredIndices == null)
+                        return Enumerable.Range(0, frameSource.CurrentFrame.ParticleCount)
+                                         .ToArray();
+                    else
+                        return selection.FilteredIndices.Value;
+                default:
+                    return new[] { particleIndex };
+            }
+        }
+
+        private int GetClosestParticleToWorldPosition(Vector3 worldPosition)
         {
             var position = transform.InverseTransformPoint(worldPosition);
 

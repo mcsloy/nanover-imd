@@ -54,7 +54,7 @@ namespace NarupaIMD.Selection
                         gradient.SetKeys(
                             colors.Select((c, i) => new GradientColorKey(
                                               c, (float) i / (colors.Count - 1)))
-                                .ToArray(),
+                                  .ToArray(),
                             new[]
                             {
                                 new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1)
@@ -95,7 +95,7 @@ namespace NarupaIMD.Selection
                     var mappingDictionary = new Dictionary<Element, Color>();
                     foreach (var (key, val) in dict)
                         if (TryParseElement(key, out var element)
-                            && TryParseColor(val, out var color))
+                         && TryParseColor(val, out var color))
                             mappingDictionary.Add(element, color);
                         else
                             return false;
@@ -210,14 +210,16 @@ namespace NarupaIMD.Selection
                 }
 
                 // Object could be a list of RGB values
-                case List<object> list when list.Count == 3 && list.All(item => item is double):
+                case IReadOnlyList<object> list
+                    when list.Count == 3 && list.All(item => item is double):
                     color = new Color((float) (double) list[0],
                                       (float) (double) list[1],
                                       (float) (double) list[2]);
                     return true;
 
                 // Object could be a list of RGBA values
-                case List<object> list when list.Count == 4 && list.All(item => item is double):
+                case IReadOnlyList<object> list
+                    when list.Count == 4 && list.All(item => item is double):
                     color = new Color((float) (double) list[0],
                                       (float) (double) list[1],
                                       (float) (double) list[2],
@@ -343,7 +345,7 @@ namespace NarupaIMD.Selection
                 foreach (var input in subgraph.GetVisualisationNodes<IInputNode>())
                 {
                     if (subgraphParameters.ContainsKey(subgraph)
-                        && FindParameter(input, subgraphParameters[subgraph], visualiser))
+                     && FindParameter(input, subgraphParameters[subgraph], visualiser))
                         continue;
                     if (FindParameter(input, globalParameters, visualiser))
                         continue;
@@ -383,7 +385,7 @@ namespace NarupaIMD.Selection
                 return true;
 
             if (parameters.TryGetValue(name, out var valueObject)
-                && tryParseObject(valueObject, out var value))
+             && tryParseObject(valueObject, out var value))
             {
                 var inputNode = visualiser.AddComponent<TInputComponentType>();
                 inputNode.Node.Name = name;

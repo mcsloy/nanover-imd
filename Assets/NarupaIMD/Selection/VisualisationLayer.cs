@@ -105,14 +105,14 @@ namespace NarupaIMD.Selection
             OnSelectionUpdated(selections.Last());
         }
 
-        public ParticleSelection GetSelectionForParticle(int particleIndex)
+        public VisualisationSelection GetSelectionForParticle(int particleIndex)
         {
             for (var i = selections.Count - 1; i >= 0; i--)
             {
-                var selection = selections[i].Selection;
-                if (selection.Selection == null)
+                var selection = selections[i];
+                if (selection.FilteredIndices.Value == null)
                     return selection;
-                if (SearchAlgorithms.BinarySearch(particleIndex, selection.Selection))
+                if (SearchAlgorithms.BinarySearch(particleIndex, selection.FilteredIndices.Value))
                     return selection;
             }
 

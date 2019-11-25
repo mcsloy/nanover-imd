@@ -99,7 +99,7 @@ namespace NarupaIMD.Selection
             }
         }
 
-        public ParticleSelection GetSelectionForParticle(int particleIndex)
+        public VisualisationSelection GetSelectionForParticle(int particleIndex)
         {
             return layers[0].GetSelectionForParticle(particleIndex);
         }
