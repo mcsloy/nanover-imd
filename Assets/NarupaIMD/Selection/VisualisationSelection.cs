@@ -195,6 +195,7 @@ namespace NarupaIMD.Selection
                 currentVisualiser.transform.parent = transform;
                 currentVisualiser.transform.localPosition = Vector3.zero;
                 currentVisualiser.transform.localRotation = Quaternion.identity;
+                currentVisualiser.transform.localScale = Vector3.one;
             }
 
             // Set visualiser's frame input
