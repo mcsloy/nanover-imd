@@ -34,6 +34,9 @@ namespace NarupaXR
         [SerializeField]
         private Text debugText;
 
+        [SerializeField]
+        private InteractableScene interactableScene;
+
         [FormerlySerializedAs("xrInteraction")]
         [SerializeField]
         private XRBoxInteractionManager xrBoxInteraction;
@@ -80,8 +83,8 @@ namespace NarupaXR
                                                                   Sessions.Multiplayer,
                                                                   this);
             ManipulableParticles = new ManipulableParticles(simulationSpaceTransform,
-                                                            Sessions.Trajectory,
-                                                            Sessions.Imd);
+                                                            Sessions.Imd,
+                                                            interactableScene);
 
             SetupVisualisation();
 

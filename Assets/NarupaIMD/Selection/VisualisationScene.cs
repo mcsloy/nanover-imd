@@ -98,5 +98,10 @@ namespace NarupaIMD.Selection
                 layer.UpdateOrCreateSelection(key, value);
             }
         }
+
+        public ParticleSelection GetSelectionForParticle(int particleIndex)
+        {
+            return layers[0].GetSelectionForParticle(particleIndex);
+        }
     }
 }

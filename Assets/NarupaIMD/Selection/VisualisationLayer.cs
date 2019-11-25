@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Narupa.Core.Math;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -102,6 +103,20 @@ namespace NarupaIMD.Selection
             selections.Remove(selection);
 
             OnSelectionUpdated(selections.Last());
+        }
+
+        public ParticleSelection GetSelectionForParticle(int particleIndex)
+        {
+            for (var i = selections.Count - 1; i >= 0; i--)
+            {
+                var selection = selections[i].Selection;
+                if (selection.Selection == null)
+                    return selection;
+                if (SearchAlgorithms.BinarySearch(particleIndex, selection.Selection))
+                    return selection;
+            }
+
+            return null;
         }
     }
 }
