@@ -167,7 +167,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Attempt to parse a color, from a name, hex code or array of rgba values.
         /// </summary>
-        private static bool TryParseColor(object value, out Color color)
+        public static bool TryParseColor(object value, out Color color)
         {
             color = Color.white;
 
