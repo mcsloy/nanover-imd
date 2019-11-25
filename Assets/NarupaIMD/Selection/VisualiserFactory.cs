@@ -258,7 +258,7 @@ namespace NarupaIMD.Selection
                 // read in frames and a DynamicComponent to contain the dynamic nodes
                 visualiser = new GameObject();
                 var adaptor = visualiser.AddComponent<FrameAdaptor>();
-                var dynamic = visualiser.AddComponent<DynamicComponent>();
+                var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
                 dynamic.FrameAdaptor = adaptor;
 
                 var subgraphs = new List<GameObject>();
