@@ -181,13 +181,9 @@ namespace NarupaIMD.Selection
                 // Object could be either a predefined color or a hex string
                 case string str:
                 {
-                    var htmlColor = System.Drawing.Color.FromName(str);
-                    if (htmlColor.A > 0)
+                    if (Colors.GetColorFromName(str) is Color c)
                     {
-                        color = new Color(htmlColor.R / 255f,
-                                          htmlColor.G / 255f,
-                                          htmlColor.B / 255f,
-                                          htmlColor.A / 255f);
+                        color = c;
                         return true;
                     }
 
