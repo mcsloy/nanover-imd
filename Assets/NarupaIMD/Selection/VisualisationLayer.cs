@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Core.Math;
+using Narupa.Visualisation.Property;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -110,7 +111,7 @@ namespace NarupaIMD.Selection
             for (var i = selections.Count - 1; i >= 0; i--)
             {
                 var selection = selections[i];
-                if (selection.FilteredIndices.Value == null)
+                if (!selection.FilteredIndices.HasNonNullValue())
                     return selection;
                 if (SearchAlgorithms.BinarySearch(particleIndex, selection.FilteredIndices.Value))
                     return selection;

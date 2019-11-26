@@ -25,6 +25,9 @@ namespace NarupaXR.Interaction
             var selection = visualisationScene.GetSelectionForParticle(particleIndex);
             var indices = GetSelectedIndices(selection, particleIndex);
 
+            if (selection.Selection.InteractionMethod == "none")
+                return null;
+            
             var grab = new ActiveParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
                 grab.ResetVelocities = true;
