@@ -37,8 +37,17 @@ namespace NarupaXR.Interaction
             this.prototype = prototype;
             manipulable = new ManipulableTransform(sceneTransform);
             this.multiplayer.SimulationPose.StateChanged += SimulationPoseOnStateChanged;
+            this.multiplayer.SimulationPose.MultiplayerKeyChanged += MultiplayerKeyChanged;
 
             Update().AwaitInBackground();
+        }
+
+        private void MultiplayerKeyChanged()
+        {
+            if (multiplayer.SimulationPose.State != ResourceLockState.Accepted)
+            {
+                SetSceneToMirrorMultiplayer();
+            }
         }
 
         private void SimulationPoseOnStateChanged()
@@ -47,9 +56,14 @@ namespace NarupaXR.Interaction
             {
                 EndAllManipulations();
 
-                var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose.Value);
-                worldPose.CopyToTransform(sceneTransform);
+                SetSceneToMirrorMultiplayer();
             }
+        }
+
+        private void SetSceneToMirrorMultiplayer()
+        {
+            var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose.Value);
+            worldPose.CopyToTransform(sceneTransform);
         }
 
         /// <summary>
