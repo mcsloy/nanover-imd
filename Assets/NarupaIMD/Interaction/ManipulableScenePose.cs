@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
+using Narupa.Grpc.Multiplayer;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -19,8 +20,6 @@ namespace NarupaXR.Interaction
     /// </summary>
     public class ManipulableScenePose
     {
-        public bool HaveSceneLock => !multiplayer.IsOpen || multiplayer.HasSimulationPoseLock;
-
         private readonly Transform sceneTransform;
         private readonly ManipulableTransform manipulable;
         private readonly MultiplayerSession multiplayer;
@@ -37,8 +36,20 @@ namespace NarupaXR.Interaction
             this.multiplayer = multiplayer;
             this.prototype = prototype;
             manipulable = new ManipulableTransform(sceneTransform);
+            this.multiplayer.SimulationPose.StateChanged += SimulationPoseOnStateChanged;
 
             Update().AwaitInBackground();
+        }
+
+        private void SimulationPoseOnStateChanged()
+        {
+            if (multiplayer.SimulationPose.State == ResourceLockState.Rejected)
+            {
+                EndAllManipulations();
+
+                var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose.Value);
+                worldPose.CopyToTransform(sceneTransform);
+            }
         }
 
         /// <summary>
@@ -47,37 +58,34 @@ namespace NarupaXR.Interaction
         /// </summary>
         public IActiveManipulation StartGrabManipulation(Transformation manipulatorPose)
         {
-            if (!HaveSceneLock)
-                return null;
-
             if (manipulable.StartGrabManipulation(manipulatorPose) is IActiveManipulation manipulation)
             {
                 manipulations.Add(manipulation);
-                manipulation.ManipulationEnded += () => manipulations.Remove(manipulation);
+                manipulation.ManipulationEnded += () => OnManipulationEnded(manipulation);
                 return manipulation;
             }
 
             return null;
         }
 
+        private void OnManipulationEnded(IActiveManipulation manipulation)
+        {
+            manipulations.Remove(manipulation);
+            if(manipulations.Count == 0)
+                multiplayer.SimulationPose.TryRelease();
+        }
+
         private async Task Update()
         {
             while (true)
             {
-                if (!HaveSceneLock)
-                {
-                    EndAllManipulations();
-
-                    var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose);
-                    worldPose.CopyToTransform(sceneTransform);
-                }
-                else if (manipulations.Count > 0)
+                if (manipulations.Count > 0)
                 {
                     var worldPose = new Transformation(sceneTransform.localPosition,
                                                        sceneTransform.localRotation,
                                                        sceneTransform.localScale);
                     var calibPose = prototype.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
-                    multiplayer.SetSimulationPose(calibPose);
+                    multiplayer.SimulationPose.SetLocalAndTryLocking(calibPose);
                 }
 
                 await Task.Delay(10);
