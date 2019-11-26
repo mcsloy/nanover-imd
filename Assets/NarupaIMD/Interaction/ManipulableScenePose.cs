@@ -85,8 +85,11 @@ namespace NarupaXR.Interaction
         private void OnManipulationEnded(IActiveManipulation manipulation)
         {
             manipulations.Remove(manipulation);
-            if(manipulations.Count == 0)
+            if (manipulations.Count == 0)
+            {
                 multiplayer.SimulationPose.TryRelease();
+                SetSceneToMirrorMultiplayer();
+            }
         }
 
         private async Task Update()
