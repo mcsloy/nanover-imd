@@ -1,14 +1,13 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using Narupa.Frontend.Manipulation;
-using Narupa.Session;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
-using Narupa.Grpc.Multiplayer;
+using Narupa.Frontend.Manipulation;
+using Narupa.Session;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -25,7 +24,7 @@ namespace NarupaXR.Interaction
         private readonly MultiplayerSession multiplayer;
         private readonly NarupaXRPrototype prototype;
 
-        private readonly HashSet<IActiveManipulation> manipulations 
+        private readonly HashSet<IActiveManipulation> manipulations
             = new HashSet<IActiveManipulation>();
 
         public ManipulableScenePose(Transform sceneTransform,
@@ -36,33 +35,42 @@ namespace NarupaXR.Interaction
             this.multiplayer = multiplayer;
             this.prototype = prototype;
             manipulable = new ManipulableTransform(sceneTransform);
-            this.multiplayer.SimulationPose.StateChanged += SimulationPoseOnStateChanged;
-            this.multiplayer.SimulationPose.MultiplayerKeyChanged += MultiplayerKeyChanged;
+            this.multiplayer.SimulationPose.LockRejected += SimulationPoseLockRejected;
+            this.multiplayer.SimulationPose.SharedValueChanged +=
+                MultiplayerSimulationPoseChanged;
 
             Update().AwaitInBackground();
         }
 
-        private void MultiplayerKeyChanged()
+        /// <summary>
+        /// Callback for when the simulation pose value is changed in the multiplayer dictionary.
+        /// </summary>
+        private void MultiplayerSimulationPoseChanged()
         {
-            if (multiplayer.SimulationPose.State != ResourceLockState.Accepted)
+            // If manipulations are active, then I'm controlling my box position.
+            if (!manipulations.Any())
             {
-                SetSceneToMirrorMultiplayer();
+                CopyMultiplayerPoseToLocal();
             }
         }
 
-        private void SimulationPoseOnStateChanged()
+        /// <summary>
+        /// Handler for if the simulation pose lock is rejected.
+        /// </summary>
+        private void SimulationPoseLockRejected()
         {
-            if (multiplayer.SimulationPose.State == ResourceLockState.Rejected)
-            {
-                EndAllManipulations();
-
-                SetSceneToMirrorMultiplayer();
-            }
+            EndAllManipulations();
+            CopyMultiplayerPoseToLocal();
         }
 
-        private void SetSceneToMirrorMultiplayer()
+        /// <summary>
+        /// Copy the pose stored in the multiplayer to the current scene transform.
+        /// </summary>
+        private void CopyMultiplayerPoseToLocal()
         {
-            var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose.Value);
+            var worldPose = prototype.CalibratedSpace
+                                     .TransformPoseCalibratedToWorld(multiplayer.SimulationPose
+                                                                                .Value);
             worldPose.CopyToTransform(sceneTransform);
         }
 
@@ -72,7 +80,8 @@ namespace NarupaXR.Interaction
         /// </summary>
         public IActiveManipulation StartGrabManipulation(Transformation manipulatorPose)
         {
-            if (manipulable.StartGrabManipulation(manipulatorPose) is IActiveManipulation manipulation)
+            if (manipulable.StartGrabManipulation(manipulatorPose) is IActiveManipulation
+                    manipulation)
             {
                 manipulations.Add(manipulation);
                 manipulation.ManipulationEnded += () => OnManipulationEnded(manipulation);
@@ -82,13 +91,17 @@ namespace NarupaXR.Interaction
             return null;
         }
 
+        /// <summary>
+        /// Callback for when a manipulation is ended by the user.
+        /// </summary>
         private void OnManipulationEnded(IActiveManipulation manipulation)
         {
             manipulations.Remove(manipulation);
-            if (manipulations.Count == 0)
+            // If manipulations are over, then release the lock.
+            if (!manipulations.Any())
             {
-                multiplayer.SimulationPose.TryRelease();
-                SetSceneToMirrorMultiplayer();
+                multiplayer.SimulationPose.ReleaseLock();
+                CopyMultiplayerPoseToLocal();
             }
         }
 
@@ -96,13 +109,14 @@ namespace NarupaXR.Interaction
         {
             while (true)
             {
-                if (manipulations.Count > 0)
+                if (manipulations.Any())
                 {
                     var worldPose = new Transformation(sceneTransform.localPosition,
                                                        sceneTransform.localRotation,
                                                        sceneTransform.localScale);
-                    var calibPose = prototype.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
-                    multiplayer.SimulationPose.SetLocalAndTryLocking(calibPose);
+                    var calibPose = prototype.CalibratedSpace
+                                             .TransformPoseWorldToCalibrated(worldPose);
+                    multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
                 }
 
                 await Task.Delay(10);
