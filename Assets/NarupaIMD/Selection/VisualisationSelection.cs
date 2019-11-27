@@ -145,8 +145,7 @@ namespace NarupaIMD.Selection
             // Use the predefined ball and stick renderer as a default
             if (visualiser == null)
             {
-                isPrefab = true;
-                visualiser = VisualiserFactory.GetPredefinedVisualiser("ball and stick");
+                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser("ball and stick");
             }
 
             if (visualiser != null)
