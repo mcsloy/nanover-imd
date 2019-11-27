@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
+using Narupa.Visualisation.Property;
 using NarupaIMD.Selection;
 using UnityEngine;
 
@@ -20,6 +22,21 @@ namespace NarupaXR.Interaction
         [Header("The object which provides the selection information.")]
         [SerializeField]
         private VisualisationScene visualisationScene;
+
+        [SerializeField]
+        private NarupaXRPrototype prototype;
+        
+        public IntArrayProperty interactedParticles = new IntArrayProperty();
+
+        private void Update()
+        {
+            var interactions = prototype.Sessions.Imd.Interactions;
+            var pts = new List<int>();
+            foreach(var interaction in interactions)
+                pts.AddRange(interaction.Value.ParticleIds);
+            interactedParticles.Value = pts.ToArray();
+
+        }
 
         /// <summary>
         /// Attempt to grab the nearest particle, returning null if no interaction is possible.

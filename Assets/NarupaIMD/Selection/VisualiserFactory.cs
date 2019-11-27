@@ -327,6 +327,9 @@ namespace NarupaIMD.Selection
                             subgraphParameters.Add(colorSubgraph, colorStruct);
                         }
                     }
+                
+                
+                subgraphs.Add(GetColorSubgraph("color pulser"));
 
                 // Get the render subgraph from the render key
                 var renderName = dict.GetValueOrDefault<string>("render");
