@@ -81,6 +81,10 @@ namespace NarupaIMD.Selection
             foreach (var selection in selections)
                 if (selection.Selection.ID == key)
                 {
+                    if (selection.Selection.ID == ParticleSelection.RootSelectionId)
+                    {
+                        dict.Remove(ParticleSelection.KeySelected);
+                    }
                     selection.Selection.UpdateFromObject(dict);
                     selection.gameObject.name = selection.Selection.Name;
                     return;
