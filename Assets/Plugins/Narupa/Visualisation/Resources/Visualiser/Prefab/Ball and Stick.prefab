@@ -10,11 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8675595082771297215}
   - component: {fileID: 2328836869028133637}
+  - component: {fileID: -6887395919446405979}
   - component: {fileID: 8611370669276084789}
   - component: {fileID: 8069557243759028456}
   - component: {fileID: 7698190664551895981}
   m_Layer: 0
-  m_Name: Ball and Stick
+  m_Name: ball and stick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,6 +51,24 @@ MonoBehaviour:
   node:
     parentAdaptor:
       value: {fileID: 0}
+      isValueProvided: 0
+--- !u!114 &-6887395919446405979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75182077779563847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fb2bb5e9984368aaff39a10335ae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.highlighted
+    input:
+      value: 
       isValueProvided: 0
 --- !u!114 &8611370669276084789
 MonoBehaviour:
@@ -101,5 +120,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs:
   - {fileID: 8528582866378757822, guid: 657af42ceba840c4299427c9a70925e8, type: 3}
+  - {fileID: 8528582866378757822, guid: 67fdc0e9b66b4be4099c8ae366f5ae05, type: 3}
   - {fileID: 1900448658886156695, guid: 9572ecae4cb8fc14698248ffb1dc72c3, type: 3}
   frameAdaptor: {fileID: 2328836869028133637}

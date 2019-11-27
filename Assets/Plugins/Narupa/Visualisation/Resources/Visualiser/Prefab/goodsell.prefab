@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8675595082771297215}
   - component: {fileID: 2328836869028133637}
+  - component: {fileID: 8734909038273194577}
   - component: {fileID: 7698190664551895981}
   m_Layer: 0
-  m_Name: Goodsell
+  m_Name: goodsell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,6 +50,24 @@ MonoBehaviour:
     parentAdaptor:
       value: {fileID: 0}
       isValueProvided: 0
+--- !u!114 &8734909038273194577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75182077779563847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fb2bb5e9984368aaff39a10335ae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.highlighted
+    input:
+      value: 
+      isValueProvided: 0
 --- !u!114 &7698190664551895981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,5 +82,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs:
   - {fileID: 8528582866378757822, guid: d2b9c24c729c2914dae65603e337a6ca, type: 3}
+  - {fileID: 8528582866378757822, guid: 67fdc0e9b66b4be4099c8ae366f5ae05, type: 3}
   - {fileID: 1900448658886156695, guid: 251a1918ca61aab4c9d8a4f3ddd850f0, type: 3}
   frameAdaptor: {fileID: 2328836869028133637}
