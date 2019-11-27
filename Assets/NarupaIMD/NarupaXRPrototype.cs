@@ -74,9 +74,6 @@ namespace NarupaXR
         /// </summary>
         public void Quit() => Application.Quit();
 
-        private bool HaveBoxLock => !Sessions.Multiplayer.IsOpen
-                                 && Sessions.Multiplayer.HasSimulationPoseLock;
-
         private void Awake()
         {
             ManipulableSimulationSpace = new ManipulableScenePose(simulationSpaceTransform,

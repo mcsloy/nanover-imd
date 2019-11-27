@@ -9,31 +9,41 @@ using UnityEngine;
 namespace NarupaXR.Interaction
 {
     /// <summary>
-    /// Represents a set of particles that can be interacted with.
+    /// Exposes a <see cref="SynchronisedFrameSource"/> that allows particles to be grabbed, accounting for the interaction method of the selections.
     /// </summary>
     public class InteractableScene : MonoBehaviour, IInteractableParticles
     {
+        [Header("The provider of the frames which can be grabbed.")]
         [SerializeField]
         private SynchronisedFrameSource frameSource;
 
+        [Header("The object which provides the selection information.")]
         [SerializeField]
         private VisualisationScene visualisationScene;
 
+        /// <summary>
+        /// Attempt to grab the nearest particle, returning null if no interaction is possible.
+        /// </summary>
+        /// <param name="grabberPose">The transformation of the grabbing pivot.</param>
         public ActiveParticleGrab GetParticleGrab(Transformation grabberPose)
         {
             var particleIndex = GetClosestParticleToWorldPosition(grabberPose.Position);
             var selection = visualisationScene.GetSelectionForParticle(particleIndex);
+
+            if (selection.Selection.InteractionMethod == ParticleSelection.InteractionMethodNone)
+                return null;
+
             var indices = GetSelectedIndices(selection, particleIndex);
 
-            if (selection.Selection.InteractionMethod == "none")
-                return null;
-            
             var grab = new ActiveParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
                 grab.ResetVelocities = true;
             return grab;
         }
         
+        /// <summary>
+        /// Get the particle indices to select, given the nearest particle index.
+        /// </summary>
         private IReadOnlyList<int> GetSelectedIndices(VisualisationSelection selection,
                                                       int particleIndex)
         {
@@ -50,6 +60,9 @@ namespace NarupaXR.Interaction
             }
         }
 
+        /// <summary>
+        /// Get the closest particle to a given point in world space.
+        /// </summary>
         private int GetClosestParticleToWorldPosition(Vector3 worldPosition)
         {
             var position = transform.InverseTransformPoint(worldPosition);

@@ -36,21 +36,21 @@ namespace NarupaIMD.Selection
             set
             {
                 if (selection != null)
-                    selection.CollectionChanged -= SelectionOnCollectionChanged;
+                    selection.SelectionUpdated -= OnSelectionUpdated;
                 selection = value;
                 if (selection != null)
-                    selection.CollectionChanged += SelectionOnCollectionChanged;
+                    selection.SelectionUpdated += OnSelectionUpdated;
             }
         }
 
         /// <summary>
         /// Callback for when the underlying selection has changed.
         /// </summary>
-        public event Action UnderlyingSelectionChanged;
+        public event Action SelectionUpdated;
 
-        private void SelectionOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnSelectionUpdated()
         {
-            UnderlyingSelectionChanged?.Invoke();
+            SelectionUpdated?.Invoke();
             UpdateVisualiser();
         }
 
@@ -74,8 +74,6 @@ namespace NarupaIMD.Selection
         /// Given potentially a higher selection, which will have drawn some particles,
         /// work out which particles are left and should be drawn by this visualiser.
         /// </summary>
-        /// <param name="upperSelection"></param>
-        /// <param name="maxCount"></param>
         public void CalculateFilteredIndices(VisualisationSelection upperSelection, int maxCount)
         {
             if (Selection.Selection != null)

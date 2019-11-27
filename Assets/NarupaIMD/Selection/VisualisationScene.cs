@@ -42,6 +42,10 @@ namespace NarupaIMD.Selection
         /// </summary>
         private ParticleSelection rootSelection;
 
+        private const string BaseLayerName = "Base Layer";
+
+        private VisualisationLayer BaseLayer => layers[0];
+
         /// <summary>
         /// Create a visualisation layer with the given name.
         /// </summary>
@@ -59,7 +63,7 @@ namespace NarupaIMD.Selection
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
-            var baseLayer = AddLayer("Base Layer");
+            var baseLayer = AddLayer(BaseLayerName);
             rootSelection = ParticleSelection.CreateRootSelection();
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
             baseRenderableSelection.UpdateVisualiser();
@@ -70,19 +74,18 @@ namespace NarupaIMD.Selection
         /// </summary>
         private void MultiplayerOnSharedStateDictionaryKeyRemoved(string key)
         {
-            if (key == "selection.root")
+            if (key == ParticleSelection.RootSelectionId)
             {
                 rootSelection.UpdateFromObject(new Dictionary<string, object>
                 {
-                    ["name"] = "Base",
-                    ["id"] = "selection.root"
+                    [ParticleSelection.KeyName] = ParticleSelection.RootSelectionName,
+                    [ParticleSelection.KeyId] = ParticleSelection.RootSelectionId
                 });
             }
-            else if (key.StartsWith("selection."))
+            else if (key.StartsWith(ParticleSelection.SelectionIdPrefix))
             {
                 // TODO: Work out which layer the selection is on.
-                var layer = layers.First();
-                layer.RemoveSelection(key);
+                BaseLayer.RemoveSelection(key);
             }
         }
 
@@ -91,17 +94,19 @@ namespace NarupaIMD.Selection
         /// </summary>
         private void MultiplayerOnSharedStateDictionaryKeyChanged(string key, object value)
         {
-            if (key.StartsWith("selection."))
+            if (key.StartsWith(ParticleSelection.SelectionIdPrefix))
             {
                 // TODO: Work out which layer the selection is on.
-                var layer = layers.First();
-                layer.UpdateOrCreateSelection(key, value);
+                BaseLayer.UpdateOrCreateSelection(key, value);
             }
         }
 
+        /// <summary>
+        /// Get the selection in the base layer which contains the particle.
+        /// </summary>
         public VisualisationSelection GetSelectionForParticle(int particleIndex)
         {
-            return layers[0].GetSelectionForParticle(particleIndex);
+            return BaseLayer.GetSelectionForParticle(particleIndex);
         }
     }
 }

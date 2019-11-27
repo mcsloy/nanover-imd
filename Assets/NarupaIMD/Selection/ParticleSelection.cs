@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Narupa.Core;
 
 namespace NarupaIMD.Selection
@@ -7,7 +7,7 @@ namespace NarupaIMD.Selection
     /// <summary>
     /// A selection containing a group of particles.
     /// </summary>
-    public class ParticleSelection : INotifyCollectionChanged
+    public class ParticleSelection
     {
         /// <summary>
         /// The unique identifier for this selection.
@@ -30,9 +30,34 @@ namespace NarupaIMD.Selection
         /// </summary>
         public IDictionary<string, object> Properties => properties;
 
-        private List<int> selection = new List<int>();
+        private List<int> selection = null;
 
         private Dictionary<string, object> properties = new Dictionary<string, object>();
+
+        public const string KeyName = "name";
+        public const string KeyProperties = "properties";
+        public const string KeyId = "id";
+        public const string KeySelected = "selected";
+        public const string KeyParticleIds = "particle_ids";
+
+        public const string KeyHideProperty = "narupa.rendering.hide";
+        public const string KeyRendererProperty = "narupa.rendering.renderer";
+        public const string KeyInteractionMethod = "narupa.interaction.method";
+        public const string KeyResetVelocities = "narupa.interaction.velocity_reset";
+
+        public const string InteractionMethodSingle = "single";
+        public const string InteractionMethodGroup = "group";
+        public const string InteractionMethodNone = "none";
+
+        public const string RootSelectionId = "selection.root";
+        public const string RootSelectionName = "Base";
+
+        public const string SelectionIdPrefix = "selection.";
+
+        /// <summary>
+        /// Callback for when the selection is altered.
+        /// </summary>
+        public event Action SelectionUpdated;
 
         /// <summary>
         /// Create a selection with the given ID, that contains all atoms.
@@ -45,7 +70,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Create a selection from a dictionary representation of the selection.
         /// </summary>
-        public ParticleSelection(Dictionary<string, object> obj) : this(obj["id"] as string)
+        public ParticleSelection(Dictionary<string, object> obj) : this(obj[KeyId] as string)
         {
             UpdateFromObject(obj);
         }
@@ -55,22 +80,21 @@ namespace NarupaIMD.Selection
         /// </summary>
         public void UpdateFromObject(Dictionary<string, object> obj)
         {
-            Name = obj["name"] as string;
-            properties = obj.TryGetValue("properties", out var propertiesValue)
-                             ? propertiesValue as Dictionary<string, object>
-                             : new Dictionary<string, object>();
-            var selectedDict = obj.TryGetValue("selected", out var selectedValue)
-                                   ? selectedValue as Dictionary<string, object>
-                                   : null;
+            Name = obj.GetValueOrDefault(KeyName, "");
+            properties = obj.GetValueOrDefault(KeyProperties, new Dictionary<string, object>());
+            var selectedDict = obj.GetValueOrDefault(KeySelected, new Dictionary<string, object>());
             if (selectedDict != null)
             {
-                var ids = selectedDict["particle_ids"] as List<object>;
-                if (ids == null || selection == null)
+                var ids = selectedDict.GetValueOrDefault<IReadOnlyList<object>>(KeyParticleIds,
+                                                                                null);
+
+                if (ids == null)
                 {
                     selection = null;
                 }
                 else
                 {
+                    selection = selection ?? new List<int>();
                     selection.Clear();
                     foreach (var id in ids)
                         selection.Add((int) (double) id);
@@ -82,41 +106,40 @@ namespace NarupaIMD.Selection
                 selection = null;
             }
 
-            CollectionChanged?.Invoke(
-                this,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            SelectionUpdated?.Invoke();
         }
-
-        /// <inheritdoc cref="INotifyCollectionChanged.CollectionChanged" />
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         /// <summary>
         /// Create a selection representing the shared root selection.
         /// </summary>
         public static ParticleSelection CreateRootSelection()
         {
-            return new ParticleSelection("selection.root")
+            return new ParticleSelection(RootSelectionId)
             {
-                selection = null,
-                Name = "Base"
+                Name = RootSelectionName,
+                selection = null
             };
         }
 
-        private const string KeyHideProperty = "narupa.rendering.hide";
-        private const string KeyRendererProperty = "narupa.rendering.renderer";
-        private const string KeyInteractionMethod = "narupa.interaction.method";
-        private const string KeyResetVelocities = "narupa.interaction.velocity_reset";
-
-        public const string InteractionMethodSingle = "single";
-        public const string InteractionMethodGroup = "group";
-
+        /// <summary>
+        /// Should this selection not have a visualiser?
+        /// </summary>
         public bool HideRenderer => Properties.GetValueOrDefault(KeyHideProperty, false);
 
+        /// <summary>
+        /// A string or dictionary that describes the visualiser for this selection.
+        /// </summary>
         public object Renderer => Properties.GetValueOrDefault<object>(KeyRendererProperty, null);
 
-        public string InteractionMethod
-            => Properties.GetValueOrDefault(KeyInteractionMethod, InteractionMethodSingle);
+        /// <summary>
+        /// The type of interaction that should occur using this selection.
+        /// </summary>
+        public string InteractionMethod =>
+            Properties.GetValueOrDefault(KeyInteractionMethod, InteractionMethodSingle);
 
+        /// <summary>
+        /// Should the velocities be reset after this selection is interacted with.
+        /// </summary>
         public bool ResetVelocities => Properties.GetValueOrDefault(KeyResetVelocities, false);
     }
 }

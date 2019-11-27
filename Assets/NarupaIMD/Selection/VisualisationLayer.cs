@@ -49,7 +49,7 @@ namespace NarupaIMD.Selection
             var visualisationSelection = Instantiate(selectionPrefab, transform);
             visualisationSelection.Selection = selection;
             visualisationSelection.gameObject.name = selection.Name;
-            visualisationSelection.UnderlyingSelectionChanged +=
+            visualisationSelection.SelectionUpdated +=
                 () => OnSelectionUpdated(visualisationSelection);
             selections.Add(visualisationSelection);
             return visualisationSelection;
@@ -106,6 +106,9 @@ namespace NarupaIMD.Selection
             OnSelectionUpdated(selections.Last());
         }
 
+        /// <summary>
+        /// Find the selection on this layer which contains the particle of the given index.
+        /// </summary>
         public VisualisationSelection GetSelectionForParticle(int particleIndex)
         {
             for (var i = selections.Count - 1; i >= 0; i--)

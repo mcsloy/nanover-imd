@@ -1,20 +1,20 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using Narupa.Frontend.Manipulation;
-using Narupa.Session;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
+using Narupa.Frontend.Manipulation;
+using Narupa.Session;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
 {
     /// <summary>
     /// Provides the ability to move the simulation scene, but preventing this
-    /// if multiplayer is active and the user does not have a lock on the 
+    /// if multiplayer is active and the user does not have a lock on the
     /// scene.
     /// </summary>
     public class ManipulableScenePose
@@ -26,7 +26,7 @@ namespace NarupaXR.Interaction
         private readonly MultiplayerSession multiplayer;
         private readonly NarupaXRPrototype prototype;
 
-        private readonly HashSet<IActiveManipulation> manipulations 
+        private readonly HashSet<IActiveManipulation> manipulations
             = new HashSet<IActiveManipulation>();
 
         public ManipulableScenePose(Transform sceneTransform,
@@ -42,7 +42,7 @@ namespace NarupaXR.Interaction
         }
 
         /// <summary>
-        /// Attempt to start a grab manipulation on this box, with a 
+        /// Attempt to start a grab manipulation on this box, with a
         /// manipulator at the current pose.
         /// </summary>
         public IActiveManipulation StartGrabManipulation(Transformation manipulatorPose)
@@ -50,7 +50,8 @@ namespace NarupaXR.Interaction
             if (!HaveSceneLock)
                 return null;
 
-            if (manipulable.StartGrabManipulation(manipulatorPose) is IActiveManipulation manipulation)
+            if (manipulable.StartGrabManipulation(manipulatorPose) is IActiveManipulation
+                    manipulation)
             {
                 manipulations.Add(manipulation);
                 manipulation.ManipulationEnded += () => manipulations.Remove(manipulation);
@@ -68,7 +69,9 @@ namespace NarupaXR.Interaction
                 {
                     EndAllManipulations();
 
-                    var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose);
+                    var worldPose =
+                        prototype.CalibratedSpace.TransformPoseCalibratedToWorld(
+                            multiplayer.SimulationPose);
                     worldPose.CopyToTransform(sceneTransform);
                 }
                 else if (manipulations.Count > 0)
@@ -76,7 +79,8 @@ namespace NarupaXR.Interaction
                     var worldPose = new Transformation(sceneTransform.localPosition,
                                                        sceneTransform.localRotation,
                                                        sceneTransform.localScale);
-                    var calibPose = prototype.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
+                    var calibPose =
+                        prototype.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
                     multiplayer.SetSimulationPose(calibPose);
                 }
 
