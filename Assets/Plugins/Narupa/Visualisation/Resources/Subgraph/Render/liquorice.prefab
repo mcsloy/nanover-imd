@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1900448658886156701}
-  - component: {fileID: 6529192864124320622}
   - component: {fileID: 4779769348369292179}
   - component: {fileID: 7604027006933302359}
   - component: {fileID: 3421694816922696361}
@@ -38,24 +37,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6529192864124320622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1900448658886156695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1d35f42ae2141f29ec4578f172eb678, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection: []
-  node:
-    name: color
-    input:
-      value: {r: 1, g: 1, b: 1, a: 1}
-      isValueProvided: 1
 --- !u!114 &4779769348369292179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,9 +155,6 @@ MonoBehaviour:
   - sourceComponent: {fileID: 4779769348369292179}
     sourceFieldName: input
     destinationFieldName: particleFilter
-  - sourceComponent: {fileID: 6529192864124320622}
-    sourceFieldName: input
-    destinationFieldName: rendererColor
   node:
     material:
       value: {fileID: 2100000, guid: 8ab524378960e644f9a238927b43e467, type: 2}
@@ -204,7 +182,7 @@ MonoBehaviour:
       isValueProvided: 0
     rendererColor:
       value: {r: 1, g: 1, b: 1, a: 1}
-      isValueProvided: 0
+      isValueProvided: 1
     particleScale:
       value: 1
       isValueProvided: 0
@@ -237,9 +215,6 @@ MonoBehaviour:
   - sourceComponent: {fileID: 2187803143233138763}
     sourceFieldName: input
     destinationFieldName: particlePositions
-  - sourceComponent: {fileID: 6529192864124320622}
-    sourceFieldName: input
-    destinationFieldName: rendererColor
   node:
     particlePositions:
       value: []
@@ -252,7 +227,7 @@ MonoBehaviour:
       isValueProvided: 0
     rendererColor:
       value: {r: 1, g: 1, b: 1, a: 1}
-      isValueProvided: 0
+      isValueProvided: 1
     rendererScale:
       value: 1
       isValueProvided: 0

@@ -10,6 +10,7 @@ using Narupa.Visualisation.Components.Input;
 using Narupa.Visualisation.Node.Color;
 using Narupa.Visualisation.Node.Input;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace NarupaIMD.Selection
 {
@@ -308,6 +309,10 @@ namespace NarupaIMD.Selection
                 // Create input for the selection's particle filter
                 var filterInput = visualiser.AddComponent<IntArrayInput>();
                 filterInput.Node.Name = "particle.filter";
+                
+                // Create input for the selection's particle highlights
+                var highlightedInput = visualiser.AddComponent<IntArrayInput>();
+                highlightedInput.Node.Name = "particle.highlighted";
 
                 // Mapping of subgraph object to its dictionary representation
                 var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
@@ -315,18 +320,28 @@ namespace NarupaIMD.Selection
                 // The root dictionary
                 var globalParameters = dict;
 
+                GameObject colorSubgraph = null;
+
                 // Parse the color keyword if it is a struct with the 'type' field, and hence
                 // describes a color subgraph
                 if (dict.TryGetValue<Dictionary<string, object>>("color", out var colorStruct))
+                {
                     if (colorStruct.TryGetValue<string>("type", out var type))
                     {
-                        var colorSubgraph = GetColorSubgraph(type);
+                        colorSubgraph = GetColorSubgraph(type);
                         if (colorSubgraph != null)
-                        {
-                            subgraphs.Add(colorSubgraph);
                             subgraphParameters.Add(colorSubgraph, colorStruct);
-                        }
                     }
+                }
+
+                // If no color subgraph, use a solid color one.
+                if (colorSubgraph == null)
+                    colorSubgraph = GetColorSubgraph("solid color");
+                
+                Assert.IsNotNull(colorSubgraph);
+
+                subgraphs.Add(colorSubgraph);
+
                 
                 
                 subgraphs.Add(GetColorSubgraph("color pulser"));
