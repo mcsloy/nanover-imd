@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6914795531129879098}
-  - component: {fileID: 5214239840595827744}
   - component: {fileID: 5856870839696454166}
   - component: {fileID: 8780840651017874724}
   - component: {fileID: 1302462309606565754}
@@ -43,24 +42,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5214239840595827744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6914795531129879088}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1d35f42ae2141f29ec4578f172eb678, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection: []
-  node:
-    name: color
-    input:
-      value: {r: 1, g: 1, b: 1, a: 1}
-      isValueProvided: 1
 --- !u!114 &5856870839696454166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,9 +226,6 @@ MonoBehaviour:
   - sourceComponent: {fileID: 5856870839696454166}
     sourceFieldName: input
     destinationFieldName: particleFilter
-  - sourceComponent: {fileID: 5214239840595827744}
-    sourceFieldName: input
-    destinationFieldName: rendererColor
   - sourceComponent: {fileID: -4014229718041890810}
     sourceFieldName: input
     destinationFieldName: particleScale
@@ -308,9 +286,6 @@ MonoBehaviour:
   - sourceComponent: {fileID: 5856870839696454166}
     sourceFieldName: input
     destinationFieldName: particleFilter
-  - sourceComponent: {fileID: 5214239840595827744}
-    sourceFieldName: input
-    destinationFieldName: rendererColor
   - sourceComponent: {fileID: -4014229718041890810}
     sourceFieldName: input
     destinationFieldName: rendererScale
@@ -364,9 +339,6 @@ MonoBehaviour:
   - sourceComponent: {fileID: 5856870839696454166}
     sourceFieldName: input
     destinationFieldName: particleFilter
-  - sourceComponent: {fileID: 5214239840595827744}
-    sourceFieldName: input
-    destinationFieldName: rendererColor
   - sourceComponent: {fileID: -4014229718041890810}
     sourceFieldName: input
     destinationFieldName: particleScale
@@ -427,7 +399,7 @@ MonoBehaviour:
   - sourceComponent: {fileID: 4567862862104944956}
     sourceFieldName: input
     destinationFieldName: particleColors
-  - sourceComponent: {fileID: 5214239840595827744}
+  - sourceComponent: {fileID: 0}
     sourceFieldName: input
     destinationFieldName: color
   - sourceComponent: {fileID: -4014229718041890810}
