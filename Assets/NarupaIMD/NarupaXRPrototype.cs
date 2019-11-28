@@ -87,9 +87,6 @@ namespace NarupaXR
         /// </summary>
         public void Quit() => Application.Quit();
 
-        private bool HaveBoxLock => !Sessions.Multiplayer.IsOpen 
-                                 && Sessions.Multiplayer.HasSimulationPoseLock;
-
         private void Awake()
         {
             Assert.IsNotNull(application, "Narupa iMD script is missing reference to application");
@@ -103,8 +100,6 @@ namespace NarupaXR
                                                             Sessions.Imd);
             
             SetupVisualisation();
-
-            StartCoroutine(AttemptLockTest());
         }
 
         private void Update()
@@ -114,24 +109,6 @@ namespace NarupaXR
             ManipulableParticles.ForceScale = forceScaleSlider.value;
             forceScaleValueLabel.text = $"{forceScaleSlider.value}x";
             debugText.text = $"Frame Index: {Sessions.Trajectory.CurrentFrameIndex}";
-
-            if (Input.GetKeyDown(KeyCode.Return))
-                AttemptLock();
-        }
-
-        private void AttemptLock()
-        {
-            if (Sessions.Multiplayer.HasPlayer && !Sessions.Multiplayer.HasSimulationPoseLock)
-                Sessions.Multiplayer.LockSimulationPose()
-                    .ContinueWith(task => Debug.Log($"Got Lock? {task.Result}"));
-        }
-
-        private IEnumerator AttemptLockTest()
-        {
-            while (!Sessions.Multiplayer.HasPlayer)
-                yield return new WaitForSeconds(1f / 10f);
-
-            AttemptLock();
         }
 
         private async void OnDestroy()
