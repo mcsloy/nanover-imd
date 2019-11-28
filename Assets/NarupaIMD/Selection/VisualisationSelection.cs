@@ -200,6 +200,14 @@ namespace NarupaIMD.Selection
                                      p.Name == "particle.filter");
             if (filter != null)
                 filter.Input.LinkedProperty = FilteredIndices;
+            
+            // Hookup the particle highlights
+            var highlight = currentVisualiser.GetVisualisationNodes<IInputNode>()
+                                      .FirstOrDefault(i => i.Name == "particle.highlighted");
+            highlight?.Input.TrySetLinkedProperty(layer.Scene.InteractedParticles);
+
+
+
         }
     }
 }

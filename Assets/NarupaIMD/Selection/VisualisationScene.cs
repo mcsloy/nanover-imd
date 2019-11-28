@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frame;
 using Narupa.Visualisation;
+using Narupa.Visualisation.Property;
 using NarupaXR;
+using NarupaXR.Interaction;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -45,6 +47,11 @@ namespace NarupaIMD.Selection
         private const string BaseLayerName = "Base Layer";
 
         private VisualisationLayer BaseLayer => layers[0];
+
+        [SerializeField]
+        private InteractableScene scene;
+
+        public IReadOnlyProperty<int[]> InteractedParticles => scene.interactedParticles;
 
         /// <summary>
         /// Create a visualisation layer with the given name.
