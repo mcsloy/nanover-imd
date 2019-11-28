@@ -119,6 +119,14 @@ namespace Narupa.Grpc
         /// </summary>
         public static Value ToProtobufValue(this IDictionary<string, object> dictionary)
         {
+            return Value.ForStruct(ToProtobufStruct(dictionary));
+        }
+        
+        /// <summary>
+        /// Convert a C# dictionary to a protobuf Struct.
+        /// </summary>
+        public static Struct ToProtobufStruct(this IDictionary<string, object> dictionary)
+        {
             var @struct = new Struct();
 
             foreach (var pair in dictionary)
@@ -126,7 +134,7 @@ namespace Narupa.Grpc
                 @struct.Fields.Add(pair.Key, pair.Value.ToProtobufValue());
             }
             
-            return Value.ForStruct(@struct);
+            return @struct;
         }
 
         /// <summary>
@@ -214,6 +222,16 @@ namespace Narupa.Grpc
             values.Add(quaternion.y);
             values.Add(quaternion.z);
             values.Add(quaternion.w);
+        }
+        
+        /// <summary>
+        /// Convert a <see cref="Value"/> to an integer value
+        /// </summary>
+        public static object ToInt(this Value value)
+        {
+            if(value.KindCase != Value.KindOneofCase.NumberValue)
+                throw new ArgumentException("Value cannot be cast to int");
+            return (int) value.NumberValue;
         }
     }
 }

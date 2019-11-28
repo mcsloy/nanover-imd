@@ -15,6 +15,7 @@ using Narupa.Core.Math;
 using Narupa.Grpc;
 using Narupa.Grpc.Multiplayer;
 using Narupa.Grpc.Stream;
+using UnityEngine.Profiling;
 
 namespace Narupa.Session
 {
@@ -99,6 +100,8 @@ namespace Narupa.Session
             = new Dictionary<string, object>();
 
         private Task avatarFlushingTask, valueFlushingTask;
+        
+        public event Action<string> SharedStateDictionaryKeyRemoved;
 
         /// <summary>
         /// Connect to a Multiplayer service over the given connection. 
@@ -273,6 +276,12 @@ namespace Narupa.Session
             {
                 SharedStateDictionary[pair.Key] = pair.Value.ToObject();
                 SharedStateDictionaryKeyUpdated?.Invoke(pair.Key);
+            }
+
+            foreach (var key in update.ResourceValueRemovals)
+            {
+                SharedStateDictionary.Remove(key);
+                SharedStateDictionaryKeyRemoved?.Invoke(key);
             }
         }
 

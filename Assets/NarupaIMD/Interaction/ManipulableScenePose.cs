@@ -14,7 +14,7 @@ namespace NarupaXR.Interaction
 {
     /// <summary>
     /// Provides the ability to move the simulation scene, but preventing this
-    /// if multiplayer is active and the user does not have a lock on the 
+    /// if multiplayer is active and the user does not have a lock on the
     /// scene.
     /// </summary>
     public class ManipulableScenePose
@@ -75,7 +75,7 @@ namespace NarupaXR.Interaction
         }
 
         /// <summary>
-        /// Attempt to start a grab manipulation on this box, with a 
+        /// Attempt to start a grab manipulation on this box, with a
         /// manipulator at the current pose.
         /// </summary>
         public IActiveManipulation StartGrabManipulation(Transformation manipulatorPose)

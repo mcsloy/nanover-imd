@@ -15,9 +15,6 @@ namespace NarupaXR.UI
         private SteamVR_Action_Boolean visualiserMenuAction;
 
         [SerializeField]
-        private VisualisationManager visualisationManager;
-
-        [SerializeField]
         private CursorProvider cursorProvider;
 
         [SerializeField]
@@ -58,9 +55,11 @@ namespace NarupaXR.UI
             menu.SetActive(true);
             
             var dynamic = menu.GetComponentInChildren<DynamicMenu>();
+            /*
             foreach (var prefab in visualisationManager.GetVisualiserPrefabs())
                 dynamic.AddItem(prefab.name, null,
                                 () => visualisationManager.SpawnVisualiser(prefab));
+                                */
             menu.transform.position = cursorProvider.Pose.Value.Position;
             menu.transform.rotation =
                 Quaternion.LookRotation(menu.transform.position - Camera.main.transform.position,
