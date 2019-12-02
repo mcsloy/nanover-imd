@@ -2,12 +2,15 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using Narupa.Core;
 using Narupa.Core.Science;
 using Narupa.Frame;
 using Narupa.Visualisation.Components.Adaptor;
+using Narupa.Visualisation.Node.Calculator;
 using Narupa.Visualisation.Node.Color;
+using Narupa.Visualisation.Node.Protein;
+using Narupa.Visualisation.Node.Spline;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Property
@@ -16,7 +19,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="Material" /> value.
     /// </summary>
     [Serializable]
-    public class MaterialProperty : SerializableProperty<Material>
+    public class MaterialProperty : Property<Material>
     {
     }
 
@@ -24,7 +27,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="Mesh" /> value.
     /// </summary>
     [Serializable]
-    public class MeshProperty : SerializableProperty<Mesh>
+    public class MeshProperty : Property<Mesh>
     {
     }
 
@@ -33,8 +36,7 @@ namespace Narupa.Visualisation.Property
     /// value.
     /// </summary>
     [Serializable]
-    public class ElementColorMappingProperty :
-        InterfaceProperty<IMapping<Element, Color>>
+    public class ElementColorMappingProperty : Property<ElementColorMapping>
     {
     }
 
@@ -42,7 +44,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="Color" /> value.
     /// </summary>
     [Serializable]
-    public class ColorProperty : SerializableProperty<Color>
+    public class ColorProperty : Property<Color>
     {
     }
 
@@ -50,7 +52,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="string" /> value.
     /// </summary>
     [Serializable]
-    public class StringProperty : SerializableProperty<string>
+    public class StringProperty : Property<string>
     {
     }
 
@@ -94,7 +96,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="float" /> value.
     /// </summary>
     [Serializable]
-    public class FloatProperty : SerializableProperty<float>
+    public class FloatProperty : Property<float>
     {
     }
 
@@ -102,7 +104,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="float" /> value.
     /// </summary>
     [Serializable]
-    public class BoolProperty : SerializableProperty<bool>
+    public class BoolProperty : Property<bool>
     {
     }
 
@@ -110,7 +112,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="Vector3" /> value.
     /// </summary>
     [Serializable]
-    public class Vector3Property : SerializableProperty<Vector3>
+    public class Vector3Property : Property<Vector3>
     {
     }
 
@@ -118,7 +120,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for an <see cref="int" /> value.
     /// </summary>
     [Serializable]
-    public class IntProperty : SerializableProperty<int>
+    public class IntProperty : Property<int>
     {
     }
 
@@ -134,7 +136,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="Gradient" /> value.
     /// </summary>
     [Serializable]
-    public class GradientProperty : SerializableProperty<Gradient>
+    public class GradientProperty : Property<Gradient>
     {
     }
 
@@ -142,7 +144,7 @@ namespace Narupa.Visualisation.Property
     /// Serializable <see cref="Property" /> for a <see cref="FrameAdaptor" /> value.
     /// </summary>
     [Serializable]
-    public class FrameAdaptorProperty : SerializableProperty<FrameAdaptor>
+    public class FrameAdaptorProperty : Property<FrameAdaptor>
     {
     }
 
@@ -173,11 +175,54 @@ namespace Narupa.Visualisation.Property
     }
 
     /// <summary>
+    /// Serializable <see cref="Property" /> for an array of <see cref="SecondaryStructureAssignment" /> values.
+    /// </summary>
+    [Serializable]
+    public class SecondaryStructureArrayProperty : ArrayProperty<SecondaryStructureAssignment>
+    {
+    }
+
+    /// <summary>
+    /// Serializable <see cref="Property" /> for an array of <see cref="SplineSegment" /> values.
+    /// </summary>
+    [Serializable]
+    public class SplineArrayProperty : ArrayProperty<SplineSegment>
+    {
+    }
+
+    /// <summary>
     /// Serializable <see cref="Property" /> for an array of <see cref="TValue" />
     /// values;
     /// </summary>
     [Serializable]
-    public abstract class ArrayProperty<TValue> : SerializableProperty<TValue[]>
+    public abstract class ArrayProperty<TValue> : Property<TValue[]>, IEnumerable<TValue>
     {
+        /// <summary>
+        /// Resize the array in this property, creating an array if not possible.
+        /// </summary>
+        public TValue[] Resize(int size)
+        {
+            var value = HasValue ? Value : new TValue[0];
+            Array.Resize(ref value, size);
+            Value = value;
+            return Value;
+        }
+
+        public IEnumerator<TValue> GetEnumerator()
+        {
+            return (Value as IEnumerable<TValue>).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+
+        public TValue this[int i]
+        {
+            get => Value[i];
+            set => Value[i] = value;
+        }
     }
 }
