@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Essd;
 using Narupa.Core.Async;
 using NarupaXR;
@@ -25,10 +24,11 @@ namespace NarupaIMD
             client.StartSearch().AwaitInBackground();
             client.ServiceFound += ClientOnServiceFound;
         }
+
         private readonly HashSet<ServiceHub> services = new HashSet<ServiceHub>();
 
-        public event  Action<ServiceHub> ServiceDiscovered;
-        
+        public event Action<ServiceHub> ServiceDiscovered;
+
         private void ClientOnServiceFound(object sender, ServiceHub e)
         {
             if (!services.Add(e))
@@ -43,9 +43,19 @@ namespace NarupaIMD
         public void Connect(ServiceHub e)
         {
             var services = e.Properties["services"] as JObject;
-            prototype.Connect(e.Address, services["trajectory"].ToObject<int>(),
-                              services["imd"].ToObject<int>(),
-                              services["multiplayer"].ToObject<int>());
+            if (services == null)
+                return;
+
+            prototype.Connect(e.Address,
+                              services.TryGetValue("trajectory", out var traj)
+                                  ? (int?) traj.ToObject<int>()
+                                  : null,
+                              services.TryGetValue("imd", out var imd)
+                                  ? (int?) imd.ToObject<int>()
+                                  : null,
+                              services.TryGetValue("multiplayer", out var multi)
+                                  ? (int?) multi.ToObject<int>()
+                                  : null);
         }
     }
 }
