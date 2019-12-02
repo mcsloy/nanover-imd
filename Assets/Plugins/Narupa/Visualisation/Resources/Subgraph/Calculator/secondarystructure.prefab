@@ -1,0 +1,169 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4166464006404062395
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4166464006404062385}
+  - component: {fileID: 7885028204725055982}
+  - component: {fileID: 641956962619085123}
+  - component: {fileID: 6819643085390361954}
+  - component: {fileID: -6575975684442331703}
+  - component: {fileID: 228758548989699922}
+  - component: {fileID: 2065188338053948245}
+  m_Layer: 0
+  m_Name: secondarystructure
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4166464006404062385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166464006404062395}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7885028204725055982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166464006404062395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 632efa9a0c394893863fa045c84d1491, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: residue.sequences
+    input:
+      isValueProvided: 0
+--- !u!114 &641956962619085123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166464006404062395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7af33a56fb6746d3bbd35f089152781c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.positions
+    input:
+      value: []
+      isValueProvided: 0
+--- !u!114 &6819643085390361954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166464006404062395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a72e54b13d84ba9abff43ae028eeb53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.names
+    input:
+      value: []
+      isValueProvided: 0
+--- !u!114 &-6575975684442331703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166464006404062395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fb2bb5e9984368aaff39a10335ae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.residues
+    input:
+      value: 
+      isValueProvided: 0
+--- !u!114 &228758548989699922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166464006404062395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c098bf9bf19439ebd619219078fa4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 641956962619085123}
+    sourceFieldName: input
+    destinationFieldName: atomPositions
+  - sourceComponent: {fileID: 7885028204725055982}
+    sourceFieldName: input
+    destinationFieldName: peptideChains
+  - sourceComponent: {fileID: 6819643085390361954}
+    sourceFieldName: input
+    destinationFieldName: atomNames
+  - sourceComponent: {fileID: -6575975684442331703}
+    sourceFieldName: input
+    destinationFieldName: atomResidues
+  node:
+    atomPositions:
+      value: []
+      isValueProvided: 0
+    atomResidues:
+      value: 
+      isValueProvided: 0
+    atomNames:
+      value: []
+      isValueProvided: 0
+    peptideChains:
+      isValueProvided: 0
+    dsspOptions:
+      Cutoff: -0.5
+--- !u!114 &2065188338053948245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166464006404062395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccd8ac0fe1b5481f86ed57d3d3ac28c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 228758548989699922}
+    sourceFieldName: atomSecondaryStructure
+    destinationFieldName: input
+  node:
+    name: particle.secondarystructure
+    input:
+      value: 
+      isValueProvided: 0

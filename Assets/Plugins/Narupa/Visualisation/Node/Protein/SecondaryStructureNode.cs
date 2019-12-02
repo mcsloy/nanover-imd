@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Narupa.Frame;
 using Narupa.Visualisation.Property;
 using UnityEngine;
@@ -30,7 +29,7 @@ namespace Narupa.Visualisation.Node.Protein
 
         private bool needRecalculate = true;
 
-        private SecondaryStructureArrayProperty residueSecondaryStructure =
+        private SecondaryStructureArrayProperty atomSecondaryStructure =
             new SecondaryStructureArrayProperty();
 
         private BondArrayProperty hydrogenBonds =
@@ -41,8 +40,8 @@ namespace Narupa.Visualisation.Node.Protein
 
         public bool IsInputValid => peptideChains.HasNonNullValue();
 
-        public bool AreResiduesDirty
-            => atomResidues.IsDirty || peptideChains.IsDirty || atomNames.IsDirty;
+        public bool AreResiduesDirty =>
+            atomResidues.IsDirty || peptideChains.IsDirty || atomNames.IsDirty;
 
         public bool AreResiduesValid => atomResidues.HasNonEmptyValue() &&
                                         peptideChains.HasNonEmptyValue() &&
@@ -82,16 +81,21 @@ namespace Narupa.Visualisation.Node.Protein
             foreach (var peptideSequence in sequenceResidueData)
                 DsspAlgorithm.CalculateSecondaryStructure(peptideSequence, dsspOptions);
 
-            var peptideCount = peptideChains.Value.Sum(s => s.Count);
+            atomSecondaryStructure.Resize(atomPositions.Value.Length);
 
-            var secondaryStruct = new SecondaryStructureAssignment[peptideCount];
+            var dict = new Dictionary<int, SecondaryStructureAssignment>();
 
             var index = 0;
             foreach (var sequence in sequenceResidueData)
             foreach (var data in sequence)
-                secondaryStruct[index++] = data.SecondaryStructure;
+                dict[data.ResidueIndex] = data.SecondaryStructure;
 
-            residueSecondaryStructure.Value = secondaryStruct;
+            for (var i = 0; i < atomSecondaryStructure.Value.Length; i++)
+                atomSecondaryStructure[i] = dict.TryGetValue(atomResidues[i], out var value)
+                                                ? value
+                                                : SecondaryStructureAssignment.None;
+            
+            atomSecondaryStructure.MarkValueAsChanged();
 
             needRecalculate = false;
 

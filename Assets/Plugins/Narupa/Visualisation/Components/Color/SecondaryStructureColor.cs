@@ -2,9 +2,9 @@ using Narupa.Visualisation.Node.Color;
 
 namespace Narupa.Visualisation.Components.Color
 {
-    /// <inheritdoc cref="Node.Color.SecondaryStructureColor" />
+    /// <inheritdoc cref="SecondaryStructureColorNode" />
     public class SecondaryStructureColor :
-        VisualisationComponent<Node.Color.SecondaryStructureColor>
+        VisualisationComponent<SecondaryStructureColorNode>
     {
         private void Update()
         {

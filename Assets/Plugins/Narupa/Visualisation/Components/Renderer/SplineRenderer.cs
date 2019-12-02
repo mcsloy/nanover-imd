@@ -18,10 +18,5 @@ namespace Narupa.Visualisation.Components.Renderer
                 return;
             node.Render(camera);
         }
-
-        private void OnDrawGizmos()
-        {
-            node.OnDrawGizmos();
-        }
     }
 }

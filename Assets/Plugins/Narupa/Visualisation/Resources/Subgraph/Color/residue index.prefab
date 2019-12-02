@@ -52,8 +52,8 @@ MonoBehaviour:
   node:
     name: particle.residues
     input:
-      isValueProvided: 0
       value: 
+      isValueProvided: 0
 --- !u!114 &8946896642395796181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,8 +70,8 @@ MonoBehaviour:
   node:
     name: residue.count
     input:
-      isValueProvided: 0
       value: 0
+      isValueProvided: 0
 --- !u!114 &-4800524976505438698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,11 +93,11 @@ MonoBehaviour:
     destinationFieldName: residueCount
   node:
     particleResidues:
-      isValueProvided: 0
       value: 
-    residueCount:
       isValueProvided: 0
+    residueCount:
       value: 0
+      isValueProvided: 0
 --- !u!114 &2688622702517566676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,7 +119,6 @@ MonoBehaviour:
     destinationFieldName: gradient
   node:
     gradient:
-      isValueProvided: 1
       value:
         serializedVersion: 2
         key0: {r: 0, g: 0.5162797, b: 1, a: 1}
@@ -149,15 +148,16 @@ MonoBehaviour:
         m_Mode: 0
         m_NumColorKeys: 3
         m_NumAlphaKeys: 2
+      isValueProvided: 1
     values:
-      isValueProvided: 0
       value: []
+      isValueProvided: 0
     minimumValue:
-      isValueProvided: 1
       value: 0
-    maximumValue:
       isValueProvided: 1
+    maximumValue:
       value: 1
+      isValueProvided: 1
 --- !u!114 &2948249340003140760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,8 +177,8 @@ MonoBehaviour:
   node:
     name: particle.colors
     input:
-      isValueProvided: 0
       value: []
+      isValueProvided: 0
 --- !u!114 &-7004610510521987868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,12 +195,11 @@ MonoBehaviour:
   node:
     name: gradient
     input:
-      isValueProvided: 0
       value:
         serializedVersion: 2
-        key0: {r: 1, g: 1, b: 1, a: 1}
-        key1: {r: 1, g: 1, b: 1, a: 1}
-        key2: {r: 0, g: 0, b: 0, a: 0}
+        key0: {r: 1, g: 0, b: 0, a: 1}
+        key1: {r: 0, g: 0, b: 1, a: 1}
+        key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -216,7 +215,7 @@ MonoBehaviour:
         ctime7: 0
         atime0: 0
         atime1: 65535
-        atime2: 0
+        atime2: 65535
         atime3: 0
         atime4: 0
         atime5: 0
@@ -225,3 +224,4 @@ MonoBehaviour:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
+      isValueProvided: 1

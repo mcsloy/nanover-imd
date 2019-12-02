@@ -279,6 +279,21 @@ namespace NarupaIMD.Selection
         {
             return Resources.Load<GameObject>($"Subgraph/Color/{name}");
         }
+        
+        public static GameObject GetScaleSubgraph(string name)
+        {
+            return Resources.Load<GameObject>($"Subgraph/Scale/{name}");
+        }
+        
+        public static GameObject GetSequenceSubgraph(string name)
+        {
+            return Resources.Load<GameObject>($"Subgraph/Sequence/{name}");
+        }
+        
+        public static GameObject GetCalculatorSubgraph(string name)
+        {
+            return Resources.Load<GameObject>($"Subgraph/Calculator/{name}");
+        }
 
         /// <summary>
         /// Construct a visualiser from the provided arbitrary C# data.
@@ -320,6 +335,28 @@ namespace NarupaIMD.Selection
                 // The root dictionary
                 var globalParameters = dict;
 
+                
+                if (dict.TryGetValue<Dictionary<string, object>>("sequence", out var sequenceStruct))
+                {
+                    if (sequenceStruct.TryGetValue<string>("type", out var type))
+                    {
+                        var sequenceSubgraph = GetSequenceSubgraph(type);
+                        if (sequenceSubgraph != null)
+                            subgraphParameters.Add(sequenceSubgraph, sequenceStruct);
+                    }
+                }
+                
+                if (dict.TryGetValue<Dictionary<string, object>>("calculator", out var calculatorStruct))
+                {
+                    if (calculatorStruct.TryGetValue<string>("type", out var type))
+                    {
+                        var calculatorSubgraph = GetCalculatorSubgraph(type);
+                        if (calculatorSubgraph != null)
+                            subgraphParameters.Add(calculatorSubgraph, calculatorStruct);
+                    }
+                }
+                
+                
                 GameObject colorSubgraph = null;
 
                 // Parse the color keyword if it is a struct with the 'type' field, and hence
@@ -337,6 +374,19 @@ namespace NarupaIMD.Selection
                 // If no color subgraph, use a solid color one.
                 if (colorSubgraph == null)
                     colorSubgraph = GetColorSubgraph("solid color");
+                
+                // Parse the scale keyword if it is a struct with the 'type' field, and hence
+                // describes a scale subgraph
+                if (dict.TryGetValue<Dictionary<string, object>>("scale", out var scaleStruct))
+                {
+                    if (scaleStruct.TryGetValue<string>("type", out var type))
+                    {
+                        var scaleSubgraph = GetScaleSubgraph(type);
+                        if (scaleSubgraph != null)
+                            subgraphParameters.Add(scaleSubgraph, scaleStruct);
+                    }
+                }
+                
                 
                 Assert.IsNotNull(colorSubgraph);
 

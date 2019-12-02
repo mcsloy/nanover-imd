@@ -168,10 +168,10 @@ namespace Narupa.Visualisation.Node.Spline
                     var normal = normals[index];
                     var binormal = Vector3.Cross(tangent, normal);
                     var color = this.color.Value * (colors.HasValue
-                                                        ? colors.Value[index]
+                                                        ? colors.Value[sequence[vertex]]
                                                         : UnityEngine.Color.white);
                     var radius = this.radius.Value * (scales.HasValue
-                                                          ? scales.Value[index]
+                                                          ? scales.Value[sequence[vertex]]
                                                           : 1f);
 
                     outputPositions[index * 2] = position + radius * binormal;

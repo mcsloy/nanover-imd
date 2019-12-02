@@ -11,7 +11,7 @@ namespace Narupa.Visualisation.Node.Scale
     /// Provides scales that depend on the secondary structure.
     /// </summary>
     [Serializable]
-    public class SecondaryStructureScaleNode : VisualiserScale
+    public class SecondaryStructureScaleNode : VisualiserScaleNode
     {
         [SerializeField]
         private SecondaryStructureArrayProperty secondaryStructure;
