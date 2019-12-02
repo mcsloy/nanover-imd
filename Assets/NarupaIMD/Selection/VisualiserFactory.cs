@@ -335,25 +335,36 @@ namespace NarupaIMD.Selection
                 // The root dictionary
                 var globalParameters = dict;
 
+                GameObject sequenceSubgraph = null;
                 
                 if (dict.TryGetValue<Dictionary<string, object>>("sequence", out var sequenceStruct))
                 {
                     if (sequenceStruct.TryGetValue<string>("type", out var type))
                     {
-                        var sequenceSubgraph = GetSequenceSubgraph(type);
+                        sequenceSubgraph = GetSequenceSubgraph(type);
                         if (sequenceSubgraph != null)
                             subgraphParameters.Add(sequenceSubgraph, sequenceStruct);
                     }
                 }
+                else if (dict.TryGetValue<string>("sequence", out var sequenceString))
+                {
+                    sequenceSubgraph = GetSequenceSubgraph(sequenceString);
+                }
+                
+                GameObject calculatorSubgraph = null;
                 
                 if (dict.TryGetValue<Dictionary<string, object>>("calculator", out var calculatorStruct))
                 {
                     if (calculatorStruct.TryGetValue<string>("type", out var type))
                     {
-                        var calculatorSubgraph = GetCalculatorSubgraph(type);
+                        calculatorSubgraph = GetCalculatorSubgraph(type);
                         if (calculatorSubgraph != null)
                             subgraphParameters.Add(calculatorSubgraph, calculatorStruct);
                     }
+                }
+                else if (dict.TryGetValue<string>("calculator", out var calculatorString))
+                {
+                    calculatorSubgraph = GetCalculatorSubgraph(calculatorString);
                 }
                 
                 
@@ -370,10 +381,16 @@ namespace NarupaIMD.Selection
                             subgraphParameters.Add(colorSubgraph, colorStruct);
                     }
                 }
+                else if (dict.TryGetValue<string>("color", out var colorString))
+                {
+                    colorSubgraph = GetColorSubgraph(colorString);
+                }
 
                 // If no color subgraph, use a solid color one.
                 if (colorSubgraph == null)
                     colorSubgraph = GetColorSubgraph("solid color");
+                
+                GameObject scaleSubgraph = null;
                 
                 // Parse the scale keyword if it is a struct with the 'type' field, and hence
                 // describes a scale subgraph
@@ -381,15 +398,26 @@ namespace NarupaIMD.Selection
                 {
                     if (scaleStruct.TryGetValue<string>("type", out var type))
                     {
-                        var scaleSubgraph = GetScaleSubgraph(type);
+                        scaleSubgraph = GetScaleSubgraph(type);
                         if (scaleSubgraph != null)
                             subgraphParameters.Add(scaleSubgraph, scaleStruct);
                     }
                 }
+                else if (dict.TryGetValue<string>("scale", out var scaleString))
+                {
+                    scaleSubgraph = GetScaleSubgraph(scaleString);
+                }
                 
+                if(sequenceSubgraph != null)
+                    subgraphs.Add(sequenceSubgraph);
+                
+                if(calculatorSubgraph != null)
+                    subgraphs.Add(calculatorSubgraph);
+                
+                if(scaleSubgraph != null)
+                    subgraphs.Add(scaleSubgraph);
                 
                 Assert.IsNotNull(colorSubgraph);
-
                 subgraphs.Add(colorSubgraph);
 
                 
