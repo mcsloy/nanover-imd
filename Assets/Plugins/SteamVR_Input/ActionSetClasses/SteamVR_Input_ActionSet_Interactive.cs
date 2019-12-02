@@ -40,5 +40,21 @@ namespace Valve.VR
                 return SteamVR_Actions.interactive_VisualiserMenu;
             }
         }
+        
+        public virtual SteamVR_Action_Boolean Play
+        {
+            get
+            {
+                return SteamVR_Actions.interactive_Play;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean Pause
+        {
+            get
+            {
+                return SteamVR_Actions.interactive_Pause;
+            }
+        }
     }
 }

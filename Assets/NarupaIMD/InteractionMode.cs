@@ -3,6 +3,7 @@
 
 using System;
 using NarupaIMD;
+using NarupaXR;
 using UnityEngine;
 using Valve.VR;
 
@@ -21,11 +22,44 @@ namespace Narupa.Frontend.Controllers
         [SerializeField]
         private GameObject gizmoPrefab;
 
+        [SerializeField]
+        private NarupaXRPrototype prototype;
+
         protected override void SetupController(VrController controller)
         {
             base.SetupController(controller);
             if (controller.IsControllerActive)
                 controller.InstantiateCursorGizmo(gizmoPrefab);
+        }
+
+        [SerializeField]
+        private SteamVR_Action_Boolean playAction;
+
+        [SerializeField]
+        private SteamVR_Action_Boolean pauseAction;
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            playAction.onStateDown += PlayActionOnStateDown;
+            pauseAction.onStateDown += PauseActionOnStateDown;
+        }
+
+        private void PauseActionOnStateDown(SteamVR_Action_Boolean fromaction, SteamVR_Input_Sources fromsource)
+        {
+            prototype.Sessions.Trajectory.Pause();
+        }
+
+        private void PlayActionOnStateDown(SteamVR_Action_Boolean fromaction, SteamVR_Input_Sources fromsource)
+        {
+            prototype.Sessions.Trajectory.Play();
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            playAction.onStateDown -= PlayActionOnStateDown;
+            pauseAction.onStateDown -= PauseActionOnStateDown;
         }
     }
 }

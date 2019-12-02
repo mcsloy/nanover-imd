@@ -28,6 +28,14 @@
     {
       "name": "/actions/Interactive/in/VisualiserMenu",
       "type": "boolean"
+    },
+    {
+      "name": "/actions/Interactive/in/Play",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Interactive/in/Pause",
+      "type": "boolean"
     }
   ],
   "action_sets": [
@@ -102,7 +110,9 @@
       "/actions/Interactive/in/Interact": "Interact",
       "/actions/Interactive/in/VisualiserMenu": "Visualiser Menu",
       "/actions/UI/in/SwitchCursor": "Switch Cursor",
-      "/actions/Controller/in/Pose": "Pose"
+      "/actions/Controller/in/Pose": "Pose",
+      "/actions/Interactive/in/Play": "Play",
+      "/actions/Interactive/in/Pause": "Pause"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "source": "Unity",
   "applications": [
     {
-      "app_key": "narupa.imd.exe",
+      "app_key": "application.generated.unity.narupaimd.exe",
       "launch_type": "url",
       "url": "steam://launch/",
       "action_manifest_path": "C:\\Users\\Alex-Binnie\\Projects\\Narupa\\narupa-imd\\Assets\\StreamingAssets\\SteamVR\\actions.json",

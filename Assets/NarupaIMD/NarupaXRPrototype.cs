@@ -31,15 +31,6 @@ namespace NarupaXR
         private Transform simulationSpaceTransform;
 
         [SerializeField]
-        private Slider forceScaleSlider;
-
-        [SerializeField]
-        private Text forceScaleValueLabel;
-
-        [SerializeField]
-        private Text debugText;
-
-        [SerializeField]
         private InteractableScene interactableScene;
 
         [FormerlySerializedAs("xrInteraction")]
@@ -107,9 +98,7 @@ namespace NarupaXR
         {
             CalibratedSpace.CalibrateFromLighthouses();
 
-            ManipulableParticles.ForceScale = forceScaleSlider.value;
-            forceScaleValueLabel.text = $"{forceScaleSlider.value}x";
-            debugText.text = $"Frame Index: {Sessions.Trajectory.CurrentFrameIndex}";
+            ManipulableParticles.ForceScale = 1000;
         }
 
         private async void OnDestroy()
