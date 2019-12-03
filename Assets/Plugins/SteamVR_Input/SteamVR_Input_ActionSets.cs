@@ -23,6 +23,8 @@ namespace Valve.VR
         
         private static SteamVR_Input_ActionSet_Interactive p_Interactive;
         
+        private static SteamVR_Input_ActionSet_Scene p_Scene;
+        
         public static SteamVR_Input_ActionSet_Controller Controller
         {
             get
@@ -47,15 +49,25 @@ namespace Valve.VR
             }
         }
         
+        public static SteamVR_Input_ActionSet_Scene Scene
+        {
+            get
+            {
+                return SteamVR_Actions.p_Scene.GetCopy<SteamVR_Input_ActionSet_Scene>();
+            }
+        }
+        
         private static void StartPreInitActionSets()
         {
             SteamVR_Actions.p_Controller = ((SteamVR_Input_ActionSet_Controller)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_Controller>("/actions/Controller")));
             SteamVR_Actions.p_UI = ((SteamVR_Input_ActionSet_UI)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_UI>("/actions/UI")));
             SteamVR_Actions.p_Interactive = ((SteamVR_Input_ActionSet_Interactive)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_Interactive>("/actions/Interactive")));
+            SteamVR_Actions.p_Scene = ((SteamVR_Input_ActionSet_Scene)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_Scene>("/actions/Scene")));
             Valve.VR.SteamVR_Input.actionSets = new Valve.VR.SteamVR_ActionSet[] {
                     SteamVR_Actions.Controller,
                     SteamVR_Actions.UI,
-                    SteamVR_Actions.Interactive};
+                    SteamVR_Actions.Interactive,
+                    SteamVR_Actions.Scene};
         }
     }
 }

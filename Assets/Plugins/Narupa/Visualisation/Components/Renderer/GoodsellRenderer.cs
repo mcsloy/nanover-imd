@@ -1,5 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using Narupa.Visualisation.Components.Renderer;
 using Narupa.Visualisation.Node.Renderer;
+using UnityEditor;
 using UnityEngine;
 
 namespace Plugins.Narupa.Visualisation.Components.Renderer
@@ -11,8 +14,15 @@ namespace Plugins.Narupa.Visualisation.Components.Renderer
         {
             base.OnEnable();
             node.Transform = transform;
-            node.Cleanup();
             node.Setup();
+            node.Cleanup();
+            StartCoroutine(ResetAfterOneFrame());
+        }
+
+        private IEnumerator ResetAfterOneFrame()
+        {
+            yield return new WaitForEndOfFrame();
+            node.Cleanup();
         }
 
         private void OnDestroy()

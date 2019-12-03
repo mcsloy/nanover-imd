@@ -1,5 +1,6 @@
 using Narupa.Frontend.Controllers;
 using Narupa.Frontend.UI;
+using NarupaIMD.Selection;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Valve.VR;
@@ -55,24 +56,24 @@ namespace NarupaXR.UI
             menu.SetActive(true);
             
             var dynamic = menu.GetComponentInChildren<DynamicMenu>();
-            /*
-            foreach (var prefab in visualisationManager.GetVisualiserPrefabs())
+            
+            foreach (var prefab in VisualiserFactory.GetRenderSubgraphs())
                 dynamic.AddItem(prefab.name, null,
-                                () => visualisationManager.SpawnVisualiser(prefab));
-                                */
+                                () => { });
+                                
             menu.transform.position = cursorProvider.Pose.Value.Position;
             menu.transform.rotation =
                 Quaternion.LookRotation(menu.transform.position - Camera.main.transform.position,
                                         Vector3.up);
 
-            prototype.GotoUiMode(inputSource);
+            //prototype.GotoUiMode(inputSource);
         }
 
         private void CloseMenu()
         {
             WorldSpaceCursorInput.TriggerClick();
             Destroy(menu);
-            prototype.GotoInteractionMode();
+            //prototype.GotoInteractionMode();
         }
     }
 }

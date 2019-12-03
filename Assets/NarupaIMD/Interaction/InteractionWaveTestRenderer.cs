@@ -1,10 +1,13 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frontend.Manipulation;
 using Narupa.Session;
+using Narupa.Visualisation;
+using NarupaIMD.UI;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -18,18 +21,25 @@ namespace NarupaXR.Interaction
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupaXR;
+        private ConnectedApplicationState narupaXR;
         [SerializeField]
         private InteractionWaveRenderer waveTemplate;
 #pragma warning restore 0649
+
+
+        [SerializeField]
+        private SynchronisedFrameSource frameSource;
 
         private Dictionary<string, InteractionWaveRenderer> renderers
             = new Dictionary<string, InteractionWaveRenderer>();
 
         private void Update()
         {
+            if (!narupaXR.IsConnected)
+                return;
+            
             var interactions = narupaXR.Sessions.Imd.Interactions;
-            var frame = narupaXR.FrameSynchronizer.CurrentFrame;
+            var frame = frameSource.CurrentFrame;
             
             foreach (var interaction in interactions.Values)
             {

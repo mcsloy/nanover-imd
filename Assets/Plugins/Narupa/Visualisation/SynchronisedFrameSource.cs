@@ -35,6 +35,7 @@ namespace Narupa.Visualisation
                 if (snapshot != null)
                     snapshot.FrameChanged -= SnapshotOnFrameChanged;
                 snapshot = value;
+                changes = new FrameChanges();
                 if (snapshot != null)
                     snapshot.FrameChanged += SnapshotOnFrameChanged;
             }

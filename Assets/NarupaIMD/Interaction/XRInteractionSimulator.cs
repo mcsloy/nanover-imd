@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Narupa.Core.Math;
 using Narupa.Frontend.Input;
 using Narupa.Frontend.Manipulation;
+using NarupaIMD.State;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -22,18 +23,23 @@ namespace NarupaXR.Interaction
         [SerializeField]
         private NarupaXRPrototype narupaXR;
 #pragma warning restore 0649
+        [SerializeField]
+        private ManipulableBoxWidget manipulableBox;
+
+        [SerializeField]
+        private ManipulableParticlesWidget manipulableParticles;
 
         private List<Manipulator> manipulators = new List<Manipulator>();
         private List<Transform> visuals = new List<Transform>();
 
         private void OnEnable()
         {
-            SimulateRandomManipulator(narupaXR.ManipulableSimulationSpace.StartGrabManipulation);
-            SimulateRandomManipulator(narupaXR.ManipulableSimulationSpace.StartGrabManipulation);
+            SimulateRandomManipulator(manipulableBox.ManipulableSimulationSpace.StartGrabManipulation);
+            SimulateRandomManipulator(manipulableBox.ManipulableSimulationSpace.StartGrabManipulation);
 
-            SimulateRandomManipulator(narupaXR.ManipulableParticles.StartParticleGrab);
-            SimulateRandomManipulator(narupaXR.ManipulableParticles.StartParticleGrab);
-            SimulateRandomManipulator(narupaXR.ManipulableParticles.StartParticleGrab);
+            SimulateRandomManipulator(manipulableParticles.ManipulableParticles.StartParticleGrab);
+            SimulateRandomManipulator(manipulableParticles.ManipulableParticles.StartParticleGrab);
+            SimulateRandomManipulator(manipulableParticles.ManipulableParticles.StartParticleGrab);
         }
 
         private void OnDisable()

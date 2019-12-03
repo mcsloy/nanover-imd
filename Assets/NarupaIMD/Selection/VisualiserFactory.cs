@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -270,6 +271,12 @@ namespace NarupaIMD.Selection
         public static GameObject GetRenderSubgraph(string name)
         {
             return Resources.Load<GameObject>($"Subgraph/Render/{name}");
+        }
+        
+        
+        public static IReadOnlyList<GameObject> GetRenderSubgraphs()
+        {
+            return Resources.LoadAll<GameObject>($"Subgraph/Render");
         }
 
         /// <summary>
@@ -545,5 +552,6 @@ namespace NarupaIMD.Selection
         {
             return obj.GetVisualisationNodes<TType>().FirstOrDefault(vis => vis.Name == name);
         }
+
     }
 }

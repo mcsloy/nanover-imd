@@ -131,6 +131,7 @@
                 
                 float bias = v.vertex.y;
                 float4x4 mat = GetHermiteMatrix(bias);
+                
                 v.vertex.y = 0;
                 v.vertex = mul(mat, v.vertex);
                 o.normal = normalize(mul(mat, float4(v.normal.xyz, 0)));
@@ -138,6 +139,7 @@
                 float3 curveNormal = lerp(spline.startNormal, spline.endNormal, bias);
                 
                 v.vertex = mul(ObjectToWorld, v.vertex);
+                o.normal = mul(ObjectToWorld, o.normal);
                 
                 float t = smoothstep(0, 1, bias);
             

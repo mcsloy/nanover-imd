@@ -11,9 +11,6 @@ namespace Narupa.Frontend.UI
     public class RadialLayoutGroup : LayoutGroup
     {
         [SerializeField]
-        private GameObject radialPrefab;
-
-        [SerializeField]
         private float angularOffset = 0;
 
         private void ArrangeChildrenRadially()
@@ -26,7 +23,6 @@ namespace Narupa.Frontend.UI
                 var d = Vector2.Scale(new Vector2(Mathf.Sin(Mathf.Deg2Rad * angle),
                                                   Mathf.Cos(Mathf.Deg2Rad * angle)),
                                       GetComponent<RectTransform>().sizeDelta * 0.5f);
-                Debug.Log(GetComponent<RectTransform>().sizeDelta);
                 children[i].transform.localPosition = d;
             }
         }

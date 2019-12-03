@@ -26,15 +26,15 @@
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Interactive/in/VisualiserMenu",
-      "type": "boolean"
-    },
-    {
       "name": "/actions/Interactive/in/Play",
       "type": "boolean"
     },
     {
       "name": "/actions/Interactive/in/Pause",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Scene/in/SceneMenu",
       "type": "boolean"
     }
   ],
@@ -49,6 +49,10 @@
     },
     {
       "name": "/actions/Interactive",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/Scene",
       "usage": "single"
     }
   ],
@@ -106,13 +110,9 @@
     {
       "language_tag": "en_US",
       "/actions/UI/in/Click": "Click",
-      "/actions/Interactive/in/GrabSpace": "Grab Space",
-      "/actions/Interactive/in/Interact": "Interact",
-      "/actions/Interactive/in/VisualiserMenu": "Visualiser Menu",
       "/actions/UI/in/SwitchCursor": "Switch Cursor",
       "/actions/Controller/in/Pose": "Pose",
-      "/actions/Interactive/in/Play": "Play",
-      "/actions/Interactive/in/Pause": "Pause"
+      "/actions/Scene/in/SceneMenu": "Scene Menu"
     }
   ]
 }

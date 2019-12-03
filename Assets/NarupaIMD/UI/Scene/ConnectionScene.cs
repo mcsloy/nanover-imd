@@ -11,7 +11,7 @@ namespace NarupaIMD.UI.Scene
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupaXR;
+        private ConnectedApplicationState narupaXR;
         [SerializeField]
         private TMP_Text hostInputField;
         [SerializeField]

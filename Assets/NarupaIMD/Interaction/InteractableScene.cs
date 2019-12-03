@@ -6,6 +6,7 @@ using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Property;
 using NarupaIMD.Selection;
+using NarupaIMD.UI;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -24,7 +25,7 @@ namespace NarupaXR.Interaction
         private VisualisationScene visualisationScene;
 
         [SerializeField]
-        private NarupaXRPrototype prototype;
+        private ConnectedApplicationState prototype;
         
         public IntArrayProperty interactedParticles = new IntArrayProperty();
 

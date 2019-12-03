@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using Narupa.Frame;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Property;
-using NarupaXR;
+using NarupaIMD.UI;
 using NarupaXR.Interaction;
 using UnityEngine;
 
@@ -21,7 +20,7 @@ namespace NarupaIMD.Selection
         private readonly List<VisualisationLayer> layers = new List<VisualisationLayer>();
 
         [SerializeField]
-        private NarupaXRPrototype narupaIMD;
+        private ConnectedApplicationState narupaIMD;
 
         [SerializeField]
         private SynchronisedFrameSource frameSource;
@@ -64,16 +63,26 @@ namespace NarupaIMD.Selection
             return layer;
         }
 
-        private void Start()
+        private void OnEnable()
         {
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyUpdated;
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
+
             var baseLayer = AddLayer(BaseLayerName);
             rootSelection = ParticleSelection.CreateRootSelection();
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
             baseRenderableSelection.UpdateVisualiser();
+        }
+
+        private void OnDisable()
+        {
+            rootSelection = null;
+            var layers = this.layers.ToArray();
+            foreach (var layer in layers)
+                Destroy(layer.gameObject);
+            this.layers.Clear();
         }
 
         /// <summary>
@@ -104,7 +113,8 @@ namespace NarupaIMD.Selection
             if (key.StartsWith(ParticleSelection.SelectionIdPrefix))
             {
                 // TODO: Work out which layer the selection is on.
-                BaseLayer.UpdateOrCreateSelection(key, narupaIMD.Sessions.Multiplayer.SharedStateDictionary[key]);
+                BaseLayer.UpdateOrCreateSelection(
+                    key, narupaIMD.Sessions.Multiplayer.SharedStateDictionary[key]);
             }
         }
 

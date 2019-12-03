@@ -27,11 +27,11 @@ namespace Valve.VR
         
         private static SteamVR_Action_Boolean p_interactive_Interact;
         
-        private static SteamVR_Action_Boolean p_interactive_VisualiserMenu;
-        
         private static SteamVR_Action_Boolean p_interactive_Play;
         
         private static SteamVR_Action_Boolean p_interactive_Pause;
+        
+        private static SteamVR_Action_Boolean p_scene_SceneMenu;
         
         public static SteamVR_Action_Pose controller_Pose
         {
@@ -73,14 +73,6 @@ namespace Valve.VR
             }
         }
         
-        public static SteamVR_Action_Boolean interactive_VisualiserMenu
-        {
-            get
-            {
-                return SteamVR_Actions.p_interactive_VisualiserMenu.GetCopy<SteamVR_Action_Boolean>();
-            }
-        }
-        
         public static SteamVR_Action_Boolean interactive_Play
         {
             get
@@ -97,6 +89,14 @@ namespace Valve.VR
             }
         }
         
+        public static SteamVR_Action_Boolean scene_SceneMenu
+        {
+            get
+            {
+                return SteamVR_Actions.p_scene_SceneMenu.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
         private static void InitializeActionArrays()
         {
             Valve.VR.SteamVR_Input.actions = new Valve.VR.SteamVR_Action[] {
@@ -105,18 +105,18 @@ namespace Valve.VR
                     SteamVR_Actions.uI_SwitchCursor,
                     SteamVR_Actions.interactive_GrabSpace,
                     SteamVR_Actions.interactive_Interact,
-                    SteamVR_Actions.interactive_VisualiserMenu,
                     SteamVR_Actions.interactive_Play,
-                    SteamVR_Actions.interactive_Pause};
+                    SteamVR_Actions.interactive_Pause,
+                    SteamVR_Actions.scene_SceneMenu};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.controller_Pose,
                     SteamVR_Actions.uI_Click,
                     SteamVR_Actions.uI_SwitchCursor,
                     SteamVR_Actions.interactive_GrabSpace,
                     SteamVR_Actions.interactive_Interact,
-                    SteamVR_Actions.interactive_VisualiserMenu,
                     SteamVR_Actions.interactive_Play,
-                    SteamVR_Actions.interactive_Pause};
+                    SteamVR_Actions.interactive_Pause,
+                    SteamVR_Actions.scene_SceneMenu};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[0];
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[0];
             Valve.VR.SteamVR_Input.actionsPose = new Valve.VR.SteamVR_Action_Pose[] {
@@ -126,9 +126,9 @@ namespace Valve.VR
                     SteamVR_Actions.uI_SwitchCursor,
                     SteamVR_Actions.interactive_GrabSpace,
                     SteamVR_Actions.interactive_Interact,
-                    SteamVR_Actions.interactive_VisualiserMenu,
                     SteamVR_Actions.interactive_Play,
-                    SteamVR_Actions.interactive_Pause};
+                    SteamVR_Actions.interactive_Pause,
+                    SteamVR_Actions.scene_SceneMenu};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[0];
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[0];
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
@@ -138,9 +138,9 @@ namespace Valve.VR
                     SteamVR_Actions.uI_SwitchCursor,
                     SteamVR_Actions.interactive_GrabSpace,
                     SteamVR_Actions.interactive_Interact,
-                    SteamVR_Actions.interactive_VisualiserMenu,
                     SteamVR_Actions.interactive_Play,
-                    SteamVR_Actions.interactive_Pause};
+                    SteamVR_Actions.interactive_Pause,
+                    SteamVR_Actions.scene_SceneMenu};
         }
         
         private static void PreInitActions()
@@ -150,9 +150,9 @@ namespace Valve.VR
             SteamVR_Actions.p_uI_SwitchCursor = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/UI/in/SwitchCursor")));
             SteamVR_Actions.p_interactive_GrabSpace = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Interactive/in/GrabSpace")));
             SteamVR_Actions.p_interactive_Interact = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Interactive/in/Interact")));
-            SteamVR_Actions.p_interactive_VisualiserMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Interactive/in/VisualiserMenu")));
             SteamVR_Actions.p_interactive_Play = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Interactive/in/Play")));
             SteamVR_Actions.p_interactive_Pause = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Interactive/in/Pause")));
+            SteamVR_Actions.p_scene_SceneMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Scene/in/SceneMenu")));
         }
     }
 }

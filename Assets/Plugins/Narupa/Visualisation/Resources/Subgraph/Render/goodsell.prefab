@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5176173228503488438}
   - component: {fileID: 2187803143233138763}
   - component: {fileID: 7006988713503493199}
+  - component: {fileID: 5403066352138857276}
   - component: {fileID: 4453204307093244066}
   m_Layer: 0
   m_Name: goodsell
@@ -164,6 +165,24 @@ MonoBehaviour:
     input:
       value: 
       isValueProvided: 0
+--- !u!114 &5403066352138857276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900448658886156695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1d35f42ae2141f29ec4578f172eb678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: color
+    input:
+      value: {r: 1, g: 1, b: 1, a: 1}
+      isValueProvided: 1
 --- !u!114 &4453204307093244066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,9 +196,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputLinkCollection:
-  - sourceComponent: {fileID: 2187803143233138763}
-    sourceFieldName: input
-    destinationFieldName: particlePositions
   - sourceComponent: {fileID: 3421694816922696361}
     sourceFieldName: input
     destinationFieldName: particleColors
@@ -189,6 +205,12 @@ MonoBehaviour:
   - sourceComponent: {fileID: 7006988713503493199}
     sourceFieldName: input
     destinationFieldName: particleFilter
+  - sourceComponent: {fileID: 2187803143233138763}
+    sourceFieldName: input
+    destinationFieldName: particlePositions
+  - sourceComponent: {fileID: 5403066352138857276}
+    sourceFieldName: input
+    destinationFieldName: rendererColor
   node:
     particlePositions:
       value: []
@@ -204,7 +226,7 @@ MonoBehaviour:
       isValueProvided: 0
     rendererColor:
       value: {r: 1, g: 1, b: 1, a: 1}
-      isValueProvided: 1
+      isValueProvided: 0
     cameraEvent: 11
     shader: {fileID: 4800000, guid: 450c17dddf234aa5bd210a808a8c316b, type: 3}
     renderer:

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
+using Narupa.Frontend.XR;
 using Narupa.Session;
 using UnityEngine;
 
@@ -22,18 +23,18 @@ namespace NarupaXR.Interaction
         private readonly Transform sceneTransform;
         private readonly ManipulableTransform manipulable;
         private readonly MultiplayerSession multiplayer;
-        private readonly NarupaXRPrototype prototype;
+        private readonly PhysicallyCalibratedSpace calibratedSpace;
 
         private readonly HashSet<IActiveManipulation> manipulations
             = new HashSet<IActiveManipulation>();
 
         public ManipulableScenePose(Transform sceneTransform,
                                     MultiplayerSession multiplayer,
-                                    NarupaXRPrototype prototype)
+                                    PhysicallyCalibratedSpace space)
         {
             this.sceneTransform = sceneTransform;
             this.multiplayer = multiplayer;
-            this.prototype = prototype;
+            this.calibratedSpace = space;
             manipulable = new ManipulableTransform(sceneTransform);
             this.multiplayer.SimulationPose.LockRejected += SimulationPoseLockRejected;
             this.multiplayer.SimulationPose.SharedValueChanged +=
@@ -68,7 +69,7 @@ namespace NarupaXR.Interaction
         /// </summary>
         private void CopyMultiplayerPoseToLocal()
         {
-            var worldPose = prototype.CalibratedSpace
+            var worldPose = calibratedSpace
                                      .TransformPoseCalibratedToWorld(multiplayer.SimulationPose
                                                                                 .Value);
             worldPose.CopyToTransform(sceneTransform);
@@ -114,7 +115,7 @@ namespace NarupaXR.Interaction
                     var worldPose = new Transformation(sceneTransform.localPosition,
                                                        sceneTransform.localRotation,
                                                        sceneTransform.localScale);
-                    var calibPose = prototype.CalibratedSpace
+                    var calibPose = calibratedSpace
                                              .TransformPoseWorldToCalibrated(worldPose);
                     multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
                 }

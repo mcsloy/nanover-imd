@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using NarupaIMD.UI;
 using UnityEngine;
 
 using InputField = TMPro.TMP_InputField;
@@ -14,7 +15,7 @@ namespace NarupaXR.UI
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupaXR;
+        private ConnectedApplicationState narupaXR;
         [SerializeField]
         private InputField hostInputField;
         [SerializeField]

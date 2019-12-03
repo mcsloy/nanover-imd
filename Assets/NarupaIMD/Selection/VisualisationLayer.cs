@@ -52,6 +52,7 @@ namespace NarupaIMD.Selection
             visualisationSelection.SelectionUpdated +=
                 () => OnSelectionUpdated(visualisationSelection);
             selections.Add(visualisationSelection);
+            OnSelectionUpdated(visualisationSelection);
             return visualisationSelection;
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Essd;
 using Narupa.Core.Async;
+using NarupaIMD.UI;
 using NarupaXR;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace NarupaIMD
     public class ServiceDiscovery : MonoBehaviour
     {
         [SerializeField]
-        private NarupaXRPrototype prototype;
+        private ConnectedApplicationState prototype;
 
         public IEnumerable<ServiceHub> Services => services;
 
@@ -25,14 +26,21 @@ namespace NarupaIMD
             client.ServiceFound += ClientOnServiceFound;
         }
 
-        private readonly HashSet<ServiceHub> services = new HashSet<ServiceHub>();
+        private readonly List<ServiceHub> services = new List<ServiceHub>();
 
         public event Action<ServiceHub> ServiceDiscovered;
 
         private void ClientOnServiceFound(object sender, ServiceHub e)
         {
-            if (!services.Add(e))
-                return;
+            foreach (var service in services)
+            {
+                if (service.Id == e.Id)
+                {
+                    if(service.Address == "127.0.0.1")
+                        e.Properties["address"] = "127.0.0.1";
+                    return;
+                }
+            }
 
             ServiceDiscovered?.Invoke(e);
         }

@@ -96,6 +96,28 @@
          "skeleton" : [],
          "sources" : []
       },
+      "/actions/scene" : {
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/scene/in/scenemenu"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/scene/in/scenemenu"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trackpad"
+            }
+         ]
+      },
       "/actions/ui" : {
          "sources" : [
             {

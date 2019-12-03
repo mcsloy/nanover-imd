@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Essd;
 using Narupa.Frontend.UI;
 using NarupaIMD;
@@ -18,6 +19,11 @@ public class ServiceList : MonoBehaviour
         services.ServiceDiscovered += ServicesOnServiceDiscovered;
         foreach (var service in services.Services)
             ServicesOnServiceDiscovered(service);
+    }
+
+    private void OnDisable()
+    {
+        services.ServiceDiscovered -= ServicesOnServiceDiscovered;
     }
 
     private void ServicesOnServiceDiscovered(ServiceHub obj)

@@ -33,14 +33,6 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean VisualiserMenu
-        {
-            get
-            {
-                return SteamVR_Actions.interactive_VisualiserMenu;
-            }
-        }
-        
         public virtual SteamVR_Action_Boolean Play
         {
             get
