@@ -1,7 +1,6 @@
 using System.Linq;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
-using Narupa.Frontend.XR;
 using Narupa.Session;
 using NarupaIMD.State;
 using NarupaIMD.UI;
@@ -13,7 +12,7 @@ namespace NarupaIMD.Widget
     {
         [SerializeField]
         private CalibratedSpaceWidget calibratedSpace;
-        
+
         [SerializeField]
         private ConnectedApplicationState narupa;
 
@@ -34,8 +33,26 @@ namespace NarupaIMD.Widget
 
         private void Setup()
         {
-            headAvatarPool = new IndexedPool<GameObject>(CreateHeadAvatar);
-            controllerAvatarPool = new IndexedPool<GameObject>(CreateControllerAvatar);
+            if (headAvatarPool == null)
+                headAvatarPool = new IndexedPool<GameObject>(CreateHeadAvatar, ActivateObject, DeactivateObject);
+            if (controllerAvatarPool == null)
+                controllerAvatarPool = new IndexedPool<GameObject>(CreateControllerAvatar, ActivateObject, DeactivateObject);
+        }
+
+        private static void DeactivateObject(GameObject obj)
+        {
+            obj.SetActive(false);
+        }
+
+        private static void ActivateObject(GameObject obj)
+        {
+            obj.SetActive(true);
+        }
+
+        private void OnDisable()
+        {
+            headAvatarPool.SetActiveInstanceCount(0);
+            controllerAvatarPool.SetActiveInstanceCount(0);
         }
 
         private GameObject CreateControllerAvatar()
@@ -52,7 +69,6 @@ namespace NarupaIMD.Widget
         {
             UpdateRendering();
         }
-
 
         private void UpdateRendering()
         {

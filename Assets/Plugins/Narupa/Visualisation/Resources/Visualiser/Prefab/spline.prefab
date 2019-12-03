@@ -121,7 +121,7 @@ MonoBehaviour:
   prefabs:
   - {fileID: 555677192221784455, guid: 734dba639d609cc47b6bbddc73e83652, type: 3}
   - {fileID: 4166464006404062395, guid: 16913110e008ff24bb92bec7657132e9, type: 3}
-  - {fileID: 8528582866378757822, guid: 119ca4398534dda4db7ed5f9fe16476f, type: 3}
+  - {fileID: 8528582866378757822, guid: d2f5fbc8cb179854db29178992a5202a, type: 3}
   - {fileID: 8528582866378757822, guid: 67fdc0e9b66b4be4099c8ae366f5ae05, type: 3}
   - {fileID: 6530162391361160966, guid: ef990a78b46b6db4ab70023c3dc1dd2e, type: 3}
   frameAdaptor: {fileID: 2328836869028133637}

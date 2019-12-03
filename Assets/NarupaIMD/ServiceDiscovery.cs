@@ -34,13 +34,14 @@ namespace NarupaIMD
         {
             foreach (var service in services)
             {
-                if (service.Id == e.Id)
+                if (e.Id == service.Id)
                 {
-                    if(service.Address == "127.0.0.1")
-                        e.Properties["address"] = "127.0.0.1";
+                    if(e.Address == "127.0.0.1")
+                        service.Properties["address"] = "127.0.0.1";
                     return;
                 }
             }
+            services.Add(e);
 
             ServiceDiscovered?.Invoke(e);
         }
