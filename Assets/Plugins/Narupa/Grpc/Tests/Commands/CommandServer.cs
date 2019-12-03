@@ -16,11 +16,9 @@ namespace Narupa.Grpc.Tests.Commands
             return new CommandReply();
         }
 
-        public override async Task GetCommands(GetCommandsRequest request,
-                                         IServerStreamWriter<CommandMessage> responseStream,
-                                         ServerCallContext context)
+        public override async Task<GetCommandsReply> GetCommands(GetCommandsRequest request, ServerCallContext context)
         {
-            return;
+            return new GetCommandsReply();
         }
     }
 }
