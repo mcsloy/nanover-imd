@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Linq;
-using Narupa.Core;
 using Narupa.Core.Math;
 using Narupa.Frame;
 using Narupa.Utility;
@@ -19,8 +18,36 @@ namespace NarupaIMD.Selection
     /// </summary>
     public class VisualisationSelection : MonoBehaviour
     {
+        /// <summary>
+        /// Callback for when the underlying selection has changed.
+        /// </summary>
+        public event Action SelectionUpdated;
+
+        /// <summary>
+        /// The indices of particles that should be rendered in this selection.
+        /// </summary>
+        public IntArrayProperty FilteredIndices { get; } = new IntArrayProperty();
+
+        private int[] filteredIndices = new int[0];
+
+        /// <summary>
+        /// The indices of particles not rendered by this or any higher selections.
+        /// </summary>
+        /// /// <remark> 
+        /// Unfiltered indices in this selection form the set of indices to be filtered
+        /// by the selections beneath it in the stack. By default, any indices left at the bottom of the stack
+        /// will be rendered by the base selection.
+        /// </remark>
+        public IntArrayProperty UnfilteredIndices { get; } = new IntArrayProperty();
+
+        private int[] unfilteredIndices = new int[0];
+
+        private ParticleSelection selection;
+
         [SerializeField]
         private VisualisationLayer layer;
+
+        private GameObject currentVisualiser;
 
         private void Awake()
         {
@@ -43,70 +70,38 @@ namespace NarupaIMD.Selection
             }
         }
 
-        /// <summary>
-        /// Callback for when the underlying selection has changed.
-        /// </summary>
-        public event Action SelectionUpdated;
-
         private void OnSelectionUpdated()
         {
             SelectionUpdated?.Invoke();
             UpdateVisualiser();
         }
 
-        private ParticleSelection selection;
-
         /// <summary>
-        /// The indices of particles that should be rendered in this selection.
-        /// </summary>
-        public IntArrayProperty FilteredIndices { get; } = new IntArrayProperty();
-
-        /// <summary>
-        /// The indices of particles not rendered by this or any higher selections.
-        /// </summary>
-        public IntArrayProperty UnfilteredIndices { get; } = new IntArrayProperty();
-
-        private int[] filteredIndices = new int[0];
-
-        private int[] unfilteredIndices = new int[0];
-
-        /// <summary>
-        /// Given potentially a higher selection, which will have drawn some particles,
-        /// work out which particles are left and should be drawn by this visualiser.
+        /// Given a selection that is at a higher level in the layer, which will have drawn
+        /// some particles, work out which particles that have not been drawn should be
+        /// drawn by this selection and which should be left for another selection further
+        /// down the stack.
         /// </summary>
         public void CalculateFilteredIndices(VisualisationSelection upperSelection, int maxCount)
         {
+            var indices = upperSelection?.unfilteredIndices;
+
             if (Selection.Selection != null)
             {
-                var possibleIndices = upperSelection?.unfilteredIndices?.Length ?? maxCount;
-                var maxSize = Mathf.Min(Selection.Selection.Count, possibleIndices);
-                Array.Resize(ref filteredIndices, maxSize);
-                Array.Resize(ref unfilteredIndices, possibleIndices);
-
-                var filteredIndex = 0;
-                var unfilteredIndex = 0;
-
-                var selectionIndices = Selection.Selection;
-
-                foreach (var unhandledIndex in upperSelection?.unfilteredIndices ??
-                                               Enumerable.Range(0, maxCount))
-                    if (SearchAlgorithms.BinarySearch(unhandledIndex, selectionIndices))
-                        filteredIndices[filteredIndex++] = unhandledIndex;
-                    else
-                        unfilteredIndices[unfilteredIndex++] = unhandledIndex;
-
-                Array.Resize(ref filteredIndices, filteredIndex);
-                Array.Resize(ref unfilteredIndices, unfilteredIndex);
+                // Calculate the subset of indices which belong in this selection
+                FilterIndices(indices ?? Enumerable.Range(0, maxCount).ToArray(),
+                              Selection.Selection,
+                              ref filteredIndices,
+                              ref unfilteredIndices);
 
                 FilteredIndices.Value = filteredIndices;
                 UnfilteredIndices.Value = unfilteredIndices;
             }
             else // This selection selects everything
             {
-                var upperIndices = upperSelection?.unfilteredIndices;
-                // The upper selection selected everything
-                if (upperIndices == null)
+                if (indices == null)
                 {
+                    // The upper selection selected everything
                     filteredIndices = null;
                     FilteredIndices.UndefineValue();
                 }
@@ -121,7 +116,41 @@ namespace NarupaIMD.Selection
             }
         }
 
-        private GameObject currentVisualiser;
+        /// <summary>
+        /// Given a set of indices and a filter, split the indices into the set which are
+        /// in filter and those which are not.
+        /// </summary>
+        /// <param name="indices">A set of indices to filter</param>
+        /// <param name="filter">A set of indices to search for in indices</param>
+        /// <param name="filteredIndices">
+        /// An array to fill with indices present in both inputs.
+        /// </param>
+        /// <param name="unfilteredIndices">
+        /// An array to fill with indices present in indices, but not filter.
+        /// </param>
+        private static void FilterIndices(IReadOnlyCollection<int> indices,
+                                          IReadOnlyList<int> filter,
+                                          ref int[] filteredIndices,
+                                          ref int[] unfilteredIndices)
+        {
+            var totalIndicesCount = indices.Count;
+            var maxSize = Mathf.Min(filter.Count, totalIndicesCount);
+            Array.Resize(ref filteredIndices, maxSize);
+            Array.Resize(ref unfilteredIndices, totalIndicesCount);
+
+            var filteredIndex = 0;
+            var unfilteredIndex = 0;
+
+            // For each index, check if it is in the filter and add it to the appropriate array
+            foreach (var unhandledIndex in indices)
+                if (SearchAlgorithms.BinarySearch(unhandledIndex, filter))
+                    filteredIndices[filteredIndex++] = unhandledIndex;
+                else
+                    unfilteredIndices[unfilteredIndex++] = unhandledIndex;
+
+            Array.Resize(ref filteredIndices, filteredIndex);
+            Array.Resize(ref unfilteredIndices, unfilteredIndex);
+        }
 
         /// <summary>
         /// Update the visualiser based upon the data stored in the selection.
@@ -167,6 +196,13 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
+        /// Keys in the visualisation stack that represent a particle filter
+        /// </summary>
+        public static string[] KeyParticleFilters = {
+            "filter", "particle.filter"
+        };
+
+        /// <summary>
         /// Set the visualiser of this selection
         /// </summary>
         /// <param name="isPrefab">Is the argument a prefab, and hence needs instantiating?</param>
@@ -196,8 +232,7 @@ namespace NarupaIMD.Selection
 
             // Setup any filters so the visualiser only draws this selection.
             var filter = currentVisualiser.GetVisualisationNodes<IntArrayInputNode>()
-                .FirstOrDefault(p => p.Name == "filter" ||
-                                     p.Name == "particle.filter");
+                                          .FirstOrDefault(p => KeyParticleFilters.Contains(p.Name));
             if (filter != null)
                 filter.Input.LinkedProperty = FilteredIndices;
         }

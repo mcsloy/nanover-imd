@@ -28,7 +28,7 @@ namespace NarupaIMD.Selection
         private VisualisationLayer layerPrefab;
 
         /// <summary>
-        /// The number of particles in the current frame, or 0 if there are none.
+        /// The number of particles in the current frame, or 0 if no frame is present.
         /// </summary>
         public int ParticleCount => frameSource.CurrentFrame?.ParticleCount ?? 0;
 

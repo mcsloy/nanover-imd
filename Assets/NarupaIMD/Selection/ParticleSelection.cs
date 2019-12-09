@@ -80,7 +80,7 @@ namespace NarupaIMD.Selection
         /// </summary>
         public void UpdateFromObject(Dictionary<string, object> obj)
         {
-            Name = obj.GetValueOrDefault(KeyName, "");
+            Name = obj.GetValueOrDefault(KeyName, "Unnamed Selection");
             properties = obj.GetValueOrDefault(KeyProperties, new Dictionary<string, object>());
             var selectedDict = obj.GetValueOrDefault(KeySelected, new Dictionary<string, object>());
             if (selectedDict != null)
@@ -90,7 +90,7 @@ namespace NarupaIMD.Selection
 
                 if (ids == null)
                 {
-                    selection = null;
+                    selection = null; // Selects everything
                 }
                 else
                 {
@@ -103,7 +103,7 @@ namespace NarupaIMD.Selection
             }
             else
             {
-                selection = null;
+                selection = null; // Selects everything
             }
 
             SelectionUpdated?.Invoke();
@@ -112,12 +112,15 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Create a selection representing the shared root selection.
         /// </summary>
+        /// <remarks> 
+        /// The root selection, containing all atoms, is denoted with a <c>null</c> selection.
+        /// </remarks>
         public static ParticleSelection CreateRootSelection()
         {
             return new ParticleSelection(RootSelectionId)
             {
                 Name = RootSelectionName,
-                selection = null
+                selection = null // Selects everything
             };
         }
 

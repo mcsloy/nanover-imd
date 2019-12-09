@@ -10,6 +10,14 @@ namespace NarupaIMD.Selection
     /// <summary>
     /// A group of <see cref="VisualisationSelection" />s which are mutually exclusive.
     /// </summary>
+    /// <remarks>
+    /// Selections within a visualisation layer display an atom precisely once,
+    /// with the selection settings overwriting one another in the order that they are
+    /// established.
+    /// For example, a <see cref="VisualisationLayer" /> with selections [1,2,3] and
+    /// [3,4,5] will display atoms [1,2] in the first (lower) selection and atoms
+    /// [3,4,5] in the second (upper) selection.
+    /// </remarks>
     public class VisualisationLayer : MonoBehaviour
     {
         [SerializeField]
@@ -86,6 +94,7 @@ namespace NarupaIMD.Selection
                     {
                         dict.Remove(ParticleSelection.KeySelected);
                     }
+
                     selection.Selection.UpdateFromObject(dict);
                     selection.gameObject.name = selection.Selection.Name;
                     return;
@@ -112,7 +121,8 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
-        /// Find the selection on this layer which contains the particle of the given index.
+        /// Find the selection on this layer which contains the particle of the given
+        /// index.
         /// </summary>
         public VisualisationSelection GetSelectionForParticle(int particleIndex)
         {

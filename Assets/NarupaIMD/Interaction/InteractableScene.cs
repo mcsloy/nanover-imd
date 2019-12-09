@@ -28,12 +28,16 @@ namespace NarupaXR.Interaction
         public ActiveParticleGrab GetParticleGrab(Transformation grabberPose)
         {
             var particleIndex = GetClosestParticleToWorldPosition(grabberPose.Position);
-            var selection = visualisationScene.GetSelectionForParticle(particleIndex);
+
+            if (!particleIndex.HasValue)
+                return null;
+            
+            var selection = visualisationScene.GetSelectionForParticle(particleIndex.Value);
 
             if (selection.Selection.InteractionMethod == ParticleSelection.InteractionMethodNone)
                 return null;
 
-            var indices = GetSelectedIndices(selection, particleIndex);
+            var indices = GetIndicesInSelection(selection, particleIndex.Value);
 
             var grab = new ActiveParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
@@ -63,14 +67,14 @@ namespace NarupaXR.Interaction
         /// <summary>
         /// Get the closest particle to a given point in world space.
         /// </summary>
-        private int GetClosestParticleToWorldPosition(Vector3 worldPosition)
+        private int? GetClosestParticleToWorldPosition(Vector3 worldPosition, float cutoff = Mathf.Infinity)
         {
             var position = transform.InverseTransformPoint(worldPosition);
 
             var frame = frameSource.CurrentFrame;
 
-            var bestSqrDistance = Mathf.Infinity;
-            var bestParticleIndex = 0;
+            var bestSqrDistance = cutoff * cutoff;
+            int? bestParticleIndex = null;
 
             for (var i = 0; i < frame.ParticlePositions.Length; ++i)
             {
