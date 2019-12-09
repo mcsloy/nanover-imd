@@ -42,7 +42,8 @@ namespace NarupaXR.Interaction
         }
         
         /// <summary>
-        /// Get the particle indices to select, given the nearest particle index.
+        /// Get the particle indices to select, given the nearest particle index,
+        /// accounting for whether the selection is selectable by group or individually.
         /// </summary>
         private IReadOnlyList<int> GetSelectedIndices(VisualisationSelection selection,
                                                       int particleIndex)
