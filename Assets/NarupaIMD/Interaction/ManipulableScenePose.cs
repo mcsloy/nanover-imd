@@ -36,7 +36,7 @@ namespace NarupaXR.Interaction
             this.prototype = prototype;
             manipulable = new ManipulableTransform(sceneTransform);
             this.multiplayer.SimulationPose.LockRejected += SimulationPoseLockRejected;
-            this.multiplayer.SimulationPose.SharedValueChanged +=
+            this.multiplayer.SimulationPose.RemoteValueChanged +=
                 MultiplayerSimulationPoseChanged;
 
             Update().AwaitInBackground();
