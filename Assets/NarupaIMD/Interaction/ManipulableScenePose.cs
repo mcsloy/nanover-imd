@@ -27,6 +27,8 @@ namespace NarupaXR.Interaction
         private readonly HashSet<IActiveManipulation> manipulations
             = new HashSet<IActiveManipulation>();
 
+        public bool CurrentlyEditingScene => manipulations.Any();
+
         public ManipulableScenePose(Transform sceneTransform,
                                     MultiplayerSession multiplayer,
                                     NarupaXRPrototype prototype)
@@ -48,7 +50,7 @@ namespace NarupaXR.Interaction
         private void MultiplayerSimulationPoseChanged()
         {
             // If manipulations are active, then I'm controlling my box position.
-            if (!manipulations.Any())
+            if (!CurrentlyEditingScene)
             {
                 CopyMultiplayerPoseToLocal();
             }
@@ -57,6 +59,9 @@ namespace NarupaXR.Interaction
         /// <summary>
         /// Handler for if the simulation pose lock is rejected.
         /// </summary>
+        /// <remarks>
+        /// If rejected, the manipulation is ended, and the simulation pose is set to the latest pose received, ignoring any user input. 
+        /// </remarks>
         private void SimulationPoseLockRejected()
         {
             EndAllManipulations();
@@ -98,7 +103,7 @@ namespace NarupaXR.Interaction
         {
             manipulations.Remove(manipulation);
             // If manipulations are over, then release the lock.
-            if (!manipulations.Any())
+            if (!CurrentlyEditingScene)
             {
                 multiplayer.SimulationPose.ReleaseLock();
                 CopyMultiplayerPoseToLocal();
@@ -109,7 +114,7 @@ namespace NarupaXR.Interaction
         {
             while (true)
             {
-                if (manipulations.Any())
+                if (CurrentlyEditingScene)
                 {
                     var worldPose = new Transformation(sceneTransform.localPosition,
                                                        sceneTransform.localRotation,
