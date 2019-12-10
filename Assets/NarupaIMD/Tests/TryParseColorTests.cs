@@ -1,4 +1,6 @@
-﻿using NarupaIMD.Selection;
+﻿using System.Collections;
+using System.Collections.Generic;
+using NarupaIMD.Selection;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -6,28 +8,20 @@ namespace NarupaIMD.Tests
 {
     internal class TryParseColorTests
     {
-        [Test]
-        public void TestList3()
+        private static IEnumerable<(object value, Color color)> GetParameters()
         {
-            Assert.IsTrue(VisualiserFactory.TryParseColor(new object[] { 1.0, 0.0, 0.0 },
+            yield return (new object[] { 1.0, 0.0, 0.0 }, Color.red);
+            yield return (new object[] { 0.0, 1.0, 0.0 }, Color.green);
+            yield return (new object[] { 0.0, 0.0, 1.0 }, Color.blue);
+            yield return (new object[] { 1.0, 1.0, 1.0 }, Color.white);
+        }
+        
+        [Test]
+        public void TestList3([ValueSource(nameof(GetParameters))] (object value, Color color) parameter)
+        {
+            Assert.IsTrue(VisualiserFactory.TryParseColor(parameter.value,
                                                           out var color));
-
-            Assert.AreEqual(Color.red, color);
-
-            Assert.IsTrue(VisualiserFactory.TryParseColor(new object[] { 0.0, 1.0, 0.0 },
-                                                          out color));
-
-            Assert.AreEqual(Color.green, color);
-
-            Assert.IsTrue(VisualiserFactory.TryParseColor(new object[] { 0.0, 0.0, 1.0 },
-                                                          out color));
-
-            Assert.AreEqual(Color.blue, color);
-
-            Assert.IsTrue(VisualiserFactory.TryParseColor(new object[] { 1.0, 1.0, 1.0 },
-                                                          out color));
-
-            Assert.AreEqual(Color.white, color);
+            Assert.AreEqual(parameter.color,  color);
         }
 
         [Test]

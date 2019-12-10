@@ -70,17 +70,17 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
-        /// Parse an <see cref="IMapping{TFrom,TTo}" /> from a C# object.
+        /// Parse an <see cref="IConverter{TFrom,TTo}" /> from a C# object.
         /// </summary>
         private static bool TryParseElementColorMapping(object value,
-                                                        out IMapping<Element, Color> mapping)
+                                                        out IConverter<Element, Color> mapping)
         {
             mapping = null;
 
             switch (value)
             {
                 // Object is already a mapping of elements to colors
-                case IMapping<Element, Color> actualValue:
+                case IConverter<Element, Color> actualValue:
                     mapping = actualValue;
                     return true;
 
@@ -427,7 +427,7 @@ namespace NarupaIMD.Selection
                     );
 
                 case ElementColorMappingInputNode _:
-                    return FindParameter<IMapping<Element, Color>, ElementColorMappingInputNode,
+                    return FindParameter<IConverter<Element, Color>, ElementColorMappingInputNode,
                         ElementColorMappingInput>(
                         input.Name,
                         parameters,
