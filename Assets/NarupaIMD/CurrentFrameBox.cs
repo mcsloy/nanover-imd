@@ -4,13 +4,23 @@ using Narupa.Visualisation;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace NarupaXR
+namespace NarupaIMD
 {
+    /// <summary>
+    /// Updates a <see cref="BoxVisualiser" /> with the simulation box of a
+    /// <see cref="Frame" />.
+    /// </summary>
     public class CurrentFrameBox : MonoBehaviour
     {
+        /// <summary>
+        /// Source of the <see cref="Frame" />.
+        /// </summary>
         [SerializeField]
         private SynchronisedFrameSource frameSource;
 
+        /// <summary>
+        /// The <see cref="BoxVisualiser" /> that will render the box.
+        /// </summary>
         [SerializeField]
         private BoxVisualiser boxVisualiser;
 
@@ -18,10 +28,15 @@ namespace NarupaXR
         {
             Assert.IsNotNull(boxVisualiser);
             Assert.IsNotNull(frameSource);
+
             boxVisualiser.enabled = false;
+
             frameSource.FrameChanged += OnFrameChanged;
         }
 
+        /// <summary>
+        /// Callback for when the frame is updated.
+        /// </summary>
         private void OnFrameChanged(IFrame frame, FrameChanges changes)
         {
             if (changes.GetIsChanged(StandardFrameProperties.BoxTransformation.Key))
