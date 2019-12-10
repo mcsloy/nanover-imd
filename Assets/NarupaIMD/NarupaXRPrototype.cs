@@ -125,7 +125,9 @@ namespace NarupaXR
 
         private void SetupVisualisation()
         {
-            FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
+            FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
+            if(FrameSynchronizer == null)
+                FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
             FrameSynchronizer.FrameSource = Sessions.Trajectory;
             visualiser.GetComponent<IFrameConsumer>().FrameSource = FrameSynchronizer;
         }
