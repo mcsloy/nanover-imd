@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Core.Math;
 using Narupa.Frame;
 using Narupa.Utility;
@@ -8,6 +9,7 @@ using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Node.Renderer;
 using Narupa.Visualisation.Property;
+using Plugins.Narupa.Core;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -86,16 +88,44 @@ namespace NarupaIMD.Selection
         {
             var indices = upperSelection?.unfilteredIndices;
 
-            if (Selection.Selection != null)
-            {
-                // Calculate the subset of indices which belong in this selection
-                FilterIndices(indices ?? Enumerable.Range(0, maxCount).ToArray(),
-                              Selection.Selection,
-                              ref filteredIndices,
-                              ref unfilteredIndices);
+            FilterIndices(indices,
+                          Selection.Selection,
+                          maxCount,
+                          ref filteredIndices,
+                          ref unfilteredIndices);
 
+            if (filteredIndices == null)
+                FilteredIndices.UndefineValue();
+            else
                 FilteredIndices.Value = filteredIndices;
-                UnfilteredIndices.Value = unfilteredIndices;
+            UnfilteredIndices.Value = unfilteredIndices;
+        }
+
+        public static void FilterIndices([CanBeNull] IReadOnlyCollection<int> indices,
+                                         [CanBeNull] IReadOnlyList<int> filter,
+                                         int maxCount,
+                                         ref int[] filteredIndices,
+                                         ref int[] unfilteredIndices)
+        {
+            if (filter != null)
+            {
+                if (filter.Count == 0) // Selection is empty
+                {
+                    filteredIndices = new int[0];
+                    
+                    if (indices == null) // Empty selection, indices was all
+                        unfilteredIndices = null;
+                    else // Empty selection, indices is a subset
+                        unfilteredIndices = indices.ToArray();
+                }
+                else
+                {
+                    // Calculate the subset of indices which belong in this selection
+                    FilterIndices(indices ?? Enumerable.Range(0, maxCount).ToArray(),
+                                  filter,
+                                  ref filteredIndices,
+                                  ref unfilteredIndices);
+                }
             }
             else // This selection selects everything
             {
@@ -103,16 +133,14 @@ namespace NarupaIMD.Selection
                 {
                     // The upper selection selected everything
                     filteredIndices = null;
-                    FilteredIndices.UndefineValue();
                 }
                 else
                 {
                     // The upper selection has left some indices
-                    FilteredIndices.LinkedProperty = upperSelection.UnfilteredIndices;
+                    filteredIndices = indices.ToArray();
                 }
 
                 unfilteredIndices = new int[0];
-                UnfilteredIndices.Value = unfilteredIndices;
             }
         }
 
@@ -128,8 +156,8 @@ namespace NarupaIMD.Selection
         /// <param name="unfilteredIndices">
         /// An array to fill with indices present in indices, but not filter.
         /// </param>
-        private static void FilterIndices(IReadOnlyCollection<int> indices,
-                                          IReadOnlyList<int> filter,
+        private static void FilterIndices([NotNull] IReadOnlyCollection<int> indices,
+                                          [NotNull] IReadOnlyList<int> filter,
                                           ref int[] filteredIndices,
                                           ref int[] unfilteredIndices)
         {
@@ -198,7 +226,8 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Keys in the visualisation stack that represent a particle filter
         /// </summary>
-        public static string[] KeyParticleFilters = {
+        public static string[] KeyParticleFilters =
+        {
             "filter", "particle.filter"
         };
 
@@ -222,9 +251,7 @@ namespace NarupaIMD.Selection
             {
                 currentVisualiser = newVisualiser;
                 currentVisualiser.transform.parent = transform;
-                currentVisualiser.transform.localPosition = Vector3.zero;
-                currentVisualiser.transform.localRotation = Quaternion.identity;
-                currentVisualiser.transform.localScale = Vector3.one;
+                currentVisualiser.transform.SetToLocalIdentity();
             }
 
             // Set visualiser's frame input
@@ -232,7 +259,8 @@ namespace NarupaIMD.Selection
 
             // Setup any filters so the visualiser only draws this selection.
             var filter = currentVisualiser.GetVisualisationNodes<IntArrayInputNode>()
-                                          .FirstOrDefault(p => KeyParticleFilters.Contains(p.Name));
+                                          .FirstOrDefault(
+                                              p => KeyParticleFilters.Contains(p.Name));
             if (filter != null)
                 filter.Input.LinkedProperty = FilteredIndices;
         }
