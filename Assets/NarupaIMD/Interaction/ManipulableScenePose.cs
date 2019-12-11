@@ -69,7 +69,7 @@ namespace NarupaXR.Interaction
                     EndAllManipulations();
 
                     var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose);
-                    //worldPose.CopyToTransformRelativeToParent(sceneTransform);
+                    worldPose.CopyToTransformRelativeToParent(sceneTransform);
                 }
                 else if (manipulations.Count > 0)
                 {
