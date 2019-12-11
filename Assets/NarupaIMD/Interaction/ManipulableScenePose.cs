@@ -45,7 +45,7 @@ namespace NarupaXR.Interaction
         /// Attempt to start a grab manipulation on this box, with a 
         /// manipulator at the current pose.
         /// </summary>
-        public IActiveManipulation StartGrabManipulation(Transformation manipulatorPose)
+        public IActiveManipulation StartGrabManipulation(UnitScaleTransformation manipulatorPose)
         {
             if (!HaveSceneLock)
                 return null;
@@ -69,13 +69,11 @@ namespace NarupaXR.Interaction
                     EndAllManipulations();
 
                     var worldPose = prototype.CalibratedSpace.TransformPoseCalibratedToWorld(multiplayer.SimulationPose);
-                    worldPose.CopyToTransform(sceneTransform);
+                    //worldPose.CopyToTransformRelativeToParent(sceneTransform);
                 }
                 else if (manipulations.Count > 0)
                 {
-                    var worldPose = new Transformation(sceneTransform.localPosition,
-                                                       sceneTransform.localRotation,
-                                                       sceneTransform.localScale);
+                    var worldPose = Transformation.FromTransformRelativeToParent(sceneTransform);
                     var calibPose = prototype.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
                     multiplayer.SetSimulationPose(calibPose);
                 }

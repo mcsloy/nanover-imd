@@ -75,7 +75,7 @@ namespace NarupaXR.Interaction
             manipulator.BindButtonToManipulation(button, AttemptGrabSpace);
         }
 
-        private IActiveManipulation AttemptGrabSpace(Transformation grabberPose)
+        private IActiveManipulation AttemptGrabSpace(UnitScaleTransformation grabberPose)
         {
             // there is presently only one grabbable space
             return narupaXR.ManipulableSimulationSpace.StartGrabManipulation(grabberPose);

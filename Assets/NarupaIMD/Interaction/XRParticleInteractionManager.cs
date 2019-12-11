@@ -74,7 +74,7 @@ namespace NarupaXR.Interaction
             manipulator.BindButtonToManipulation(button, AttemptGrabObject);
         }
 
-        private IActiveManipulation AttemptGrabObject(Transformation grabberPose)
+        private IActiveManipulation AttemptGrabObject(UnitScaleTransformation grabberPose)
         {
             // there is presently only one grabbable set of objects
             return narupaXR.ManipulableParticles.StartParticleGrab(grabberPose);
