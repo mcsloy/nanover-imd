@@ -1,3 +1,13 @@
+# Narupa iMD 
+
+Interactive Molecular Dynamics (iMD) in VR, an application built with the Narupa 
+framework.
+
+This repository is maintained by the Intangible Realities Laboratory, University Of Bristol, 
+and distributed under [GPLv3](LICENSE).
+See [the list of contributors](CONTRIBUTORS.md) for the individual authors of the project.
+
+
 # Installation
 
 *  Clone this repository to a folder on your computer.
@@ -9,6 +19,18 @@
 
 Once open in Unity, the main Unity scene can be found in `NarupaIMD/NarupaXR Scene`.
 
-# Credits
+## Citation, Credits and External Libraries
 
-The CIF file importer uses the *Chemical Component Dictionary* provided at http://www.wwpdb.org/data/ccd.
+If you find this project useful, please cite the following paper: 
+
+M. O’Connor, S.J. Bennie, H.M. Deeks, A. Jamieson-Binnie, A.J. Jones, R.J. Shannon, R. Walters, T. Mitchell, A.J. Mulholland, D.R. Glowacki, [“Interactive molecular dynamics from quantum chemistry to drug binding: an open-source multi-person virtual reality framework”](https://aip.scitation.org/doi/10.1063/1.5092590), J. Chem Phys 150, 224703 (2019)
+
+This project has been made possible by the following projects. We gratefully thank them for their efforts, and suggest that you use and cite them:
+
+* [gRPC](https://grpc.io/) (Apache v2) - Communication protocol.
+* [SteamVR SDK](https://github.com/ValveSoftware/steamvr_unity_plugin) (BSD) - SDK for developing VR applications in SteamVR.
+* The CIF file importer uses the *Chemical Component Dictionary* provided at http://www.wwpdb.org/data/ccd.
+* [icons8](https://icons8.com) - Provider of icons used in UI.
+* [NSubstitute](https://nsubstitute.github.io/) (BSD) - Mock testing framework.
+
+
