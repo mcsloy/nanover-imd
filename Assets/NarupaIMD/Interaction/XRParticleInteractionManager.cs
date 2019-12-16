@@ -23,14 +23,14 @@ namespace NarupaXR.Interaction
         [Header("Controller Actions")]
         [SerializeField]
         private SteamVR_Action_Boolean grabObjectAction;
+
+        [SerializeField]
+        private ControllerManager controllerManager;
 #pragma warning restore 0649
 
         private Manipulator leftManipulator;
         
         private Manipulator rightManipulator;
-        
-        [SerializeField]
-        private ControllerManager controllerManager;
 
         private void Awake()
         {
