@@ -59,7 +59,14 @@ namespace NarupaIMD.Selection
             visualisationSelection.gameObject.name = selection.Name;
             visualisationSelection.SelectionUpdated +=
                 () => OnSelectionUpdated(visualisationSelection);
-            selections.Add(visualisationSelection);
+
+            var insertIndex = 0;
+            
+            foreach(var existingSelection in selections)
+                if (string.CompareOrdinal(existingSelection.Selection.ID, selection.ID) <= 0)
+                    insertIndex++;
+            
+            selections.Insert(insertIndex, visualisationSelection);
             OnSelectionUpdated(visualisationSelection);
             return visualisationSelection;
         }
