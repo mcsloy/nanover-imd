@@ -18,14 +18,14 @@ namespace Narupa.Core.Math
 
         Vector3 ITransformation.TransformPoint(Vector3 point) => Matrix.TransformPoint(point);
 
-        Vector3 ITransformation.InverseTransformPoint(Vector3 point)
-            => Matrix.InverseTransformPoint(point);
+        Vector3 ITransformation.InverseTransformPoint(Vector3 point) =>
+            Matrix.InverseTransformPoint(point);
 
-        Vector3 ITransformation.TransformDirection(Vector3 point)
-            => Matrix.TransformDirection(point);
+        Vector3 ITransformation.TransformDirection(Vector3 point) =>
+            Matrix.TransformDirection(point);
 
-        Vector3 ITransformation.InverseTransformDirection(Vector3 point)
-            => Matrix.InverseTransformDirection(point);
+        Vector3 ITransformation.InverseTransformDirection(Vector3 point) =>
+            Matrix.InverseTransformDirection(point);
 
 
         /// <summary>
@@ -145,5 +145,21 @@ namespace Narupa.Core.Math
         {
             return new UnitScaleTransformation(Position, Rotation);
         }
+
+        #region Conversions
+
+        public static implicit operator Matrix4x4(Transformation transformation)
+        {
+            return transformation.Matrix;
+        }
+
+        public static implicit operator AffineTransformation(Transformation transformation)
+        {
+            return new AffineTransformation(transformation.Position,
+                                            transformation.Rotation,
+                                            transformation.Scale);
+        }
+
+        #endregion
     }
 }

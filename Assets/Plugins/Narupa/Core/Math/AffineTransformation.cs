@@ -61,7 +61,7 @@ namespace Narupa.Core.Math
             this.zAxis = zAxis;
             this.origin = position;
         }
-        
+
         /// <summary>
         /// Create an affine transformation from the upper 3x4 matrix.
         /// </summary>
@@ -71,6 +71,14 @@ namespace Narupa.Core.Math
             yAxis = matrix.GetColumn(1);
             zAxis = matrix.GetColumn(2);
             origin = matrix.GetColumn(3);
+        }
+
+        /// <summary>
+        /// Create an affine transformation from a position, rotation and scale.
+        /// </summary>
+        public AffineTransformation(Vector3 position, Quaternion rotation, Vector3 scale)
+            : this(Matrix4x4.TRS(position, rotation, scale))
+        {
         }
 
         #endregion
@@ -92,7 +100,7 @@ namespace Narupa.Core.Math
         public Vector3 axesMagnitudes => new Vector3(xAxis.magnitude,
                                                      yAxis.magnitude,
                                                      zAxis.magnitude);
-        
+
         #endregion
 
 
@@ -107,7 +115,7 @@ namespace Narupa.Core.Math
         #region Matrices
 
         /// <inheritdoc cref="ITransformation.matrix"/>
-        public Matrix4x4 matrix => 
+        public Matrix4x4 matrix =>
             new Matrix4x4(xAxis, yAxis, zAxis, new Vector4(origin.x, origin.y, origin.z, 1));
 
         /// <inheritdoc cref="ITransformation.inverseMatrix"/>
