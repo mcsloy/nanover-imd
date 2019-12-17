@@ -24,14 +24,14 @@ namespace NarupaXR.Interaction
 
         [SerializeField]
         private SteamVR_Action_Boolean grabSpaceAction;
+
+        [SerializeField]
+        private ControllerManager controllerManager;
 #pragma warning restore 0649
 
         private Manipulator leftManipulator;
         
         private Manipulator rightManipulator;
-        
-        [SerializeField]
-        private ControllerManager controllerManager;
 
         private void Awake()
         {
@@ -75,7 +75,7 @@ namespace NarupaXR.Interaction
             manipulator.BindButtonToManipulation(button, AttemptGrabSpace);
         }
 
-        private IActiveManipulation AttemptGrabSpace(Transformation grabberPose)
+        private IActiveManipulation AttemptGrabSpace(UnitScaleTransformation grabberPose)
         {
             // there is presently only one grabbable space
             return narupaXR.ManipulableSimulationSpace.StartGrabManipulation(grabberPose);

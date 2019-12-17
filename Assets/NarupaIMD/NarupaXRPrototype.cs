@@ -22,8 +22,17 @@ namespace NarupaXR
     public sealed class NarupaXRPrototype : MonoBehaviour
     {
 #pragma warning disable 0649
+        /// <summary>
+        /// The transform that represents the box that contains the simulation.
+        /// </summary>
         [SerializeField]
         private Transform simulationSpaceTransform;
+
+        /// <summary>
+        /// The transform that represents the actual simulation.
+        /// </summary>
+        [SerializeField]
+        private Transform rightHandedSimulationSpace;
 
         [SerializeField]
         private GameObject visualiser;
@@ -79,7 +88,7 @@ namespace NarupaXR
             ManipulableSimulationSpace = new ManipulableScenePose(simulationSpaceTransform,
                                                                   Sessions.Multiplayer,
                                                                   this);
-            ManipulableParticles = new ManipulableParticles(simulationSpaceTransform,
+            ManipulableParticles = new ManipulableParticles(rightHandedSimulationSpace,
                                                             Sessions.Trajectory,
                                                             Sessions.Imd);
             
@@ -102,7 +111,9 @@ namespace NarupaXR
 
         private void SetupVisualisation()
         {
-            FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
+            FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
+            if(FrameSynchronizer == null)
+                FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
             FrameSynchronizer.FrameSource = Sessions.Trajectory;
             visualiser.GetComponent<IFrameConsumer>().FrameSource = FrameSynchronizer;
         }
