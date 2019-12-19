@@ -60,13 +60,21 @@ namespace NarupaIMD.Selection
             visualisationSelection.SelectionUpdated +=
                 () => OnSelectionUpdated(visualisationSelection);
 
-            var insertIndex = 0;
             
-            foreach(var existingSelection in selections)
-                if (string.CompareOrdinal(existingSelection.Selection.ID, selection.ID) <= 0)
-                    insertIndex++;
+            if (selections.Any())
+            {
+                var insertIndex = 1;
+                foreach (var existingSelection in selections.Skip(1))
+                    if (string.CompareOrdinal(existingSelection.Selection.ID, selection.ID) <= 0)
+                        insertIndex++;
+                selections.Insert(insertIndex, visualisationSelection);
+            }
+            else
+            {
+                selections.Add(visualisationSelection);
+            }
+
             
-            selections.Insert(insertIndex, visualisationSelection);
             OnSelectionUpdated(visualisationSelection);
             return visualisationSelection;
         }

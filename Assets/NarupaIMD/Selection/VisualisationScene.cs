@@ -59,7 +59,7 @@ namespace NarupaIMD.Selection
 
         private void Start()
         {
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyChanged +=
+            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
