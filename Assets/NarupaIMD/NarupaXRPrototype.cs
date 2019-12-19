@@ -98,8 +98,6 @@ namespace NarupaXR
                                                             interactableScene);
             
             SetupVisualisation();
-
-            StartCoroutine(AttemptLockTest());
         }
 
         private void Update()
@@ -109,24 +107,6 @@ namespace NarupaXR
             ManipulableParticles.ForceScale = forceScaleSlider.value;
             forceScaleValueLabel.text = $"{forceScaleSlider.value}x";
             debugText.text = $"Frame Index: {Sessions.Trajectory.CurrentFrameIndex}";
-
-            if (Input.GetKeyDown(KeyCode.Return))
-                AttemptLock();
-        }
-
-        private void AttemptLock()
-        {
-            if (Sessions.Multiplayer.HasPlayer && !Sessions.Multiplayer.HasSimulationPoseLock)
-                Sessions.Multiplayer.LockSimulationPose()
-                        .ContinueWith(task => Debug.Log($"Got Lock? {task.Result}"));
-        }
-
-        private IEnumerator AttemptLockTest()
-        {
-            while (!Sessions.Multiplayer.HasPlayer)
-                yield return new WaitForSeconds(1f / 10f);
-
-            AttemptLock();
         }
 
         private async void OnDestroy()
