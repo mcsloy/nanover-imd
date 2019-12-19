@@ -23,14 +23,14 @@ namespace NarupaXR.Interaction
         [Header("Controller Actions")]
         [SerializeField]
         private SteamVR_Action_Boolean grabObjectAction;
+
+        [SerializeField]
+        private ControllerManager controllerManager;
 #pragma warning restore 0649
 
         private Manipulator leftManipulator;
         
         private Manipulator rightManipulator;
-        
-        [SerializeField]
-        private ControllerManager controllerManager;
 
         private void Awake()
         {
@@ -74,7 +74,7 @@ namespace NarupaXR.Interaction
             manipulator.BindButtonToManipulation(button, AttemptGrabObject);
         }
 
-        private IActiveManipulation AttemptGrabObject(Transformation grabberPose)
+        private IActiveManipulation AttemptGrabObject(UnitScaleTransformation grabberPose)
         {
             // there is presently only one grabbable set of objects
             return narupaXR.ManipulableParticles.StartParticleGrab(grabberPose);
