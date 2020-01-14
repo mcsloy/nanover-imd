@@ -112,7 +112,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Parse an element from either a string symbol or an integer atomic number.
         /// </summary>
-        private static bool TryParseElement(object value, out Element element)
+        public static bool TryParseElement(object value, out Element element)
         {
             element = Element.Virtual;
 
@@ -159,7 +159,7 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
-        /// Regex for parsing strings such as E4F924 and #24fac8
+        /// Regex for parsing strings such as E4F924, #24fac8 and 0x2Ef9e2
         /// </summary>
         private const string RegexRgbHex =
             @"^(?:#|0x)?([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])$";
