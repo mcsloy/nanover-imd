@@ -162,7 +162,7 @@ namespace NarupaIMD.Selection
         /// Regex for parsing strings such as E4F924 and #24fac8
         /// </summary>
         private const string RegexRgbHex =
-            @"^#?([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])$";
+            @"^(?:#|0x)?([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])$";
 
         /// <summary>
         /// Attempt to parse a color, from a name, hex code or array of rgba values.
