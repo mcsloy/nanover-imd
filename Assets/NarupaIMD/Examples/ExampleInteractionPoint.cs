@@ -19,7 +19,7 @@ namespace NarupaXR.Examples
         private string streamId;
 
         [SerializeField]
-        private uint atomIndex = 0;
+        private int atomIndex = 0;
 
         [SerializeField]
         private float force = 100f;
@@ -30,7 +30,7 @@ namespace NarupaXR.Examples
             imdClient.InteractiveSession.SetInteraction(streamId, 
                                                         transform.position, 
                                                         force, 
-                                                        particles: atomIndex);
+                                                        particles: new [] {atomIndex});
         }
 
         private void OnDisable()
