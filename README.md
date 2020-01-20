@@ -27,6 +27,8 @@ M. O’Connor, S.J. Bennie, H.M. Deeks, A. Jamieson-Binnie, A.J. Jones, R.J. Sha
 
 This project has been made possible by the following projects. We gratefully thank them for their efforts, and suggest that you use and cite them:
 
+* [unity](https://unity.com/) - Development platform.
+* [TextMeshPro](https://docs.unity3d.com/Packages/com.unity.textmeshpro@2.1/manual/index.html) - Text rendering for Unity.
 * [gRPC](https://grpc.io/) (Apache v2) - Communication protocol.
 * [SteamVR SDK](https://github.com/ValveSoftware/steamvr_unity_plugin) (BSD) - SDK for developing VR applications in SteamVR.
 * The CIF file importer uses the *Chemical Component Dictionary* provided at http://www.wwpdb.org/data/ccd.
