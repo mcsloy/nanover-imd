@@ -18,7 +18,7 @@ ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x2
   -quit \
   -batchmode \
   -buildTarget $BUILD_TARGET \
-  -buildWindowsPlayer "${BUILD_PATH}NarupaXR.exe" \
+  -buildWindowsPlayer "${BUILD_PATH}${BUILD_NAME}.exe" \
   -logFile /dev/stdout
 
 UNITY_EXIT_CODE=$?
