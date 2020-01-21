@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 147d743152d75b346866ef0a4600e9ae, type: 3}
-  m_Name: Gloves
+  m_Name: Fallback
   m_EditorClassIdentifier: 
-  controllerId: vive_tracker_handed
+  controllerId: null
   leftController:
     prefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
       type: 3}
