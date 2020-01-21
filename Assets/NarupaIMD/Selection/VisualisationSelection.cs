@@ -6,6 +6,8 @@ using Narupa.Core.Math;
 using Narupa.Frame;
 using Narupa.Utility;
 using Narupa.Visualisation.Components;
+using Narupa.Visualisation.Components.Adaptor;
+using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Node.Renderer;
 using Narupa.Visualisation.Properties;
@@ -208,14 +210,6 @@ namespace NarupaIMD.Selection
 
             if (visualiser != null)
             {
-                // Todo: Formalise this
-                // Set the bottom-most selection so it draws bonds between itself and other atoms.
-                var index = layer.Selections.IndexOf(this);
-                if (index == 0)
-                    foreach (var renderer in visualiser
-                        .GetVisualisationNodesInChildren<ParticleBondRendererNode>())
-                        renderer.BondToNonFiltered = true;
-
                 SetVisualiser(visualiser, isPrefab);
             }
             else
@@ -223,14 +217,6 @@ namespace NarupaIMD.Selection
                 SetVisualiser(null, false);
             }
         }
-
-        /// <summary>
-        /// Keys in the visualisation stack that represent a particle filter
-        /// </summary>
-        public static string[] KeyParticleFilters =
-        {
-            "filter", "particle.filter"
-        };
 
         /// <summary>
         /// Set the visualiser of this selection
@@ -259,11 +245,10 @@ namespace NarupaIMD.Selection
             currentVisualiser.GetComponent<IFrameConsumer>().FrameSource = layer.Scene.FrameSource;
 
             // Setup any filters so the visualiser only draws this selection.
-            var filter = currentVisualiser.GetVisualisationNodes<IntArrayInputNode>()
-                                          .FirstOrDefault(
-                                              p => KeyParticleFilters.Contains(p.Name));
+            var filter = currentVisualiser.GetVisualisationNodes<FilteredAdaptorNode>()
+                                          .FirstOrDefault();
             if (filter != null)
-                filter.Input.LinkedProperty = FilteredIndices;
+                filter.ParticleFilter.LinkedProperty = FilteredIndices;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -280,6 +281,14 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
+        /// Get a visualisation subgraph which is responsible for calculating sequences.
+        /// </summary>
+        public static GameObject GetSequenceSubgraph(string name)
+        {
+            return Resources.Load<GameObject>($"Subgraph/Sequence/{name}");
+        }
+
+        /// <summary>
         /// Construct a visualiser from the provided arbitrary C# data.
         /// </summary>
         public static (GameObject visualiser, bool isPrefab) ConstructVisualiser(object data)
@@ -298,16 +307,15 @@ namespace NarupaIMD.Selection
                 // Create a basic dynamic visualiser, with a FrameAdaptor to
                 // read in frames and a DynamicVisualiserSubgraphs to contain the dynamic nodes
                 visualiser = new GameObject();
-                var adaptor = visualiser.AddComponent<FrameAdaptor>();
+
+                var adaptor = visualiser.AddComponent<FilteredAdaptor>();
+
                 var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
+
                 dynamic.FrameAdaptor = adaptor;
 
                 // Set of subgraphs to be used in the visualiser
                 var subgraphs = new List<GameObject>();
-
-                // Create input for the selection's particle filter
-                var filterInput = visualiser.AddComponent<IntArrayInput>();
-                filterInput.Node.Name = "particle.filter";
 
                 // Mapping of subgraph object to its dictionary representation
                 var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
@@ -315,18 +323,42 @@ namespace NarupaIMD.Selection
                 // The root dictionary
                 var globalParameters = dict;
 
-                // Parse the color keyword if it is a struct with the 'type' field, and hence
-                // describes a color subgraph
-                if (dict.TryGetValue<Dictionary<string, object>>("color", out var colorStruct))
-                    if (colorStruct.TryGetValue<string>("type", out var type))
+                bool GetSubgraph(string key, Func<string, GameObject> findSubgraph)
+                {
+                    if (dict.TryGetValue<Dictionary<string, object>>(key, out var strut))
                     {
-                        var colorSubgraph = GetColorSubgraph(type);
-                        if (colorSubgraph != null)
+                        if (strut.TryGetValue<string>("type", out var type))
                         {
-                            subgraphs.Add(colorSubgraph);
-                            subgraphParameters.Add(colorSubgraph, colorStruct);
+                            var subgraph = findSubgraph(type);
+                            if (subgraph != null)
+                            {
+                                subgraphs.Add(subgraph);
+                                subgraphParameters.Add(subgraph, strut);
+                                return true;
+                            }
                         }
                     }
+                    else if (dict.TryGetValue<string>(key, out var t))
+                    {
+                        var subgraph = findSubgraph(t);
+                        if (subgraph != null)
+                        {
+                            subgraphs.Add(subgraph);
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                var subgraphIndex = subgraphs.Count;
+                // Parse the sequence subgraph
+                var hasSequenceSubgraph = GetSubgraph("sequence", GetSequenceSubgraph);
+
+
+                // Parse the color keyword if it is a struct with the 'type' field, and hence
+                // describes a color subgraph
+                GetSubgraph("color", GetColorSubgraph);
 
                 // Get the render subgraph from the render key
                 var renderName = dict.GetValueOrDefault<string>("render");
@@ -334,6 +366,13 @@ namespace NarupaIMD.Selection
 
                 if (render != null)
                     subgraphs.Add(render);
+
+                if (!hasSequenceSubgraph
+                 && FindInputNodeWithName<IntArrayInputNode>(render, "sequences.lengths") != null)
+                {
+                    var subgraph = GetSequenceSubgraph("entities");
+                    subgraphs.Insert(subgraphIndex, subgraph);
+                }
 
                 // For each input of each subgraph, see if either the subgraph's dictionary
                 // or the root dictionary have an item which could be the value for that input
