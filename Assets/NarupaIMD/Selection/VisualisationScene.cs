@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frame;
 using Narupa.Visualisation;
+using Narupa.Visualisation.Components.Adaptor;
 using NarupaXR;
 using UnityEngine;
 
@@ -24,6 +25,10 @@ namespace NarupaIMD.Selection
         [SerializeField]
         private SynchronisedFrameSource frameSource;
 
+        private FrameAdaptor frameAdaptor;
+
+        public FrameAdaptor FrameAdaptor => frameAdaptor;
+
         [SerializeField]
         private VisualisationLayer layerPrefab;
 
@@ -31,11 +36,6 @@ namespace NarupaIMD.Selection
         /// The number of particles in the current frame, or 0 if no frame is present.
         /// </summary>
         public int ParticleCount => frameSource.CurrentFrame?.ParticleCount ?? 0;
-
-        /// <summary>
-        /// The source of the frames that this scene will render.
-        /// </summary>
-        public ITrajectorySnapshot FrameSource => frameSource;
 
         /// <summary>
         /// The root selection of the scene.
@@ -59,6 +59,9 @@ namespace NarupaIMD.Selection
 
         private void Start()
         {
+            frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
+            frameAdaptor.FrameSource = frameSource;
+            
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=

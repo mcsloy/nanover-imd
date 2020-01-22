@@ -364,6 +364,8 @@ namespace NarupaIMD.Selection
                 var renderName = dict.GetValueOrDefault<string>("render");
                 var render = GetRenderSubgraph(renderName ?? "ball and stick");
 
+                if (render == null)
+                    render = GetRenderSubgraph("ball and stick");
                 if (render != null)
                     subgraphs.Add(render);
 

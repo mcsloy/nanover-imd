@@ -3,15 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Narupa.Core.Math;
-using Narupa.Frame;
-using Narupa.Utility;
 using Narupa.Visualisation.Components;
-using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Node.Adaptor;
-using Narupa.Visualisation.Node.Input;
-using Narupa.Visualisation.Node.Renderer;
 using Narupa.Visualisation.Properties;
-using Narupa.Visualisation.Property;
 using Plugins.Narupa.Core;
 using UnityEngine;
 
@@ -115,7 +109,7 @@ namespace NarupaIMD.Selection
                 if (filter.Count == 0) // Selection is empty
                 {
                     filteredIndices = new int[0];
-                    
+
                     if (indices == null) // Empty selection, indices was all
                         unfilteredIndices = null;
                     else // Empty selection, indices is a subset
@@ -225,7 +219,10 @@ namespace NarupaIMD.Selection
         public void SetVisualiser(GameObject newVisualiser, bool isPrefab = true)
         {
             if (currentVisualiser != null)
+            {
+                StripDownAdaptorAndFilter();
                 Destroy(currentVisualiser);
+            }
 
             if (newVisualiser == null)
                 return;
@@ -241,14 +238,30 @@ namespace NarupaIMD.Selection
                 currentVisualiser.transform.SetToLocalIdentity();
             }
 
-            // Set visualiser's frame input
-            currentVisualiser.GetComponent<IFrameConsumer>().FrameSource = layer.Scene.FrameSource;
+            SetupAdaptorAndFilter();
+        }
 
+        private void SetupAdaptorAndFilter()
+        {
             // Setup any filters so the visualiser only draws this selection.
-            var filter = currentVisualiser.GetVisualisationNodes<FilteredAdaptorNode>()
-                                          .FirstOrDefault();
+            var filter = currentVisualiser.GetVisualisationNode<PassThroughAdaptorNode>();
             if (filter != null)
-                filter.ParticleFilter.LinkedProperty = FilteredIndices;
+            {
+                filter.ParentAdaptor.Value = this.layer.Scene.FrameAdaptor;
+                if (filter is FilteredAdaptorNode filtered)
+                {
+                    filtered.ParticleFilter.LinkedProperty = FilteredIndices;
+                }
+            }
+        }
+
+        private void StripDownAdaptorAndFilter()
+        {
+            var filter = currentVisualiser.GetVisualisationNode<PassThroughAdaptorNode>();
+            if (filter != null && filter is FilteredAdaptorNode filtered)
+            {
+                filtered.ParticleFilter.LinkedProperty = null;
+            }
         }
     }
 }
