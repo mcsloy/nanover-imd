@@ -10,6 +10,7 @@ using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Components.Input;
 using Narupa.Visualisation.Node.Color;
 using Narupa.Visualisation.Node.Input;
+using Narupa.Visualisation.Properties.Collections;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -279,6 +280,22 @@ namespace NarupaIMD.Selection
         {
             return Resources.Load<GameObject>($"Subgraph/Color/{name}");
         }
+        
+        /// <summary>
+        /// Get a visualisation subgraph which is responsible for the scale of particles.
+        /// </summary>
+        public static GameObject GetScaleSubgraph(string name)
+        {
+            return Resources.Load<GameObject>($"Subgraph/Scale/{name}");
+        }
+        
+        /// <summary>
+        /// Get a visualisation subgraph which is responsible for the width of particles in splines.
+        /// </summary>
+        public static GameObject GetWidthSubgraph(string name)
+        {
+            return Resources.Load<GameObject>($"Subgraph/Width/{name}");
+        }
 
         /// <summary>
         /// Get a visualisation subgraph which is responsible for calculating sequences.
@@ -308,11 +325,7 @@ namespace NarupaIMD.Selection
                 // read in frames and a DynamicVisualiserSubgraphs to contain the dynamic nodes
                 visualiser = new GameObject();
 
-                var adaptor = visualiser.AddComponent<FilteredAdaptor>();
-
                 var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
-
-                dynamic.FrameAdaptor = adaptor;
 
                 // Set of subgraphs to be used in the visualiser
                 var subgraphs = new List<GameObject>();
@@ -359,6 +372,14 @@ namespace NarupaIMD.Selection
                 // Parse the color keyword if it is a struct with the 'type' field, and hence
                 // describes a color subgraph
                 GetSubgraph("color", GetColorSubgraph);
+                
+                // Parse the color keyword if it is a struct with the 'type' field, and hence
+                // describes a color subgraph
+                GetSubgraph("width", GetWidthSubgraph);
+                
+                // Parse the color keyword if it is a struct with the 'type' field, and hence
+                // describes a color subgraph
+                GetSubgraph("scale", GetScaleSubgraph);
 
                 // Get the render subgraph from the render key
                 var renderName = dict.GetValueOrDefault<string>("render");
@@ -369,11 +390,28 @@ namespace NarupaIMD.Selection
                 if (render != null)
                     subgraphs.Add(render);
 
+                // If a subgraph requires a set of sequence lengths, a sequence provider is required. If one hasn't already been provided, the default is one that generates sequences based on entities.
                 if (!hasSequenceSubgraph
                  && FindInputNodeWithName<IntArrayInputNode>(render, "sequences.lengths") != null)
                 {
                     var subgraph = GetSequenceSubgraph("entities");
                     subgraphs.Insert(subgraphIndex, subgraph);
+                }
+
+                IDynamicPropertyProvider preAdaptor = null;
+
+                // If a subgraph requires secondary structure, then a secondary structure adaptor is inserted into the chain before the particle filter.
+                if (subgraphs.Any(subgraph =>
+                                      FindInputNodeWithName<SecondaryStructureArrayInputNode>(
+                                          subgraph, "residue.secondarystructures") != null))
+                {
+                    preAdaptor = visualiser.AddComponent<SecondaryStructureAdaptor>();
+                }
+
+                var filterAdaptor = visualiser.AddComponent<FilteredAdaptor>();
+                if (preAdaptor != null)
+                {
+                    filterAdaptor.Node.ParentAdaptor.Value = preAdaptor;
                 }
 
                 // For each input of each subgraph, see if either the subgraph's dictionary
@@ -391,6 +429,8 @@ namespace NarupaIMD.Selection
                 // Only return a valid visualiser if it has a render subgraph
                 if (render != null)
                 {
+                    dynamic.FrameAdaptor = filterAdaptor;
+
                     dynamic.SetSubgraphs(subgraphs.ToArray());
                     prefab = false;
                 }

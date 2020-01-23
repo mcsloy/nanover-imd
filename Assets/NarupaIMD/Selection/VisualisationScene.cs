@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using Narupa.Frame;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Components.Adaptor;
 using NarupaXR;
@@ -9,9 +7,13 @@ using UnityEngine;
 namespace NarupaIMD.Selection
 {
     /// <summary>
-    /// A set of layers and selections that are used to render a system using multiple
+    /// A set of layers and selections that are used to render a frame using multiple
     /// visualisers.
     /// </summary>
+    /// <remarks>
+    /// It contains a <see cref="FrameAdaptor" /> to which each visualiser will be
+    /// linked.
+    /// </remarks>
     public class VisualisationScene : MonoBehaviour
     {
         /// <summary>
@@ -25,8 +27,16 @@ namespace NarupaIMD.Selection
         [SerializeField]
         private SynchronisedFrameSource frameSource;
 
+        /// <inheritdoc cref="FrameAdaptor" />
+        /// <remarks>
+        /// This is automatically generated on <see cref="Start()" />.
+        /// </remarks>
         private FrameAdaptor frameAdaptor;
 
+        /// <summary>
+        /// The <see cref="FrameAdaptor" /> that exposes all the data present in the frame
+        /// in a way that is compatible with the visualisation system.
+        /// </summary>
         public FrameAdaptor FrameAdaptor => frameAdaptor;
 
         [SerializeField]
@@ -61,7 +71,7 @@ namespace NarupaIMD.Selection
         {
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
-            
+
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=

@@ -32,9 +32,11 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// The indices of particles not rendered by this or any higher selections.
         /// </summary>
-        /// /// <remark> 
+        /// ///
+        /// <remark>
         /// Unfiltered indices in this selection form the set of indices to be filtered
-        /// by the selections beneath it in the stack. By default, any indices left at the bottom of the stack
+        /// by the selections beneath it in the stack. By default, any indices left at the
+        /// bottom of the stack
         /// will be rendered by the base selection.
         /// </remark>
         public IntArrayProperty UnfilteredIndices { get; } = new IntArrayProperty();
@@ -241,13 +243,17 @@ namespace NarupaIMD.Selection
             SetupAdaptorAndFilter();
         }
 
+        /// <summary>
+        /// Sets up the visualiser by connecting it to the scenes adaptor and linking the
+        /// filter to the selection.
+        /// </summary>
         private void SetupAdaptorAndFilter()
         {
             // Setup any filters so the visualiser only draws this selection.
-            var filter = currentVisualiser.GetVisualisationNode<PassThroughAdaptorNode>();
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
             if (filter != null)
             {
-                filter.ParentAdaptor.Value = this.layer.Scene.FrameAdaptor;
+                filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
                 if (filter is FilteredAdaptorNode filtered)
                 {
                     filtered.ParticleFilter.LinkedProperty = FilteredIndices;
@@ -255,10 +261,16 @@ namespace NarupaIMD.Selection
             }
         }
 
+        /// <summary>
+        /// Undoes the actions of <see cref="SetupAdaptorAndFilter" />. The act of
+        /// unlinking unregisters the appropriate event handlers, preventing memory leaks
+        /// when the visualiser is destroyed.
+        /// </summary>
         private void StripDownAdaptorAndFilter()
         {
-            var filter = currentVisualiser.GetVisualisationNode<PassThroughAdaptorNode>();
-            if (filter != null && filter is FilteredAdaptorNode filtered)
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
+            filter.ParentAdaptor.UndefineValue();
+            if (filter is FilteredAdaptorNode filtered)
             {
                 filtered.ParticleFilter.LinkedProperty = null;
             }
