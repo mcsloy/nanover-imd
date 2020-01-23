@@ -138,10 +138,14 @@ namespace Narupa.Session
         public void CloseClient()
         {
             client?.CloseAndCancelAllSubscriptions();
+            client?.Dispose();
             client = null;
 
+            IncomingAvatars?.CloseAsync();
             IncomingAvatars?.Dispose();
             IncomingAvatars = null;
+
+            OutgoingAvatar?.CloseAsync();
             OutgoingAvatar?.Dispose();
             OutgoingAvatar = null;
 
@@ -150,6 +154,9 @@ namespace Narupa.Session
 
             Avatars.Clear();
             pendingAvatars.Clear();
+
+            SharedStateDictionary.Clear();
+            pendingValues.Clear();
         }
 
         /// <summary>
@@ -276,9 +283,7 @@ namespace Narupa.Session
             FlushAvatars();
             FlushValues();
 
-            client?.Dispose();
-            OutgoingAvatar?.Dispose();
-            IncomingAvatars?.Dispose();
+            CloseClient();
         }
 
         private void OnAvatarReceived(Avatar avatar)
