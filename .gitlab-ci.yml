@@ -14,7 +14,7 @@ trigger_plugin_update:
     - "curl -X POST -F token=${NARUPA_UNITY_PLUGIN_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/14856986/trigger/pipeline"
 
 variables:
-  BUILD_NAME: NarupaXR
+  BUILD_NAME: Narupa iMD
 
 .unity_before_script: &unity_before_script
   before_script:
