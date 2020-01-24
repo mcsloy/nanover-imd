@@ -12,6 +12,8 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Text = TMPro.TextMeshProUGUI;
 
+using Essd;
+
 namespace NarupaXR
 {
     /// <summary>
@@ -77,6 +79,8 @@ namespace NarupaXR
         /// </summary>
         public void Connect(string address, int? trajectoryPort, int? imdPort, int? multiplayerPort)
             => Sessions.Connect(address, trajectoryPort, imdPort, multiplayerPort);
+
+        public void AutoConnect() => Sessions.AutoConnect();
 
         /// <summary>
         /// Called from UI to quit the application.

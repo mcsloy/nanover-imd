@@ -7,6 +7,9 @@ using Narupa.Core.Async;
 using Narupa.Grpc;
 using Narupa.Grpc.Trajectory;
 using UnityEngine;
+using System.Collections.Generic;
+using Essd;
+using Newtonsoft.Json.Linq;
 
 namespace NarupaXR
 {
@@ -15,13 +18,14 @@ namespace NarupaXR
     /// </summary>
     public sealed class NarupaXRSessionManager
     {
-        private GrpcConnection remoteTrajectoryConnection;
-        private GrpcConnection remoteImdConnection;
-        private GrpcConnection remoteMultiplayerConnection;
-
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public ImdSession Imd { get; } = new ImdSession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
+
+        private Dictionary<string, GrpcConnection> channels
+            = new Dictionary<string, GrpcConnection>();
+
+        private Client essdClient = new Client();
 
         /// <summary>
         /// Connect to the host address and attempt to open clients for the
@@ -36,25 +40,47 @@ namespace NarupaXR
 
             if (trajectoryPort.HasValue)
             {
-                remoteTrajectoryConnection = new GrpcConnection(address, trajectoryPort.Value);
-                Trajectory.OpenClient(remoteTrajectoryConnection);
+                Trajectory.OpenClient(GetChannel(address, trajectoryPort.Value));
             }
 
             if (imdPort.HasValue)
             {
-                remoteImdConnection = new GrpcConnection(address, imdPort.Value);
-                Imd.OpenClient(remoteImdConnection);
+                Imd.OpenClient(GetChannel(address, imdPort.Value));
             }
 
             if (multiplayerPort.HasValue)
             {
-                Debug.Log($"Multiplayer port: {multiplayerPort}");
-
-                remoteMultiplayerConnection = new GrpcConnection(address, multiplayerPort.Value);
-                Multiplayer.OpenClient(remoteMultiplayerConnection);
-
+                Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
                 Multiplayer.JoinMultiplayer("test").AwaitInBackgroundIgnoreCancellation();
             }
+        }
+
+        public void Connect(ServiceHub hub)
+        {
+            Debug.Log($"Connecting to {hub.Name} ({hub.Id})");
+
+            var services = hub.Properties["services"] as JObject;
+            Connect(hub.Address,
+                    GetServicePort("trajectory"),
+                    GetServicePort("imd"),
+                    GetServicePort("multiplayer"));
+
+            int? GetServicePort(string name)
+            {
+                return services.ContainsKey(name) ? services[name].ToObject<int>() : (int?) null;
+            }
+        }
+
+        public void AutoConnect()
+        {
+            StopEssd();
+            essdClient = new Client();
+            essdClient.ServiceFound += async (sender, hub) =>
+            {
+                await StopEssd();
+                Connect(hub);
+            };
+            essdClient.StartSearch();
         }
 
         /// <summary>
@@ -66,14 +92,32 @@ namespace NarupaXR
             Imd.CloseClient();
             Multiplayer.CloseClient();
 
-            if (remoteTrajectoryConnection != null)
-                await remoteTrajectoryConnection.CloseAsync();
+            await StopEssd();
 
-            if (remoteImdConnection != null)
-                await remoteImdConnection.CloseAsync();
+            foreach (var channel in channels.Values)
+            {
+                await channel.CloseAsync();
+            }
+            channels.Clear();
+        }
 
-            if (remoteMultiplayerConnection != null)
-                await remoteMultiplayerConnection.CloseAsync();
+        private GrpcConnection GetChannel(string address, int port)
+        {
+            string key = $"{address}:{port}";
+
+            if (!channels.TryGetValue(key, out var channel))
+            {
+                channel = new GrpcConnection(address, port);
+                channels[key] = channel;
+            }
+
+            return channel;
+        }
+
+        private async Task StopEssd()
+        {
+            await essdClient?.StopSearch();
+            essdClient = null;
         }
     }
 }
