@@ -80,7 +80,7 @@ namespace NarupaXR
         /// Run an ESSD search and connect to the first service found, or none
         /// if the timeout elapses without finding a service.
         /// </summary>
-        public async Task AutoConnect()
+        public async Task AutoConnect(int millisecondsTimeout = 3000)
         {
             var client = new Client();
             client.ServiceFound += async (sender, hub) =>
@@ -89,7 +89,7 @@ namespace NarupaXR
                 await Connect(hub);
             };
             await client.StartSearch();
-            await Task.Delay(3000);
+            await Task.Delay(millisecondsTimeout);
             await client.StopSearch();
         }
 
