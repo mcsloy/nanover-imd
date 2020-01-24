@@ -55,6 +55,9 @@ namespace NarupaXR
             }
         }
 
+        /// <summary>
+        /// Connect to services as advertised by an ESSD service hub.
+        /// </summary>
         public void Connect(ServiceHub hub)
         {
             Debug.Log($"Connecting to {hub.Name} ({hub.Id})");
@@ -71,6 +74,9 @@ namespace NarupaXR
             }
         }
 
+        /// <summary>
+        /// Run an ESSD search and connect to the first service found.
+        /// </summary>
         public void AutoConnect()
         {
             StopEssd();
@@ -116,8 +122,11 @@ namespace NarupaXR
 
         private async Task StopEssd()
         {
-            await essdClient?.StopSearch();
-            essdClient = null;
+            if (essdClient != null)
+            {
+                await essdClient.StopSearch();
+                essdClient = null;
+            }
         }
     }
 }
