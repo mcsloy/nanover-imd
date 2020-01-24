@@ -32,6 +32,8 @@ namespace NarupaXR
                             int? imdPort = null,
                             int? multiplayerPort = null)
         {
+            CloseAsync();
+
             if (trajectoryPort.HasValue)
             {
                 remoteTrajectoryConnection = new GrpcConnection(address, trajectoryPort.Value);
