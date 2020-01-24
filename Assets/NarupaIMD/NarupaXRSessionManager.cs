@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Essd;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace NarupaXR
 {
@@ -80,17 +81,12 @@ namespace NarupaXR
         /// Run an ESSD search and connect to the first service found, or none
         /// if the timeout elapses without finding a service.
         /// </summary>
-        public async Task AutoConnect(int millisecondsTimeout = 3000)
+        public async Task AutoConnect(int millisecondsTimeout = 1000)
         {
             var client = new Client();
-            client.ServiceFound += async (sender, hub) =>
-            {
-                await client.StopSearch();
-                await Connect(hub);
-            };
-            await client.StartSearch();
-            await Task.Delay(millisecondsTimeout);
-            await client.StopSearch();
+            var services = await Task.Run(() => client.SearchForServices(millisecondsTimeout));
+            if (services.Count > 0)
+                await Connect(services.First());
         }
 
         /// <summary>
