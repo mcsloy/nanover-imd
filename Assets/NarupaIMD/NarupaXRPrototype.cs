@@ -12,6 +12,8 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Text = TMPro.TextMeshProUGUI;
 
+using Essd;
+
 namespace NarupaXR
 {
     /// <summary>
@@ -73,10 +75,15 @@ namespace NarupaXR
         public NarupaXRSessionManager Sessions { get; } = new NarupaXRSessionManager();
 
         /// <summary>
-        /// Connect to remote trajectory and IMD services.
+        /// Connect to remote Narupa services.
         /// </summary>
         public void Connect(string address, int? trajectoryPort, int? imdPort, int? multiplayerPort)
             => Sessions.Connect(address, trajectoryPort, imdPort, multiplayerPort);
+
+        /// <summary>
+        /// Connect to the first set of Narupa services found via ESSD.
+        /// </summary>
+        public void AutoConnect() => Sessions.AutoConnect();
 
         /// <summary>
         /// Called from UI to quit the application.
