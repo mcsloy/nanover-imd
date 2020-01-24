@@ -18,6 +18,10 @@ namespace NarupaXR
     /// </summary>
     public sealed class NarupaXRSessionManager
     {
+        private const string TrajectoryServiceName = "trajectory";
+        private const string ImdServiceName = "imd";
+        private const string MultiplayerServiceName = "multiplayer";
+
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public ImdSession Imd { get; } = new ImdSession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
@@ -25,18 +29,16 @@ namespace NarupaXR
         private Dictionary<string, GrpcConnection> channels
             = new Dictionary<string, GrpcConnection>();
 
-        private Client essdClient = new Client();
-
         /// <summary>
         /// Connect to the host address and attempt to open clients for the
         /// trajectory and IMD services.
         /// </summary>
-        public void Connect(string address, 
-                            int? trajectoryPort, 
-                            int? imdPort = null,
-                            int? multiplayerPort = null)
+        public async Task Connect(string address, 
+                                  int? trajectoryPort, 
+                                  int? imdPort = null,
+                                  int? multiplayerPort = null)
         {
-            CloseAsync();
+            await CloseAsync();
 
             if (trajectoryPort.HasValue)
             {
@@ -58,15 +60,15 @@ namespace NarupaXR
         /// <summary>
         /// Connect to services as advertised by an ESSD service hub.
         /// </summary>
-        public void Connect(ServiceHub hub)
+        public async Task Connect(ServiceHub hub)
         {
             Debug.Log($"Connecting to {hub.Name} ({hub.Id})");
 
             var services = hub.Properties["services"] as JObject;
-            Connect(hub.Address,
-                    GetServicePort("trajectory"),
-                    GetServicePort("imd"),
-                    GetServicePort("multiplayer"));
+            await Connect(hub.Address,
+                          GetServicePort(TrajectoryServiceName),
+                          GetServicePort(ImdServiceName),
+                          GetServicePort(MultiplayerServiceName));
 
             int? GetServicePort(string name)
             {
@@ -75,18 +77,20 @@ namespace NarupaXR
         }
 
         /// <summary>
-        /// Run an ESSD search and connect to the first service found.
+        /// Run an ESSD search and connect to the first service found, or none
+        /// if the timeout elapses without finding a service.
         /// </summary>
-        public void AutoConnect()
+        public async Task AutoConnect()
         {
-            StopEssd();
-            essdClient = new Client();
-            essdClient.ServiceFound += async (sender, hub) =>
+            var client = new Client();
+            client.ServiceFound += async (sender, hub) =>
             {
-                await StopEssd();
-                Connect(hub);
+                await client.StopSearch();
+                await Connect(hub);
             };
-            essdClient.StartSearch();
+            await client.StartSearch();
+            await Task.Delay(3000);
+            await client.StopSearch();
         }
 
         /// <summary>
@@ -97,8 +101,6 @@ namespace NarupaXR
             Trajectory.CloseClient();
             Imd.CloseClient();
             Multiplayer.CloseClient();
-
-            await StopEssd();
 
             foreach (var channel in channels.Values)
             {
@@ -118,15 +120,6 @@ namespace NarupaXR
             }
 
             return channel;
-        }
-
-        private async Task StopEssd()
-        {
-            if (essdClient != null)
-            {
-                await essdClient.StopSearch();
-                essdClient = null;
-            }
         }
     }
 }
