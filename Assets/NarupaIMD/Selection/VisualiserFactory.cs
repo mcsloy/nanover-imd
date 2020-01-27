@@ -408,6 +408,90 @@ namespace NarupaIMD.Selection
         /// </summary>
         private const string ResidueSecondaryStructureKey = "residue.secondarystructures";
 
+        private static (GameObject subgraph, Dictionary<string, object> parameters) GetSubgraph(
+            Dictionary<string, object> dict,
+            string key,
+            Func<string, GameObject> findSubgraph)
+        {
+            if (dict.TryGetValue<Dictionary<string, object>>(key, out var strut))
+            {
+                if (strut.TryGetValue<string>(TypeKeyword, out var type))
+                {
+                    var subgraph = findSubgraph(type);
+                    if (subgraph != null)
+                    {
+                        return (subgraph, strut);
+                    }
+                }
+            }
+            else if (dict.TryGetValue<string>(key, out var t))
+            {
+                var subgraph = findSubgraph(t);
+                if (subgraph != null)
+                {
+                    return (subgraph, null);
+                }
+            }
+
+            return (null, null);
+        }
+
+        private static (List<GameObject> subgraphs,
+            Dictionary<GameObject, Dictionary<string, object>> subgraphParameters) FindSubgraphs(
+                Dictionary<string, object> dict)
+        {
+            // Set of subgraphs to be used in the visualiser
+            var subgraphs = new List<GameObject>();
+
+            // Mapping of subgraph object to its dictionary representation
+            var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
+
+            GameObject FindSubgraph(string key, Func<string, GameObject> findSubgraph)
+            {
+                var (subgraph, parameters) = GetSubgraph(dict, key, findSubgraph);
+                if (subgraph == null)
+                    return null;
+                subgraphs.Add(subgraph);
+                if (parameters != null)
+                    subgraphParameters.Add(subgraph, parameters);
+                return subgraph;
+            }
+
+            // Parse the sequence subgraph
+            var sequenceSubgraph = FindSubgraph(SequenceKeyword, GetSequenceSubgraph);
+
+            // Parse the color keyword if it is a struct with the 'type' field, and hence
+            // describes a color subgraph
+            FindSubgraph(ColorKeyword, GetColorSubgraph);
+
+            // Parse the color keyword if it is a struct with the 'type' field, and hence
+            // describes a color subgraph
+            FindSubgraph(WidthKeyword, GetWidthSubgraph);
+
+            // Parse the color keyword if it is a struct with the 'type' field, and hence
+            // describes a color subgraph
+            FindSubgraph(ScaleKeyword, GetScaleSubgraph);
+
+            // Get the render subgraph from the render key
+            var renderSubgraph = FindSubgraph(RenderKeyword, GetRenderSubgraph);
+            if (renderSubgraph == null)
+                subgraphs.Add(GetRenderSubgraph(DefaultRenderSubgraph));
+
+            // If a subgraph requires a set of sequence lengths, a sequence provider is required.
+            // If one hasn't already been provided, the default is one that generates sequences
+            // based on entities.
+            if (sequenceSubgraph == null
+             && subgraphs.Any(subgraph =>
+                                  FindInputNodeWithName<IntArrayInputNode>(
+                                      subgraph, SequenceLengthsKey) != null))
+            {
+                var subgraph = GetSequenceSubgraph(DefaultSequenceSubgraph);
+                subgraphs.Insert(0, subgraph);
+            }
+
+            return (subgraphs, subgraphParameters);
+        }
+
         /// <summary>
         /// Generate a visualiser from a dictionary describing subgraphs and parameters.
         /// </summary>
@@ -419,76 +503,11 @@ namespace NarupaIMD.Selection
 
             var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
 
-            // Set of subgraphs to be used in the visualiser
-            var subgraphs = new List<GameObject>();
-
-            // Mapping of subgraph object to its dictionary representation
-            var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
 
             // The root dictionary
             var globalParameters = dict;
 
-            bool GetSubgraph(string key, Func<string, GameObject> findSubgraph)
-            {
-                if (dict.TryGetValue<Dictionary<string, object>>(key, out var strut))
-                {
-                    if (strut.TryGetValue<string>(TypeKeyword, out var type))
-                    {
-                        var subgraph = findSubgraph(type);
-                        if (subgraph != null)
-                        {
-                            subgraphs.Add(subgraph);
-                            subgraphParameters.Add(subgraph, strut);
-                            return true;
-                        }
-                    }
-                }
-                else if (dict.TryGetValue<string>(key, out var t))
-                {
-                    var subgraph = findSubgraph(t);
-                    if (subgraph != null)
-                    {
-                        subgraphs.Add(subgraph);
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            var subgraphIndex = subgraphs.Count;
-            // Parse the sequence subgraph
-            var hasSequenceSubgraph = GetSubgraph(SequenceKeyword, GetSequenceSubgraph);
-
-
-            // Parse the color keyword if it is a struct with the 'type' field, and hence
-            // describes a color subgraph
-            GetSubgraph(ColorKeyword, GetColorSubgraph);
-
-            // Parse the color keyword if it is a struct with the 'type' field, and hence
-            // describes a color subgraph
-            GetSubgraph(WidthKeyword, GetWidthSubgraph);
-
-            // Parse the color keyword if it is a struct with the 'type' field, and hence
-            // describes a color subgraph
-            GetSubgraph(ScaleKeyword, GetScaleSubgraph);
-
-            // Get the render subgraph from the render key
-            var renderName = dict.GetValueOrDefault<string>(RenderKeyword);
-            var render = GetRenderSubgraph(renderName ?? DefaultRenderSubgraph);
-
-            if (render == null)
-                render = GetRenderSubgraph(DefaultRenderSubgraph);
-            if (render != null)
-                subgraphs.Add(render);
-
-            // If a subgraph requires a set of sequence lengths, a sequence provider is required. If one hasn't already been provided, the default is one that generates sequences based on entities.
-            if (!hasSequenceSubgraph
-             && FindInputNodeWithName<IntArrayInputNode>(render, SequenceLengthsKey) != null)
-            {
-                var subgraph = GetSequenceSubgraph(DefaultSequenceSubgraph);
-                subgraphs.Insert(subgraphIndex, subgraph);
-            }
+            var (subgraphs, subgraphParameters) = FindSubgraphs(globalParameters);
 
             IDynamicPropertyProvider preAdaptor = null;
 
@@ -518,16 +537,9 @@ namespace NarupaIMD.Selection
                     continue;
             }
 
-            // Only return a valid visualiser if it has a render subgraph
-            if (render != null)
-            {
-                dynamic.FrameAdaptor = filterAdaptor;
-                dynamic.SetSubgraphs(subgraphs.ToArray());
-            }
-            else
-            {
-                visualiser = null;
-            }
+            // Setup adaptor and subgraphds
+            dynamic.FrameAdaptor = filterAdaptor;
+            dynamic.SetSubgraphs(subgraphs.ToArray());
 
             return visualiser;
         }

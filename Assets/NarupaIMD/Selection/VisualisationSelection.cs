@@ -254,7 +254,7 @@ namespace NarupaIMD.Selection
             if (filter != null)
             {
                 filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
-                if (filter is FilteredAdaptorNode filtered)
+                if (filter is ParticleFilteredAdaptorNode filtered)
                 {
                     filtered.ParticleFilter.LinkedProperty = FilteredIndices;
                 }
@@ -270,7 +270,7 @@ namespace NarupaIMD.Selection
         {
             var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
             filter.ParentAdaptor.UndefineValue();
-            if (filter is FilteredAdaptorNode filtered)
+            if (filter is ParticleFilteredAdaptorNode filtered)
             {
                 filtered.ParticleFilter.LinkedProperty = null;
             }
