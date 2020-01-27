@@ -10,7 +10,6 @@ using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Components.Input;
 using Narupa.Visualisation.Node.Color;
 using Narupa.Visualisation.Node.Input;
-using Narupa.Visualisation.Properties.Collections;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -280,7 +279,7 @@ namespace NarupaIMD.Selection
         {
             return Resources.Load<GameObject>($"Subgraph/Color/{name}");
         }
-        
+
         /// <summary>
         /// Get a visualisation subgraph which is responsible for the scale of particles.
         /// </summary>
@@ -288,7 +287,7 @@ namespace NarupaIMD.Selection
         {
             return Resources.Load<GameObject>($"Subgraph/Scale/{name}");
         }
-        
+
         /// <summary>
         /// Get a visualisation subgraph which is responsible for the width of particles in splines.
         /// </summary>
@@ -311,7 +310,7 @@ namespace NarupaIMD.Selection
         public static (GameObject visualiser, bool isPrefab) ConstructVisualiser(object data)
         {
             GameObject visualiser = null;
-            var prefab = true;
+            var isPrefab = true;
 
             if (data is string visName)
             {
@@ -321,126 +320,138 @@ namespace NarupaIMD.Selection
             }
             else if (data is Dictionary<string, object> dict)
             {
-                // Create a basic dynamic visualiser, with a FrameAdaptor to
-                // read in frames and a DynamicVisualiserSubgraphs to contain the dynamic nodes
-                visualiser = new GameObject();
+                // A dictionary indicates the visualiser should be created from
+                // fields in dict
+                (visualiser, isPrefab) = (GetVisualiserFromDictionary(dict), false);
+            }
 
-                var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
+            return (visualiser, isPrefab);
+        }
 
-                // Set of subgraphs to be used in the visualiser
-                var subgraphs = new List<GameObject>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dict"></param>
+        /// <returns></returns>
+        private static GameObject GetVisualiserFromDictionary(Dictionary<string, object> dict)
+        {
+            // Create a basic dynamic visualiser, with a FrameAdaptor to
+            // read in frames and a DynamicVisualiserSubgraphs to contain the dynamic nodes
+            var visualiser = new GameObject();
 
-                // Mapping of subgraph object to its dictionary representation
-                var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
+            var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
 
-                // The root dictionary
-                var globalParameters = dict;
+            // Set of subgraphs to be used in the visualiser
+            var subgraphs = new List<GameObject>();
 
-                bool GetSubgraph(string key, Func<string, GameObject> findSubgraph)
+            // Mapping of subgraph object to its dictionary representation
+            var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
+
+            // The root dictionary
+            var globalParameters = dict;
+
+            bool GetSubgraph(string key, Func<string, GameObject> findSubgraph)
+            {
+                if (dict.TryGetValue<Dictionary<string, object>>(key, out var strut))
                 {
-                    if (dict.TryGetValue<Dictionary<string, object>>(key, out var strut))
+                    if (strut.TryGetValue<string>("type", out var type))
                     {
-                        if (strut.TryGetValue<string>("type", out var type))
-                        {
-                            var subgraph = findSubgraph(type);
-                            if (subgraph != null)
-                            {
-                                subgraphs.Add(subgraph);
-                                subgraphParameters.Add(subgraph, strut);
-                                return true;
-                            }
-                        }
-                    }
-                    else if (dict.TryGetValue<string>(key, out var t))
-                    {
-                        var subgraph = findSubgraph(t);
+                        var subgraph = findSubgraph(type);
                         if (subgraph != null)
                         {
                             subgraphs.Add(subgraph);
+                            subgraphParameters.Add(subgraph, strut);
                             return true;
                         }
                     }
-
-                    return false;
                 }
-
-                var subgraphIndex = subgraphs.Count;
-                // Parse the sequence subgraph
-                var hasSequenceSubgraph = GetSubgraph("sequence", GetSequenceSubgraph);
-
-
-                // Parse the color keyword if it is a struct with the 'type' field, and hence
-                // describes a color subgraph
-                GetSubgraph("color", GetColorSubgraph);
-                
-                // Parse the color keyword if it is a struct with the 'type' field, and hence
-                // describes a color subgraph
-                GetSubgraph("width", GetWidthSubgraph);
-                
-                // Parse the color keyword if it is a struct with the 'type' field, and hence
-                // describes a color subgraph
-                GetSubgraph("scale", GetScaleSubgraph);
-
-                // Get the render subgraph from the render key
-                var renderName = dict.GetValueOrDefault<string>("render");
-                var render = GetRenderSubgraph(renderName ?? "ball and stick");
-
-                if (render == null)
-                    render = GetRenderSubgraph("ball and stick");
-                if (render != null)
-                    subgraphs.Add(render);
-
-                // If a subgraph requires a set of sequence lengths, a sequence provider is required. If one hasn't already been provided, the default is one that generates sequences based on entities.
-                if (!hasSequenceSubgraph
-                 && FindInputNodeWithName<IntArrayInputNode>(render, "sequences.lengths") != null)
+                else if (dict.TryGetValue<string>(key, out var t))
                 {
-                    var subgraph = GetSequenceSubgraph("entities");
-                    subgraphs.Insert(subgraphIndex, subgraph);
+                    var subgraph = findSubgraph(t);
+                    if (subgraph != null)
+                    {
+                        subgraphs.Add(subgraph);
+                        return true;
+                    }
                 }
 
-                IDynamicPropertyProvider preAdaptor = null;
-
-                // If a subgraph requires secondary structure, then a secondary structure adaptor is inserted into the chain before the particle filter.
-                if (subgraphs.Any(subgraph =>
-                                      FindInputNodeWithName<SecondaryStructureArrayInputNode>(
-                                          subgraph, "residue.secondarystructures") != null))
-                {
-                    preAdaptor = visualiser.AddComponent<SecondaryStructureAdaptor>();
-                }
-
-                var filterAdaptor = visualiser.AddComponent<FilteredAdaptor>();
-                if (preAdaptor != null)
-                {
-                    filterAdaptor.Node.ParentAdaptor.Value = preAdaptor;
-                }
-
-                // For each input of each subgraph, see if either the subgraph's dictionary
-                // or the root dictionary have an item which could be the value for that input
-                foreach (var subgraph in subgraphs)
-                foreach (var input in subgraph.GetVisualisationNodes<IInputNode>())
-                {
-                    if (subgraphParameters.ContainsKey(subgraph)
-                     && FindParameter(input, subgraphParameters[subgraph], visualiser))
-                        continue;
-                    if (FindParameter(input, globalParameters, visualiser))
-                        continue;
-                }
-
-                // Only return a valid visualiser if it has a render subgraph
-                if (render != null)
-                {
-                    dynamic.FrameAdaptor = filterAdaptor;
-
-                    dynamic.SetSubgraphs(subgraphs.ToArray());
-                    prefab = false;
-                }
-                else
-                {
-                    visualiser = null;
-                }
+                return false;
             }
 
-            return (visualiser, prefab);
+            var subgraphIndex = subgraphs.Count;
+            // Parse the sequence subgraph
+            var hasSequenceSubgraph = GetSubgraph("sequence", GetSequenceSubgraph);
+
+
+            // Parse the color keyword if it is a struct with the 'type' field, and hence
+            // describes a color subgraph
+            GetSubgraph("color", GetColorSubgraph);
+
+            // Parse the color keyword if it is a struct with the 'type' field, and hence
+            // describes a color subgraph
+            GetSubgraph("width", GetWidthSubgraph);
+
+            // Parse the color keyword if it is a struct with the 'type' field, and hence
+            // describes a color subgraph
+            GetSubgraph("scale", GetScaleSubgraph);
+
+            // Get the render subgraph from the render key
+            var renderName = dict.GetValueOrDefault<string>("render");
+            var render = GetRenderSubgraph(renderName ?? "ball and stick");
+
+            if (render == null)
+                render = GetRenderSubgraph("ball and stick");
+            if (render != null)
+                subgraphs.Add(render);
+
+            // If a subgraph requires a set of sequence lengths, a sequence provider is required. If one hasn't already been provided, the default is one that generates sequences based on entities.
+            if (!hasSequenceSubgraph
+             && FindInputNodeWithName<IntArrayInputNode>(render, "sequences.lengths") != null)
+            {
+                var subgraph = GetSequenceSubgraph("entities");
+                subgraphs.Insert(subgraphIndex, subgraph);
+            }
+
+            IDynamicPropertyProvider preAdaptor = null;
+
+            // If a subgraph requires secondary structure, then a secondary structure adaptor is inserted into the chain before the particle filter.
+            if (subgraphs.Any(subgraph =>
+                                  FindInputNodeWithName<SecondaryStructureArrayInputNode>(
+                                      subgraph, "residue.secondarystructures") != null))
+            {
+                preAdaptor = visualiser.AddComponent<SecondaryStructureAdaptor>();
+            }
+
+            var filterAdaptor = visualiser.AddComponent<FilteredAdaptor>();
+            if (preAdaptor != null)
+            {
+                filterAdaptor.Node.ParentAdaptor.Value = preAdaptor;
+            }
+
+            // For each input of each subgraph, see if either the subgraph's dictionary
+            // or the root dictionary have an item which could be the value for that input
+            foreach (var subgraph in subgraphs)
+            foreach (var input in subgraph.GetVisualisationNodes<IInputNode>())
+            {
+                if (subgraphParameters.ContainsKey(subgraph)
+                 && FindParameter(input, subgraphParameters[subgraph], visualiser))
+                    continue;
+                if (FindParameter(input, globalParameters, visualiser))
+                    continue;
+            }
+
+            // Only return a valid visualiser if it has a render subgraph
+            if (render != null)
+            {
+                dynamic.FrameAdaptor = filterAdaptor;
+                dynamic.SetSubgraphs(subgraphs.ToArray());
+            }
+            else
+            {
+                visualiser = null;
+            }
+
+            return visualiser;
         }
 
         private delegate bool TryParseObject<TValue>(object obj, out TValue value);
