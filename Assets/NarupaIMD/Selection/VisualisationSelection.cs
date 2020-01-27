@@ -244,7 +244,7 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
-        /// Sets up the visualiser by connecting it to the scenes adaptor and linking the
+        /// Sets up the visualiser by connecting it to the scene's adaptor and linking the
         /// filter to the selection.
         /// </summary>
         private void SetupAdaptorAndFilter()
