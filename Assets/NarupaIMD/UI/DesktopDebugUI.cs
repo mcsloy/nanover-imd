@@ -14,9 +14,6 @@ namespace NarupaXR
         private NarupaXRPrototype narupa;
 
         [SerializeField]
-        private GameObject testRendererContainer;
-
-        [SerializeField]
         private GameObject xrSimulatorContainer;
 
         private bool directConnect;
@@ -64,7 +61,6 @@ namespace NarupaXR
                 narupa.Sessions.Trajectory.Reset();
 
             GUILayout.Box("Debug");
-            testRendererContainer.SetActive(GUILayout.Toggle(testRendererContainer.activeSelf, "Show Test Renderer"));
             xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 
             GUILayout.Box("Misc");
