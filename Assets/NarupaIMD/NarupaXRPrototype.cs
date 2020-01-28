@@ -77,13 +77,15 @@ namespace NarupaXR
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>
-        public void Connect(string address, int? trajectoryPort, int? imdPort, int? multiplayerPort)
+        public void Connect(string address, int? trajectoryPort = null, int? imdPort = null, int? multiplayerPort = null)
             => Sessions.Connect(address, trajectoryPort, imdPort, multiplayerPort);
 
         /// <summary>
         /// Connect to the first set of Narupa services found via ESSD.
         /// </summary>
         public void AutoConnect() => Sessions.AutoConnect();
+
+        public void Disconnect() => Sessions.CloseAsync();
 
         /// <summary>
         /// Called from UI to quit the application.
@@ -110,9 +112,6 @@ namespace NarupaXR
         private void Update()
         {
             CalibratedSpace.CalibrateFromLighthouses();
-
-            ManipulableParticles.ForceScale = forceScaleSlider.value;
-            forceScaleValueLabel.text = $"{forceScaleSlider.value}x";
             debugText.text = $"Frame Index: {Sessions.Trajectory.CurrentFrameIndex}";
         }
 
