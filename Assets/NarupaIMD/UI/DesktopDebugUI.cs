@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace NarupaXR
 {
+    /// <summary>
+    /// Unity Immediate Mode GUI for connecting, configuring, etc from the
+    /// desktop (without needing VR).
+    /// </summary>
     public class DesktopDebugUI : MonoBehaviour
     {
         [SerializeField]

@@ -85,6 +85,9 @@ namespace NarupaXR
         /// </summary>
         public void AutoConnect() => Sessions.AutoConnect();
 
+        /// <summary>
+        /// Disconnect from all Narupa services.
+        /// </summary>
         public void Disconnect() => Sessions.CloseAsync();
 
         /// <summary>
