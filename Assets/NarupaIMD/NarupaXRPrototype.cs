@@ -37,15 +37,6 @@ namespace NarupaXR
         private Transform rightHandedSimulationSpace;
 
         [SerializeField]
-        private Slider forceScaleSlider;
-
-        [SerializeField]
-        private Text forceScaleValueLabel;
-
-        [SerializeField]
-        private Text debugText;
-
-        [SerializeField]
         private InteractableScene interactableScene;
 
         [FormerlySerializedAs("xrInteraction")]
@@ -115,7 +106,6 @@ namespace NarupaXR
         private void Update()
         {
             CalibratedSpace.CalibrateFromLighthouses();
-            debugText.text = $"Frame Index: {Sessions.Trajectory.CurrentFrameIndex}";
         }
 
         private async void OnDestroy()
