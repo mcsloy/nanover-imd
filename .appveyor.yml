@@ -1,0 +1,18 @@
+environment:
+    global:
+        branch: "feature/buckyball-cycles"
+        job_name: "build-StandaloneWindows64"
+        namespace: "intangiblerealities"
+        project: "narupa-applications/narupa-imd"
+        artifact_url: "https://gitlab.com/${namespace}/${project}/-/jobs/artifacts/${branch}/download?job=${job_name}"
+        artifact_zip: "artifacts.zip"
+        artifact_dir: "conda/artifacts"
+init:
+    - ps: Invoke-Webrequest -Uri https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
+    - ps: .\\Miniconda3-latest-Windows-x86_64.exe
+install:
+    - ps: conda install conda-build conda-verify ripgrep 
+build:
+    - ps: Invoke-WebRequest -Uri $artifact_url -OutFile $artifact_zip
+    - ps: Expand-Archive -Path $artifact_zip -DestinationPath $artifact_dir
+    - ps: conda build .\conda

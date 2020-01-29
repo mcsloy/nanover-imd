@@ -1,0 +1,14 @@
+{
+    "menu_name": "Narupa",
+    "menu_items":
+        [
+            {
+                "script": "${PREFIX}/Scripts/NarupaImd.bat",
+                "name": "Narupa iMD",
+                "workdir": "${PREFIX}",
+                "icon": "${MENU_DIR}/icon.png",
+                "desktop": true,
+                "quicklaunch": true
+            }
+        ]
+}
