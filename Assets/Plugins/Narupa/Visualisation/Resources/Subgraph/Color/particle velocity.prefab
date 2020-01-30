@@ -1,0 +1,267 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8528582866378757822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8528582866378757812}
+  - component: {fileID: 7512847196996072751}
+  - component: {fileID: -7470940349134249008}
+  - component: {fileID: 1841712910847173454}
+  - component: {fileID: -1157222868010095713}
+  - component: {fileID: 2688622702517566676}
+  - component: {fileID: 2948249340003140760}
+  - component: {fileID: -5650612546705806100}
+  - component: {fileID: 4064498582268436806}
+  m_Layer: 0
+  m_Name: particle velocity
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8528582866378757812
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7512847196996072751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7af33a56fb6746d3bbd35f089152781c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.positions
+    input:
+      value: []
+      isValueProvided: 0
+--- !u!114 &-7470940349134249008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec4c3439c06e406da701e0eb78819201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: gradient
+    input:
+      value:
+        serializedVersion: 2
+        key0: {r: 1, g: 0, b: 0, a: 1}
+        key1: {r: 0, g: 0, b: 1, a: 1}
+        key2: {r: 1, g: 1, b: 1, a: 0}
+        key3: {r: 0, g: 0, b: 0, a: 0}
+        key4: {r: 0, g: 0, b: 0, a: 0}
+        key5: {r: 0, g: 0, b: 0, a: 0}
+        key6: {r: 0, g: 0, b: 0, a: 0}
+        key7: {r: 0, g: 0, b: 0, a: 0}
+        ctime0: 0
+        ctime1: 65535
+        ctime2: 65535
+        ctime3: 0
+        ctime4: 0
+        ctime5: 0
+        ctime6: 0
+        ctime7: 0
+        atime0: 0
+        atime1: 65535
+        atime2: 0
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_NumColorKeys: 2
+        m_NumAlphaKeys: 2
+      isValueProvided: 1
+--- !u!114 &1841712910847173454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 192fa8aa0edc4b07b48a66ab0036f110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 7512847196996072751}
+    sourceFieldName: input
+    destinationFieldName: particlePositions
+  node:
+    particlePositions:
+      value: []
+      isValueProvided: 0
+--- !u!114 &-1157222868010095713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da86dd9599e64e82bdc178e045413815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 1841712910847173454}
+    sourceFieldName: particleVelocities
+    destinationFieldName: input
+  node:
+    input:
+      value: []
+      isValueProvided: 0
+--- !u!114 &2688622702517566676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3da310b13e541739a3f22355665514d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: -1157222868010095713}
+    sourceFieldName: output
+    destinationFieldName: values
+  - sourceComponent: {fileID: -7470940349134249008}
+    sourceFieldName: input
+    destinationFieldName: gradient
+  - sourceComponent: {fileID: -5650612546705806100}
+    sourceFieldName: input
+    destinationFieldName: minimumValue
+  - sourceComponent: {fileID: 4064498582268436806}
+    sourceFieldName: input
+    destinationFieldName: maximumValue
+  node:
+    gradient:
+      value:
+        serializedVersion: 2
+        key0: {r: 1, g: 0, b: 0, a: 1}
+        key1: {r: 0, g: 0.42557764, b: 1, a: 1}
+        key2: {r: 0, g: 0, b: 0, a: 0}
+        key3: {r: 0, g: 0, b: 0, a: 0}
+        key4: {r: 0, g: 0, b: 0, a: 0}
+        key5: {r: 0, g: 0, b: 0, a: 0}
+        key6: {r: 0, g: 0, b: 0, a: 0}
+        key7: {r: 0, g: 0, b: 0, a: 0}
+        ctime0: 0
+        ctime1: 65535
+        ctime2: 0
+        ctime3: 0
+        ctime4: 0
+        ctime5: 0
+        ctime6: 0
+        ctime7: 0
+        atime0: 0
+        atime1: 65535
+        atime2: 0
+        atime3: 0
+        atime4: 0
+        atime5: 0
+        atime6: 0
+        atime7: 0
+        m_Mode: 0
+        m_NumColorKeys: 2
+        m_NumAlphaKeys: 2
+      isValueProvided: 1
+    values:
+      value: []
+      isValueProvided: 0
+    minimumValue:
+      value: 0
+      isValueProvided: 1
+    maximumValue:
+      value: 1
+      isValueProvided: 1
+--- !u!114 &2948249340003140760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f0af7a320c14292938973e5f087d629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 2688622702517566676}
+    sourceFieldName: colors
+    destinationFieldName: output
+  node:
+    name: particle.colors
+    output:
+      value: []
+      isValueProvided: 0
+--- !u!114 &-5650612546705806100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: min
+    input:
+      value: 0
+      isValueProvided: 1
+--- !u!114 &4064498582268436806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: max
+    input:
+      value: 1
+      isValueProvided: 1
