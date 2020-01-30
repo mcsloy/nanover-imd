@@ -7,10 +7,10 @@ environment:
         artifact_url: "https://gitlab.com/${namespace}/${project}/-/jobs/artifacts/${branch}/download?job=${job_name}"
         artifact_zip: "artifacts.zip"
         artifact_dir: "conda/artifacts"
+        miniconda_uri: "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
 init:
-    - ps: Invoke-Webrequest -Uri https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
-    - ps: .\\Miniconda3-latest-Windows-x86_64.exe
-install:
+    - ps: Invoke-Webrequest -Uri $miniconda_uri -OutFile miniconda.exe
+    - ps: .\miniconda.exe
     - ps: conda install conda-build conda-verify ripgrep 
 build_script:
     - ps: Invoke-WebRequest -Uri $artifact_url -OutFile $artifact_zip
