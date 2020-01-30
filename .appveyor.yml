@@ -8,9 +8,12 @@ environment:
         artifact_zip: "artifacts.zip"
         artifact_dir: "conda/artifacts"
         miniconda_uri: "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
+        miniconda: "C:\Miniconda3"
 init:
     - ps: Invoke-Webrequest -Uri ${env:miniconda_uri} -OutFile miniconda.exe
     - ps: .\miniconda.exe
+    - ps: ls
+    - ps: SetItem -Path Env:Path -Value ($Env:Path + ";${env:miniconda};${env:miniconda}\Scripts")
     - ps: conda install conda-build conda-verify ripgrep 
 build_script:
     - ps: Invoke-WebRequest -Uri ${env:artifact_url} -OutFile ${env:artifact_zip}
