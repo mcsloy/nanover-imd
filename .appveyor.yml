@@ -14,7 +14,7 @@ init:
     - ps: .\miniconda.exe
     - ps: ls
     - ps: Set-Item -Path Env:Path -Value ($Env:Path + ";${env:miniconda};${env:miniconda}\Scripts")
-    - ps: conda install conda-build conda-verify ripgrep 
+    - ps: conda install -y conda-build conda-verify ripgrep 
 build_script:
     - ps: Invoke-WebRequest -Uri ${env:artifact_url} -OutFile ${env:artifact_zip}
     - ps: Expand-Archive -Path ${env:artifact_zip} -DestinationPath ${env:artifact_dir}
