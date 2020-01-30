@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frame;
@@ -67,6 +68,14 @@ namespace NarupaIMD.Selection
             rootSelection = ParticleSelection.CreateRootSelection();
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
             baseRenderableSelection.UpdateVisualiser();
+        }
+
+        private void OnDisable()
+        {
+            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated -=
+                MultiplayerOnSharedStateDictionaryKeyChanged;
+            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved -=
+                MultiplayerOnSharedStateDictionaryKeyRemoved;
         }
 
         /// <summary>
