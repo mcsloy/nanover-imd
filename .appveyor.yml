@@ -13,7 +13,7 @@ init:
     - ps: Invoke-Webrequest -Uri ${env:miniconda_uri} -OutFile miniconda.exe
     - ps: .\miniconda.exe
     - ps: ls
-    - ps: SetItem -Path Env:Path -Value ($Env:Path + ";${env:miniconda};${env:miniconda}\Scripts")
+    - ps: Set-Item -Path Env:Path -Value ($Env:Path + ";${env:miniconda};${env:miniconda}\Scripts")
     - ps: conda install conda-build conda-verify ripgrep 
 build_script:
     - ps: Invoke-WebRequest -Uri ${env:artifact_url} -OutFile ${env:artifact_zip}
