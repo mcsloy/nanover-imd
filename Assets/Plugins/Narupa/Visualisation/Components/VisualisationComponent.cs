@@ -199,12 +199,6 @@ namespace Narupa.Visualisation.Components
             ClearUpInvalidLinks();
         }
 
-        /// <inheritdoc cref="IPropertyProvider.GetPotentialProperties" />
-        public virtual IEnumerable<(string name, Type type)> GetPotentialProperties()
-        {
-            yield break;
-        }
-
         /// <inheritdoc cref="IPropertyProvider.GetProperty" />
         public virtual IReadOnlyProperty GetProperty(string name)
         {
@@ -220,31 +214,13 @@ namespace Narupa.Visualisation.Components
         {
             var node = GetWrappedVisualisationNode();
 
-            var allFields = GetWrappedVisualisationNodeType()
-                .GetFieldsInSelfOrParents(BindingFlags.Instance
-                                          | BindingFlags.NonPublic
-                                          | BindingFlags.Public);
-
-            var validFields = allFields.Where(field => typeof(IReadOnlyProperty).IsAssignableFrom(
-                                                  field.FieldType
-                                              ));
-
-            return validFields.Select(field => (field.Name,
-                                                field.GetValue(node) as
-                                                    IReadOnlyProperty));
+            return VisualisationUtility.GetAllPropertyFields(node);
         }
 
-        /// <inheritdoc cref="IPropertyProvider.GetOrCreateProperty{T}" />
-        public virtual IReadOnlyProperty<T> GetOrCreateProperty<T>(string name)
+        protected virtual void OnDestroy()
         {
-            if (GetProperty(name) is IReadOnlyProperty<T> property)
-                return property;
-            throw new ArgumentException($"{this} does not have property {name}");
-        }
-
-        public virtual bool CanProvideProperty<T>(string name)
-        {
-            return false;
+            if(GetWrappedVisualisationNode() is IDisposable disposable)
+                disposable.Dispose();
         }
     }
 }

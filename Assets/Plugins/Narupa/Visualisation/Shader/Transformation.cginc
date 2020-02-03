@@ -9,6 +9,7 @@
 
     uniform float4x4 ObjectToWorld = float4x4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
     uniform float4x4 WorldToObject = float4x4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+    uniform float4x4 ObjectToWorldInverseTranspose = float4x4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
 
     #if defined(UNITY_CG_INCLUDED)
         #define InstanceSpaceViewDirection(v) mul(WorldToObject, float4(_WorldSpaceCameraPos.xyz, 1)).xyz - v
@@ -151,6 +152,18 @@
         
         setup_transformation(l1, l2, d, float3(scale, scale, scale), position);
     }
+    
+    // Get the transformation matrix associated with mapping to a linear space with the provided axes and origin
+    
+     float4x4 get_transformation_matrix(float3 xAxis, float3 yAxis, float3 zAxis, float3 pos) {
+            float4x4 m = 0;
+            m._11_21_31_41 = float4(xAxis, 0);
+            m._12_22_32_42 = float4(yAxis, 0);
+            m._13_23_33_43 = float4(zAxis, 0);
+            m._14_24_34_44 = float4(pos, 1);
+           return m;
+        }
+
 
 
 #endif

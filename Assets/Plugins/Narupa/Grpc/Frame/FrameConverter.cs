@@ -78,19 +78,11 @@ namespace Narupa.Grpc.Frame
         private static readonly Dictionary<string, Converter<ValueArray, object>> arrayConverters =
             new Dictionary<string, Converter<ValueArray, object>>
             {
-                {
-                    FrameData.BondArrayKey, FrameConversions.ToBondPairArray
-                },
-                {
-                    StandardFrameProperties.BoxTransformation.Key,
-                    (obj) => (object) obj.ToLinearTransformation()
-                },
-                {
-                    FrameData.ParticleElementArrayKey, FrameConversions.ToElementArray
-                },
-                {
-                    FrameData.ParticlePositionArrayKey, Conversions.ToVector3Array
-                }
+                [FrameData.BondArrayKey] = FrameConversions.ToBondPairArray,
+                [FrameData.ParticleElementArrayKey] = FrameConversions.ToElementArray,
+                [FrameData.ParticlePositionArrayKey] = Conversions.ToVector3Array,
+                [StandardFrameProperties.BoxTransformation.Key] 
+                = (obj) => (object) obj.ToLinearTransformation()
             };
 
         /// <summary>
@@ -99,9 +91,9 @@ namespace Narupa.Grpc.Frame
         private static readonly Dictionary<string, Converter<Value, object>> valueConverters =
             new Dictionary<string, Converter<Value, object>>
             {
-                [FrameData.ParticleCountValueKey] = Conversions.ToInt,
-                [FrameData.ResidueCountValueKey] = Conversions.ToInt,
-                [FrameData.ChainCountValueKey] = Conversions.ToInt
+                [FrameData.ParticleCountValueKey] = s => s.ToInt(),
+                [FrameData.ResidueCountValueKey] = s => s.ToInt(),
+                [FrameData.ChainCountValueKey] = s => s.ToInt()
             };
     }
 }

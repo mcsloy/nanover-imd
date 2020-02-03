@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Property;
 using UnityEngine;
 

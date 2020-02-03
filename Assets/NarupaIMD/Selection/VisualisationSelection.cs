@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Narupa.Core.Math;
-using Narupa.Frame;
-using Narupa.Utility;
 using Narupa.Visualisation.Components;
-using Narupa.Visualisation.Node.Input;
-using Narupa.Visualisation.Node.Renderer;
-using Narupa.Visualisation.Property;
+using Narupa.Visualisation.Node.Adaptor;
+using Narupa.Visualisation.Properties;
 using Plugins.Narupa.Core;
 using UnityEngine;
 
@@ -35,9 +32,11 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// The indices of particles not rendered by this or any higher selections.
         /// </summary>
-        /// /// <remark> 
+        /// ///
+        /// <remark>
         /// Unfiltered indices in this selection form the set of indices to be filtered
-        /// by the selections beneath it in the stack. By default, any indices left at the bottom of the stack
+        /// by the selections beneath it in the stack. By default, any indices left at the
+        /// bottom of the stack
         /// will be rendered by the base selection.
         /// </remark>
         public IntArrayProperty UnfilteredIndices { get; } = new IntArrayProperty();
@@ -112,7 +111,7 @@ namespace NarupaIMD.Selection
                 if (filter.Count == 0) // Selection is empty
                 {
                     filteredIndices = new int[0];
-                    
+
                     if (indices == null) // Empty selection, indices was all
                         unfilteredIndices = null;
                     else // Empty selection, indices is a subset
@@ -207,14 +206,6 @@ namespace NarupaIMD.Selection
 
             if (visualiser != null)
             {
-                // Todo: Formalise this
-                // Set the bottom-most selection so it draws bonds between itself and other atoms.
-                var index = layer.Selections.IndexOf(this);
-                if (index == 0)
-                    foreach (var renderer in visualiser
-                        .GetVisualisationNodesInChildren<ParticleBondRendererNode>())
-                        renderer.BondToNonFiltered = true;
-
                 SetVisualiser(visualiser, isPrefab);
             }
             else
@@ -224,21 +215,16 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
-        /// Keys in the visualisation stack that represent a particle filter
-        /// </summary>
-        public static string[] KeyParticleFilters =
-        {
-            "filter", "particle.filter"
-        };
-
-        /// <summary>
         /// Set the visualiser of this selection
         /// </summary>
         /// <param name="isPrefab">Is the argument a prefab, and hence needs instantiating?</param>
         public void SetVisualiser(GameObject newVisualiser, bool isPrefab = true)
         {
             if (currentVisualiser != null)
+            {
+                StripDownAdaptorAndFilter();
                 Destroy(currentVisualiser);
+            }
 
             if (newVisualiser == null)
                 return;
@@ -254,15 +240,40 @@ namespace NarupaIMD.Selection
                 currentVisualiser.transform.SetToLocalIdentity();
             }
 
-            // Set visualiser's frame input
-            currentVisualiser.GetComponent<IFrameConsumer>().FrameSource = layer.Scene.FrameSource;
+            SetupAdaptorAndFilter();
+        }
 
+        /// <summary>
+        /// Sets up the visualiser by connecting it to the scene's adaptor and linking the
+        /// filter to the selection.
+        /// </summary>
+        private void SetupAdaptorAndFilter()
+        {
             // Setup any filters so the visualiser only draws this selection.
-            var filter = currentVisualiser.GetVisualisationNodes<IntArrayInputNode>()
-                                          .FirstOrDefault(
-                                              p => KeyParticleFilters.Contains(p.Name));
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
             if (filter != null)
-                filter.Input.LinkedProperty = FilteredIndices;
+            {
+                filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
+                if (filter is ParticleFilteredAdaptorNode filtered)
+                {
+                    filtered.ParticleFilter.LinkedProperty = FilteredIndices;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Undoes the actions of <see cref="SetupAdaptorAndFilter" />. The act of
+        /// unlinking unregisters the appropriate event handlers, preventing memory leaks
+        /// when the visualiser is destroyed.
+        /// </summary>
+        private void StripDownAdaptorAndFilter()
+        {
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
+            filter.ParentAdaptor.UndefineValue();
+            if (filter is ParticleFilteredAdaptorNode filtered)
+            {
+                filtered.ParticleFilter.LinkedProperty = null;
+            }
         }
     }
 }

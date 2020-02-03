@@ -227,12 +227,12 @@ namespace Narupa.Grpc
         }
         
         /// <summary>
-        /// Convert a <see cref="Value"/> to an integer value
+        /// Convert a protobuf <see cref="Value" /> to an integer.
         /// </summary>
-        public static object ToInt(this Value value)
+        public static int ToInt(this Value value)
         {
             if(value.KindCase != Value.KindOneofCase.NumberValue)
-                throw new ArgumentException("Value cannot be cast to int");
+                throw new ArgumentException("Value is not numeric, and cannot be converted to an integer");
             return (int) value.NumberValue;
         }
     }

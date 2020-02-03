@@ -2,6 +2,8 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using Narupa.Visualisation.Properties;
+using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 using Narupa.Visualisation.Utility;
 using Plugins.Narupa.Visualisation.Node.Renderer;
@@ -51,11 +53,6 @@ namespace Narupa.Visualisation.Node.Renderer
         /// </summary>
         public IProperty<float> RendererScale => rendererScale;
 
-        /// <summary>
-        /// Filtered indices for particles.
-        /// </summary>
-        public IProperty<int[]> ParticleFilter => particleFilter;
-
         public IProperty<Mesh> Mesh => mesh;
 
         public IProperty<Material> Material => material;
@@ -77,9 +74,6 @@ namespace Narupa.Visualisation.Node.Renderer
         private FloatProperty rendererScale = new FloatProperty();
 
         [SerializeField]
-        private IntArrayProperty particleFilter = new IntArrayProperty();
-
-        [SerializeField]
         private MeshProperty mesh = new MeshProperty();
 
         [SerializeField]
@@ -94,9 +88,7 @@ namespace Narupa.Visualisation.Node.Renderer
                                           && Transform != null
                                           && InstanceCount > 0;
 
-        private int InstanceCount => particleFilter.HasNonNullValue()
-                                         ? particleFilter.Value.Length
-                                         : particlePositions.Value.Length;
+        private int InstanceCount => particlePositions.Value.Length;
 
         public override bool IsInputDirty => mesh.IsDirty
                                           || material.IsDirty
@@ -104,8 +96,7 @@ namespace Narupa.Visualisation.Node.Renderer
                                           || rendererScale.IsDirty
                                           || particlePositions.IsDirty
                                           || particleColors.IsDirty
-                                          || particleScales.IsDirty
-                                          || particleFilter.IsDirty;
+                                          || particleScales.IsDirty;
 
 
         public override void UpdateInput()
@@ -126,7 +117,6 @@ namespace Narupa.Visualisation.Node.Renderer
             UpdatePositionsIfDirty();
             UpdateColorsIfDirty();
             UpdateScalesIfDirty();
-            UpdateFilterIfDirty();
         }
 
         private void UpdatePositionsIfDirty()
@@ -159,15 +149,6 @@ namespace Narupa.Visualisation.Node.Renderer
             }
         }
 
-        private void UpdateFilterIfDirty()
-        {
-            if (particleFilter.IsDirty)
-            {
-                InstancingUtility.SetFilter(drawCommand, particleFilter.HasValue ? particleFilter.Value : null);
-                particleFilter.IsDirty = false;
-            }
-        }
-
         private void UpdateMeshAndMaterials()
         {
             drawCommand.SetMesh(mesh);
@@ -184,7 +165,6 @@ namespace Narupa.Visualisation.Node.Renderer
             particleColors.IsDirty = true;
             particlePositions.IsDirty = true;
             particleScales.IsDirty = true;
-            particleFilter.IsDirty = true;
         }
     }
 }

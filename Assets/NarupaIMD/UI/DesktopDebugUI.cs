@@ -19,10 +19,10 @@ namespace NarupaXR
         private GameObject xrSimulatorContainer;
 
         private bool directConnect;
-        private string directConnectAddress = "";
-        private string trajectoryPort = "";
-        private string interactionPort = "";
-        private string multiplayerPort = "";
+        private string directConnectAddress = "localhost";
+        private string trajectoryPort = "38801";
+        private string interactionPort = "38801";
+        private string multiplayerPort = "38801";
 
         private bool discovery;
         private Dictionary<string, ServiceHub> knownServiceHubs = new Dictionary<string, ServiceHub>();

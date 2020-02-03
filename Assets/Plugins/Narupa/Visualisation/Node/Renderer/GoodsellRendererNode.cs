@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Narupa.Visualisation.Properties;
+using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -23,23 +25,24 @@ namespace Narupa.Visualisation.Node.Renderer
 
         [SerializeField]
         private IntArrayProperty particleResidues = new IntArrayProperty();
-        
-        [SerializeField]
-        private IntArrayProperty particleFilter = new IntArrayProperty();
 #pragma warning restore 0649
 
         [SerializeField]
         private ColorProperty rendererColor = new ColorProperty();
 
+        [SerializeField]
+        private FloatProperty rendererScale = new FloatProperty();
+
+        
         /// <summary>
         /// The transform to center this renderer on.
         /// </summary>
         public Transform Transform { get; set; }
 
         /// <inheritdoc cref="CommandBufferRendererNode.Cleanup"/>
-        public override void Cleanup()
+        public override void Dispose()
         {
-            base.Cleanup();
+            base.Dispose();
             renderer.ResetBuffers();
         }
 
@@ -51,8 +54,8 @@ namespace Narupa.Visualisation.Node.Renderer
             renderer.ParticlePositions.LinkedProperty = particlePositions;
             renderer.ParticleColors.LinkedProperty = particleColors;
             renderer.ParticleResidues.LinkedProperty = particleResidues;
-            renderer.ParticleFilter.LinkedProperty = particleFilter;
             renderer.RendererColor.LinkedProperty = rendererColor;
+            renderer.RendererScale.LinkedProperty = rendererScale;
 
             renderer.Transform = Transform;
         }
@@ -75,7 +78,7 @@ namespace Narupa.Visualisation.Node.Renderer
         {
             if (renderer.IsInputDirty && renderer.ShouldRender != isRendering)
             {
-                Cleanup();
+                Dispose();
                 isRendering = renderer.ShouldRender;
             }
 

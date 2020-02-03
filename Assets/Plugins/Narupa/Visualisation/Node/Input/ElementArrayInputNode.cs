@@ -3,6 +3,7 @@
 
 using System;
 using Narupa.Core.Science;
+using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 
 namespace Narupa.Visualisation.Node.Input

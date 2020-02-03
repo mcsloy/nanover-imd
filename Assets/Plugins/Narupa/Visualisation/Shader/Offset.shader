@@ -36,12 +36,13 @@
         v2f offset_vert (appdata v, float mult)
         {
             v2f o;
-            v.normal *= sign(mult * _Offset);
+            
+            v.normal *= sign(mult * _Offset) * sign(determinant(unity_ObjectToWorld));
             o.normal = mul(unity_ObjectToWorld, float4(v.normal.xyz, 0));
             
             v.vertex += v.normal * abs(_Offset);
             o.vertex = UnityObjectToClipPos(v.vertex);
-            o.color = v.color;
+            o.color = pow(v.color, 2.2);
             return o;
         }
 
@@ -68,7 +69,7 @@
                 fixed4 color = i.color;
                 float3 n = normalize(i.normal.xyz);
                 float3 l = normalize(_WorldSpaceLightPos0.xyz);
-                return _Color * pow(color, 2.2) * saturate(lerp(1, dot(n, l), _Diffuse));;
+                return _Color *color * saturate(lerp(1, dot(n, l), _Diffuse));
             }
 
             ENDCG
@@ -93,7 +94,7 @@
                 fixed4 color = i.color;
                 float3 n = normalize(i.normal.xyz);
                 float3 l = normalize(_WorldSpaceLightPos0.xyz);
-                return _Color * pow(color, 2.2) * saturate(lerp(1, dot(n, l), _Diffuse));;
+                return _Color * color * saturate(lerp(1, dot(n, l), _Diffuse));;
             }
 
             ENDCG

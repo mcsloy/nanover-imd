@@ -4,6 +4,7 @@
 using System;
 using Narupa.Core;
 using Narupa.Core.Science;
+using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Property;
 using UnityEngine;
 
