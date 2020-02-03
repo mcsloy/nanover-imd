@@ -72,6 +72,11 @@ namespace NarupaXR
             => Sessions.Connect(address, trajectoryPort, imdPort, multiplayerPort);
 
         /// <summary>
+        /// Connect to the Narupa services described in a given ServiceHub.
+        /// </summary>
+        public void Connect(ServiceHub hub) => Sessions.Connect(hub);
+
+        /// <summary>
         /// Connect to the first set of Narupa services found via ESSD.
         /// </summary>
         public void AutoConnect() => Sessions.AutoConnect();
