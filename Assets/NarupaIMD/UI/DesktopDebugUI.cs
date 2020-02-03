@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using Essd;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace NarupaXR
@@ -17,16 +19,19 @@ namespace NarupaXR
         private GameObject xrSimulatorContainer;
 
         private bool directConnect;
-        private string directConnectAddress = "";
-        private string trajectoryPort = "";
-        private string interactionPort = "";
-        private string multiplayerPort = "";
+        private string directConnectAddress = "localhost";
+        private string trajectoryPort = "38801";
+        private string interactionPort = "38801";
+        private string multiplayerPort = "38801";
+
+        private bool discovery;
+        private Dictionary<string, ServiceHub> knownServiceHubs = new Dictionary<string, ServiceHub>();
 
         public float interactionForceMultiplier = 1000;
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(10, 10, 192, 512));
+            GUILayout.BeginArea(new Rect(16, 16, 192, 512));
             GUILayout.Box("Narupa iMD");
 
             GUILayout.Box("Server");
@@ -36,6 +41,11 @@ namespace NarupaXR
             if (GUILayout.Button("Direct Connect"))
             {
                 directConnect = !directConnect;
+            }
+
+            if (GUILayout.Button("Discover Services"))
+            {
+                discovery = !discovery;
             }
 
             if (GUILayout.Button("Disconnect"))
@@ -71,11 +81,14 @@ namespace NarupaXR
 
             if (directConnect)
                 ShowDirectConnectWindow();
+
+            if (discovery)
+                ShowServiceDiscoveryWindow();
         }
 
         private void ShowDirectConnectWindow()
         {
-            GUILayout.BeginArea(new Rect(256, 10, 192, 512));
+            GUILayout.BeginArea(new Rect(192 + 16 * 2, 10, 192, 512));
             GUILayout.Box("Direct Connect");
 
             GUILayout.Label("Addresss");
@@ -99,6 +112,37 @@ namespace NarupaXR
 
             if (GUILayout.Button("Cancel"))
                 directConnect = false;
+
+            GUILayout.EndArea();
+        }
+
+        private void ShowServiceDiscoveryWindow()
+        {
+            GUILayout.BeginArea(new Rect(192 * 2 + 16 * 3, 10, 192, 512));
+            GUILayout.Box("Discover Servers");
+
+            if (GUILayout.Button("Search"))
+            {
+                knownServiceHubs = (new Client()).SearchForServices(500).ToDictionary(hub => hub.Id, hub => hub);
+            }
+
+            if (GUILayout.Button("Cancel"))
+                discovery = false;
+
+            if (knownServiceHubs.Count > 0)
+            {
+                GUILayout.Box("Found Services");
+
+                foreach (var hub in knownServiceHubs.Values)
+                {
+                    if (GUILayout.Button($"{hub.Name} ({hub.Address})"))
+                    {
+                        discovery = false;
+                        knownServiceHubs = new Dictionary<string, ServiceHub>();
+                        narupa.Connect(hub);
+                    }
+                }
+            }
 
             GUILayout.EndArea();
         }
