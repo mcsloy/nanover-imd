@@ -2,14 +2,13 @@
   "dependencies": {
     "com.alexjbinnie.codecoveragetools": "https://gitlab.com/alexjbinnie/code-coverage-tools.git",
     "com.unity.ext.nunit": "1.0.0",
-    "com.unity.ide.rider": "1.1.1",
-    "com.unity.ide.vscode": "1.1.2",
-    "com.unity.package-manager-ui": "2.2.0",
-    "com.unity.postprocessing": "2.1.7",
-    "com.unity.test-framework": "1.1.3",
+    "com.unity.ide.rider": "1.1.4",
+    "com.unity.ide.vscode": "1.1.4",
+    "com.unity.postprocessing": "2.3.0",
+    "com.unity.test-framework": "1.1.9",
     "com.unity.textmeshpro": "2.0.1",
     "com.unity.ugui": "1.0.0",
-    "com.unity.xr.openvr.standalone": "1.0.5",
+    "com.unity.xr.openvr.standalone": "2.0.5",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -44,8 +43,8 @@
   },
   "lock": {
     "com.alexjbinnie.codecoveragetools": {
-      "hash": "b0f291ed8d1b49c782915b7f135acbb7c03b49c7",
-      "revision": "HEAD"
+      "revision": "HEAD",
+      "hash": "b0f291ed8d1b49c782915b7f135acbb7c03b49c7"
     }
   }
 }
