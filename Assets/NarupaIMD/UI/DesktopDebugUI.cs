@@ -25,7 +25,7 @@ namespace NarupaXR
         private string multiplayerPort = "38801";
 
         private bool discovery;
-        private Dictionary<string, ServiceHub> knownServiceHubs = new Dictionary<string, ServiceHub>();
+        private ICollection<ServiceHub> knownServiceHubs = new List<ServiceHub>();
 
         public float interactionForceMultiplier = 1000;
 
@@ -123,7 +123,12 @@ namespace NarupaXR
 
             if (GUILayout.Button("Search"))
             {
-                knownServiceHubs = (new Client()).SearchForServices(500).ToDictionary(hub => hub.Id, hub => hub);
+                var client = new Client();
+                knownServiceHubs = client
+                    .SearchForServices(500)
+                    .GroupBy(hub => hub.Id)
+                    .Select(group => group.First())
+                    .ToList();
             }
 
             if (GUILayout.Button("Cancel"))
@@ -133,12 +138,12 @@ namespace NarupaXR
             {
                 GUILayout.Box("Found Services");
 
-                foreach (var hub in knownServiceHubs.Values)
+                foreach (var hub in knownServiceHubs)
                 {
                     if (GUILayout.Button($"{hub.Name} ({hub.Address})"))
                     {
                         discovery = false;
-                        knownServiceHubs = new Dictionary<string, ServiceHub>();
+                        knownServiceHubs = new List<ServiceHub>();
                         narupa.Connect(hub);
                     }
                 }
