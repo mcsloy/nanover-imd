@@ -39,4 +39,13 @@ else
 fi
 
 cat $(pwd)/$TEST_PLATFORM-results.xml | grep test-run | grep Passed
+
+
+git clone "https://gitlab.com/alexjbinnie/extentreports-dotnetcore-cli.git"
+cd extentreports-dotnetcore-cli/ExtentReportsDotNetCLI
+dotnet publish -c Release
+cd ../../
+dotnet extentreports-dotnetcore-cli/ExtentReportsDotNetCLI/ExtentReportsDotNetCLI/bin/Release/netcoreapp2.1/ExtentReportsDotNetCLI.dll -i $(pwd)/$TEST_PLATFORM-results.xml
+mv index.html $TEST_PLATFORM-results.html
+
 exit $UNITY_EXIT_CODE
