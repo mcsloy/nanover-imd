@@ -4,9 +4,6 @@ set -x
 
 echo "Testing for $TEST_PLATFORM"
 
-docker pull microsoft/dotnet:latest
-dotnet --info
-
 ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
   -projectPath $(pwd) \
   -runTests \
@@ -42,13 +39,4 @@ else
 fi
 
 cat $(pwd)/$TEST_PLATFORM-results.xml | grep test-run | grep Passed
-
-
-git clone "https://gitlab.com/alexjbinnie/extentreports-dotnetcore-cli.git"
-cd extentreports-dotnetcore-cli/ExtentReportsDotNetCLI
-dotnet publish -c Release
-cd ../../
-dotnet extentreports-dotnetcore-cli/ExtentReportsDotNetCLI/ExtentReportsDotNetCLI/bin/Release/netcoreapp2.1/ExtentReportsDotNetCLI.dll -i $(pwd)/$TEST_PLATFORM-results.xml
-mv index.html $TEST_PLATFORM-results.html
-
 exit $UNITY_EXIT_CODE

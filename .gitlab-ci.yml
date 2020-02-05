@@ -2,7 +2,26 @@ image: "gableroux/unity3d:2019.3.0f6-windows"
 
 stages:
 - build
+- reports
 - deploy
+
+generate_report:
+  stage: reports
+  image: "microsoft/dotnet:latest"
+  script:
+    - git clone "https://gitlab.com/alexjbinnie/extentreports-dotnetcore-cli.git"
+    - cd extentreports-dotnetcore-cli/ExtentReportsDotNetCLI
+    - dotnet publish -c Release
+    - cd ../../
+    - dotnet extentreports-dotnetcore-cli/ExtentReportsDotNetCLI/ExtentReportsDotNetCLI/bin/Release/netcoreapp2.1/ExtentReportsDotNetCLI.dll -i ./editmode-results.xml
+    - mv index.html editmode-results.html
+  dependencies:
+    test-editmode
+  artifacts:
+    paths:
+    - $(pwd)/editmode-results.html
+    when: always
+
 
 # triggers an update of the Narupa unity plugin repo.
 trigger_plugin_update:
