@@ -16,7 +16,7 @@ generate_report:
     - dotnet extentreports-dotnetcore-cli/ExtentReportsDotNetCLI/ExtentReportsDotNetCLI/bin/Release/netcoreapp2.1/ExtentReportsDotNetCLI.dll -i ./editmode-results.xml
     - mv index.html editmode-results.html
   dependencies:
-    test-editmode
+    - test-editmode
   artifacts:
     paths:
     - $(pwd)/editmode-results.html
