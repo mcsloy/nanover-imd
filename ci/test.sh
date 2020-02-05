@@ -4,6 +4,9 @@ set -x
 
 echo "Testing for $TEST_PLATFORM"
 
+docker pull microsoft/dotnet:latest
+dotnet --info
+
 ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
   -projectPath $(pwd) \
   -runTests \
