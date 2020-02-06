@@ -36,14 +36,17 @@ namespace Narupa.Frontend.UI
         protected override void Awake()
         {
             base.Awake();
-            Assert.IsNull(Instance, $"Only one instance of {nameof(WorldSpaceCursorInput)} should exist in the scene.");
+            Assert.IsNull(
+                Instance,
+                $"Only one instance of {nameof(WorldSpaceCursorInput)} should exist in the scene.");
             Instance = this;
         }
 
         protected override void Start()
         {
             base.Start();
-            Assert.IsNotNull(camera, $"{nameof(WorldSpaceCursorInput)} must have a non-null {nameof(camera)}");
+            Assert.IsNotNull(
+                camera, $"{nameof(WorldSpaceCursorInput)} must have a non-null {nameof(camera)}");
             StartCoroutine(InitialiseWhenInputModuleReady());
         }
 
@@ -52,7 +55,16 @@ namespace Narupa.Frontend.UI
             Vector3? worldPoint;
             worldPoint = GetProjectedCursorPoint();
 
-            isCursorOnCanvas = worldPoint.HasValue;
+            
+            var newCursorState = worldPoint.HasValue;
+            if (!newCursorState && isCursorOnCanvas)
+            {
+                (EventSystem.current.currentInputModule as NarupaInputModule).ClearSelection();
+            }
+
+            isCursorOnCanvas = newCursorState;
+
+            
             if (worldPoint.HasValue)
             {
                 screenPosition = camera.WorldToScreenPoint(worldPoint.Value);
@@ -71,7 +83,8 @@ namespace Narupa.Frontend.UI
                                               IPosedObject cursor,
                                               IButton click)
         {
-            Assert.IsNotNull(Instance, $"There is no instance of {nameof(WorldSpaceCursorInput)} in the scene.");
+            Assert.IsNotNull(
+                Instance, $"There is no instance of {nameof(WorldSpaceCursorInput)} in the scene.");
             Instance.canvas = canvas;
             Instance.cursor = cursor;
             Instance.clickButton = click;
@@ -142,6 +155,12 @@ namespace Narupa.Frontend.UI
                 Instance.canvas = null;
                 Instance.cursor = null;
             }
+        }
+
+        private void OnDrawGizmos()
+        {
+            var ray = camera.ScreenPointToRay(mousePosition);
+            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 5f);
         }
     }
 }

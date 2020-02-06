@@ -67,7 +67,7 @@ namespace Narupa.Frontend.UI
         protected virtual void RegisterCanvas()
         {
             WorldSpaceCursorInput.SetCanvasAndCursor(canvas,
-                                                     controller.HeadPose,
+                                                     controller.CursorPose,
                                                      inputAction.WrapAsButton(inputSource));
         }
 
