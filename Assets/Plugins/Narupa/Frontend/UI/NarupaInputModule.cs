@@ -15,7 +15,7 @@ namespace Narupa.Frontend.UI
         /// <summary>
         /// Get the <see cref="PointerEventData"/> for the UI.
         /// </summary>
-        /// <remarks>
+        /// <remarks>F
         /// Exposes the protected method <see cref="StandaloneInputModule.GetPointerData"/>.
         /// </remarks>
         private PointerEventData GetPointerEventData(int pointerId = -1)

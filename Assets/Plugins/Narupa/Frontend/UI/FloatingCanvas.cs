@@ -3,6 +3,9 @@ using UnityEngine.Assertions;
 
 namespace Narupa.Frontend.UI
 {
+    /// <summary>
+    /// Makes a Canvas float in front of the user.
+    /// </summary>
     public class FloatingCanvas : MonoBehaviour
     {
         [SerializeField]
