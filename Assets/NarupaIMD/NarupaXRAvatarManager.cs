@@ -105,7 +105,8 @@ namespace NarupaXR
                                         Name = pair.Key,
                                         Pose = pair.Value
                                     }))
-                                    .Where(component => component.Name != MultiplayerSession.HeadsetName)
+                                    .Where(component => component.Name == MultiplayerSession.LeftHandName 
+                                                     || component.Name == MultiplayerSession.RightHandName)
                                     .Where(component => component.PlayerId != localPlayerId)
                                     .Select(component => component.Pose)
                                     .OfType<Transformation>();
