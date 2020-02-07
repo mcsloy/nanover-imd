@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Narupa.Core.Math;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
+using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Properties;
 using Plugins.Narupa.Core;
 using UnityEngine;
@@ -259,7 +260,16 @@ namespace NarupaIMD.Selection
                     filtered.ParticleFilter.LinkedProperty = FilteredIndices;
                 }
             }
+
+            // Setup the subgraph to the highlighted particles
+            foreach (var node in currentVisualiser.GetVisualisationNodesInChildren<IntArrayInputNode>()
+                .Where(node => node.Name == HighlightedParticlesKey))
+            {
+                node.Input.LinkedProperty = layer.Scene.InteractedParticles;
+            }
         }
+
+        private const string HighlightedParticlesKey = "highlighted.particles";
 
         /// <summary>
         /// Undoes the actions of <see cref="SetupAdaptorAndFilter" />. The act of

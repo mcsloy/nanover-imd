@@ -472,6 +472,8 @@ namespace NarupaIMD.Selection
             // describes a color subgraph
             FindSubgraph(ScaleKeyword, GetScaleSubgraph);
 
+            subgraphs.Add(GetColorSubgraph("color pulser"));
+
             // Get the render subgraph from the render key
             var renderSubgraph = FindSubgraph(RenderKeyword, GetRenderSubgraph);
             if (renderSubgraph == null)
