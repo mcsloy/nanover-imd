@@ -21,23 +21,23 @@ namespace NarupaXR.Interaction
         [SerializeField]
         private VisualisationScene visualisationScene;
 
+        private bool HasValidFrame => frameSource?.CurrentFrame != null;
+
         /// <summary>
         /// Attempt to grab the nearest particle, returning null if no interaction is possible.
         /// </summary>
         /// <param name="grabberPose">The transformation of the grabbing pivot.</param>
         public ActiveParticleGrab GetParticleGrab(Transformation grabberPose)
         {
-            var particleIndex = GetClosestParticleToWorldPosition(grabberPose.Position);
-
-            if (!particleIndex.HasValue)
+            if (!(GetClosestParticleToWorldPosition(grabberPose.Position) is int particleIndex))
                 return null;
-            
-            var selection = visualisationScene.GetSelectionForParticle(particleIndex.Value);
+
+            var selection = visualisationScene.GetSelectionForParticle(particleIndex);
 
             if (selection.Selection.InteractionMethod == ParticleSelection.InteractionMethodNone)
                 return null;
 
-            var indices = GetIndicesInSelection(selection, particleIndex.Value);
+            var indices = GetIndicesInSelection(selection, particleIndex);
 
             var grab = new ActiveParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
@@ -69,6 +69,9 @@ namespace NarupaXR.Interaction
         /// </summary>
         private int? GetClosestParticleToWorldPosition(Vector3 worldPosition, float cutoff = Mathf.Infinity)
         {
+            if (!HasValidFrame)
+                return null;
+
             var position = transform.InverseTransformPoint(worldPosition);
 
             var frame = frameSource.CurrentFrame;

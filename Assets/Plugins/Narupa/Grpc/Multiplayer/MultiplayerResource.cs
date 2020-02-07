@@ -60,6 +60,8 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private TValue ObjectToValue(object obj)
         {
+            if (obj is null)
+                return default;
             if (objectToValue != null)
                 return objectToValue(obj);
             if (obj is TValue v)

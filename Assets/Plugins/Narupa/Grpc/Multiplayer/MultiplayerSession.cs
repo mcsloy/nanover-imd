@@ -265,6 +265,9 @@ namespace Narupa.Session
         /// </summary>
         public async Task<bool> LockResource(string id)
         {
+            if (!IsOpen)
+                return false;
+
             return await client.LockResource(PlayerId, id);
         }
 
@@ -273,6 +276,9 @@ namespace Narupa.Session
         /// </summary>
         public async Task<bool> ReleaseResource(string id)
         {
+            if (!IsOpen)
+                return false;
+
             return await client.ReleaseResource(PlayerId, id);
         }
 
