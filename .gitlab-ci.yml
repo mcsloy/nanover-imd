@@ -2,11 +2,6 @@ stages:
 - build
 - deploy
 
-test_update:
-  stage: deploy
-  script:
-    - echo "Testing"
-
 # triggers an update of the Narupa unity plugin repo.
 trigger_plugin_update:
   stage: deploy
