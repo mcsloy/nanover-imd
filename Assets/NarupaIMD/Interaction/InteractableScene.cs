@@ -3,6 +3,8 @@ using System.Linq;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
+using Narupa.Visualisation.Properties;
+using Narupa.Visualisation.Property;
 using NarupaIMD.Selection;
 using UnityEngine;
 
@@ -24,7 +26,13 @@ namespace NarupaXR.Interaction
         [SerializeField]
         private NarupaXRPrototype prototype;
 
-        public IntArrayProperty interactedParticles = new IntArrayProperty();
+        /// <inheritdoc cref="InteractedParticles"/>
+        private readonly IntArrayProperty interactedParticles = new IntArrayProperty();
+
+        /// <summary>
+        /// The set of particles which are currently being interacted with.
+        /// </summary>
+        public IReadOnlyProperty<int[]> InteractedParticles => interactedParticles;
 
         private void Update()
         {

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Components.Adaptor;
+using Narupa.Visualisation.Property;
 using NarupaXR;
+using NarupaXR.Interaction;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -27,6 +29,13 @@ namespace NarupaIMD.Selection
 
         [SerializeField]
         private SynchronisedFrameSource frameSource;
+
+        [SerializeField]
+        private InteractableScene interactableScene;
+
+        /// <inheritdoc cref="InteractableScene.InteractedParticles"/>
+        public IReadOnlyProperty<int[]> InteractedParticles
+            => interactableScene.InteractedParticles;
 
         /// <inheritdoc cref="FrameAdaptor" />
         /// <remarks>
