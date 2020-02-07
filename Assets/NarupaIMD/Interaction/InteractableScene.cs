@@ -21,6 +21,20 @@ namespace NarupaXR.Interaction
         [SerializeField]
         private VisualisationScene visualisationScene;
 
+        [SerializeField]
+        private NarupaXRPrototype prototype;
+
+        public IntArrayProperty interactedParticles = new IntArrayProperty();
+
+        private void Update()
+        {
+            var interactions = prototype.Sessions.Imd.Interactions;
+            var pts = new List<int>();
+            foreach (var interaction in interactions)
+                pts.AddRange(interaction.Value.ParticleIds);
+            interactedParticles.Value = pts.ToArray();
+        }
+
         /// <summary>
         /// Attempt to grab the nearest particle, returning null if no interaction is possible.
         /// </summary>

@@ -259,6 +259,14 @@ namespace NarupaIMD.Selection
                     filtered.ParticleFilter.LinkedProperty = FilteredIndices;
                 }
             }
+            
+            
+            // Setup the subgraph to the highlighted particles
+            foreach (var node in currentVisualiser.GetVisualisationNodesInChildren<IntArrayInputNode>()
+                .Where(node => node.Name == VisualisationFrameProperties.HighlightedParticles.Key))
+            {
+                node.Input.LinkedProperty = layer.Scene.InteractableScene.interactedParticles;
+            }
         }
 
         /// <summary>
