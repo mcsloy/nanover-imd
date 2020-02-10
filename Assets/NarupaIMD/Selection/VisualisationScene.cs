@@ -81,6 +81,7 @@ namespace NarupaIMD.Selection
         {
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
+            frameAdaptor.Node.AddCustomProperty<int[]>("highlighted.particles").LinkedProperty = InteractedParticles; 
 
             narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
