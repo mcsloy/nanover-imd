@@ -521,7 +521,7 @@ namespace NarupaIMD.Selection
                 preAdaptor = visualiser.AddComponent<SecondaryStructureAdaptor>();
             }
 
-            var filterAdaptor = visualiser.AddComponent<FilteredAdaptor>();
+            var filterAdaptor = visualiser.AddComponent<ParticleFilteredAdaptor>();
             if (preAdaptor != null)
             {
                 filterAdaptor.Node.ParentAdaptor.Value = preAdaptor;
