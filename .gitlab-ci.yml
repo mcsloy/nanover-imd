@@ -11,6 +11,15 @@ trigger_plugin_update:
     - apt-get update && apt-get install --yes curl
     - "curl -X POST -F token=${NARUPA_UNITY_PLUGIN_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/14856986/trigger/pipeline"
 
+# triggers an update of the conda package in "Narupa iMD conda package"
+trigger_conda_update:
+  stage: deploy
+  only:
+    - master
+  script:
+    - apt-get update && apt-get install --yes curl
+    - "curl -X POST -F token=${NARUPA_IMD_CONDA_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/16612348/trigger/pipeline"
+
 variables:
   BUILD_NAME: Narupa iMD
 
