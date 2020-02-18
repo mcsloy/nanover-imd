@@ -15,7 +15,7 @@ trigger_plugin_update:
 trigger_conda_update:
   stage: deploy
   only:
-    - hotfix/appveyor-trigger
+    - master
   script:
     - apt-get update && apt-get install --yes curl
     - |
