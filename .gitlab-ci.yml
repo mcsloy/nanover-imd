@@ -15,10 +15,20 @@ trigger_plugin_update:
 trigger_conda_update:
   stage: deploy
   only:
-    - master
+    - hotfix/appveyor-trigger
   script:
     - apt-get update && apt-get install --yes curl
-    - "curl -X POST -F token=${NARUPA_IMD_CONDA_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/16612348/trigger/pipeline"
+    - |
+      curl \
+        -H "Authorization: Bearer $APPVEYOR_TOKEN" \
+        -H "Content-Type: application/json" \
+        --request POST \
+        --data '{
+            "accountName": "IntangibleRealitiesLab",
+            "projectSlug": "narupa-imd-conda-package",
+            "branch": "master",
+        }' \
+        https://ci.appveyor.com/api/builds
 
 variables:
   BUILD_NAME: Narupa iMD
