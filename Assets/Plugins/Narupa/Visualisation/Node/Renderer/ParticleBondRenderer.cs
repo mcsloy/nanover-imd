@@ -102,7 +102,6 @@ namespace Narupa.Visualisation.Node.Renderer
                                   && material.HasNonNullValue()
                                   && bondPairs.HasNonEmptyValue()
                                   && particlePositions.HasNonEmptyValue()
-                                  && bondScale.HasValue
                                   && rendererColor.HasValue
                                   && particleScale.HasValue;
 
@@ -119,7 +118,8 @@ namespace Narupa.Visualisation.Node.Renderer
 
                 drawCommand.SetInstanceCount(bondPairs.Value.Length);
 
-                drawCommand.SetFloat("_EdgeScale", bondScale.Value);
+                if(bondScale.HasValue)
+                    drawCommand.SetFloat("_EdgeScale", bondScale.Value);
                 drawCommand.SetFloat("_ParticleScale", particleScale.Value);
                 drawCommand.SetFloat("_Scale", particleScale.Value);
                 drawCommand.SetColor("_Color", rendererColor.Value);

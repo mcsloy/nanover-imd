@@ -74,6 +74,24 @@
 
     #endif
 
+    // Triangle array
+    
+    #if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED) && defined(TRIPLE_ARRAY)
+
+        struct Triple {
+            int a;
+            int b;
+            int c;
+        };
+        
+        StructuredBuffer<Triple> TripleArray;
+
+        Triple instance_triple() {
+            return TripleArray[instance_id];
+        }
+        
+    #endif
+    
     /// Edge array, representing connections between particles
 
     #if defined(UNITY_PROCEDURAL_INSTANCING_ENABLED) && defined(EDGE_ARRAY)

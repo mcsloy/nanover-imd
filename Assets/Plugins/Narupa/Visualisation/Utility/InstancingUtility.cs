@@ -3,6 +3,7 @@
 
 using System.Runtime.InteropServices;
 using Narupa.Frame;
+using Narupa.Visualisation.Node.Renderer;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Utility
@@ -56,6 +57,12 @@ namespace Narupa.Visualisation.Utility
         {
             command.SetKeyword("EDGE_ARRAY");
             command.SetDataBuffer("EdgeArray", edges);
+        }
+        
+        public static void SetTriples(IndirectMeshDrawCommand command, Triple[] triples)
+        {
+            command.SetKeyword("TRIPLE_ARRAY");
+            command.SetDataBuffer("TripleArray", triples);
         }
 
         /// <summary>

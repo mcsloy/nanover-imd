@@ -7,6 +7,7 @@ using Narupa.Core.Science;
 using Narupa.Frame;
 using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Node.Color;
+using Narupa.Visualisation.Node.Renderer;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Property
@@ -159,6 +160,11 @@ namespace Narupa.Visualisation.Property
     /// </summary>
     [Serializable]
     public class BondArrayProperty : ArrayProperty<BondPair>
+    {
+    }
+    
+    [Serializable]
+    public class TripleArrayProperty : ArrayProperty<Triple>
     {
     }
     

@@ -11,11 +11,10 @@ GameObject:
   - component: {fileID: 8528582866378757812}
   - component: {fileID: 8528582866378757811}
   - component: {fileID: 397105478419057534}
-  - component: {fileID: 6089087228771831228}
   - component: {fileID: 8528582866378757808}
   - component: {fileID: 8528582866378757823}
   m_Layer: 0
-  m_Name: Torus Bond
+  m_Name: Torus Bonds
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,24 +69,6 @@ MonoBehaviour:
     input:
       isValueProvided: 1
       value: 0.1
---- !u!114 &6089087228771831228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8528582866378757822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection: []
-  node:
-    name: bond.scale
-    input:
-      isValueProvided: 1
-      value: 0.1
 --- !u!114 &8528582866378757808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,9 +91,6 @@ MonoBehaviour:
   - sourceComponent: {fileID: 0}
     sourceFieldName: colors
     destinationFieldName: particleColors
-  - sourceComponent: {fileID: 6089087228771831228}
-    sourceFieldName: input
-    destinationFieldName: bondScale
   - sourceComponent: {fileID: 397105478419057534}
     sourceFieldName: input
     destinationFieldName: particleScale
@@ -142,8 +120,8 @@ MonoBehaviour:
       isValueProvided: 1
       value: {r: 1, g: 1, b: 1, a: 1}
     particleScale:
-      isValueProvided: 0
-      value: 1
+      isValueProvided: 1
+      value: 0.01
     bondOrders:
       isValueProvided: 0
       value: 
@@ -163,9 +141,6 @@ MonoBehaviour:
   - sourceComponent: {fileID: 8528582866378757811}
     sourceFieldName: particle.positions
     destinationFieldName: particlePositions
-  - sourceComponent: {fileID: 0}
-    sourceFieldName: colors
-    destinationFieldName: particleColors
   - sourceComponent: {fileID: 397105478419057534}
     sourceFieldName: input
     destinationFieldName: rendererScale

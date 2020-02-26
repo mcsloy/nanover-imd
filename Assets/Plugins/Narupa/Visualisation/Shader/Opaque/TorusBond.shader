@@ -6,7 +6,6 @@ Shader "NarupaXR/Opaque/Torus Bond"
     Properties
     {
         _Color ("Color", Color) = (1, 1, 1, 1)
-        _EdgeScale ("Edge Scale", Float) = 1
         _Diffuse ("Diffuse", Range(0, 1)) = 0.5
         _ParticleScale ("Particle Scale", Float) = 1
         _GradientWidth ("Gradient Width", Range(0, 1)) = 1
@@ -38,9 +37,6 @@ Shader "NarupaXR/Opaque/Torus Bond"
             
             // The scales to apply to the particles
             float _ParticleScale;
-            
-            // The scales to apply to the edges
-            float _EdgeScale;
             
             // Color multiplier
             float4 _Color;
@@ -92,11 +88,13 @@ Shader "NarupaXR/Opaque/Torus Bond"
                     float3 p1 = edge_position(0);
                     float3 p2 = edge_position(1);
                     
-                    float scale = _EdgeScale;
+                    
                     float3 off = normalize(p2 - p1);
                 
                    float rad1 = edge_scale(0) * _ParticleScale;
                    float rad2 = edge_scale(1) * _ParticleScale;
+                   
+                   float scale = max(rad1, rad2);
                    
                     setup_isotropic_edge_transformation(p1, p2, scale);
                     
@@ -141,7 +139,7 @@ Shader "NarupaXR/Opaque/Torus Bond"
                 float s = i.q.w;
                 float3 a = i.a.xyz;
                 
-                float rho = 0.1;
+                float rho = 0.08;
                 float halfD = length(a);
                 float R = sqrt((s + rho) * (s + rho) - halfD * halfD);
                 float phi = s / (s + rho);
