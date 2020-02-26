@@ -173,7 +173,21 @@
         
         float tspac = sqrt(qd*qd + Rinsec*Rinsec - qq);
         
-        float t = solve_quartic_sturms_method(a4, a3, a2, a1, a0, tmid - tspac, tmid + tspac);
+        float tstart = tmid - tspac;
+        
+        if(rho > R) {
+            float b2a = qd;
+            float r2 = rho2 - R2;
+            float ca = qq - r2;
+            
+            float det = b2a * b2a - ca;
+            
+            if(det > 0) {
+                tstart = -b2a + sqrt(det);
+            }
+        }
+        
+        float t = solve_quartic_sturms_method(a4, a3, a2, a1, a0, tstart, tmid + tspac);
         
         //t = - qd - sqrt(qd * qd + R*R - qq);
         

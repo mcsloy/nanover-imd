@@ -23,6 +23,9 @@ namespace Narupa.Visualisation.Node.Renderer
 
         [SerializeField]
         private MeshProperty mesh = new MeshProperty();
+        
+        [SerializeField]
+        private FloatProperty particleScale = new FloatProperty();
 #pragma warning restore 0649
 
         public Transform Transform { get; set; }
@@ -63,7 +66,11 @@ namespace Narupa.Visualisation.Node.Renderer
                 InstancingUtility.SetTransform(drawCommand, Transform);
 
                 drawCommand.SetInstanceCount(triples.Value.Length);
-
+                
+                if(particleScale.IsDirty && particleScale.HasValue)
+                    drawCommand.SetFloat("_ParticleScale", particleScale.Value);
+                particleScale.IsDirty = false;
+                
                 UpdatePositionsIfDirty();
                 UpdateTriplesIfDirty();
 

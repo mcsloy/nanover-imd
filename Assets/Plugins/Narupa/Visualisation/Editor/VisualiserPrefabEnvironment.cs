@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Narupa.Frame;
+using Narupa.Frame.Event;
 using Narupa.Frame.Import.CIF;
 using Narupa.Frame.Import.CIF.Components;
 using UnityEditor;
@@ -80,6 +81,24 @@ namespace Narupa.Visualisation.Editor
                 return;
 
             DrawGUI();
+
+            MoveParticles();
+        }
+
+        private static void MoveParticles()
+        {
+            if (currentMolecule != null)
+            {
+                var frame = Frame.Frame.ShallowCopy(currentMolecule.CurrentFrame);
+                var pos = new Vector3[frame.ParticleCount];
+                for (var i = 0; i < pos.Length; i++)
+                    pos[i] = frame.ParticlePositions[i] +
+                             UnityEngine.Random.insideUnitSphere * 0.001f;
+                frame.ParticlePositions = pos;
+                var changes = new FrameChanges();
+                changes.SetIsChanged(StandardFrameProperties.ParticlePositions.Key, true);
+                currentMolecule.SetFrame(frame, changes);
+            }
         }
 
         private static void DrawGUI()
@@ -306,7 +325,13 @@ namespace Narupa.Visualisation.Editor
                 CurrentFrame = frame;
             }
 
-            public Frame.Frame CurrentFrame { get; }
+            public void SetFrame(Frame.Frame frame, FrameChanges changes = null)
+            {
+                CurrentFrame = frame;
+                FrameChanged?.Invoke(CurrentFrame, changes);
+            }
+
+            public Frame.Frame CurrentFrame { get; private set; }
             public event FrameChanged FrameChanged;
         }
     }

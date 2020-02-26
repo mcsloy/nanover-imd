@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 397105478419057534}
   - component: {fileID: 8528582866378757808}
   - component: {fileID: 8528582866378757823}
+  - component: {fileID: 7457823974968368375}
   m_Layer: 0
   m_Name: Torus Bonds
   m_TagString: Untagged
@@ -85,8 +86,8 @@ MonoBehaviour:
   - sourceComponent: {fileID: 8528582866378757811}
     sourceFieldName: particle.positions
     destinationFieldName: particlePositions
-  - sourceComponent: {fileID: 8528582866378757811}
-    sourceFieldName: bond.pairs
+  - sourceComponent: {fileID: 7457823974968368375}
+    sourceFieldName: bonds
     destinationFieldName: bondPairs
   - sourceComponent: {fileID: 0}
     sourceFieldName: colors
@@ -169,3 +170,24 @@ MonoBehaviour:
     material:
       isValueProvided: 1
       value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
+--- !u!114 &7457823974968368375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f83380689a11492c92bc5ff2380eb4bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: 8528582866378757811}
+    sourceFieldName: particle.positions
+    destinationFieldName: positions
+  node:
+    positions:
+      isValueProvided: 0
+      value: []
+    cutoff: 0.5

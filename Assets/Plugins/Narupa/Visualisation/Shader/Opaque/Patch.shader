@@ -3,6 +3,7 @@ Shader "NarupaXR/Patch"
     Properties
     {
        _Radius ("Radius", Float) = 0.5
+       _ParticleScale ("Particle Scale", Float) = 1
        _Flip ("Flip", Float) = 1.0
     }
     SubShader
@@ -27,7 +28,7 @@ Shader "NarupaXR/Patch"
 #include "../Transformation.cginc"
 #include "../Instancing.cginc"
             float _Radius;
-            
+            float _ParticleScale;
             float _Flip;
 
             struct appdata
@@ -54,7 +55,7 @@ Shader "NarupaXR/Patch"
                 
                 float3 x = cross(p12, p13);
                 
-                float rho = _Radius*2;
+                float rho = _Radius;
                  
                 float D12 = dot(p12, p12);
                 float D13 = dot(p13, p13);
@@ -85,7 +86,12 @@ Shader "NarupaXR/Patch"
                 float3 p0 = PositionArray[triple.a];
                 float3 p1 = PositionArray[triple.b];
                 float3 p2 = PositionArray[triple.c];
-                float3 p = sphere_pos(p0,p1,p2,0.05,0.05,0.05);
+                
+                float R1 = _ParticleScale/2;
+                float R2 = _ParticleScale/2;
+                float R3 = _ParticleScale/2;
+                
+                float3 p = sphere_pos(p0,p1,p2,R1,R2,R3);
                 
                 setup_isotropic_transformation((p0+p1+p2)/3.0, 0.3);
                 
@@ -94,7 +100,7 @@ Shader "NarupaXR/Patch"
                 
                 float3 w = mul(unity_ObjectToWorld, v.vertex);
                 float3 c = _WorldSpaceCameraPos.xyz;
-                float s = _Radius*2;
+                float s = _Radius;
                 
                 
                 o.q = float4(c - p, s);
@@ -188,14 +194,21 @@ Shader "NarupaXR/Patch"
                 float3 p1 = i.p1;
                 float3 p2 = i.p2;
                 
+                
+                float3 x = cross(p1 - p0, p2 - p0);
+                
+                if(dot(r - p0, _Flip * x) < 0)
+                    discard;
+                
                 p0 = normalize(p0 - p);
                 p1 = normalize(p1 - p);
                 p2 = normalize(p2 - p);
                 
                 clip_spherical_triangle(-n, p0, p1, p2);
                 
+                
                 o.color = DIFFUSE(fixed4(1,1,1,1), n, l, 0.5);
-                OUTPUT_FRAG_DEPTH(o, c + d * t);
+                OUTPUT_FRAG_DEPTH(o, r);
                 return o;
             }
             

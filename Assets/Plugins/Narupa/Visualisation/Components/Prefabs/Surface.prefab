@@ -71,7 +71,7 @@ MonoBehaviour:
     name: sphere.scale
     input:
       isValueProvided: 1
-      value: 0.1
+      value: 0.2
 --- !u!114 &8528582866378757808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,7 +192,7 @@ MonoBehaviour:
     positions:
       isValueProvided: 0
       value: []
-    cutoff: 0.21
+    cutoff: 0.5
 --- !u!114 &7818992916198413377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,6 +219,9 @@ MonoBehaviour:
     mesh:
       isValueProvided: 1
       value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    particleScale:
+      isValueProvided: 0
+      value: 0
     triples:
       isValueProvided: 0
     particlePositions:
@@ -243,6 +246,9 @@ MonoBehaviour:
   - sourceComponent: {fileID: 8528582866378757811}
     sourceFieldName: particle.positions
     destinationFieldName: particlePositions
+  - sourceComponent: {fileID: 397105478419057534}
+    sourceFieldName: input
+    destinationFieldName: particleScale
   node:
     material:
       isValueProvided: 1
@@ -250,6 +256,9 @@ MonoBehaviour:
     mesh:
       isValueProvided: 1
       value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    particleScale:
+      isValueProvided: 1
+      value: 0.1
     triples:
       isValueProvided: 0
     particlePositions:

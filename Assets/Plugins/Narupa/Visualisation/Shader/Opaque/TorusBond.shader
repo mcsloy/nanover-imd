@@ -9,6 +9,7 @@ Shader "NarupaXR/Opaque/Torus Bond"
         _Diffuse ("Diffuse", Range(0, 1)) = 0.5
         _ParticleScale ("Particle Scale", Float) = 1
         _GradientWidth ("Gradient Width", Range(0, 1)) = 1
+        _Radius ("Radius", Range(0, 1)) = 1
     }
     SubShader
     {
@@ -44,6 +45,8 @@ Shader "NarupaXR/Opaque/Torus Bond"
             // Diffuse factor (0 for flat, 1 for full diffuse)
             float _Diffuse;
             
+            float _Radius;
+            
             #include "UnityCG.cginc"
             #include "../Instancing.cginc"
             #include "../Transformation.cginc"
@@ -69,6 +72,7 @@ Shader "NarupaXR/Opaque/Torus Bond"
                 fixed4 color1 : TEXCOORD2;
                 fixed4 color2 : TEXCOORD3;
                 float3 a : TEXCOORD4;
+                float3 o : TEXCOORD5;
             };
             
             v2f vert (appdata i)
@@ -113,9 +117,11 @@ Shader "NarupaXR/Opaque/Torus Bond"
                 float3 v = mul(unity_ObjectToWorld, i.vertex);
                 float3 c = _WorldSpaceCameraPos.xyz;
                 
+                o.o = v.xyz;
+                
                 float s = scale * 0.5 * overall_scale;
                 
-                o.q = float4(c - p, s);
+                o.q = float4(v - p, s);
                 o.d = float4(v - c, 0);
                
                 o.color1 = _Color * edge_color(0);
@@ -139,7 +145,7 @@ Shader "NarupaXR/Opaque/Torus Bond"
                 float s = i.q.w;
                 float3 a = i.a.xyz;
                 
-                float rho = 0.08;
+                float rho = _Radius;
                 float halfD = length(a);
                 float R = sqrt((s + rho) * (s + rho) - halfD * halfD);
                 float phi = s / (s + rho);
@@ -160,7 +166,7 @@ Shader "NarupaXR/Opaque/Torus Bond"
                 lerpt = clamp((lerpt - 0.5) / (_GradientWidth + 0.0001) + 0.5, 0, 1);
                 o.color = DIFFUSE(lerp(i.color1, i.color2, lerpt), n, l, _Diffuse);
                             
-                OUTPUT_FRAG_DEPTH(o, c + d * t);
+                OUTPUT_FRAG_DEPTH(o, i.o + d * t);
                 return o;
             }
             
