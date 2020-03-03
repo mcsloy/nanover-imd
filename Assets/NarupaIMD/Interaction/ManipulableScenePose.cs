@@ -117,6 +117,7 @@ namespace NarupaXR.Interaction
                 if (CurrentlyEditingScene)
                 {
                     var worldPose = Transformation.FromTransformRelativeToParent(sceneTransform);
+                    worldPose = ClampToSensibleValues(worldPose);
                     var calibPose = prototype.CalibratedSpace
                                              .TransformPoseWorldToCalibrated(worldPose);
                     multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
@@ -124,6 +125,23 @@ namespace NarupaXR.Interaction
 
                 await Task.Delay(10);
             }
+        }
+
+        private Transformation ClampToSensibleValues(Transformation worldPose)
+        {
+            if (float.IsNaN(worldPose.Position.x)
+             || float.IsNaN(worldPose.Position.y)
+             || float.IsNaN(worldPose.Position.z))
+                worldPose.Position = Vector3.zero;
+            worldPose.Position = Vector3.ClampMagnitude(worldPose.Position, 100f);
+            
+            if (float.IsNaN(worldPose.Scale.x)
+             || float.IsNaN(worldPose.Scale.y)
+             || float.IsNaN(worldPose.Scale.z))
+                worldPose.Scale = Vector3.one;
+            worldPose.Scale.x = Mathf.Clamp(worldPose.Scale.x, 0.001f, 1000f);
+            worldPose.Scale.y = Mathf.Clamp(worldPose.Scale.y, 0.001f, 1000f);
+            worldPose.Scale.z = Mathf.Clamp(worldPose.Scale.z, 0.001f, 1000f);
         }
 
         private void EndAllManipulations()
