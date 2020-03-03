@@ -33,31 +33,31 @@ namespace NarupaXR.Interaction
         private Gradient forceGradient;
 #pragma warning restore 0649
 
-        public Vector3 StartPosition, EndPosition;
-        public float CurrentForceMagnitude;
+        private Vector3 startPosition, endPosition;
+        private float currentForceMagnitude;
 
         private Vector3 direction;
-        private float MaxForceMagnitude;
+        private float maxForceMagnitude;
 
         private void Update()
         {
-            UpdateLineColors();
-            UpdateLinePositions();
+           UpdateLineColors();
+                UpdateLinePositions();
         }
 
         private void UpdateLinePositions()
         {
-            var intensity = Mathf.Clamp01(CurrentForceMagnitude / MaxForceMagnitude);
+            var intensity = Mathf.Clamp01(currentForceMagnitude / maxForceMagnitude);
             var width = Mathf.Clamp(intensity * maxLineWidth, minLineWidth, maxLineWidth);
             lineRenderer.widthMultiplier = width;
 
-            var direction = StartPosition - EndPosition;
+            var direction = startPosition - endPosition;
             var positionCount = (int) Mathf.Clamp(direction.magnitude * sectionsPerNm, 2f, 50f);
             lineRenderer.positionCount = positionCount;
 
             for (var i = 0; i < positionCount; i++)
             {
-                var posOnLine = EndPosition + (float) i / lineRenderer.positionCount * direction;
+                var posOnLine = endPosition + (float) i / lineRenderer.positionCount * direction;
                 var sineGoodness = height * Mathf.Sin(frequency * i + speedMultiplier * Time.time);
                 posOnLine.y += sineGoodness;
                 lineRenderer.SetPosition(i, posOnLine);
@@ -66,13 +66,13 @@ namespace NarupaXR.Interaction
 
         private void UpdateLineColors()
         {
-            if (CurrentForceMagnitude > MaxForceMagnitude)
-                MaxForceMagnitude = 1.2f * CurrentForceMagnitude;
+            if (currentForceMagnitude > maxForceMagnitude)
+                maxForceMagnitude = 1.2f * currentForceMagnitude;
 
             var gradient = lineRenderer.colorGradient;
             var colorKeys = gradient.colorKeys;
 
-            var intensity = Mathf.Clamp01(CurrentForceMagnitude / MaxForceMagnitude);
+            var intensity = Mathf.Clamp01(currentForceMagnitude / maxForceMagnitude);
 
             for (var i = 0; i < gradient.colorKeys.Length; i++)
             {
@@ -84,6 +84,13 @@ namespace NarupaXR.Interaction
 
             gradient.SetKeys(colorKeys, gradient.alphaKeys);
             lineRenderer.colorGradient = gradient;
+        }
+
+        public void SetPositionAndForce(Vector3 startPoint, Vector3 endPoint, float force)
+        {
+            startPosition = startPoint;
+            endPosition = endPoint;
+            currentForceMagnitude = force;
         }
     }
 }
