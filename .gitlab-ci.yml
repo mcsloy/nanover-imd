@@ -11,6 +11,25 @@ trigger_plugin_update:
     - apt-get update && apt-get install --yes curl
     - "curl -X POST -F token=${NARUPA_UNITY_PLUGIN_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/14856986/trigger/pipeline"
 
+# triggers an update of the conda package in "Narupa iMD conda package"
+trigger_conda_update:
+  stage: deploy
+  only:
+    - master
+  script:
+    - apt-get update && apt-get install --yes curl
+    - |
+      curl \
+        -H "Authorization: Bearer $APPVEYOR_TOKEN" \
+        -H "Content-Type: application/json" \
+        --request POST \
+        --data '{
+            "accountName": "IntangibleRealitiesLab",
+            "projectSlug": "narupa-imd-conda-package",
+            "branch": "master",
+        }' \
+        https://ci.appveyor.com/api/builds
+
 variables:
   BUILD_NAME: Narupa iMD
 
