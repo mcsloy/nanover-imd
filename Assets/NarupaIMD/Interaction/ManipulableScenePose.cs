@@ -117,7 +117,7 @@ namespace NarupaXR.Interaction
                 if (CurrentlyEditingScene)
                 {
                     var worldPose = Transformation.FromTransformRelativeToParent(sceneTransform);
-                    worldPose = ClampToSensibleValues(worldPose);
+                    ClampToSensibleValues(worldPose);
                     var calibPose = prototype.CalibratedSpace
                                              .TransformPoseWorldToCalibrated(worldPose);
                     multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
@@ -127,7 +127,7 @@ namespace NarupaXR.Interaction
             }
         }
 
-        private Transformation ClampToSensibleValues(Transformation worldPose)
+        private void ClampToSensibleValues(Transformation worldPose)
         {
             if (float.IsNaN(worldPose.Position.x)
              || float.IsNaN(worldPose.Position.y)
