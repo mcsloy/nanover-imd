@@ -5,6 +5,7 @@ using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
 using Narupa.Session;
+using NarupaIMD;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -14,7 +15,10 @@ namespace NarupaXR
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupa;
+        private NarupaXRPrototype application;
+        
+        [SerializeField]
+        private NarupaImdSimulation simulation;
 
         [SerializeField]
         private Transform headsetPrefab;
@@ -22,7 +26,7 @@ namespace NarupaXR
         [SerializeField]
         private Transform controllerPrefab;
 #pragma warning restore 0649
-
+        
         private IndexedPool<Transform> headsetObjects;
         private IndexedPool<Transform> controllerObjects;
 
@@ -56,11 +60,11 @@ namespace NarupaXR
 
         private IEnumerator AutoJoin()
         {
-            while (!narupa.Sessions.Multiplayer.IsOpen)
+            while (!simulation.Multiplayer.IsOpen)
                 yield return null;
 
-            narupa.Sessions.Multiplayer.JoinMultiplayer("NarupaXR")
-                  .AwaitInBackground();
+            simulation.Multiplayer.JoinMultiplayer("NarupaXR")
+                      .AwaitInBackground();
         }
 
         private IEnumerator SendAvatars()
@@ -71,8 +75,8 @@ namespace NarupaXR
 
             while (true)
             {
-                if (narupa.Sessions.Multiplayer.HasPlayer)
-                    narupa.Sessions.Multiplayer.SetVRAvatar(
+                if (simulation.Multiplayer.HasPlayer)
+                    simulation.Multiplayer.SetVRAvatar(
                         TransformPoseWorldToCalibrated(headset.Pose),
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
@@ -83,33 +87,33 @@ namespace NarupaXR
 
         private void UpdateRendering()
         {
-            var localPlayerId = narupa.Sessions.Multiplayer.PlayerId;
-            var headsets = narupa.Sessions.Multiplayer
-                                 .Avatars.Values
-                                 .SelectMany(avatar => avatar.Components.Select(pair => new
-                                 {
-                                     avatar.PlayerId,
-                                     Name = pair.Key,
-                                     Pose = pair.Value
-                                 }))
-                                 .Where(component => component.Name == MultiplayerSession.HeadsetName)
-                                 .Where(component => component.PlayerId != localPlayerId)
-                                 .Select(component => component.Pose)
-                                 .OfType<Transformation>();
+            var localPlayerId = simulation.Multiplayer.PlayerId;
+            var headsets = simulation.Multiplayer
+                                     .Avatars.Values
+                                     .SelectMany(avatar => avatar.Components.Select(pair => new
+                                     {
+                                         avatar.PlayerId,
+                                         Name = pair.Key,
+                                         Pose = pair.Value
+                                     }))
+                                     .Where(component => component.Name == MultiplayerSession.HeadsetName)
+                                     .Where(component => component.PlayerId != localPlayerId)
+                                     .Select(component => component.Pose)
+                                     .OfType<Transformation>();
 
-            var controllers = narupa.Sessions.Multiplayer
-                                    .Avatars.Values
-                                    .SelectMany(avatar => avatar.Components.Select(pair => new
-                                    {
-                                        avatar.PlayerId,
-                                        Name = pair.Key,
-                                        Pose = pair.Value
-                                    }))
-                                    .Where(component => component.Name == MultiplayerSession.LeftHandName 
-                                                     || component.Name == MultiplayerSession.RightHandName)
-                                    .Where(component => component.PlayerId != localPlayerId)
-                                    .Select(component => component.Pose)
-                                    .OfType<Transformation>();
+            var controllers = simulation.Multiplayer
+                                        .Avatars.Values
+                                        .SelectMany(avatar => avatar.Components.Select(pair => new
+                                        {
+                                            avatar.PlayerId,
+                                            Name = pair.Key,
+                                            Pose = pair.Value
+                                        }))
+                                        .Where(component => component.Name == MultiplayerSession.LeftHandName 
+                                                         || component.Name == MultiplayerSession.RightHandName)
+                                        .Where(component => component.PlayerId != localPlayerId)
+                                        .Select(component => component.Pose)
+                                        .OfType<Transformation>();
 
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
@@ -124,7 +128,7 @@ namespace NarupaXR
         public Transformation? TransformPoseCalibratedToWorld(Transformation? pose)
         {
             if (pose is Transformation calibratedPose)
-                return narupa.CalibratedSpace.TransformPoseCalibratedToWorld(calibratedPose);
+                return application.CalibratedSpace.TransformPoseCalibratedToWorld(calibratedPose);
 
             return null;
         }
@@ -132,7 +136,7 @@ namespace NarupaXR
         public Transformation? TransformPoseWorldToCalibrated(Transformation? pose)
         {
             if (pose is Transformation worldPose)
-                return narupa.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
+                return application.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
 
             return null;
         }

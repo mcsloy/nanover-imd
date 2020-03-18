@@ -5,6 +5,7 @@ using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Property;
+using NarupaIMD;
 using NarupaIMD.Selection;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace NarupaXR.Interaction
         private VisualisationScene visualisationScene;
 
         [SerializeField]
-        private NarupaXRPrototype prototype;
+        private NarupaImdSimulation simulation;
 
         /// <inheritdoc cref="InteractedParticles"/>
         private readonly IntArrayProperty interactedParticles = new IntArrayProperty();
@@ -36,7 +37,7 @@ namespace NarupaXR.Interaction
 
         private void Update()
         {
-            var interactions = prototype.Sessions.Imd.Interactions;
+            var interactions = simulation.Imd.Interactions;
             var pts = new List<int>();
             foreach (var interaction in interactions)
                 pts.AddRange(interaction.Value.ParticleIds);

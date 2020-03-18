@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NarupaIMD;
 using UnityEngine;
 
 namespace NarupaXR
@@ -13,7 +14,10 @@ namespace NarupaXR
     public class DesktopDebugUI : MonoBehaviour
     {
         [SerializeField]
-        private NarupaXRPrototype narupa;
+        private NarupaXRPrototype application;
+        
+        [SerializeField]
+        private NarupaImdSimulation simulation;
 
         [SerializeField]
         private GameObject xrSimulatorContainer;
@@ -36,7 +40,7 @@ namespace NarupaXR
 
             GUILayout.Box("Server");
             if (GUILayout.Button("Autoconnect"))
-                narupa.AutoConnect();
+                simulation.AutoConnect();
 
             if (GUILayout.Button("Direct Connect"))
             {
@@ -50,32 +54,37 @@ namespace NarupaXR
 
             if (GUILayout.Button("Disconnect"))
             {
-                narupa.Disconnect();
+                simulation.Disconnect();
             }
 
-            GUILayout.Box("User");
-            GUILayout.Label($"Interaction Force: {narupa.ManipulableParticles.ForceScale:0.}x");
-            narupa.ManipulableParticles.ForceScale = GUILayout.HorizontalSlider(narupa.ManipulableParticles.ForceScale, 0, 5000);
+            if (simulation.gameObject.activeSelf)
+            {
+                GUILayout.Box("User");
+                GUILayout.Label(
+                    $"Interaction Force: {simulation.ManipulableParticles.ForceScale:0.}x");
+                simulation.ManipulableParticles.ForceScale =
+                    GUILayout.HorizontalSlider(simulation.ManipulableParticles.ForceScale, 0, 5000);
 
-            GUILayout.Box("Simulation");
-            if (GUILayout.Button("Play"))
-                narupa.Sessions.Trajectory.Play();
+                GUILayout.Box("Simulation");
+                if (GUILayout.Button("Play"))
+                    simulation.Trajectory.Play();
 
-            if (GUILayout.Button("Pause"))
-                narupa.Sessions.Trajectory.Pause();
+                if (GUILayout.Button("Pause"))
+                    simulation.Trajectory.Pause();
 
-            if (GUILayout.Button("Step"))
-                narupa.Sessions.Trajectory.Step();
+                if (GUILayout.Button("Step"))
+                    simulation.Trajectory.Step();
 
-            if (GUILayout.Button("Reset"))
-                narupa.Sessions.Trajectory.Reset();
+                if (GUILayout.Button("Reset"))
+                    simulation.Trajectory.Reset();
+            }
 
             GUILayout.Box("Debug");
             xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 
             GUILayout.Box("Misc");
             if (GUILayout.Button("Quit"))
-                narupa.Quit();
+                application.Quit();
 
             GUILayout.EndArea();
 
@@ -103,7 +112,7 @@ namespace NarupaXR
             if (GUILayout.Button("Connect"))
             {
                 directConnect = false;
-                narupa.Connect(
+                application.Connect(
                     directConnectAddress,
                     ParseInt(trajectoryPort),
                     ParseInt(interactionPort),
@@ -144,7 +153,7 @@ namespace NarupaXR
                     {
                         discovery = false;
                         knownServiceHubs = new List<ServiceHub>();
-                        narupa.Connect(hub);
+                        application.Connect(hub);
                     }
                 }
             }

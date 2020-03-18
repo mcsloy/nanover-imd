@@ -5,6 +5,7 @@ using Narupa.Core.Math;
 using Narupa.Frontend.Controllers;
 using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.XR;
+using NarupaIMD;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Valve.VR;
@@ -18,7 +19,7 @@ namespace NarupaXR.Interaction
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupaXR;
+        private NarupaImdSimulation simulation;
 
         [Header("Controller Actions")]
 
@@ -35,7 +36,7 @@ namespace NarupaXR.Interaction
 
         private void Awake()
         {
-            Assert.IsNotNull(narupaXR);
+            Assert.IsNotNull(simulation);
             Assert.IsNotNull(controllerManager);
             Assert.IsNotNull(grabSpaceAction);
 
@@ -78,7 +79,7 @@ namespace NarupaXR.Interaction
         private IActiveManipulation AttemptGrabSpace(UnitScaleTransformation grabberPose)
         {
             // there is presently only one grabbable space
-            return narupaXR.ManipulableSimulationSpace.StartGrabManipulation(grabberPose);
+            return simulation.ManipulableSimulationSpace.StartGrabManipulation(grabberPose);
         }
     }
 }

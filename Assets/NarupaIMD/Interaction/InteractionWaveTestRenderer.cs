@@ -7,6 +7,7 @@ using System.Linq;
 using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.Utility;
 using Narupa.Session;
+using NarupaIMD;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -20,7 +21,7 @@ namespace NarupaXR.Interaction
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupaXR;
+        private NarupaImdSimulation simulation;
         [SerializeField]
         private InteractionWaveRenderer waveTemplate;
 
@@ -52,8 +53,8 @@ namespace NarupaXR.Interaction
 
         private void Update()
         {
-            var interactions = narupaXR.Sessions.Imd.Interactions;
-            var frame = narupaXR.FrameSynchronizer.CurrentFrame;
+            var interactions = simulation.Imd.Interactions;
+            var frame = simulation.FrameSynchronizer.CurrentFrame;
             
             wavePool.MapConfig(interactions.Values, MapConfigToInstance);
             

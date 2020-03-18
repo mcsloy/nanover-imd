@@ -1,27 +1,44 @@
-﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
-// Licensed under the GPL. See License.txt in the project root for license information.
-
-using Narupa.Session;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Essd;
 using Narupa.Core.Async;
+using Narupa.Frontend.Manipulation;
 using Narupa.Grpc;
 using Narupa.Grpc.Trajectory;
-using UnityEngine;
-using System.Collections.Generic;
-using Essd;
+using Narupa.Session;
+using Narupa.Visualisation;
+using NarupaXR;
+using NarupaXR.Interaction;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+using UnityEngine;
 
-namespace NarupaXR
+namespace NarupaIMD
 {
-    /// <summary>
-    /// Manages trajectory and IMD sessions for the NarupaXR application.
-    /// </summary>
-    public sealed class NarupaXRSessionManager
+    public class NarupaImdSimulation : MonoBehaviour
     {
         private const string TrajectoryServiceName = "trajectory";
         private const string ImdServiceName = "imd";
         private const string MultiplayerServiceName = "multiplayer";
+
+        /// <summary>
+        /// The transform that represents the box that contains the simulation.
+        /// </summary>
+        [SerializeField]
+        private Transform simulationSpaceTransform;
+
+        /// <summary>
+        /// The transform that represents the actual simulation.
+        /// </summary>
+        [SerializeField]
+        private Transform rightHandedSimulationSpace;
+        
+        [SerializeField]
+        private InteractableScene interactableScene;
+
+        [SerializeField]
+        private NarupaXRPrototype application;
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public ImdSession Imd { get; } = new ImdSession();
@@ -30,16 +47,35 @@ namespace NarupaXR
         private Dictionary<string, GrpcConnection> channels
             = new Dictionary<string, GrpcConnection>();
 
+        
+        /// <summary>
+        /// The route through which simulation space can be manipulated with
+        /// gestures to perform translation, rotation, and scaling.
+        /// </summary>
+        public ManipulableScenePose ManipulableSimulationSpace { get; private set; }
+
+        /// <summary>
+        /// The route through which simulated particles can be manipulated with
+        /// grabs.
+        /// </summary>
+        public ManipulableParticles ManipulableParticles { get; private set; }
+
+        public SynchronisedFrameSource FrameSynchronizer { get; private set; }
+
+        public event Action ConnectionStarted;
+        
         /// <summary>
         /// Connect to the host address and attempt to open clients for the
         /// trajectory and IMD services.
         /// </summary>
-        public async Task Connect(string address, 
-                                  int? trajectoryPort, 
+        public async Task Connect(string address,
+                                  int? trajectoryPort,
                                   int? imdPort = null,
                                   int? multiplayerPort = null)
         {
             await CloseAsync();
+
+            gameObject.SetActive(true);
 
             if (trajectoryPort.HasValue)
             {
@@ -56,6 +92,24 @@ namespace NarupaXR
                 Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
                 Multiplayer.JoinMultiplayer("test").AwaitInBackgroundIgnoreCancellation();
             }
+            
+            ConnectionStarted?.Invoke();
+        }
+
+        private void Awake()
+        {
+            ManipulableSimulationSpace = new ManipulableScenePose(simulationSpaceTransform,
+                                                                  Multiplayer,
+                                                                  application);
+
+            ManipulableParticles = new ManipulableParticles(rightHandedSimulationSpace,
+                                                            Imd,
+                                                            interactableScene);
+            
+            var FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
+            if (FrameSynchronizer == null)
+                FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
+            FrameSynchronizer.FrameSource = Trajectory;
         }
 
         /// <summary>
@@ -102,7 +156,10 @@ namespace NarupaXR
             {
                 await channel.CloseAsync();
             }
+
             channels.Clear();
+
+            gameObject.SetActive(false);
         }
 
         private GrpcConnection GetChannel(string address, int port)
@@ -116,6 +173,17 @@ namespace NarupaXR
             }
 
             return channel;
+        }
+
+
+        private async void OnDestroy()
+        {
+            await CloseAsync();
+        }
+
+        public void Disconnect()
+        {
+            CloseAsync();
         }
     }
 }
