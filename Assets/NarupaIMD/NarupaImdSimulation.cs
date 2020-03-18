@@ -75,8 +75,6 @@ namespace NarupaIMD
         {
             await CloseAsync();
 
-            gameObject.SetActive(true);
-
             if (trajectoryPort.HasValue)
             {
                 Trajectory.OpenClient(GetChannel(address, trajectoryPort.Value));
@@ -90,9 +88,10 @@ namespace NarupaIMD
             if (multiplayerPort.HasValue)
             {
                 Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
-                Multiplayer.JoinMultiplayer("test").AwaitInBackgroundIgnoreCancellation();
             }
-            
+
+            gameObject.SetActive(true);
+
             ConnectionStarted?.Invoke();
         }
 
@@ -106,7 +105,7 @@ namespace NarupaIMD
                                                             Imd,
                                                             interactableScene);
             
-            var FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
+            FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
             if (FrameSynchronizer == null)
                 FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
             FrameSynchronizer.FrameSource = Trajectory;
@@ -159,7 +158,8 @@ namespace NarupaIMD
 
             channels.Clear();
 
-            gameObject.SetActive(false);
+            if(gameObject != null)
+                gameObject.SetActive(false);
         }
 
         private GrpcConnection GetChannel(string address, int port)

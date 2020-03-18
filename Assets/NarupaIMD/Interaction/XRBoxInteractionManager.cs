@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using System;
 using Narupa.Core.Math;
 using Narupa.Frontend.Controllers;
 using Narupa.Frontend.Manipulation;
@@ -34,26 +35,39 @@ namespace NarupaXR.Interaction
         
         private Manipulator rightManipulator;
 
-        private void Awake()
+        private void OnEnable()
         {
             Assert.IsNotNull(simulation);
             Assert.IsNotNull(controllerManager);
             Assert.IsNotNull(grabSpaceAction);
 
-            controllerManager.LeftController.ControllerReset += () =>
-            {
-                CreateManipulator(ref leftManipulator, 
-                                  controllerManager.LeftController,
-                                  SteamVR_Input_Sources.LeftHand);
-            };
+            controllerManager.LeftController.ControllerReset += SetupLeftManipulator;
+            controllerManager.RightController.ControllerReset += SetupRightManipulator;
             
-            controllerManager.RightController.ControllerReset += () =>
-            {
-                CreateManipulator(ref rightManipulator, 
-                                  controllerManager.RightController,
-                                  SteamVR_Input_Sources.RightHand);
-            };
+            SetupLeftManipulator();
+            SetupRightManipulator();
         }
+
+        private void OnDisable()
+        {
+            controllerManager.LeftController.ControllerReset -= SetupLeftManipulator;
+            controllerManager.RightController.ControllerReset -= SetupRightManipulator;
+        }
+
+        private void SetupLeftManipulator()
+        {
+            CreateManipulator(ref leftManipulator, 
+                              controllerManager.LeftController,
+                              SteamVR_Input_Sources.LeftHand);
+        }
+
+        private void SetupRightManipulator()
+        {
+            CreateManipulator(ref rightManipulator, 
+                              controllerManager.RightController,
+                              SteamVR_Input_Sources.RightHand);
+        }
+        
         private void CreateManipulator(ref Manipulator manipulator,
                                        VrController controller,
                                        SteamVR_Input_Sources source)

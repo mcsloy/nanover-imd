@@ -22,8 +22,8 @@ namespace NarupaIMD.UI
 
         public void GotoSceneAndAddToStack(GameObject newScene)
         {
-            GotoScene(newScene);
             sceneStack.Push(currentScene);
+            GotoScene(newScene);
         }
 
         public void GoBack()
@@ -31,6 +31,7 @@ namespace NarupaIMD.UI
             if (sceneStack.Any())
             {
                 GotoScene(sceneStack.Pop());
+                sceneStack.Clear();
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
@@ -15,6 +16,9 @@ namespace NarupaXR
     {
 #pragma warning disable 0649
         [SerializeField]
+        private NarupaMultiplayer multiplayer;
+        
+        [SerializeField]
         private NarupaXRPrototype application;
         
         [SerializeField]
@@ -29,18 +33,15 @@ namespace NarupaXR
         
         private IndexedPool<Transform> headsetObjects;
         private IndexedPool<Transform> controllerObjects;
-
-        private void Awake()
-        {
-            Setup();
-        }
+        
+        private Coroutine sendAvatarsCoroutine;
 
         private void Update()
         {
             UpdateRendering();
         }
 
-        private void Setup()
+        private void OnEnable()
         {
             headsetObjects = new IndexedPool<Transform>(
                 () => Instantiate(headsetPrefab),
@@ -53,18 +54,13 @@ namespace NarupaXR
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
-
-            StartCoroutine(AutoJoin());
-            StartCoroutine(SendAvatars());
+            
+            sendAvatarsCoroutine = StartCoroutine(SendAvatars());
         }
 
-        private IEnumerator AutoJoin()
+        private void OnDisable()
         {
-            while (!simulation.Multiplayer.IsOpen)
-                yield return null;
-
-            simulation.Multiplayer.JoinMultiplayer("NarupaXR")
-                      .AwaitInBackground();
+            StopCoroutine(sendAvatarsCoroutine);
         }
 
         private IEnumerator SendAvatars()

@@ -33,26 +33,40 @@ namespace NarupaXR.Interaction
         
         private Manipulator rightManipulator;
 
-        private void Awake()
+        private void OnEnable()
         {
             Assert.IsNotNull(simulation);
             Assert.IsNotNull(controllerManager);
             Assert.IsNotNull(grabObjectAction);
+
+            controllerManager.LeftController.ControllerReset += SetupLeftManipulator;
+            controllerManager.RightController.ControllerReset += SetupRightManipulator;
             
-            controllerManager.LeftController.ControllerReset += () =>
-            {
-                CreateManipulator(ref leftManipulator, 
-                                  controllerManager.LeftController,
-                                  SteamVR_Input_Sources.LeftHand);
-            };
-            
-            controllerManager.RightController.ControllerReset += () =>
-            {
-                CreateManipulator(ref rightManipulator, 
-                                  controllerManager.RightController,
-                                  SteamVR_Input_Sources.RightHand);
-            };
+            SetupLeftManipulator();
+            SetupRightManipulator();
         }
+        
+        
+        private void OnDisable()
+        {
+            controllerManager.LeftController.ControllerReset -= SetupLeftManipulator;
+            controllerManager.RightController.ControllerReset -= SetupRightManipulator;
+        }
+
+        private void SetupLeftManipulator()
+        {
+            CreateManipulator(ref leftManipulator, 
+                              controllerManager.LeftController,
+                              SteamVR_Input_Sources.LeftHand);
+        }
+
+        private void SetupRightManipulator()
+        {
+            CreateManipulator(ref rightManipulator, 
+                              controllerManager.RightController,
+                              SteamVR_Input_Sources.RightHand);
+        }
+        
         private void CreateManipulator(ref Manipulator manipulator,
                                        VrController controller,
                                        SteamVR_Input_Sources source)
