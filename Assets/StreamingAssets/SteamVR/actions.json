@@ -1,24 +1,58 @@
 {
   "actions": [
     {
-      "name": "/actions/NarupaIMD/in/Interact",
-      "type": "boolean",
-      "requirement": "mandatory"
-    },
-    {
-      "name": "/actions/NarupaIMD/in/GrabSpace",
-      "type": "boolean",
-      "requirement": "mandatory"
-    },
-    {
-      "name": "/actions/NarupaIMD/in/Pose",
+      "name": "/actions/Application/in/Pose",
       "type": "pose",
       "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/UI/in/Click",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Simulation/in/GrabSpace",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Simulation/in/Interact",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Simulation/in/Select",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Simulation/in/PauseMenu",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Simulation/in/QuickActions",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Simulation/in/IncreaseInteractionStrength",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Simulation/in/DecreaseInteractionStrength",
+      "type": "boolean"
     }
   ],
   "action_sets": [
     {
-      "name": "/actions/NarupaIMD",
+      "name": "/actions/Application",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/UI",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/Simulation",
       "usage": "single"
     }
   ],
@@ -75,9 +109,15 @@
   "localization": [
     {
       "language_tag": "en_US",
-      "/actions/NarupaIMD/in/Interact": "Interact",
-      "/actions/NarupaIMD/in/GrabSpace": "Grab Space",
-      "/actions/NarupaIMD/in/Pose": "Pose"
+      "/actions/Simulation/in/GrabSpace": "Grab Simulation Box",
+      "/actions/Simulation/in/Interact": "Interact with Particles",
+      "/actions/Simulation/in/Select": "Select Particles",
+      "/actions/UI/in/Click": "UI Click",
+      "/actions/Application/in/Pose": "Controller Pose",
+      "/actions/Simulation/in/QuickActions": "Open Quick Actions Menu",
+      "/actions/Simulation/in/PauseMenu": "Open Pause Menu",
+      "/actions/Simulation/in/IncreaseInteractionStrength": "Increase Interaction Strength",
+      "/actions/Simulation/in/DecreaseInteractionStrength": "Decrease Interaction Strength"
     }
   ]
 }

@@ -17,67 +17,157 @@ namespace Valve.VR
     public partial class SteamVR_Actions
     {
         
-        private static SteamVR_Action_Boolean p_narupaIMD_Interact;
+        private static SteamVR_Action_Pose p_application_Pose;
         
-        private static SteamVR_Action_Boolean p_narupaIMD_GrabSpace;
+        private static SteamVR_Action_Boolean p_uI_Click;
         
-        private static SteamVR_Action_Pose p_narupaIMD_Pose;
+        private static SteamVR_Action_Boolean p_simulation_GrabSpace;
         
-        public static SteamVR_Action_Boolean narupaIMD_Interact
+        private static SteamVR_Action_Boolean p_simulation_Interact;
+        
+        private static SteamVR_Action_Boolean p_simulation_Select;
+        
+        private static SteamVR_Action_Boolean p_simulation_PauseMenu;
+        
+        private static SteamVR_Action_Boolean p_simulation_QuickActions;
+        
+        private static SteamVR_Action_Boolean p_simulation_IncreaseInteractionStrength;
+        
+        private static SteamVR_Action_Boolean p_simulation_DecreaseInteractionStrength;
+        
+        public static SteamVR_Action_Pose application_Pose
         {
             get
             {
-                return SteamVR_Actions.p_narupaIMD_Interact.GetCopy<SteamVR_Action_Boolean>();
+                return SteamVR_Actions.p_application_Pose.GetCopy<SteamVR_Action_Pose>();
             }
         }
         
-        public static SteamVR_Action_Boolean narupaIMD_GrabSpace
+        public static SteamVR_Action_Boolean uI_Click
         {
             get
             {
-                return SteamVR_Actions.p_narupaIMD_GrabSpace.GetCopy<SteamVR_Action_Boolean>();
+                return SteamVR_Actions.p_uI_Click.GetCopy<SteamVR_Action_Boolean>();
             }
         }
         
-        public static SteamVR_Action_Pose narupaIMD_Pose
+        public static SteamVR_Action_Boolean simulation_GrabSpace
         {
             get
             {
-                return SteamVR_Actions.p_narupaIMD_Pose.GetCopy<SteamVR_Action_Pose>();
+                return SteamVR_Actions.p_simulation_GrabSpace.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean simulation_Interact
+        {
+            get
+            {
+                return SteamVR_Actions.p_simulation_Interact.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean simulation_Select
+        {
+            get
+            {
+                return SteamVR_Actions.p_simulation_Select.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean simulation_PauseMenu
+        {
+            get
+            {
+                return SteamVR_Actions.p_simulation_PauseMenu.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean simulation_QuickActions
+        {
+            get
+            {
+                return SteamVR_Actions.p_simulation_QuickActions.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean simulation_IncreaseInteractionStrength
+        {
+            get
+            {
+                return SteamVR_Actions.p_simulation_IncreaseInteractionStrength.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean simulation_DecreaseInteractionStrength
+        {
+            get
+            {
+                return SteamVR_Actions.p_simulation_DecreaseInteractionStrength.GetCopy<SteamVR_Action_Boolean>();
             }
         }
         
         private static void InitializeActionArrays()
         {
             Valve.VR.SteamVR_Input.actions = new Valve.VR.SteamVR_Action[] {
-                    SteamVR_Actions.narupaIMD_Interact,
-                    SteamVR_Actions.narupaIMD_GrabSpace,
-                    SteamVR_Actions.narupaIMD_Pose};
+                    SteamVR_Actions.application_Pose,
+                    SteamVR_Actions.uI_Click,
+                    SteamVR_Actions.simulation_GrabSpace,
+                    SteamVR_Actions.simulation_Interact,
+                    SteamVR_Actions.simulation_Select,
+                    SteamVR_Actions.simulation_PauseMenu,
+                    SteamVR_Actions.simulation_QuickActions,
+                    SteamVR_Actions.simulation_IncreaseInteractionStrength,
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
-                    SteamVR_Actions.narupaIMD_Interact,
-                    SteamVR_Actions.narupaIMD_GrabSpace,
-                    SteamVR_Actions.narupaIMD_Pose};
+                    SteamVR_Actions.application_Pose,
+                    SteamVR_Actions.uI_Click,
+                    SteamVR_Actions.simulation_GrabSpace,
+                    SteamVR_Actions.simulation_Interact,
+                    SteamVR_Actions.simulation_Select,
+                    SteamVR_Actions.simulation_PauseMenu,
+                    SteamVR_Actions.simulation_QuickActions,
+                    SteamVR_Actions.simulation_IncreaseInteractionStrength,
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[0];
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[0];
             Valve.VR.SteamVR_Input.actionsPose = new Valve.VR.SteamVR_Action_Pose[] {
-                    SteamVR_Actions.narupaIMD_Pose};
+                    SteamVR_Actions.application_Pose};
             Valve.VR.SteamVR_Input.actionsBoolean = new Valve.VR.SteamVR_Action_Boolean[] {
-                    SteamVR_Actions.narupaIMD_Interact,
-                    SteamVR_Actions.narupaIMD_GrabSpace};
+                    SteamVR_Actions.uI_Click,
+                    SteamVR_Actions.simulation_GrabSpace,
+                    SteamVR_Actions.simulation_Interact,
+                    SteamVR_Actions.simulation_Select,
+                    SteamVR_Actions.simulation_PauseMenu,
+                    SteamVR_Actions.simulation_QuickActions,
+                    SteamVR_Actions.simulation_IncreaseInteractionStrength,
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[0];
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[0];
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
             Valve.VR.SteamVR_Input.actionsSkeleton = new Valve.VR.SteamVR_Action_Skeleton[0];
             Valve.VR.SteamVR_Input.actionsNonPoseNonSkeletonIn = new Valve.VR.ISteamVR_Action_In[] {
-                    SteamVR_Actions.narupaIMD_Interact,
-                    SteamVR_Actions.narupaIMD_GrabSpace};
+                    SteamVR_Actions.uI_Click,
+                    SteamVR_Actions.simulation_GrabSpace,
+                    SteamVR_Actions.simulation_Interact,
+                    SteamVR_Actions.simulation_Select,
+                    SteamVR_Actions.simulation_PauseMenu,
+                    SteamVR_Actions.simulation_QuickActions,
+                    SteamVR_Actions.simulation_IncreaseInteractionStrength,
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
         }
         
         private static void PreInitActions()
         {
-            SteamVR_Actions.p_narupaIMD_Interact = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/NarupaIMD/in/Interact")));
-            SteamVR_Actions.p_narupaIMD_GrabSpace = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/NarupaIMD/in/GrabSpace")));
-            SteamVR_Actions.p_narupaIMD_Pose = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/NarupaIMD/in/Pose")));
+            SteamVR_Actions.p_application_Pose = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/Application/in/Pose")));
+            SteamVR_Actions.p_uI_Click = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/UI/in/Click")));
+            SteamVR_Actions.p_simulation_GrabSpace = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/GrabSpace")));
+            SteamVR_Actions.p_simulation_Interact = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/Interact")));
+            SteamVR_Actions.p_simulation_Select = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/Select")));
+            SteamVR_Actions.p_simulation_PauseMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/PauseMenu")));
+            SteamVR_Actions.p_simulation_QuickActions = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/QuickActions")));
+            SteamVR_Actions.p_simulation_IncreaseInteractionStrength = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/IncreaseInteractionStrength")));
+            SteamVR_Actions.p_simulation_DecreaseInteractionStrength = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/DecreaseInteractionStrength")));
         }
     }
 }
