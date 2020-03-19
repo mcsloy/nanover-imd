@@ -23,28 +23,28 @@ namespace NarupaXR.Interaction
         [SerializeField]
         private NarupaImdSimulation simulation;
         [SerializeField]
-        private InteractionWaveRenderer waveTemplate;
+        private SineConnectorRenderer waveTemplate;
 
-        private IndexedPool<InteractionWaveRenderer> wavePool;
+        private IndexedPool<SineConnectorRenderer> wavePool;
         
 #pragma warning restore 0649
 
         private void Start()
         {
-            wavePool = new IndexedPool<InteractionWaveRenderer>(CreateInstanceCallback, ActivateInstanceCallback, DeactivateInstanceCallback);
+            wavePool = new IndexedPool<SineConnectorRenderer>(CreateInstanceCallback, ActivateInstanceCallback, DeactivateInstanceCallback);
         }
 
-        private void DeactivateInstanceCallback(InteractionWaveRenderer obj)
+        private void DeactivateInstanceCallback(SineConnectorRenderer obj)
         {
             obj.gameObject.SetActive(false);
         }
 
-        private void ActivateInstanceCallback(InteractionWaveRenderer obj)
+        private void ActivateInstanceCallback(SineConnectorRenderer obj)
         {
             obj.gameObject.SetActive(true);
         }
 
-        private InteractionWaveRenderer CreateInstanceCallback()
+        private SineConnectorRenderer CreateInstanceCallback()
         {
             var renderer = Instantiate(waveTemplate, transform, true);
             renderer.gameObject.SetActive(true);
@@ -59,14 +59,13 @@ namespace NarupaXR.Interaction
             wavePool.MapConfig(interactions.Values, MapConfigToInstance);
             
             void MapConfigToInstance(ImdSession.InteractionData interaction, 
-                                     InteractionWaveRenderer renderer)
+                                     SineConnectorRenderer renderer)
             {
                 var particlePositionSim = computeParticleCentroid(interaction.ParticleIds);
                 var particlePositionWorld = transform.TransformPoint(particlePositionSim);
-                
-                renderer.SetPositionAndForce(transform.TransformPoint(interaction.Position),
-                                             particlePositionWorld, 
-                                             0.5f);
+
+                renderer.EndPosition = transform.TransformPoint(interaction.Position);
+                renderer.StartPosition = particlePositionWorld;
             }
 
             Vector3 computeParticleCentroid(IReadOnlyList<int> particleIds)

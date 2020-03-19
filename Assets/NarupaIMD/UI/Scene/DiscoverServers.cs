@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Essd;
 using Narupa.Frontend.UI;
@@ -23,12 +24,37 @@ namespace NarupaIMD.UI.Scene
         
         [SerializeField]
         private DynamicMenu menu;
-        
+
+        private void OnEnable()
+        {
+            client = new Client();
+            Refresh();
+        }
+
+        /// <summary>
+        /// Returns either the <see cref="ServiceHub"/> with a localhost IP address or the first hub.
+        /// </summary>
+        private ServiceHub SelectBestService(IGrouping<string, ServiceHub> group)
+        {
+            foreach (var hub in group)
+            {
+                if (IsLocalhost(hub))
+                    return hub;
+            }
+
+            return group.First();
+        }
+
+        private bool IsLocalhost(ServiceHub hub)
+        {
+            return hub.Address.Equals("127.0.0.1") || hub.Address.Equals("localhost");
+        }
+
         public void Refresh()
         {
             hubs = client.SearchForServices(500)
                                .GroupBy(hub => hub.Id)
-                               .Select(group => group.First())
+                               .Select(SelectBestService)
                                .ToList();
 
             menu.ClearChildren();
