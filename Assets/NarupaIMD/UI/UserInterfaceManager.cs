@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Narupa.Frontend.UI;
 using UnityEngine;
 
 namespace NarupaIMD.UI
@@ -9,15 +10,21 @@ namespace NarupaIMD.UI
         [SerializeField]
         private GameObject currentScene;
 
+        [SerializeField]
+        private NarupaCanvas canvas;
+
         private Stack<GameObject> sceneStack = new Stack<GameObject>();
 
         public void GotoScene(GameObject newScene)
         {
             if (newScene == currentScene)
                 return;
-            currentScene?.SetActive(false);
+            if (currentScene != null)
+                currentScene.SetActive(false);
             currentScene = newScene;
-            newScene?.SetActive(true);
+            canvas.enabled = newScene != null;
+            if (newScene != null)
+                newScene.SetActive(true);
         }
 
         public void GotoSceneAndAddToStack(GameObject newScene)

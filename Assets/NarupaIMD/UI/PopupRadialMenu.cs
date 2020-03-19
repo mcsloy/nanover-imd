@@ -40,7 +40,9 @@ namespace NarupaXR.UI
 
         private void ShowMenu(SteamVR_Input_Sources source)
         {
-            menu = Instantiate(radialMenuPrefab);
+            menu = Instantiate(radialMenuPrefab, transform);
+            menu.SetActive(true);
+            hover.enabled = true;
 
             transform.position = hover.Controller.HeadPose.Pose.Value.Position;
             transform.rotation =
@@ -52,6 +54,7 @@ namespace NarupaXR.UI
         private void CloseMenu()
         {
             WorldSpaceCursorInput.TriggerClick();
+            hover.enabled = false;
             Destroy(menu);
         }
     }

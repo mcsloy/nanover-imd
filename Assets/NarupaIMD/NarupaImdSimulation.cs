@@ -185,5 +185,20 @@ namespace NarupaIMD
         {
             CloseAsync();
         }
+
+        public void PlayTrajectory()
+        {
+            Trajectory.Play();
+        }
+        
+        public void PauseTrajectory()
+        {
+            Trajectory.Pause();
+        }
+        
+        public void ResetTrajectory()
+        {
+            Trajectory.Reset();
+        }
     }
 }
