@@ -77,10 +77,13 @@ namespace NarupaIMD.Selection
             return layer;
         }
 
+        private const string HighlightedParticlesKey = "highlighted.particles";
+
         private void Start()
         {
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
+            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles; 
 
             simulation.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;

@@ -1,21 +1,12 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System;
-using System.Collections;
-using Narupa.Frame;
-using Narupa.Frontend.Manipulation;
-using Narupa.Frontend.XR;
-using Narupa.Visualisation;
-using NarupaXR.Interaction;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-using Text = TMPro.TextMeshProUGUI;
-
 using Essd;
+using Narupa.Frontend.XR;
 using NarupaIMD;
+using UnityEngine;
 using UnityEngine.Events;
+using Text = TMPro.TextMeshProUGUI;
 
 namespace NarupaXR
 {
@@ -37,7 +28,7 @@ namespace NarupaXR
 
         [SerializeField]
         private UnityEvent connectionStarted;
-        
+
         private void Awake()
         {
             simulation.ConnectionStarted += connectionStarted.Invoke;
@@ -46,8 +37,11 @@ namespace NarupaXR
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>
-        public void Connect(string address, int? trajectoryPort = null, int? imdPort = null, int? multiplayerPort = null)
-            => simulation.Connect(address, trajectoryPort, imdPort, multiplayerPort);
+        public void Connect(string address,
+                            int? trajectoryPort = null,
+                            int? imdPort = null,
+                            int? multiplayerPort = null) =>
+            simulation.Connect(address, trajectoryPort, imdPort, multiplayerPort);
 
         /// <summary>
         /// Connect to the Narupa services described in a given ServiceHub.
@@ -73,6 +67,5 @@ namespace NarupaXR
         {
             CalibratedSpace.CalibrateFromLighthouses();
         }
-
     }
 }

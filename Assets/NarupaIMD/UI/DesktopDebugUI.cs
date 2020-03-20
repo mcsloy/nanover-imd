@@ -74,11 +74,14 @@ namespace NarupaXR
 
                 if (GUILayout.Button("Step"))
                     simulation.Trajectory.Step();
-
+                
                 if (GUILayout.Button("Reset"))
                     simulation.Trajectory.Reset();
+                
+                if (GUILayout.Button("Reset Box"))
+                    simulation.ResetBox();
             }
-
+            
             GUILayout.Box("Debug");
             xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 

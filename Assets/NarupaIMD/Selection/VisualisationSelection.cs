@@ -251,7 +251,7 @@ namespace NarupaIMD.Selection
         private void SetupAdaptorAndFilter()
         {
             // Setup any filters so the visualiser only draws this selection.
-            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptorNode>();
             if (filter != null)
             {
                 filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
@@ -259,13 +259,6 @@ namespace NarupaIMD.Selection
                 {
                     filtered.ParticleFilter.LinkedProperty = FilteredIndices;
                 }
-            }
-
-            // Setup the subgraph to the highlighted particles
-            foreach (var node in currentVisualiser.GetVisualisationNodesInChildren<IntArrayInputNode>()
-                .Where(node => node.Name == HighlightedParticlesKey))
-            {
-                node.Input.LinkedProperty = layer.Scene.InteractedParticles;
             }
         }
 
@@ -278,7 +271,7 @@ namespace NarupaIMD.Selection
         /// </summary>
         private void StripDownAdaptorAndFilter()
         {
-            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptorNode>();
             filter.ParentAdaptor.UndefineValue();
             if (filter is ParticleFilteredAdaptorNode filtered)
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Essd;
-using Narupa.Core.Async;
+using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Grpc;
 using Narupa.Grpc.Trajectory;
@@ -33,7 +33,7 @@ namespace NarupaIMD
         /// </summary>
         [SerializeField]
         private Transform rightHandedSimulationSpace;
-        
+
         [SerializeField]
         private InteractableScene interactableScene;
 
@@ -47,7 +47,7 @@ namespace NarupaIMD
         private Dictionary<string, GrpcConnection> channels
             = new Dictionary<string, GrpcConnection>();
 
-        
+
         /// <summary>
         /// The route through which simulation space can be manipulated with
         /// gestures to perform translation, rotation, and scaling.
@@ -63,7 +63,7 @@ namespace NarupaIMD
         public SynchronisedFrameSource FrameSynchronizer { get; private set; }
 
         public event Action ConnectionStarted;
-        
+
         /// <summary>
         /// Connect to the host address and attempt to open clients for the
         /// trajectory and IMD services.
@@ -104,7 +104,7 @@ namespace NarupaIMD
             ManipulableParticles = new ManipulableParticles(rightHandedSimulationSpace,
                                                             Imd,
                                                             interactableScene);
-            
+
             FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
             if (FrameSynchronizer == null)
                 FrameSynchronizer = gameObject.AddComponent<SynchronisedFrameSource>();
@@ -158,7 +158,7 @@ namespace NarupaIMD
 
             channels.Clear();
 
-            if(gameObject != null)
+            if (gameObject != null)
                 gameObject.SetActive(false);
         }
 
@@ -190,15 +190,25 @@ namespace NarupaIMD
         {
             Trajectory.Play();
         }
-        
+
         public void PauseTrajectory()
         {
             Trajectory.Pause();
         }
-        
+
         public void ResetTrajectory()
         {
             Trajectory.Reset();
+        }
+
+        /// <summary>
+        /// Reset the box to the unit position.
+        /// </summary>
+        public void ResetBox()
+        {
+            var calibPose = application.CalibratedSpace
+                                       .TransformPoseWorldToCalibrated(Transformation.Identity);
+            Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
         }
     }
 }
