@@ -70,14 +70,14 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// Callback for when the frame is changed. Updates the output properties
         /// selectively depending on if the field is marked as having changed.
         /// </summary>
-        private void OnFrameUpdated(IFrame frame, FrameChanges changes = null)
+        private void OnFrameUpdated(IFrame frame, FrameChanges changes)
         {
             if (frame == null)
                 return;
 
             foreach (var (key, property) in Properties)
             {
-                if (changes?.GetIsChanged(key) ?? true)
+                if (changes.HasChanged(key))
                     GetPropertyValueFromFrame(key, property);
             }
         }
@@ -96,7 +96,7 @@ namespace Narupa.Visualisation.Node.Adaptor
                 if (source != null)
                 {
                     source.FrameChanged += OnFrameUpdated;
-                    OnFrameUpdated(source.CurrentFrame);
+                    OnFrameUpdated(source.CurrentFrame, FrameChanges.All);
                 }
             }
         }

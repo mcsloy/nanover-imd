@@ -39,9 +39,9 @@ namespace NarupaIMD
         /// </summary>
         private void OnFrameChanged(IFrame frame, FrameChanges changes)
         {
-            if (changes.GetIsChanged(StandardFrameProperties.BoxTransformation.Key))
+            if (changes.HasChanged(StandardFrameProperties.BoxTransformation.Key))
             {
-                var box = (frame as Frame).BoxVectors;
+                var box = (frame as Frame)?.BoxVectors;
                 if (box == null)
                 {
                     boxVisualiser.enabled = false;
