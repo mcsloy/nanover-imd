@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frontend.Manipulation;
+using Narupa.Frontend.Utility;
 using Narupa.Session;
 using UnityEngine;
 
@@ -21,58 +23,60 @@ namespace NarupaXR.Interaction
         private NarupaXRPrototype narupaXR;
         [SerializeField]
         private InteractionWaveRenderer waveTemplate;
+
+        private IndexedPool<InteractionWaveRenderer> wavePool;
+        
 #pragma warning restore 0649
 
-        private Dictionary<string, InteractionWaveRenderer> renderers
-            = new Dictionary<string, InteractionWaveRenderer>();
+        private void Start()
+        {
+            wavePool = new IndexedPool<InteractionWaveRenderer>(CreateInstanceCallback, ActivateInstanceCallback, DeactivateInstanceCallback);
+        }
+
+        private void DeactivateInstanceCallback(InteractionWaveRenderer obj)
+        {
+            obj.gameObject.SetActive(false);
+        }
+
+        private void ActivateInstanceCallback(InteractionWaveRenderer obj)
+        {
+            obj.gameObject.SetActive(true);
+        }
+
+        private InteractionWaveRenderer CreateInstanceCallback()
+        {
+            var renderer = Instantiate(waveTemplate, transform, true);
+            renderer.gameObject.SetActive(true);
+            return renderer;
+        }
 
         private void Update()
         {
             var interactions = narupaXR.Sessions.Imd.Interactions;
             var frame = narupaXR.FrameSynchronizer.CurrentFrame;
             
-            foreach (var interaction in interactions.Values)
+            wavePool.MapConfig(interactions.Values, MapConfigToInstance);
+            
+            void MapConfigToInstance(ImdSession.InteractionData interaction, 
+                                     InteractionWaveRenderer renderer)
             {
-                var renderer = GetRenderer(interaction.InteractionId);
-                renderer.StartPosition = transform.TransformPoint(interaction.Position);
-
                 var particlePositionSim = computeParticleCentroid(interaction.ParticleIds);
                 var particlePositionWorld = transform.TransformPoint(particlePositionSim);
-                renderer.EndPosition = particlePositionWorld;
-
-                renderer.CurrentForceMagnitude = .5f;
+                
+                renderer.SetPositionAndForce(transform.TransformPoint(interaction.Position),
+                                             particlePositionWorld, 
+                                             0.5f);
             }
 
-            var remove = renderers.Keys.Where(interactionId => !interactions.ContainsKey(interactionId)).ToList();
-
-            foreach (var interactionId in remove)
-            {
-                Destroy(renderers[interactionId].gameObject);
-                renderers.Remove(interactionId);
-            }
-
-            Vector3 computeParticleCentroid(int[] particleIds)
+            Vector3 computeParticleCentroid(IReadOnlyList<int> particleIds)
             {
                 var centroid = Vector3.zero;
 
-                for (int i = 0; i < particleIds.Length; ++i)
+                for (int i = 0; i < particleIds.Count; ++i)
                     centroid += frame.ParticlePositions[particleIds[i]];
 
-                return centroid / particleIds.Length;
+                return centroid / particleIds.Count;
             }
-        }
-
-        private InteractionWaveRenderer GetRenderer(string interactionId)
-        {
-            if (!renderers.TryGetValue(interactionId, out var renderer))
-            {
-                renderer = Instantiate(waveTemplate);
-                renderer.gameObject.SetActive(true);
-                renderer.transform.SetParent(transform);
-                renderers.Add(interactionId, renderer);
-            }
-
-            return renderer;
         }
     }
 }
