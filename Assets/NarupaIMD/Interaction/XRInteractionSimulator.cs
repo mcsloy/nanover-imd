@@ -58,8 +58,9 @@ namespace NarupaXR.Interaction
             var grabPoser = CreateRandomlyMovingPosedObject();
             var grabButton = CreateRandomlyPressedButton();
 
-            var manipulator = new Manipulator(grabPoser);
-            manipulator.BindButtonToManipulation(grabButton, AttemptManipulation);
+            var manipulator = new AttemptableManipulator(grabPoser, AttemptManipulation);
+            grabButton.Pressed += manipulator.AttemptManipulation;
+            grabButton.Released += manipulator.EndActiveManipulation;
             manipulators.Add(manipulator);
 
             var visual = CreateSimulatedControllerVisual();

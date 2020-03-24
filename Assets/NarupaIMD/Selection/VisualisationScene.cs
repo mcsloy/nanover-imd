@@ -79,7 +79,7 @@ namespace NarupaIMD.Selection
 
         private const string HighlightedParticlesKey = "highlighted.particles";
 
-        private void Start()
+        private void OnEnable()
         {
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
@@ -101,6 +101,8 @@ namespace NarupaIMD.Selection
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             simulation.Multiplayer.SharedStateDictionaryKeyRemoved -=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
+            
+            Destroy(frameAdaptor);
         }
 
         /// <summary>

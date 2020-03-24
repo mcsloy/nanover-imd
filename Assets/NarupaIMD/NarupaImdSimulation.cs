@@ -158,7 +158,7 @@ namespace NarupaIMD
 
             channels.Clear();
 
-            if (gameObject != null)
+            if (this != null && gameObject != null)
                 gameObject.SetActive(false);
         }
 

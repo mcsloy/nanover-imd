@@ -4,6 +4,7 @@
 using System;
 using Narupa.Core.Math;
 using Narupa.Frontend.Controllers;
+using Narupa.Frontend.Input;
 using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.XR;
 using NarupaIMD;
@@ -31,10 +32,12 @@ namespace NarupaXR.Interaction
         private ControllerManager controllerManager;
 #pragma warning restore 0649
 
-        private Manipulator leftManipulator;
+        private AttemptableManipulator leftManipulator;
+        private IButton leftButton;
         
-        private Manipulator rightManipulator;
-
+        private AttemptableManipulator rightManipulator;
+        private IButton rightButton;
+        
         private void OnEnable()
         {
             Assert.IsNotNull(simulation);
@@ -57,6 +60,7 @@ namespace NarupaXR.Interaction
         private void SetupLeftManipulator()
         {
             CreateManipulator(ref leftManipulator, 
+                              ref leftButton,
                               controllerManager.LeftController,
                               SteamVR_Input_Sources.LeftHand);
         }
@@ -64,11 +68,13 @@ namespace NarupaXR.Interaction
         private void SetupRightManipulator()
         {
             CreateManipulator(ref rightManipulator, 
+                              ref rightButton,
                               controllerManager.RightController,
                               SteamVR_Input_Sources.RightHand);
         }
-        
-        private void CreateManipulator(ref Manipulator manipulator,
+
+        private void CreateManipulator(ref AttemptableManipulator manipulator,
+                                       ref IButton button,
                                        VrController controller,
                                        SteamVR_Input_Sources source)
         {
@@ -76,6 +82,8 @@ namespace NarupaXR.Interaction
             if (manipulator != null)
             {
                 manipulator.EndActiveManipulation();
+                button.Pressed -= manipulator.AttemptManipulation;
+                button.Released -= manipulator.EndActiveManipulation;
                 manipulator = null;
             }
 
@@ -83,11 +91,11 @@ namespace NarupaXR.Interaction
                 return;
 
             var controllerPoser = controller.GripPose;
-            manipulator = new Manipulator(controllerPoser);
+            manipulator = new AttemptableManipulator(controllerPoser, AttemptGrabSpace);
 
-            var button = grabSpaceAction.WrapAsButton(source);
-
-            manipulator.BindButtonToManipulation(button, AttemptGrabSpace);
+            button = grabSpaceAction.WrapAsButton(source);
+            button.Pressed += manipulator.AttemptManipulation;
+            button.Released += manipulator.EndActiveManipulation;
         }
 
         private IActiveManipulation AttemptGrabSpace(UnitScaleTransformation grabberPose)
