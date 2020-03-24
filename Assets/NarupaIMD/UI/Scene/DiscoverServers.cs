@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Essd;
+using Narupa.Core.Async;
 using Narupa.Frontend.UI;
 using NarupaXR;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace NarupaIMD.UI.Scene
 {
@@ -21,13 +23,12 @@ namespace NarupaIMD.UI.Scene
 
         [SerializeField]
         private NarupaXRPrototype application;
-        
+
         [SerializeField]
         private DynamicMenu menu;
 
         private void OnEnable()
         {
-            client = new Client();
             Refresh();
         }
 
@@ -50,18 +51,52 @@ namespace NarupaIMD.UI.Scene
             return hub.Address.Equals("127.0.0.1") || hub.Address.Equals("localhost");
         }
 
+        private Task currentSearchTask = null;
+
+        [SerializeField]
+        private UnityEvent startSearch;
+
+        [SerializeField]
+        private UnityEvent endSearch;
+
+        public async Task SearchAsync()
+        {
+            currentSearchTask = client.StartSearch();
+            startSearch?.Invoke();
+            await Task.WhenAny(Task.Delay(500), currentSearchTask);
+            await client.StopSearch();
+            currentSearchTask = null;
+            endSearch?.Invoke();
+            RefreshHubs();
+        }
+
         public void Refresh()
         {
-            hubs = client.SearchForServices(500)
-                               .GroupBy(hub => hub.Id)
-                               .Select(SelectBestService)
-                               .ToList();
+            if (currentSearchTask != null)
+            {
+                client.StopSearch().AwaitInBackground();
+                currentSearchTask = null;
+                endSearch?.Invoke();
+            }
+
+            client = new Client();
+            hubs.Clear();
+            client.ServiceFound += (obj, args) => hubs.Add(args);
+            SearchAsync().AwaitInBackground();
+        }
+
+        public void RefreshHubs()
+        {
+            hubs = hubs.GroupBy(hub => hub.Id)
+                       .Select(SelectBestService)
+                       .ToList();
 
             menu.ClearChildren();
             foreach (var hub in hubs)
             {
                 var local = hub.Address.Equals("127.0.0.1") || hub.Address.Equals("localhost");
-                menu.AddItem(hub.Name, local ? localServerIcon : remoteServerIcon, () => application.Connect(hub), hub.Address);
+                menu.AddItem(hub.Name, local ? localServerIcon : remoteServerIcon,
+                             () => application.Connect(hub), hub.Address);
             }
         }
     }

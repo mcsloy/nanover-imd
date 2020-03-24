@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.alexjbinnie.codecoveragetools": "https://gitlab.com/alexjbinnie/code-coverage-tools.git",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.ext.nunit": "1.0.0",
     "com.unity.ide.rider": "1.1.4",
     "com.unity.ide.vscode": "1.1.4",

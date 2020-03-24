@@ -1,5 +1,7 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace NarupaIMD.UI
 {
@@ -12,7 +14,12 @@ namespace NarupaIMD.UI
 
         [SerializeField]
         private float decaySpeed = 1;
-    
+
+        private void Awake()
+        {
+            Assert.IsNotNull(text);
+        }
+
         private void Update()
         {
             if (strength > 0)

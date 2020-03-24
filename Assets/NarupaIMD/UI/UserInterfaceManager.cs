@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Frontend.UI;
@@ -11,20 +13,40 @@ namespace NarupaIMD.UI
         private GameObject currentScene;
 
         [SerializeField]
+        private GameObject initialScene;
+
+        [SerializeField]
         private NarupaCanvas canvas;
 
         private Stack<GameObject> sceneStack = new Stack<GameObject>();
 
-        public void GotoScene(GameObject newScene)
+        private void Start()
         {
-            if (newScene == currentScene)
+            if(initialScene != null)
+                GotoScene(initialScene);
+        }
+
+        private void LeaveScene(GameObject scene)
+        {
+            WorldSpaceCursorInput.ClearSelection();
+            scene.SetActive(false);
+        }
+
+        private void EnterScene(GameObject scene)
+        {
+            scene.SetActive(true);
+        }
+
+        public void GotoScene(GameObject scene)
+        {
+            if (scene == currentScene)
                 return;
             if (currentScene != null)
-                currentScene.SetActive(false);
-            currentScene = newScene;
-            canvas.enabled = newScene != null;
-            if (newScene != null)
-                newScene.SetActive(true);
+                LeaveScene(currentScene);
+            currentScene = scene;
+            canvas.enabled = currentScene != null;
+            if (currentScene != null)
+                EnterScene(currentScene);
         }
 
         public void GotoSceneAndAddToStack(GameObject newScene)
