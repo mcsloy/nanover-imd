@@ -27,6 +27,30 @@ namespace NarupaXR.Interaction
         [SerializeField]
         private NarupaImdSimulation simulation;
 
+        public enum InteractionTarget
+        {
+            Single,
+            Residue
+        }
+
+        [SerializeField]
+        private InteractionTarget interactionTarget = InteractionTarget.Single;
+
+        public void SetInteractionTarget(InteractionTarget target)
+        {
+            this.interactionTarget = target;
+        }
+
+        public void SetInteractionTargetSingle()
+        {
+            SetInteractionTarget(InteractionTarget.Single);
+        }
+        
+        public void SetInteractionTargetResidue()
+        {
+            SetInteractionTarget(InteractionTarget.Residue);
+        }
+
         /// <inheritdoc cref="InteractedParticles"/>
         private readonly IntArrayProperty interactedParticles = new IntArrayProperty();
 
@@ -60,14 +84,36 @@ namespace NarupaXR.Interaction
             if (selection.Selection.InteractionMethod == ParticleSelection.InteractionMethodNone)
                 return null;
 
-            var indices = GetIndicesInSelection(selection, particleIndex.Value);
+            var indices = GetInteractionIndices(particleIndex.Value);
 
             var grab = new ActiveParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
                 grab.ResetVelocities = true;
             return grab;
         }
-        
+
+        private IEnumerable<int> GetInteractionIndices(int particleIndex)
+        {
+            switch (interactionTarget)
+            {
+                case InteractionTarget.Single:
+                    yield return particleIndex;
+                    break;
+                case InteractionTarget.Residue:
+                    var frame = simulation.FrameSynchronizer.CurrentFrame;
+                    var residue = frame.ParticleResidues[particleIndex];
+                    if (residue == -1)
+                    {
+                        yield return particleIndex;
+                        break;
+                    }
+                    for(var i = 0; i < frame.ParticleCount; i++)
+                        if (frame.ParticleResidues[i] == residue)
+                            yield return i;
+                    break;
+            }
+        }
+
         /// <summary>
         /// Get the particle indices to select, given the nearest particle index.
         /// </summary>

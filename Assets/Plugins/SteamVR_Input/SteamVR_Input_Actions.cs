@@ -35,6 +35,8 @@ namespace Valve.VR
         
         private static SteamVR_Action_Boolean p_simulation_DecreaseInteractionStrength;
         
+        private static SteamVR_Action_Boolean p_simulation_InteractionQuickMenu;
+        
         public static SteamVR_Action_Pose application_Pose
         {
             get
@@ -107,6 +109,14 @@ namespace Valve.VR
             }
         }
         
+        public static SteamVR_Action_Boolean simulation_InteractionQuickMenu
+        {
+            get
+            {
+                return SteamVR_Actions.p_simulation_InteractionQuickMenu.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
         private static void InitializeActionArrays()
         {
             Valve.VR.SteamVR_Input.actions = new Valve.VR.SteamVR_Action[] {
@@ -118,7 +128,8 @@ namespace Valve.VR
                     SteamVR_Actions.simulation_PauseMenu,
                     SteamVR_Actions.simulation_QuickActions,
                     SteamVR_Actions.simulation_IncreaseInteractionStrength,
-                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength,
+                    SteamVR_Actions.simulation_InteractionQuickMenu};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.application_Pose,
                     SteamVR_Actions.uI_Click,
@@ -128,7 +139,8 @@ namespace Valve.VR
                     SteamVR_Actions.simulation_PauseMenu,
                     SteamVR_Actions.simulation_QuickActions,
                     SteamVR_Actions.simulation_IncreaseInteractionStrength,
-                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength,
+                    SteamVR_Actions.simulation_InteractionQuickMenu};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[0];
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[0];
             Valve.VR.SteamVR_Input.actionsPose = new Valve.VR.SteamVR_Action_Pose[] {
@@ -141,7 +153,8 @@ namespace Valve.VR
                     SteamVR_Actions.simulation_PauseMenu,
                     SteamVR_Actions.simulation_QuickActions,
                     SteamVR_Actions.simulation_IncreaseInteractionStrength,
-                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength,
+                    SteamVR_Actions.simulation_InteractionQuickMenu};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[0];
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[0];
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
@@ -154,7 +167,8 @@ namespace Valve.VR
                     SteamVR_Actions.simulation_PauseMenu,
                     SteamVR_Actions.simulation_QuickActions,
                     SteamVR_Actions.simulation_IncreaseInteractionStrength,
-                    SteamVR_Actions.simulation_DecreaseInteractionStrength};
+                    SteamVR_Actions.simulation_DecreaseInteractionStrength,
+                    SteamVR_Actions.simulation_InteractionQuickMenu};
         }
         
         private static void PreInitActions()
@@ -168,6 +182,7 @@ namespace Valve.VR
             SteamVR_Actions.p_simulation_QuickActions = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/QuickActions")));
             SteamVR_Actions.p_simulation_IncreaseInteractionStrength = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/IncreaseInteractionStrength")));
             SteamVR_Actions.p_simulation_DecreaseInteractionStrength = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/DecreaseInteractionStrength")));
+            SteamVR_Actions.p_simulation_InteractionQuickMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Simulation/in/InteractionQuickMenu")));
         }
     }
 }

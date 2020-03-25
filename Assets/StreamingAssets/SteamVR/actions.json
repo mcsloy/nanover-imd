@@ -40,6 +40,10 @@
     {
       "name": "/actions/Simulation/in/DecreaseInteractionStrength",
       "type": "boolean"
+    },
+    {
+      "name": "/actions/Simulation/in/InteractionQuickMenu",
+      "type": "boolean"
     }
   ],
   "action_sets": [
@@ -117,7 +121,8 @@
       "/actions/Simulation/in/QuickActions": "Open Quick Actions Menu",
       "/actions/Simulation/in/PauseMenu": "Open Pause Menu",
       "/actions/Simulation/in/IncreaseInteractionStrength": "Increase Interaction Strength",
-      "/actions/Simulation/in/DecreaseInteractionStrength": "Decrease Interaction Strength"
+      "/actions/Simulation/in/DecreaseInteractionStrength": "Decrease Interaction Strength",
+      "/actions/Simulation/in/InteractionQuickMenu": "Interaction Quick Menu"
     }
   ]
 }

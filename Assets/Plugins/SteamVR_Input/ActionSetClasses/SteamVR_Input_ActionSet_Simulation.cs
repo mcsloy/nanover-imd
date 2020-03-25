@@ -72,5 +72,13 @@ namespace Valve.VR
                 return SteamVR_Actions.simulation_DecreaseInteractionStrength;
             }
         }
+        
+        public virtual SteamVR_Action_Boolean InteractionQuickMenu
+        {
+            get
+            {
+                return SteamVR_Actions.simulation_InteractionQuickMenu;
+            }
+        }
     }
 }

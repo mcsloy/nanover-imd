@@ -224,6 +224,9 @@
                   "east" : {
                      "output" : "/actions/simulation/in/increaseinteractionstrength"
                   },
+                  "south" : {
+                     "output" : "/actions/simulation/in/interactionquickmenu"
+                  },
                   "west" : {
                      "output" : "/actions/simulation/in/decreaseinteractionstrength"
                   }
