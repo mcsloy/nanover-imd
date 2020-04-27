@@ -6,11 +6,6 @@
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/UI/in/Click",
-      "type": "boolean",
-      "requirement": "mandatory"
-    },
-    {
       "name": "/actions/Simulation/in/GrabSpace",
       "type": "boolean",
       "requirement": "mandatory"
@@ -30,10 +25,6 @@
       "type": "boolean"
     },
     {
-      "name": "/actions/Simulation/in/QuickActions",
-      "type": "boolean"
-    },
-    {
       "name": "/actions/Simulation/in/IncreaseInteractionStrength",
       "type": "boolean"
     },
@@ -42,8 +33,22 @@
       "type": "boolean"
     },
     {
-      "name": "/actions/Simulation/in/InteractionQuickMenu",
+      "name": "/actions/FullScreenUI/in/Click",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/InAppUI/in/QuickActions",
       "type": "boolean"
+    },
+    {
+      "name": "/actions/InAppUI/in/ToolActions",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/InAppUI/in/Click",
+      "type": "boolean",
+      "requirement": "mandatory"
     }
   ],
   "action_sets": [
@@ -52,11 +57,15 @@
       "usage": "single"
     },
     {
-      "name": "/actions/UI",
+      "name": "/actions/Simulation",
       "usage": "single"
     },
     {
-      "name": "/actions/Simulation",
+      "name": "/actions/FullScreenUI",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/InAppUI",
       "usage": "single"
     }
   ],
@@ -113,16 +122,17 @@
   "localization": [
     {
       "language_tag": "en_US",
-      "/actions/Simulation/in/GrabSpace": "Grab Simulation Box",
-      "/actions/Simulation/in/Interact": "Interact with Particles",
-      "/actions/Simulation/in/Select": "Select Particles",
-      "/actions/UI/in/Click": "UI Click",
       "/actions/Application/in/Pose": "Controller Pose",
-      "/actions/Simulation/in/QuickActions": "Open Quick Actions Menu",
+      "/actions/Simulation/in/GrabSpace": "Grab Space",
+      "/actions/Simulation/in/Interact": "Interact with Particle",
+      "/actions/Simulation/in/Select": "Select Particle",
       "/actions/Simulation/in/PauseMenu": "Open Pause Menu",
       "/actions/Simulation/in/IncreaseInteractionStrength": "Increase Interaction Strength",
       "/actions/Simulation/in/DecreaseInteractionStrength": "Decrease Interaction Strength",
-      "/actions/Simulation/in/InteractionQuickMenu": "Interaction Quick Menu"
+      "/actions/FullScreenUI/in/Click": "UI Click",
+      "/actions/InAppUI/in/QuickActions": "Show Quick Actions",
+      "/actions/InAppUI/in/ToolActions": "Show Tool Actions",
+      "/actions/InAppUI/in/Click": "UI Click"
     }
   ]
 }

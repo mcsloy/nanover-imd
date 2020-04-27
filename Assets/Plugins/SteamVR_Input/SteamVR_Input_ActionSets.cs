@@ -19,23 +19,17 @@ namespace Valve.VR
         
         private static SteamVR_Input_ActionSet_Application p_Application;
         
-        private static SteamVR_Input_ActionSet_UI p_UI;
-        
         private static SteamVR_Input_ActionSet_Simulation p_Simulation;
+        
+        private static SteamVR_Input_ActionSet_FullScreenUI p_FullScreenUI;
+        
+        private static SteamVR_Input_ActionSet_InAppUI p_InAppUI;
         
         public static SteamVR_Input_ActionSet_Application Application
         {
             get
             {
                 return SteamVR_Actions.p_Application.GetCopy<SteamVR_Input_ActionSet_Application>();
-            }
-        }
-        
-        public static SteamVR_Input_ActionSet_UI UI
-        {
-            get
-            {
-                return SteamVR_Actions.p_UI.GetCopy<SteamVR_Input_ActionSet_UI>();
             }
         }
         
@@ -47,15 +41,33 @@ namespace Valve.VR
             }
         }
         
+        public static SteamVR_Input_ActionSet_FullScreenUI FullScreenUI
+        {
+            get
+            {
+                return SteamVR_Actions.p_FullScreenUI.GetCopy<SteamVR_Input_ActionSet_FullScreenUI>();
+            }
+        }
+        
+        public static SteamVR_Input_ActionSet_InAppUI InAppUI
+        {
+            get
+            {
+                return SteamVR_Actions.p_InAppUI.GetCopy<SteamVR_Input_ActionSet_InAppUI>();
+            }
+        }
+        
         private static void StartPreInitActionSets()
         {
             SteamVR_Actions.p_Application = ((SteamVR_Input_ActionSet_Application)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_Application>("/actions/Application")));
-            SteamVR_Actions.p_UI = ((SteamVR_Input_ActionSet_UI)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_UI>("/actions/UI")));
             SteamVR_Actions.p_Simulation = ((SteamVR_Input_ActionSet_Simulation)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_Simulation>("/actions/Simulation")));
+            SteamVR_Actions.p_FullScreenUI = ((SteamVR_Input_ActionSet_FullScreenUI)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_FullScreenUI>("/actions/FullScreenUI")));
+            SteamVR_Actions.p_InAppUI = ((SteamVR_Input_ActionSet_InAppUI)(SteamVR_ActionSet.Create<SteamVR_Input_ActionSet_InAppUI>("/actions/InAppUI")));
             Valve.VR.SteamVR_Input.actionSets = new Valve.VR.SteamVR_ActionSet[] {
                     SteamVR_Actions.Application,
-                    SteamVR_Actions.UI,
-                    SteamVR_Actions.Simulation};
+                    SteamVR_Actions.Simulation,
+                    SteamVR_Actions.FullScreenUI,
+                    SteamVR_Actions.InAppUI};
         }
     }
 }

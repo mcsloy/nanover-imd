@@ -16,9 +16,11 @@ namespace NarupaIMD.UI
         private GameObject initialScene;
 
         [SerializeField]
-        private NarupaCanvas canvas;
+        private GameObject sceneUI;
 
         private Stack<GameObject> sceneStack = new Stack<GameObject>();
+
+        public GameObject SceneUI => sceneUI;
 
         private void Start()
         {
@@ -36,7 +38,7 @@ namespace NarupaIMD.UI
         {
             if (scene != null)
             {
-                var newScene = Instantiate(scene, transform);
+                var newScene = Instantiate(scene, sceneUI.transform);
                 newScene.SetActive(true);
                 return newScene;
             }
@@ -53,7 +55,7 @@ namespace NarupaIMD.UI
                 currentScenePrefab = scene;
             else
                 currentScenePrefab = null;
-            canvas.enabled = currentScene != null;
+            sceneUI.SetActive(currentScene != null);
         }
 
         public void GotoSceneAndAddToStack(GameObject newScene)

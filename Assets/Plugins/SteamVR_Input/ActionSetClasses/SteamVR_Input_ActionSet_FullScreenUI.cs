@@ -14,14 +14,14 @@ namespace Valve.VR
     using UnityEngine;
     
     
-    public class SteamVR_Input_ActionSet_UI : Valve.VR.SteamVR_ActionSet
+    public class SteamVR_Input_ActionSet_FullScreenUI : Valve.VR.SteamVR_ActionSet
     {
         
         public virtual SteamVR_Action_Boolean Click
         {
             get
             {
-                return SteamVR_Actions.uI_Click;
+                return SteamVR_Actions.fullScreenUI_Click;
             }
         }
     }

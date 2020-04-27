@@ -49,14 +49,6 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean QuickActions
-        {
-            get
-            {
-                return SteamVR_Actions.simulation_QuickActions;
-            }
-        }
-        
         public virtual SteamVR_Action_Boolean IncreaseInteractionStrength
         {
             get
@@ -70,14 +62,6 @@ namespace Valve.VR
             get
             {
                 return SteamVR_Actions.simulation_DecreaseInteractionStrength;
-            }
-        }
-        
-        public virtual SteamVR_Action_Boolean InteractionQuickMenu
-        {
-            get
-            {
-                return SteamVR_Actions.simulation_InteractionQuickMenu;
             }
         }
     }
