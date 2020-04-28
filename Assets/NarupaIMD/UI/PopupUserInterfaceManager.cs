@@ -1,3 +1,4 @@
+using Narupa.Frontend.Controllers;
 using Narupa.Frontend.UI;
 using NarupaIMD.UI;
 using UnityEngine;
@@ -19,6 +20,12 @@ namespace NarupaXR.UI
 
         [SerializeField]
         private bool clickOnMenuClosed = true;
+
+        [SerializeField]
+        private ControllerManager controllers;
+        
+        [SerializeField]
+        private UiInputMode mode;
 
         private void Start()
         {
@@ -44,6 +51,9 @@ namespace NarupaXR.UI
 
         private void ShowMenu()
         {
+            if (!controllers.WouldBecomeCurrentMode(mode))
+                return;
+            
             GotoScene(menuPrefab);
             
             SceneUI.transform.position = SceneUI.GetComponent<PhysicalCanvasInput>()
