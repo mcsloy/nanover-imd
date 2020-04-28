@@ -12,19 +12,13 @@ namespace NarupaIMD.UI.Scene
         [SerializeField]
         private TMP_Text hostInputField;
         [SerializeField]
-        private TMP_Text trajectoryPortInput;
-        [SerializeField]
-        private TMP_Text imdPortInput;
-        [SerializeField]
-        private TMP_Text multiplayerPortInput;
+        private TMP_Text portInput;
     
         private void Start()
         {
             Assert.IsNotNull(application);
             Assert.IsNotNull(hostInputField);
-            Assert.IsNotNull(trajectoryPortInput);
-            Assert.IsNotNull(imdPortInput);
-            Assert.IsNotNull(multiplayerPortInput);
+            Assert.IsNotNull(portInput);
         }
 
         /// <summary>
@@ -33,14 +27,14 @@ namespace NarupaIMD.UI.Scene
         /// </summary>
         public void ConnectToServer()
         {
-            var trajectoryPort = trajectoryPortInput.text.Length > 0
-                                     ? (int?) int.Parse(trajectoryPortInput.text)
+            var trajectoryPort = portInput.text.Length > 0
+                                     ? (int?) int.Parse(portInput.text)
                                      : null;
-            var imdPort = imdPortInput.text.Length > 0
-                              ? (int?) int.Parse(imdPortInput.text)
+            var imdPort = portInput.text.Length > 0
+                              ? (int?) int.Parse(portInput.text)
                               : null;
-            var multiplayerPort = multiplayerPortInput.text.Length > 0
-                                      ? (int?) int.Parse(multiplayerPortInput.text)
+            var multiplayerPort = portInput.text.Length > 0
+                                      ? (int?) int.Parse(portInput.text)
                                       : null;
 
             application.Connect(hostInputField.text, trajectoryPort, imdPort, multiplayerPort);
