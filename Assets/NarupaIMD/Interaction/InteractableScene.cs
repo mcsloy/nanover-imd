@@ -101,6 +101,12 @@ namespace NarupaXR.Interaction
                     break;
                 case InteractionTarget.Residue:
                     var frame = simulation.FrameSynchronizer.CurrentFrame;
+                    if (frame.ParticleResidues == null || frame.ParticleResidues.Length == 0)
+                    {
+                        yield return particleIndex;
+                        break;
+                    }
+
                     var residue = frame.ParticleResidues[particleIndex];
                     if (residue == -1)
                     {
