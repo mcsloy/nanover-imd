@@ -27,11 +27,11 @@ namespace NarupaXR
         public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
 
         [SerializeField]
-        private UnityEvent connectionStarted;
+        private UnityEvent connectionEstablished;
 
         private void Awake()
         {
-            simulation.ConnectionStarted += connectionStarted.Invoke;
+            simulation.ConnectionEstablished += connectionEstablished.Invoke;
         }
 
         /// <summary>

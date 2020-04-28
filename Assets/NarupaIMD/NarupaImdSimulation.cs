@@ -62,7 +62,7 @@ namespace NarupaIMD
 
         public SynchronisedFrameSource FrameSynchronizer { get; private set; }
 
-        public event Action ConnectionStarted;
+        public event Action ConnectionEstablished;
 
         /// <summary>
         /// Connect to the host address and attempt to open clients for the
@@ -92,7 +92,7 @@ namespace NarupaIMD
 
             gameObject.SetActive(true);
 
-            ConnectionStarted?.Invoke();
+            ConnectionEstablished?.Invoke();
         }
 
         private void Awake()
