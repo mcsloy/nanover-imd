@@ -62,9 +62,18 @@ test-editmode:
   artifacts:
     paths:
     - ./Builds/
-    - ./docs/
 
 build-StandaloneWindows64:
   <<: *build
   variables:
     BUILD_TARGET: StandaloneWindows64
+
+.docs: &docs
+  stage: build
+  <<: *unity_before_script
+  script:
+  - chmod +x ./ci/docs.sh && ./ci/docs.sh
+
+  artifacts:
+    paths:
+    - ./docs/
