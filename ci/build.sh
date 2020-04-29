@@ -13,7 +13,7 @@ ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x2
   -projectPath $(pwd) \
   -quit \
   -batchmode \
-  -executeMethod NarupaIMD.Editor.GenerateCsProj.Generate \
+  -executeMethod GenerateCsProj.Generate \
   -logFile /dev/stdout
 
 ls
