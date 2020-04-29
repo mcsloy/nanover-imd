@@ -8,40 +8,6 @@ set -x
 
 echo "Building for $BUILD_TARGET"
 
-# Generate csproj files
-${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
-  -projectPath $(pwd) \
-  -quit \
-  -batchmode \
-  -executeMethod GenerateCsProj.Generate \
-  -logFile /dev/stdout
-
-ls
-
-# Check initial mono version
-mono --version
-
-# Update Mono
-apt install gnupg ca-certificates
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | tee /etc/apt/sources.list.d/mono-official-stable.list
-apt update
-
-apt install -y mono-devel
-
-# Check mono version
-mono --version
-
-# Get the 2.5.1 version of docfx extracted to the docfx/ folder
-mkdir docfx
-cd docfx
-wget https://github.com/dotnet/docfx/releases/download/v2.51/docfx.zip
-apt-get -y install unzip
-unzip docfx.zip
-cd ../
-
-mono docfx/docfx.exe metadata || mono docfx/docfx.exe metadata
-
 # Create the folder to store the build
 export BUILD_PATH=./Builds/$BUILD_TARGET/
 mkdir -p $BUILD_PATH

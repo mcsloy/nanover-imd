@@ -77,3 +77,6 @@ build-StandaloneWindows64:
   artifacts:
     paths:
     - ./docs/
+
+docs:
+  <<: *docs
