@@ -8,7 +8,6 @@ using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 using Narupa.Visualisation.Utility;
-using Plugins.Narupa.Visualisation.Node.Renderer;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Node.Renderer
