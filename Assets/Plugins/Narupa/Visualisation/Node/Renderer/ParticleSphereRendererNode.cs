@@ -15,10 +15,10 @@ namespace Narupa.Visualisation.Node.Renderer
     /// Visualisation node for rendering particles using spheres.
     /// </summary>
     /// <remarks>
-    /// A call to <see cref="UpdateRenderer" /> should be made every frame. Depending
-    /// on use case, either call <see cref="Render" /> to draw for a single frame, or
+    /// A call to <see cref="IndirectMeshRenderer.UpdateRenderer" /> should be made every frame. Depending
+    /// on use case, either call <see cref="IndirectMeshRenderer.Render" /> to draw for a single frame, or
     /// add to a <see cref="CommandBuffer" /> using
-    /// <see cref="AppendToCommandBuffer" />.
+    /// <see cref="IndirectMeshRenderer.AppendToCommandBuffer" />.
     /// </remarks>
     [Serializable]
     public class ParticleSphereRendererNode : IndirectMeshRenderer, IDisposable

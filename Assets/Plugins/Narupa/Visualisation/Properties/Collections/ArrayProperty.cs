@@ -9,7 +9,7 @@ using Narupa.Visualisation.Property;
 namespace Narupa.Visualisation.Properties.Collections
 {
     /// <summary>
-    /// Serializable <see cref="Property" /> for an array of <see cref="TValue" />
+    /// Serializable <see cref="Property" /> for an array of <typeparamref name="TValue"/>
     /// values;
     /// </summary>
     [Serializable]

@@ -9,7 +9,7 @@ using Narupa.Visualisation.Property;
 namespace Narupa.Visualisation.Node.Input
 {
     /// <summary>
-    /// Input for the visualisation system that provides a <see cref="Color[]" /> value.
+    /// Input for the visualisation system that provides a <see cref="T:Color[]" /> value.
     /// </summary>
     [Serializable]
     public class ColorArrayInputNode : InputNode<ColorArrayProperty>
