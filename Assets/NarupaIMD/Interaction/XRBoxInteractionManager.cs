@@ -1,21 +1,19 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System;
 using Narupa.Core.Math;
 using Narupa.Frontend.Controllers;
 using Narupa.Frontend.Input;
 using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.XR;
-using NarupaIMD;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Valve.VR;
 
-namespace NarupaXR.Interaction
+namespace NarupaIMD.Interaction
 {
     /// <summary>
-    /// Translates XR input into interactions the box in NarupaXR.
+    /// Translates XR input into interactions the box in Narupa iMD.
     /// </summary>
     public class XRBoxInteractionManager : MonoBehaviour
     {

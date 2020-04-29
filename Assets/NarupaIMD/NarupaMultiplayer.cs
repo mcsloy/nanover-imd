@@ -1,6 +1,4 @@
-using System;
 using Narupa.Core.Async;
-using NarupaXR;
 using UnityEngine;
 
 namespace NarupaIMD
@@ -11,13 +9,13 @@ namespace NarupaIMD
         private NarupaImdSimulation simulation;
 
         [SerializeField]
-        private NarupaXRAvatarManager avatars;
+        private NarupaAvatarManager avatars;
 
         private void OnEnable()
         {
             avatars.enabled = false;
             simulation.Multiplayer.MultiplayerJoined += OnMultiplayerJoined;
-            simulation.Multiplayer.JoinMultiplayer("NarupaXR")
+            simulation.Multiplayer.JoinMultiplayer("Narupa iMD")
                       .AwaitInBackground();
         }
 

@@ -3,19 +3,17 @@
 
 using Essd;
 using Narupa.Frontend.XR;
-using NarupaIMD;
 using UnityEngine;
 using UnityEngine.Events;
-using Text = TMPro.TextMeshProUGUI;
 
-namespace NarupaXR
+namespace NarupaIMD
 {
     /// <summary>
     /// The entry point to the application, and central location for accessing
     /// shared resources.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class NarupaXRPrototype : MonoBehaviour
+    public sealed class NarupaIMDPrototype : MonoBehaviour
     {
 #pragma warning disable 0649
         [SerializeField]

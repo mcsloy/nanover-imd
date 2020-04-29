@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace NarupaXR.Examples
+namespace NarupaIMD.Examples
 {
     /// <summary>
     /// Example component that applies interaction forces to an IMD simulation
