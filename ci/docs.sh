@@ -34,3 +34,7 @@ unzip docfx.zip
 cd ../
 
 mono docfx/docfx.exe metadata || mono docfx/docfx.exe metadata
+
+mkdir docs/csproj_files
+
+cp *.csproj docs/csproj_files
