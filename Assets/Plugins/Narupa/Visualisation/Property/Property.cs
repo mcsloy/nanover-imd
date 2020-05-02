@@ -60,4 +60,35 @@ namespace Narupa.Visualisation.Property
         /// <inheritdoc cref="IProperty.TrySetLinkedProperty"/>
         public abstract void TrySetLinkedProperty(object property);
     }
+    
+    /// <inheritdoc cref="Property"/>
+    public abstract class Property<TValue> : Property, IProperty<TValue> {
+    
+        /// <summary>
+        /// Implicit conversion of the property to its value
+        /// </summary>
+        public static implicit operator TValue(Property<TValue> property)
+        {
+            return property.Value;
+        }
+
+        public abstract TValue Value { get; set; }
+        
+        public abstract IReadOnlyProperty<TValue> LinkedProperty { get; set; }
+
+        /// <inheritdoc cref="Property.PropertyType" />
+        public override Type PropertyType => typeof(TValue);
+
+        /// <inheritdoc cref="Property.TrySetValue" />
+        public override void TrySetValue(object value)
+        {
+            if (value is TValue validValue)
+                Value = validValue;
+            else if (value == default)
+                Value = default;
+            else
+                throw new ArgumentException($"Tried to set property of type {PropertyType} to {value}.");
+        }
+
+    }
 }

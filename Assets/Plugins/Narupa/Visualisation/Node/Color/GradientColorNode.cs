@@ -51,22 +51,19 @@ namespace Narupa.Visualisation.Node.Color
 
         protected override void UpdateOutput()
         {
-            var arr = colors.HasValue ? colors.Value : new UnityEngine.Color[0];
             var values = this.values.Value;
             var minimumValue = this.minimumValue.Value;
             var maximumValue = this.maximumValue.Value;
             var gradient = this.gradient.Value;
             var count = values.Length;
-            Array.Resize(ref arr, count);
-            for (var i = 0; i < count; i++)
-                arr[i] = gradient.Evaluate((values[i] - minimumValue) /
-                                           (maximumValue - minimumValue));
-            colors.Value = arr;
-        }
 
-        protected override void ClearOutput()
-        {
-            colors.UndefineValue();
+            output.Resize(count);
+
+            for (var i = 0; i < count; i++)
+                output.Value[i] = gradient.Evaluate((values[i] - minimumValue) /
+                                                    (maximumValue - minimumValue));
+
+            output.MarkValueAsChanged();
         }
     }
 }

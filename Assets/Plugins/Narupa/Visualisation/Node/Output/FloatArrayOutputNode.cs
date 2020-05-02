@@ -6,7 +6,7 @@ using Narupa.Visualisation.Property;
 namespace Narupa.Visualisation.Node.Output
 {
     [Serializable]
-    public class FloatArrayOutputNode : OutputNode<FloatArrayProperty>
+    public class FloatArrayOutputNode : OutputNode<FloatArrayProperty, float[]>
     {
     }
 }

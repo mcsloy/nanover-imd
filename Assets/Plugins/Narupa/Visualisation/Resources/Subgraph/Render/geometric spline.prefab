@@ -205,6 +205,9 @@ MonoBehaviour:
     mesh:
       value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
       isValueProvided: 1
+    colorBlend:
+      value: 0
+      isValueProvided: 1
     bondScale:
       value: 1
       isValueProvided: 1
@@ -305,6 +308,9 @@ MonoBehaviour:
     mesh:
       value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
       isValueProvided: 1
+    colorBlend:
+      value: 0
+      isValueProvided: 1
     bondScale:
       value: 1
       isValueProvided: 1
@@ -379,7 +385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputLinkCollection: []
   node:
-    name: sequences.lengths
+    name: sequence.lengths
     input:
       value: 
       isValueProvided: 0

@@ -17,4 +17,30 @@ namespace Narupa.Visualisation.Node.Protein
         Strand = Sheet | Bridge,
         Loop = Turn | Bend
     }
+
+    public static class SecondaryStructureAssignmentExtensions
+    {
+        public static string AsSymbol(this SecondaryStructureAssignment ss)
+        {
+            switch (ss)
+            {
+                case SecondaryStructureAssignment.AlphaHelix:
+                    return "H";
+                case SecondaryStructureAssignment.ThreeTenHelix:
+                    return "G";
+                case SecondaryStructureAssignment.PiHelix:
+                    return "I";
+                case SecondaryStructureAssignment.Bridge:
+                    return "B";
+                case SecondaryStructureAssignment.Sheet:
+                    return "E";
+                case SecondaryStructureAssignment.Turn:
+                    return "T";
+                case SecondaryStructureAssignment.Bend:
+                    return "S";
+            }
+
+            return "";
+        }
+    }
 }

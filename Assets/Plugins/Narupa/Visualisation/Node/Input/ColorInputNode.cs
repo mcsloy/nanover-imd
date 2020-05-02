@@ -11,7 +11,7 @@ namespace Narupa.Visualisation.Node.Input
     /// Input for the visualisation system that provides a <see cref="Color" /> value.
     /// </summary>
     [Serializable]
-    public class ColorInputNode : InputNode<ColorProperty>
+    public class ColorInputNode : InputNode<ColorProperty, UnityEngine.Color>
     {
     }
 }

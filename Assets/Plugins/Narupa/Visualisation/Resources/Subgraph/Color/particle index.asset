@@ -1,0 +1,183 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: particle index
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  links:
+  - sourceObject:
+      id: 5
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: particleResidues
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: residueCount
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 3
+    destinationName: gradient
+  - sourceObject:
+      id: 2
+    sourceName: output
+    destinationObject:
+      id: 3
+    destinationName: values
+  - sourceObject:
+      id: 3
+    sourceName: output
+    destinationObject:
+      id: 4
+    destinationName: output
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: particleCount
+  references:
+    version: 1
+    00000000:
+      type: {class: IntInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.count
+          isValueProvided: 1
+        input:
+          value: 0
+          isValueProvided: 0
+    00000001:
+      type: {class: GradientInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: gradient
+          isValueProvided: 1
+        input:
+          value:
+            serializedVersion: 2
+            key0: {r: 1, g: 0, b: 0, a: 1}
+            key1: {r: 0, g: 0, b: 1, a: 1}
+            key2: {r: 0, g: 0, b: 0, a: 0}
+            key3: {r: 0, g: 0, b: 0, a: 0}
+            key4: {r: 0, g: 0, b: 0, a: 0}
+            key5: {r: 0, g: 0, b: 0, a: 0}
+            key6: {r: 0, g: 0, b: 0, a: 0}
+            key7: {r: 0, g: 0, b: 0, a: 0}
+            ctime0: 0
+            ctime1: 65535
+            ctime2: 0
+            ctime3: 0
+            ctime4: 0
+            ctime5: 0
+            ctime6: 0
+            ctime7: 0
+            atime0: 0
+            atime1: 65535
+            atime2: 0
+            atime3: 0
+            atime4: 0
+            atime5: 0
+            atime6: 0
+            atime7: 0
+            m_Mode: 0
+            m_NumColorKeys: 2
+            m_NumAlphaKeys: 2
+          isValueProvided: 1
+    00000002:
+      type: {class: ParticleInSystemFractionNode, ns: Narupa.Visualisation.Node.Fraction,
+        asm: Narupa.Visualisation}
+      data:
+        particleCount:
+          value: 0
+          isValueProvided: 0
+    00000003:
+      type: {class: GradientColorNode, ns: Narupa.Visualisation.Node.Color, asm: Narupa.Visualisation}
+      data:
+        gradient:
+          value:
+            serializedVersion: 2
+            key0: {r: 1, g: 1, b: 1, a: 1}
+            key1: {r: 1, g: 1, b: 1, a: 1}
+            key2: {r: 0, g: 0, b: 0, a: 0}
+            key3: {r: 0, g: 0, b: 0, a: 0}
+            key4: {r: 0, g: 0, b: 0, a: 0}
+            key5: {r: 0, g: 0, b: 0, a: 0}
+            key6: {r: 0, g: 0, b: 0, a: 0}
+            key7: {r: 0, g: 0, b: 0, a: 0}
+            ctime0: 0
+            ctime1: 65535
+            ctime2: 0
+            ctime3: 0
+            ctime4: 0
+            ctime5: 0
+            ctime6: 0
+            ctime7: 0
+            atime0: 0
+            atime1: 65535
+            atime2: 0
+            atime3: 0
+            atime4: 0
+            atime5: 0
+            atime6: 0
+            atime7: 0
+            m_Mode: 0
+            m_NumColorKeys: 2
+            m_NumAlphaKeys: 2
+          isValueProvided: 0
+        values:
+          value: []
+          isValueProvided: 0
+        minimumValue:
+          value: 0
+          isValueProvided: 1
+        maximumValue:
+          value: 1
+          isValueProvided: 1
+    00000004:
+      type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.colors
+          isValueProvided: 1
+        output:
+          value: []
+          isValueProvided: 0
+    00000005:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: 
+          isValueProvided: 0
+        input:
+          value: 
+          isValueProvided: 0
+    00000006:
+      type: {class: ParticleInResidueFractionNode, ns: Narupa.Visualisation.Node.Fraction,
+        asm: Narupa.Visualisation}
+      data:
+        particleResidues:
+          value: 
+          isValueProvided: 0
+        residueCount:
+          value: 0
+          isValueProvided: 0

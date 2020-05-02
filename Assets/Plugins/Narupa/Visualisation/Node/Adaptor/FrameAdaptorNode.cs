@@ -20,9 +20,15 @@ namespace Narupa.Visualisation.Node.Adaptor
     /// and the visualisation system.
     /// </remarks>
     [Serializable]
-    public class FrameAdaptorNode : BaseAdaptorNode, IFrameConsumer
+    public class FrameAdaptorNode : BaseAdaptorNode, IFrameConsumer, IDisposable
     {
         private List<string> propertyOverrides = new List<string>();
+
+        public override void Setup()
+        {
+            base.Setup();
+            propertyOverrides = new List<string>();
+        }
 
         /// <summary>
         /// Add a property with the given type and name to this adaptor that is not
@@ -34,7 +40,7 @@ namespace Narupa.Visualisation.Node.Adaptor
             propertyOverrides.Add(name);
             return prop;
         }
-        
+
         /// <summary>
         /// Remove a property with the given type and name from this adaptor that is not
         /// affected by the frame.
@@ -70,14 +76,14 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// Callback for when the frame is changed. Updates the output properties
         /// selectively depending on if the field is marked as having changed.
         /// </summary>
-        private void OnFrameUpdated(IFrame frame, FrameChanges changes)
+        private void OnFrameUpdated(IFrame frame, FrameChanges changes = null)
         {
             if (frame == null)
                 return;
 
             foreach (var (key, property) in Properties)
             {
-                if (changes.HasChanged(key))
+                if (changes?.GetIsChanged(key) ?? true)
                     GetPropertyValueFromFrame(key, property);
             }
         }
@@ -96,9 +102,15 @@ namespace Narupa.Visualisation.Node.Adaptor
                 if (source != null)
                 {
                     source.FrameChanged += OnFrameUpdated;
-                    OnFrameUpdated(source.CurrentFrame, FrameChanges.All);
+                    OnFrameUpdated(source.CurrentFrame);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            FrameSource = null;
+            Refresh();
         }
     }
 }

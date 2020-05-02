@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: element
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  links:
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: elements
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: mapping
+  - sourceObject:
+      id: 2
+    sourceName: output
+    destinationObject:
+      id: 3
+    destinationName: output
+  references:
+    version: 1
+    00000000:
+      type: {class: ElementArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.elements
+          isValueProvided: 1
+        input:
+          value: 
+          isValueProvided: 0
+    00000001:
+      type: {class: ElementColorMappingInputNode, ns: Narupa.Visualisation.Node.Input,
+        asm: Narupa.Visualisation}
+      data:
+        name:
+          value: scheme
+          isValueProvided: 1
+        input:
+          unityObject: {fileID: 11400000, guid: d9246a3960e1df3438615b81ea1b394e,
+            type: 2}
+          isValueProvided: 1
+    00000002:
+      type: {class: ElementColorMappingNode, ns: Narupa.Visualisation.Node.Color,
+        asm: Narupa.Visualisation}
+      data:
+        elements:
+          value: 
+          isValueProvided: 0
+        mapping:
+          unityObject: {fileID: 0}
+          isValueProvided: 0
+    00000003:
+      type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.colors
+          isValueProvided: 1
+        output:
+          value: []
+          isValueProvided: 0

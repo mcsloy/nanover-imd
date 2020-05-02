@@ -1,0 +1,236 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: ball and stick
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  - id: 5
+  - id: 6
+  - id: 7
+  - id: 8
+  links:
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: particlePositions
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: rendererColor
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: rendererScale
+  - sourceObject:
+      id: 4
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: particleColors
+  - sourceObject:
+      id: 5
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: particleScales
+  - sourceObject:
+      id: 4
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: particleColors
+  - sourceObject:
+      id: 5
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: particleScales
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: particlePositions
+  - sourceObject:
+      id: 6
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: bondPairs
+  - sourceObject:
+      id: 3
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: bondScale
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: particleScale
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: rendererColor
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: particleColor
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: particleScale
+  references:
+    version: 1
+    00000000:
+      type: {class: Vector3ArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.positions
+          isValueProvided: 1
+        input:
+          value: []
+          isValueProvided: 0
+    00000001:
+      type: {class: ColorInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: color
+          isValueProvided: 1
+        input:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 1
+    00000002:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.scale
+          isValueProvided: 1
+        input:
+          value: 0.1
+          isValueProvided: 1
+    00000003:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.color
+          isValueProvided: 1
+        input:
+          value: 0.05
+          isValueProvided: 1
+    00000004:
+      type: {class: ColorArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.colors
+          isValueProvided: 1
+        input:
+          value: []
+          isValueProvided: 0
+    00000005:
+      type: {class: FloatArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.scales
+          isValueProvided: 1
+        input:
+          value: []
+          isValueProvided: 0
+    00000006:
+      type: {class: BondArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: bond.pairs
+          isValueProvided: 1
+        input:
+          value: []
+          isValueProvided: 0
+    00000007:
+      type: {class: ParticleSphereRendererNode, ns: Narupa.Visualisation.Node.Renderer,
+        asm: Narupa.Visualisation}
+      data:
+        particlePositions:
+          value: []
+          isValueProvided: 0
+        particleColors:
+          value: []
+          isValueProvided: 0
+        particleScales:
+          value: []
+          isValueProvided: 0
+        particleColor:
+          value: {r: 0, g: 0, b: 0, a: 0}
+          isValueProvided: 0
+        particleScale:
+          value: 0
+          isValueProvided: 0
+        mesh:
+          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+          isValueProvided: 1
+        material:
+          value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
+          isValueProvided: 1
+    00000008:
+      type: {class: ParticleBondRendererNode, ns: Narupa.Visualisation.Node.Renderer,
+        asm: Narupa.Visualisation}
+      data:
+        material:
+          value: {fileID: 2100000, guid: 8ab524378960e644f9a238927b43e467, type: 2}
+          isValueProvided: 1
+        mesh:
+          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+          isValueProvided: 1
+        colorBlend:
+          value: 1
+          isValueProvided: 1
+        bondScale:
+          value: 0
+          isValueProvided: 1
+        bondPairs:
+          value: []
+          isValueProvided: 0
+        particlePositions:
+          value: []
+          isValueProvided: 0
+        particleColors:
+          value: []
+          isValueProvided: 0
+        particleScales:
+          value: []
+          isValueProvided: 0
+        rendererColor:
+          value: {r: 0, g: 0, b: 0, a: 0}
+          isValueProvided: 1
+        particleScale:
+          value: 0
+          isValueProvided: 1
+        bondOrders:
+          value: 
+          isValueProvided: 0

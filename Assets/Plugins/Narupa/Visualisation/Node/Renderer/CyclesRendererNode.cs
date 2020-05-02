@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
@@ -8,13 +9,13 @@ using UnityEngine;
 namespace Narupa.Visualisation.Node.Renderer
 {
     [Serializable]
-    public class CyclesRendererNode
+    public class CyclesRendererNode : VisualisationNode, IRenderNode
     {
         private Mesh mesh;
 
 #pragma warning disable 0649
         [SerializeField]
-        private Material material;
+        private MaterialProperty material;
 
         [SerializeField]
         private SelectionArrayProperty cycles = new SelectionArrayProperty();
@@ -36,7 +37,7 @@ namespace Narupa.Visualisation.Node.Renderer
 
 #pragma warning restore 0649
 
-        public Transform Transform { get; set; }
+        public UnityEngine.Transform Transform { get; set; }
 
         public void Render(Camera camera)
         {

@@ -6,7 +6,7 @@ namespace Narupa.Visualisation.Property
     /// <summary>
     /// Implementation of a property which does not define if it itself provides a value, but allows linking to other properties.
     /// </summary>
-    public abstract class LinkableProperty<TValue> : Property, IProperty<TValue>
+    public abstract class LinkableProperty<TValue> : Property<TValue>, IProperty<TValue>
     {
         /// <summary>
         /// A linked <see cref="Property" /> which can provide a value.
@@ -68,7 +68,7 @@ namespace Narupa.Visualisation.Property
         protected abstract bool HasProvidedValue { get; }
 
         /// <inheritdoc cref="IProperty{TValue}.Value" />
-        public virtual TValue Value
+        public override TValue Value
         {
             get
             {
@@ -103,7 +103,7 @@ namespace Narupa.Visualisation.Property
 
         /// <inheritdoc cref="IProperty{TValue}.LinkedProperty" />
         [CanBeNull]
-        public IReadOnlyProperty<TValue> LinkedProperty
+        public override IReadOnlyProperty<TValue> LinkedProperty
         {
             get => linkedProperty;
             set
@@ -143,28 +143,6 @@ namespace Narupa.Visualisation.Property
         {
             LinkedProperty = null;
             MarkValueAsChanged();
-        }
-
-        /// <summary>
-        /// Implicit conversion of the property to its value
-        /// </summary>
-        public static implicit operator TValue(LinkableProperty<TValue> property)
-        {
-            return property.Value;
-        }
-
-        /// <inheritdoc cref="Property.PropertyType" />
-        public override Type PropertyType => typeof(TValue);
-
-        /// <inheritdoc cref="Property.TrySetValue" />
-        public override void TrySetValue(object value)
-        {
-            if (value is TValue validValue)
-                Value = validValue;
-            else if (value == default)
-                Value = default;
-            else
-                throw new ArgumentException($"Tried to set property of type {PropertyType} to {value}.");
         }
 
         /// <inheritdoc cref="Property.TrySetLinkedProperty" />

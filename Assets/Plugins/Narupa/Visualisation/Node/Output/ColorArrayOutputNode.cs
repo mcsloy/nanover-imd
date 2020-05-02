@@ -6,7 +6,7 @@ using Narupa.Visualisation.Property;
 namespace Narupa.Visualisation.Node.Output
 {
     [Serializable]
-    public class ColorArrayOutputNode : OutputNode<ColorArrayProperty>
+    public class ColorArrayOutputNode : OutputNode<ColorArrayProperty, UnityEngine.Color[]>
     {
         
     }

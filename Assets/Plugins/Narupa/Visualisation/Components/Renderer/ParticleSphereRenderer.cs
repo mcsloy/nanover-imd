@@ -11,7 +11,7 @@ namespace Narupa.Visualisation.Components.Visualiser
     public class ParticleSphereRenderer :
         VisualisationComponentRenderer<ParticleSphereRendererNode>
     {
-        private void Start()
+        protected override void Awake()
         {
             node.Transform = transform;
         }

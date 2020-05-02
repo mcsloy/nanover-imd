@@ -13,7 +13,7 @@ namespace Narupa.Visualisation.Node.Input
     /// Input for the visualisation system that provides a <see cref="IMapping{TFrom,TTo}" /> value.
     /// </summary>
     [Serializable]
-    public class ElementColorMappingInputNode : InputNode<ElementColorMappingProperty>
+    public class ElementColorMappingInputNode : InputNode<ElementColorMappingProperty, IMapping<Element, UnityEngine.Color>>
     {
     }
 }

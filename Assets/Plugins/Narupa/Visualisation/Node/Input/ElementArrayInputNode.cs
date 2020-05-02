@@ -9,10 +9,10 @@ using Narupa.Visualisation.Property;
 namespace Narupa.Visualisation.Node.Input
 {
     /// <summary>
-    /// Input for the visualisation system that provides a <see cref="T:Element[]" /> value.
+    /// Input for the visualisation system that provides a <see cref="Element[]" /> value.
     /// </summary>
     [Serializable]
-    public class ElementArrayInputNode : InputNode<ElementArrayProperty>
+    public class ElementArrayInputNode : InputNode<ElementArrayProperty, Element[]>
     {
     }
 }

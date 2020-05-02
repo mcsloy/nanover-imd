@@ -2,11 +2,12 @@ using System;
 using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
+using UnityEngine;
 
 namespace Narupa.Visualisation.Node.Output
 {
     [Serializable]
-    public class Vector3ArrayOutputNode : OutputNode<Vector3ArrayProperty>
+    public class Vector3ArrayOutputNode : OutputNode<Vector3ArrayProperty, Vector3[]>
     {
     }
 }

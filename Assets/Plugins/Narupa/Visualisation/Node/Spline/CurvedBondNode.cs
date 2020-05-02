@@ -1,4 +1,5 @@
 using System;
+using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using UnityEngine;
 
@@ -11,17 +12,32 @@ namespace Narupa.Visualisation.Node.Spline
         private Vector3ArrayProperty particlePositions = new Vector3ArrayProperty();
 
         [SerializeField]
+        private ColorProperty particleColor = new ColorProperty();
+        
+        [SerializeField]
         private ColorArrayProperty particleColors = new ColorArrayProperty();
 
+        [SerializeField]
+        private FloatProperty particleScale = new FloatProperty();
+        
+        [SerializeField]
+        private FloatArrayProperty particleScales = new FloatArrayProperty();
+        
         [SerializeField]
         private BondArrayProperty bondPairs = new BondArrayProperty();
 
         private SplineArrayProperty splineSegment = new SplineArrayProperty();
 
+        public override void Setup()
+        {
+            base.Setup();
+            splineSegment = splineSegment ?? new SplineArrayProperty();
+        }
+
         protected override bool IsInputValid => particlePositions.HasValue && bondPairs.HasValue;
 
         protected override bool IsInputDirty =>
-            particlePositions.IsDirty || bondPairs.IsDirty || particleColors.IsDirty;
+            particlePositions.IsDirty || bondPairs.IsDirty || particleColors.IsDirty || particleColor.IsDirty || particleScale.IsDirty || particleScales.IsDirty;
 
         private Vector3[] offsetArray = new Vector3[0];
         private int[] offsetCount = new int[0];
@@ -64,9 +80,20 @@ namespace Narupa.Visualisation.Node.Spline
 
             this.splineSegment.Resize(bondcount);
             var splineSegment = this.splineSegment.Value;
+           
             var hasColors = this.particleColors.HasValue;
             var particleColors = hasColors ?  this.particleColors.Value : null;
 
+            var hasScales = this.particleScales.HasValue;
+            var particleScales = hasScales ?  this.particleScales.Value : null;
+
+            
+            var defaultColor =
+                particleColor.HasValue ? particleColor.Value : UnityEngine.Color.white;
+
+            var defaultScale =
+                particleScale.HasValue ? particleScale.Value : 1f;
+            
             var l = 0;
             foreach (var bond in bondPairs)
             {
@@ -99,12 +126,20 @@ namespace Narupa.Visualisation.Node.Spline
 
                 var color1 = hasColors
                                  ? particleColors[bond.A]
-                                 : UnityEngine.Color.white;
+                                 : defaultColor;
 
                 var color2 = hasColors
                                  ? particleColors[bond.B]
-                                 : UnityEngine.Color.white;
+                                 : defaultColor;
 
+                var scale1 = hasScales
+                                 ? particleScales[bond.A]
+                                 : defaultScale;
+
+                var scale2 = hasScales
+                                 ? particleScales[bond.B]
+                                 : defaultScale;
+                
                 splineSegment[l] = new SplineSegment
                 {
                     StartPoint = pos1,
@@ -115,8 +150,8 @@ namespace Narupa.Visualisation.Node.Spline
                     EndNormal = norm2,
                     StartColor = color1,
                     EndColor = color2,
-                    StartScale = Vector3.one,
-                    EndScale = Vector3.one
+                    StartScale = scale1 * Vector3.one,
+                    EndScale = scale2 * Vector3.one
                 };
 
                 l++;

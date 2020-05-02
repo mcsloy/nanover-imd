@@ -1,12 +1,14 @@
 // Copyright (c) Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using Narupa.Visualisation.Components;
+
 namespace Narupa.Visualisation.Node
 {
     /// <summary>
     /// A generic structure for a visualisation node.
     /// </summary>
-    public abstract class GenericOutputNode
+    public abstract class GenericOutputNode : VisualisationNode
     {
         /// <summary>
         /// Is the current input valid and can it create a valid output?
@@ -33,10 +35,14 @@ namespace Narupa.Visualisation.Node
         /// </summary>
         protected abstract void ClearOutput();
 
+        public override void Setup()
+        {
+        }
+
         /// <summary>
         /// Refresh the node.
         /// </summary>
-        public void Refresh()
+        public override void Refresh()
         {
             if (IsInputDirty)
             {

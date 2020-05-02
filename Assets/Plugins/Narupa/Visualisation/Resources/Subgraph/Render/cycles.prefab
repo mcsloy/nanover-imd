@@ -152,18 +152,12 @@ MonoBehaviour:
   - sourceComponent: {fileID: 7693630364666978037}
     sourceFieldName: input
     destinationFieldName: particleCount
-  - sourceComponent: {fileID: 5856870839696454166}
-    sourceFieldName: input
-    destinationFieldName: particleResidues
   node:
     bonds:
       value: []
       isValueProvided: 0
     particleCount:
       value: 0
-      isValueProvided: 0
-    particleResidues:
-      value: 
       isValueProvided: 0
 --- !u!114 &146005666751186440
 MonoBehaviour:
@@ -236,6 +230,9 @@ MonoBehaviour:
       isValueProvided: 1
     mesh:
       value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+      isValueProvided: 1
+    colorBlend:
+      value: 0
       isValueProvided: 1
     bondScale:
       value: 1
@@ -342,6 +339,9 @@ MonoBehaviour:
       isValueProvided: 1
     mesh:
       value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+      isValueProvided: 1
+    colorBlend:
+      value: 0
       isValueProvided: 1
     bondScale:
       value: 1

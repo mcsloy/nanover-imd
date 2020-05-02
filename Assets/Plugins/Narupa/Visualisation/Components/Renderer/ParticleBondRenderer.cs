@@ -9,7 +9,7 @@ namespace Narupa.Visualisation.Components.Renderer
     /// <inheritdoc cref="ParticleBondRendererNode" />
     public class ParticleBondRenderer : VisualisationComponentRenderer<ParticleBondRendererNode>
     {
-        private void Start()
+        protected override void Awake()
         {
             node.Transform = transform;
         }

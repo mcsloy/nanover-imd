@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using Narupa.Core;
 using Narupa.Core.Math;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Properties;
+using Plugins.Narupa.Core;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -188,30 +188,29 @@ namespace NarupaIMD.Selection
             // The hide property turns off any visualiser
             if (Selection.HideRenderer)
             {
-                SetVisualiser(null, false);
+                SetVisualiser(null);
                 return;
             }
 
             GameObject visualiser = null;
-            var isPrefab = true;
 
             // Construct a visualiser from any provided renderer info
             if (Selection.Renderer is object data)
-                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
+                visualiser = VisualiserFactory.ConstructVisualiser(data);
 
             // Use the predefined ball and stick renderer as a default
             if (visualiser == null)
             {
-                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser("ball and stick");
+                visualiser = VisualiserFactory.ConstructVisualiser("ball and stick");
             }
 
             if (visualiser != null)
             {
-                SetVisualiser(visualiser, isPrefab);
+                SetVisualiser(visualiser);
             }
             else
             {
-                SetVisualiser(null, false);
+                SetVisualiser(null);
             }
         }
 
@@ -219,7 +218,7 @@ namespace NarupaIMD.Selection
         /// Set the visualiser of this selection
         /// </summary>
         /// <param name="isPrefab">Is the argument a prefab, and hence needs instantiating?</param>
-        public void SetVisualiser(GameObject newVisualiser, bool isPrefab = true)
+        public void SetVisualiser(GameObject newVisualiser)
         {
             if (currentVisualiser != null)
             {
@@ -230,16 +229,10 @@ namespace NarupaIMD.Selection
             if (newVisualiser == null)
                 return;
 
-            if (isPrefab)
-            {
-                currentVisualiser = Instantiate(newVisualiser, transform);
-            }
-            else
-            {
-                currentVisualiser = newVisualiser;
-                currentVisualiser.transform.parent = transform;
-                currentVisualiser.transform.SetToLocalIdentity();
-            }
+            currentVisualiser = newVisualiser;
+            currentVisualiser.transform.parent = transform;
+            currentVisualiser.transform.SetToLocalIdentity();
+
 
             SetupAdaptorAndFilter();
         }
@@ -261,8 +254,6 @@ namespace NarupaIMD.Selection
                 }
             }
         }
-
-        private const string HighlightedParticlesKey = "highlighted.particles";
 
         /// <summary>
         /// Undoes the actions of <see cref="SetupAdaptorAndFilter" />. The act of

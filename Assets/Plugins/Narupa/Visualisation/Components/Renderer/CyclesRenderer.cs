@@ -5,8 +5,9 @@ namespace Narupa.Visualisation.Components.Renderer
 {
     public class CyclesRenderer : VisualisationComponentRenderer<CyclesRendererNode>
     {
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
             node.Transform = transform;
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Narupa.Core;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Node.Color
@@ -9,7 +10,7 @@ namespace Narupa.Visualisation.Node.Color
     /// coloring.
     /// </summary>
     [CreateAssetMenu(menuName = "Definition/String-Color Mapping")]
-    public class StringColorMapping : ScriptableObject
+    public class StringColorMapping : ScriptableObject, IMapping<string, UnityEngine.Color>
     {
 #pragma warning disable 0649
         /// <summary>
@@ -31,7 +32,7 @@ namespace Narupa.Visualisation.Node.Color
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
-        public UnityEngine.Color GetColor(string name)
+        public UnityEngine.Color Map(string name)
         {
             foreach (var item in dictionary)
                 if (item.value.Equals(name, StringComparison.InvariantCultureIgnoreCase))

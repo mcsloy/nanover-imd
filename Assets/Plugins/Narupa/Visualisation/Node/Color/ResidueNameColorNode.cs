@@ -20,7 +20,7 @@ namespace Narupa.Visualisation.Node.Color
         private IntArrayProperty particleResidues = new IntArrayProperty();
 
         [SerializeField]
-        private StringColorMapping mapping;
+        private StringColorMappingProperty mapping;
 #pragma warning restore 0649
 
         protected override bool IsInputValid => residueNames.HasNonEmptyValue() 
@@ -38,16 +38,10 @@ namespace Narupa.Visualisation.Node.Color
         {
             var particleResidues = this.particleResidues.Value;
             var residueNames = this.residueNames.Value;
-            var colorArray = colors.HasValue ? colors.Value : new UnityEngine.Color[0];
-            Array.Resize(ref colorArray, particleResidues.Length);
+            output.Resize(particleResidues.Length);
             for (var i = 0; i < particleResidues.Length; i++)
-                colorArray[i] = mapping.GetColor(residueNames[particleResidues[i]]);
-            colors.Value = colorArray;
-        }
-
-        protected override void ClearOutput()
-        {
-            colors.UndefineValue();
+                output.Value[i] = mapping.Value.Map(residueNames[particleResidues[i]]);
+            output.MarkValueAsChanged();
         }
     }
 }

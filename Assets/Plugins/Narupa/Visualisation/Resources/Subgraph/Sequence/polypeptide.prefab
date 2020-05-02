@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 4659525984902923030}
   - component: {fileID: 4119878278907132683}
   m_Layer: 0
-  m_Name: Polypeptide Sequence
+  m_Name: polypeptide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -164,7 +164,7 @@ MonoBehaviour:
     sourceFieldName: alphaCarbonSequences
     destinationFieldName: particleFilter
   node:
-    parentAdaptor:
+    adaptor:
       unityObject: {fileID: 0}
       isValueProvided: 0
     particleFilter:
@@ -187,7 +187,7 @@ MonoBehaviour:
     sourceFieldName: sequenceLengths
     destinationFieldName: output
   node:
-    name: sequences.lengths
+    name: sequence.lengths
     output:
       value: 
       isValueProvided: 0

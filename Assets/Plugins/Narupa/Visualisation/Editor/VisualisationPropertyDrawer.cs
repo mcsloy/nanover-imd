@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Narupa.Core;
-using Narupa.Core.Science;
-using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Property;
 using UnityEditor;
 using UnityEngine;
@@ -14,7 +12,7 @@ using UnityEngine;
 namespace Narupa.Visualisation.Editor
 {
     /// <summary>
-    /// Draws a <see cref="Property" /> in the Editor.
+    /// Custom UI for drawing a <see cref="Property" /> in the Editor.
     /// </summary>
     [CustomPropertyDrawer(typeof(Property.Property), true)]
     public sealed class VisualisationPropertyDrawer : PropertyDrawer
@@ -30,8 +28,8 @@ namespace Narupa.Visualisation.Editor
         private static readonly List<OnGuiOverride> overrides = new List<OnGuiOverride>();
 
         /// <summary>
-        /// Add an override for drawing properties, for example to allow linking in the
-        /// Editor for Visualisation Components
+        /// Add an override for drawing <see cref="Property" /> fields, for example to
+        /// allow linking in the Editor for Visualisation Components
         /// </summary>
         public static void AddOverride(OnGuiOverride guiOverride)
         {
@@ -40,36 +38,43 @@ namespace Narupa.Visualisation.Editor
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            // Prefix the name of the property
+            // Standard practice of prefixing the name of the property
             position = EditorGUI.PrefixLabel(position, label);
 
-            // Check if any overrides apply here
+            // Check if any overrides apply here, and if so return
             if (overrides.Any(overrideOnGui => overrideOnGui(ref position, property, label)))
             {
                 return;
             }
 
-            var valueProperty = GetValueProperty(property);
-            var objectProperty = GetUnityObjectProperty(property);
+            DrawDefaultPropertyGui(position, property);
+        }
 
-            if (objectProperty == null && (valueProperty == null ||
-                                           (valueProperty.isArray &&
-                                            valueProperty.type != "string")))
+        /// <summary>
+        /// Draw a standard representation of a <see cref="Property" />, which is the
+        /// standard input for the value that property wraps with a small tick box to
+        /// indicate if a value should be provided.
+        /// </summary>
+        private void DrawDefaultPropertyGui(Rect position, SerializedProperty property)
+        {
+            var valueProperty = GetValueProperty(property);
+            var referencedObjectProperty = GetReferencedObjectProperty(property);
+
+            if (referencedObjectProperty == null && (valueProperty == null ||
+                                                     (valueProperty.isArray &&
+                                                      valueProperty.type != "string")))
             {
-                // Don't draw arrays in the editor.
+                // Don't want to be able to edit arrays in the Editor.
                 EditorGUI.HelpBox(position, "Set array input from within code.", MessageType.None);
             }
             else
             {
-                var valueRect = position;
-
                 var isProvidedSerializedProperty = GetIsProvidedProperty(property);
+                var isValueProvided = isProvidedSerializedProperty.boolValue;
 
-                valueRect.xMin -= 15f;
+                var valueRect = position;
                 var togglePosition = new Rect(valueRect);
                 valueRect.xMin += 20f;
-
-                var isValueProvided = isProvidedSerializedProperty.boolValue;
 
                 if (isValueProvided)
                 {
@@ -91,7 +96,7 @@ namespace Narupa.Visualisation.Editor
         /// </summary>
         private void DrawMissingValueGui(SerializedProperty property, Rect rect)
         {
-            var field = GetField(property);
+            var field = property.GetField();
             if (field?.GetCustomAttribute<RequiredPropertyAttribute>() != null)
             {
                 EditorGUI.HelpBox(rect, "Missing input!", MessageType.Error);
@@ -108,12 +113,13 @@ namespace Narupa.Visualisation.Editor
         private void DrawValueGui(SerializedProperty property, Rect rect)
         {
             var valueSerializedProperty = GetValueProperty(property);
-            var objectSerializedProperty = GetUnityObjectProperty(property);
+            var objectSerializedProperty = GetReferencedObjectProperty(property);
 
             // Draw a property field, wrapping in a ChangeCheck to 
             // check if its been changed, and dirty the underlying
             // field if so
             EditorGUI.BeginChangeCheck();
+
             if (valueSerializedProperty != null)
                 EditorGUI.PropertyField(rect, valueSerializedProperty, GUIContent.none, true);
             else if (objectSerializedProperty != null)
@@ -121,23 +127,15 @@ namespace Narupa.Visualisation.Editor
 
             if (EditorGUI.EndChangeCheck())
             {
-                // Get the underlying field as a Property
-                var obj = GetVisualisationBaseObject(property.serializedObject.targetObject);
-                var field = obj.GetType()
-                               .GetFieldInSelfOrParents(property.name, BindingFlags.Instance
-                                                                     | BindingFlags.Public
-                                                                     | BindingFlags.NonPublic)
-                               ?.GetValue(obj) as Property.Property;
-
-                field?.MarkValueAsChanged();
+                if (property.TryGetObject<Property.Property>(out var narupaProperty))
+                {
+                    narupaProperty.MarkValueAsChanged();
+                }
+                else
+                {
+                    Debug.LogWarning("Visualisation Property not found");
+                }
             }
-        }
-
-        private static object GetVisualisationBaseObject(Object src)
-        {
-            if (src is VisualisationComponent component)
-                return component.GetWrappedVisualisationNode();
-            return src;
         }
 
         /// <summary>
@@ -160,12 +158,17 @@ namespace Narupa.Visualisation.Editor
         /// Get the <see cref="SerializedProperty" /> representing the internal input
         /// value.
         /// </summary>
-        private SerializedProperty GetValueProperty(SerializedProperty inputProperty)
+        internal static SerializedProperty GetValueProperty(SerializedProperty inputProperty)
         {
             return inputProperty.FindPropertyRelative("value");
         }
 
-        private SerializedProperty GetUnityObjectProperty(SerializedProperty inputProperty)
+        /// <summary>
+        /// Get the <see cref="SerializedProperty" /> representing a Unity object
+        /// referenced by this property, indicating it is a
+        /// <see cref="InterfaceProperty" />.
+        /// </summary>
+        private SerializedProperty GetReferencedObjectProperty(SerializedProperty inputProperty)
         {
             return inputProperty.FindPropertyRelative("unityObject");
         }
@@ -182,12 +185,12 @@ namespace Narupa.Visualisation.Editor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var provided = GetIsProvidedProperty(property);
-            if (provided.boolValue)
+            if (provided == null || provided.boolValue)
             {
                 var valueProperty = GetValueProperty(property);
                 if (valueProperty != null)
                     return EditorGUI.GetPropertyHeight(valueProperty);
-                var objectProperty = GetUnityObjectProperty(property);
+                var objectProperty = GetReferencedObjectProperty(property);
                 if (objectProperty != null)
                     return EditorGUI.GetPropertyHeight(objectProperty);
             }

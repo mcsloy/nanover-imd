@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Spline;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
@@ -10,7 +11,7 @@ using UnityEngine;
 namespace Narupa.Visualisation.Node.Renderer
 {
     [Serializable]
-    public class SplineRendererNode : IDisposable
+    public class SplineRendererNode : VisualisationNode, IRenderNode, IDisposable
     {
         [SerializeField]
         private bool useBox = true;
@@ -24,20 +25,32 @@ namespace Narupa.Visualisation.Node.Renderer
         public IProperty<SplineSegment[]> SplineSegments => splineSegments;
 
         [SerializeField]
-        private int segments = 1;
+        private IntProperty segments = new IntProperty()
+        {
+            Value = 6
+        };
 
         [SerializeField]
-        private int sides = 1;
+        private IntProperty sides = new IntProperty()
+        {
+            Value = 6
+        };
 
         private IndirectMeshDrawCommand drawCommand = new IndirectMeshDrawCommand();
 
         [SerializeField]
-        private Material material;
+        private MaterialProperty material;
 
         private Mesh mesh;
 
         [SerializeField]
         private FloatProperty splineRadius = new FloatProperty();
+
+        public override void Setup()
+        {
+            base.Setup();
+            drawCommand = drawCommand ?? new IndirectMeshDrawCommand();
+        }
 
         public void Render(Camera camera)
         {
@@ -63,7 +76,7 @@ namespace Narupa.Visualisation.Node.Renderer
             }
         }
 
-        public Transform Transform { get; set; }
+        public UnityEngine.Transform Transform { get; set; }
 
         private Mesh GenerateMesh()
         {

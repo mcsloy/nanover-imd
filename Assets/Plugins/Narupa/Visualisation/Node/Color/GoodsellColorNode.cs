@@ -56,8 +56,7 @@ namespace Narupa.Visualisation.Node.Color
 
         protected override void UpdateOutput()
         {
-            var colorArray = colors.HasNonNullValue() ? colors.Value : new UnityEngine.Color[0];
-            Array.Resize(ref colorArray, elements.Value.Length);
+            output.Resize(elements.Value.Length);
 
             var elementArray = elements.Value;
             var residueArray = particleResidues.Value;
@@ -67,15 +66,10 @@ namespace Narupa.Visualisation.Node.Color
             for (var i = 0; i < elements.Value.Length; i++)
             {
                 var resid = residueArray[i];
-                colorArray[i] = GetColor(elementArray[i], entityArray[resid], nameArray[resid]);
+                output.Value[i] = GetColor(elementArray[i], entityArray[resid], nameArray[resid]);
             }
 
-            colors.Value = colorArray;
-        }
-
-        protected override void ClearOutput()
-        {
-            colors.UndefineValue();
+            output.MarkValueAsChanged();
         }
 
         protected override void ClearDirty()

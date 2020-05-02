@@ -156,10 +156,10 @@ namespace Narupa.Visualisation.Visualiser
 
             var usePerElementColor = colorScheme.HasNonNullValue();
 
-            sphereRenderer.RendererColor.LinkedProperty = tint;
+            sphereRenderer.ParticleColor.LinkedProperty = tint;
             sphereRenderer.Material.LinkedProperty = particleMaterial;
             sphereRenderer.Mesh.LinkedProperty = particleMesh;
-            sphereRenderer.RendererScale.LinkedProperty = particleScale;
+            sphereRenderer.ParticleScale.LinkedProperty = particleScale;
 
             bondRenderer.RendererColor.LinkedProperty = tint;
             bondRenderer.Material.LinkedProperty = bondMaterial;
@@ -184,13 +184,13 @@ namespace Narupa.Visualisation.Visualiser
                 sphereRenderer.ParticleScales.LinkedProperty = particleScales.Scales;
 
             if (usePerElementColor)
-                sphereRenderer.ParticleColors.LinkedProperty = particleColors.Colors;
+                sphereRenderer.ParticleColors.LinkedProperty = particleColors.Output;
 
             bondRenderer.ParticlePositions.LinkedProperty = frameAdaptor.ParticlePositions;
             if (useVdwRadii.HasValue && useVdwRadii)
                 bondRenderer.ParticleScales.LinkedProperty = particleScales.Scales;
             if (usePerElementColor)
-                bondRenderer.ParticleColors.LinkedProperty = particleColors.Colors;
+                bondRenderer.ParticleColors.LinkedProperty = particleColors.Output;
 
             bondRenderer.BondPairs.LinkedProperty = frameAdaptor.BondPairs;
 

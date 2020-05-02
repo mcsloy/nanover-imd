@@ -41,7 +41,7 @@ namespace Narupa.Visualisation.Node.Calculator
         public IReadOnlyProperty<Cycle[]> Cycles => cycles;
 
         /// <inheritdoc cref="Cycles"/>
-        private readonly ArrayProperty<Cycle> cycles = new ArrayProperty<Cycle>();
+        private ArrayProperty<Cycle> cycles = new ArrayProperty<Cycle>();
 
         /// <summary>
         /// Set of particle residue indices.
@@ -49,7 +49,8 @@ namespace Narupa.Visualisation.Node.Calculator
         public IReadOnlyProperty<int[]> ParticleResidues => particleResidues;
 
         /// <inheritdoc cref="ParticleResidues"/>
-        private readonly IntArrayProperty particleResidues = new IntArrayProperty();
+        [SerializeField]
+        private IntArrayProperty particleResidues = new IntArrayProperty();
 
         /// <summary>
         /// Number of cycles.
@@ -57,7 +58,14 @@ namespace Narupa.Visualisation.Node.Calculator
         public IReadOnlyProperty<int> CyclesCount => cyclesCount;
 
         /// <inheritdoc cref="CyclesCount"/>
-        private readonly IntProperty cyclesCount = new IntProperty();
+        private IntProperty cyclesCount = new IntProperty();
+
+        public override void Setup()
+        {
+            base.Setup();
+            cycles = cycles ?? new ArrayProperty<Cycle>();
+            cyclesCount = cyclesCount ?? new IntProperty();
+        }
 
         /// <inheritdoc cref="GenericOutputNode.IsInputDirty"/>
         protected override bool IsInputDirty => bonds.IsDirty || particleCount.IsDirty;

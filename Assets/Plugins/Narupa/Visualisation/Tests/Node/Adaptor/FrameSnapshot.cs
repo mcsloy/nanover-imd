@@ -5,7 +5,7 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
 {
     internal class FrameSnapshot : ITrajectorySnapshot
     {
-        public void Update(Frame.Frame frame, FrameChanges changes)
+        public void Update(Frame.Frame frame, FrameChanges changes = null)
         {
             CurrentFrame = frame;
             FrameChanged?.Invoke(frame, changes);

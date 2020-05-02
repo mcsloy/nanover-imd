@@ -40,18 +40,12 @@ namespace Narupa.Visualisation.Node.Color
         protected override void UpdateOutput()
         {
             var elementArray = elements.Value;
-            var colorArray = colors.HasValue ? colors.Value : new UnityEngine.Color[0];
-            Array.Resize(ref colorArray, elements.Value.Length);
+            output.Resize(elements.Value.Length);
+            
             for (var i = 0; i < elements.Value.Length; i++)
-                colorArray[i] = GetColor(elementArray[i]);
+                output.Value[i] = GetColor(elementArray[i]);
 
-            colors.Value = colorArray;
-        }
-
-        /// <inheritdoc cref="GenericOutputNode.ClearOutput"/>
-        protected override void ClearOutput()
-        {
-            colors.UndefineValue();
+            output.MarkValueAsChanged();
         }
 
         /// <summary>

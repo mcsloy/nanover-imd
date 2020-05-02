@@ -25,12 +25,13 @@ namespace Narupa.Visualisation.Node.Adaptor
         [SerializeField]
         private IntArrayProperty particleFilter = new IntArrayProperty();
 
-        private readonly Dictionary<string, IReadOnlyProperty> filteredProperties =
+        private Dictionary<string, IReadOnlyProperty> filteredProperties =
             new Dictionary<string, IReadOnlyProperty>();
 
         /// <inheritdoc cref="BaseAdaptorNode.GetProperties"/>
         public override IEnumerable<(string name, IReadOnlyProperty property)> GetProperties()
         {
+            yield return ("particle.filter", ParticleFilter);
             foreach (var (key, value) in filteredProperties)
                 yield return (key, value);
         }
@@ -48,7 +49,7 @@ namespace Narupa.Visualisation.Node.Adaptor
         {
             if (GetProperty(name) is IReadOnlyProperty<T> existing)
                 return existing;
-            
+
             var property = base.GetOrCreateProperty<T>(name);
 
             if (property is IReadOnlyProperty<BondPair[]> bondPairProperty
@@ -64,11 +65,11 @@ namespace Narupa.Visualisation.Node.Adaptor
                 filteredProperties[name] = property;
                 return property;
             }
-            
+
             if (name.Contains(".particles") && property is IReadOnlyProperty<int[]> indexProp)
             {
                 var filtered = new IndexFilteredProperty(indexProp, particleFilter);
-                
+
                 filteredProperties[name] = filtered;
                 return filtered as IReadOnlyProperty<T>;
             }
@@ -86,7 +87,7 @@ namespace Narupa.Visualisation.Node.Adaptor
                 filteredProperties[name] = filtered;
                 return filtered;
             }
-            
+
             filteredProperties[name] = property;
             return property;
         }

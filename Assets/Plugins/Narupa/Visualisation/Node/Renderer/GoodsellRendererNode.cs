@@ -37,7 +37,7 @@ namespace Narupa.Visualisation.Node.Renderer
         /// <summary>
         /// The transform to center this renderer on.
         /// </summary>
-        public Transform Transform { get; set; }
+        public UnityEngine.Transform Transform { get; set; }
 
         /// <inheritdoc cref="CommandBufferRendererNode.Cleanup"/>
         public override void Dispose()
@@ -54,8 +54,8 @@ namespace Narupa.Visualisation.Node.Renderer
             renderer.ParticlePositions.LinkedProperty = particlePositions;
             renderer.ParticleColors.LinkedProperty = particleColors;
             renderer.ParticleResidues.LinkedProperty = particleResidues;
-            renderer.RendererColor.LinkedProperty = rendererColor;
-            renderer.RendererScale.LinkedProperty = rendererScale;
+            renderer.ParticleColor.LinkedProperty = rendererColor;
+            renderer.ParticleScale.LinkedProperty = rendererScale;
 
             renderer.Transform = Transform;
         }

@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: goodsell
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  - id: 5
+  links:
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: elements
+  - sourceObject:
+      id: 7
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: mapping
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: elements
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: particleResidues
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: residueEntities
+  - sourceObject:
+      id: 3
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: residueNames
+  - sourceObject:
+      id: 4
+    sourceName: output
+    destinationObject:
+      id: 5
+    destinationName: output
+  references:
+    version: 1
+    00000000:
+      type: {class: ElementArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.elements
+          isValueProvided: 1
+        input:
+          value: 
+          isValueProvided: 0
+    00000001:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.residues
+          isValueProvided: 1
+        input:
+          value: 
+          isValueProvided: 0
+    00000002:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: residue.chains
+          isValueProvided: 1
+        input:
+          value: 
+          isValueProvided: 0
+    00000003:
+      type: {class: StringArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: residue.names
+          isValueProvided: 1
+        input:
+          value: []
+          isValueProvided: 0
+    00000004:
+      type: {class: GoodsellColorNode, ns: Narupa.Visualisation.Node.Color, asm: Narupa.Visualisation}
+      data:
+        elements:
+          value: 
+          isValueProvided: 0
+        particleResidues:
+          value: 
+          isValueProvided: 0
+        residueEntities:
+          value: 
+          isValueProvided: 0
+        residueNames:
+          value: []
+          isValueProvided: 0
+        waterColor: {r: 0.9622642, g: 0.62184054, b: 0.62184054, a: 1}
+        chainColors:
+        - NonHeteroColor: {r: 0.61000353, g: 0.85230744, b: 0.8679245, a: 1}
+          HeteroColor: {r: 0.45229617, g: 0.71660614, b: 0.7924528, a: 1}
+    00000005:
+      type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
+      data:
+        name:
+          value: particle.colors
+          isValueProvided: 1
+        output:
+          value: []
+          isValueProvided: 0
+    00000006:
+      type: {class: ElementColorMappingNode, ns: Narupa.Visualisation.Node.Color,
+        asm: Narupa.Visualisation}
+      data:
+        elements:
+          value: 
+          isValueProvided: 0
+        mapping:
+          unityObject: {fileID: 0}
+          isValueProvided: 0
+    00000007:
+      type: {class: ElementColorMappingInputNode, ns: Narupa.Visualisation.Node.Input,
+        asm: Narupa.Visualisation}
+      data:
+        name:
+          value: 
+          isValueProvided: 0
+        input:
+          unityObject: {fileID: 11400000, guid: d9246a3960e1df3438615b81ea1b394e,
+            type: 2}
+          isValueProvided: 1

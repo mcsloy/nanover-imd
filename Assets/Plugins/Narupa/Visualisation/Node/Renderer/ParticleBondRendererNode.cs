@@ -2,12 +2,13 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
-using Narupa.Core.Math;
 using Narupa.Frame;
+using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 using Narupa.Visualisation.Utility;
+using Plugins.Narupa.Visualisation.Node.Renderer;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Node.Renderer
@@ -16,9 +17,9 @@ namespace Narupa.Visualisation.Node.Renderer
     /// Visualisation node for rendering bonds between particles.
     /// </summary>
     [Serializable]
-    public class ParticleBondRendererNode : IndirectMeshRenderer, IDisposable
+    public class ParticleBondRendererNode : IndirectMeshRenderer, IDisposable, IVisualisationNode, IRenderNode, ISerializationCallbackReceiver
     {
-        private readonly IndirectMeshDrawCommand drawCommand = new IndirectMeshDrawCommand();
+        private IndirectMeshDrawCommand drawCommand = new IndirectMeshDrawCommand();
 
 #pragma warning disable 0649
         [SerializeField]
@@ -26,6 +27,9 @@ namespace Narupa.Visualisation.Node.Renderer
 
         [SerializeField]
         private MeshProperty mesh = new MeshProperty();
+
+        [SerializeField]
+        private FloatProperty colorBlend = new FloatProperty();
 #pragma warning restore 0649
 
         #region Input Properties
@@ -126,6 +130,8 @@ namespace Narupa.Visualisation.Node.Renderer
             drawCommand.SetFloat("_ParticleScale", particleScale.Value);
             drawCommand.SetFloat("_Scale", particleScale.Value);
             drawCommand.SetColor("_Color", rendererColor.Value);
+            if (colorBlend.HasValue)
+                drawCommand.SetFloat("_ColorBlend", colorBlend.Value);
 
             bondScale.IsDirty = false;
             particleScale.IsDirty = false;
@@ -190,6 +196,7 @@ namespace Narupa.Visualisation.Node.Renderer
                 bondOrders.IsDirty = false;
             }
         }
+
         private int[] filter = new int[0];
 
         private void UpdateMeshAndMaterials()
@@ -210,6 +217,22 @@ namespace Narupa.Visualisation.Node.Renderer
             particlePositions.IsDirty = true;
             particleScales.IsDirty = true;
             bondPairs.IsDirty = true;
+        }
+
+        public void Refresh()
+        {
+            if(!Application.isPlaying)
+                ResetBuffers();
+        }
+
+        public void OnBeforeSerialize()
+        {
+            
+        }
+        
+        public void OnAfterDeserialize()
+        {
+            drawCommand = new IndirectMeshDrawCommand();
         }
     }
 }

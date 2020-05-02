@@ -87,7 +87,7 @@ namespace Narupa.Frame.Import.CIF.Structures
                                  .ToArray(),
                 ParticleCount = atoms.Count,
                 ResidueCount = residues.Count,
-                EntityCount = entities.Count
+                EntityCount = asymmetricUnits.Count
             };
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Narupa.Core;
 using Narupa.Core.Science;
 using Narupa.Frame;
@@ -15,17 +16,23 @@ namespace Narupa.Visualisation.Node.Adaptor
     /// as a gateway, for both connecting the visualisation system to external sources
     /// (such as a frame source) and for filtering out values.
     /// </summary>
-    public abstract class BaseAdaptorNode : IDynamicPropertyProvider
+    public abstract class BaseAdaptorNode : VisualisationNode, IDynamicPropertyProvider
     {
         /// <inheritdoc cref="Properties" />
-        private readonly Dictionary<string, Property.Property> properties =
-            new Dictionary<string, Property.Property>();
+        private Dictionary<string, IProperty> properties =
+            new Dictionary<string, IProperty>();
+        
+        public override void Setup()
+        {
+            base.Setup();
+            properties = properties ?? new Dictionary<string, IProperty>();
+        }
 
         /// <summary>
         /// Dynamic properties created by the system, with the keys corresponding to the
         /// keys in the frame's data.
         /// </summary>
-        protected IReadOnlyDictionary<string, Property.Property> Properties => properties;
+        public IReadOnlyDictionary<string, IProperty> Properties => properties;
 
         /// <inheritdoc cref="IDynamicPropertyProvider.GetOrCreateProperty{T}" />
         public virtual IReadOnlyProperty<T> GetOrCreateProperty<T>(string name)
@@ -42,7 +49,7 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// <inheritdoc cref="IDynamicPropertyProvider.GetPotentialProperties" />
         public IEnumerable<(string name, Type type)> GetPotentialProperties()
         {
-            return StandardFrameProperties.All;
+            return StandardFrameProperties.All.Select(a => (a.Key, a.Type));
         }
 
         /// <inheritdoc cref="IDynamicPropertyProvider.CanDynamicallyProvideProperty{T}" />
@@ -122,18 +129,11 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// </summary>
         public IReadOnlyProperty<int[]> ResidueEntities =>
             GetOrCreateProperty<int[]>(FrameData.ResidueChainArrayKey);
-        
+
         /// <summary>
         /// Array of residue entities of the provided frame.
         /// </summary>
         public IReadOnlyProperty<int> ResidueCount =>
             GetOrCreateProperty<int>(FrameData.ResidueCountValueKey);
-
-        /// <summary>
-        /// Refresh the adaptor. Should be called every frame.
-        /// </summary>
-        public virtual void Refresh()
-        {
-        }
     }
 }

@@ -9,7 +9,7 @@ using Narupa.Visualisation.Property;
 namespace Narupa.Visualisation.Properties.Collections
 {
     /// <summary>
-    /// Serializable <see cref="Property" /> for an array of <typeparamref name="TValue"/>
+    /// Serializable <see cref="Property" /> for an array of <see cref="TValue" />
     /// values;
     /// </summary>
     [Serializable]
@@ -35,5 +35,9 @@ namespace Narupa.Visualisation.Properties.Collections
         {
             return GetEnumerator();
         }
+
+        public TValue this[int i] => Value[i];
+
+        public int Length => Value.Length;
     }
 }

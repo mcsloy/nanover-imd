@@ -4,7 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Narupa.Core.Collections;
 using Narupa.Visualisation.Components;
+using Narupa.Visualisation.Node.Input;
+using Narupa.Visualisation.Node.Output;
 using Narupa.Visualisation.Property;
 using UnityEditor;
 using UnityEngine;
@@ -21,15 +24,20 @@ namespace Narupa.Visualisation.Editor
     {
         static VisualiserComponentsPropertyDrawer()
         {
-            VisualisationPropertyDrawer.AddOverride(OnGUI);
+            VisualisationPropertyDrawer.AddOverride(OnGui);
         }
 
         /// <summary>
-        /// 
+        /// Draw the GUI for a <see cref="Property.Property" /> that is wrapped by a
+        /// <see cref="VisualisationComponent" /> which provides information on links.
         /// </summary>
-        /// <returns>True if this should override the default property GUI, false if it shouldn't.</returns>
-        private static bool OnGUI(ref Rect rect, SerializedProperty property, GUIContent label)
+        /// <returns>
+        /// True if this should override the default property GUI, false if it
+        /// shouldn't.
+        /// </returns>
+        private static bool OnGui(ref Rect rect, SerializedProperty property, GUIContent label)
         {
+            // Find the list of links stored in the VisualisationComponent
             var collection = property.serializedObject.FindProperty("inputLinkCollection");
             if (collection == null) return false;
 
@@ -76,6 +84,28 @@ namespace Narupa.Visualisation.Editor
             }
             else
             {
+                var obj = property.serializedObject.targetObject as VisualisationComponent;
+                if (obj != null)
+                {
+                    if (obj.GetWrappedVisualisationNode() is IInputNode node &&
+                        property.name == "name")
+                    {
+                        var valueProperty = VisualisationPropertyDrawer.GetValueProperty(property);
+                        FramePropertyDrawer.DrawFrameKeyProperty(
+                            rect, valueProperty, node.InputType);
+                        return true;
+                    }
+
+                    if (obj.GetWrappedVisualisationNode() is IOutputNode output &&
+                        property.name == "name")
+                    {
+                        var valueProperty = VisualisationPropertyDrawer.GetValueProperty(property);
+                        FramePropertyDrawer.DrawFrameKeyProperty(
+                            rect, valueProperty, output.OutputType);
+                        return true;
+                    }
+                }
+
                 return false;
             }
 
@@ -123,15 +153,15 @@ namespace Narupa.Visualisation.Editor
             public SerializedProperty DestinationProperty;
         }
 
-        class ValidShortcut
+        private class ValidShortcut
         {
             public GUIContent Label;
             public Object Source;
             public string Name;
         }
 
-        static IEnumerable<ValidShortcut> GetShortcuts(MonoBehaviour behaviour,
-                                                       Type destinationType)
+        private static IEnumerable<ValidShortcut> GetShortcuts(MonoBehaviour behaviour,
+                                                               Type destinationType)
         {
             if (behaviour == null)
                 yield break;
@@ -149,7 +179,7 @@ namespace Narupa.Visualisation.Editor
                 {
                     yield return new ValidShortcut
                     {
-                        Label = new GUIContent($"{go.name}[{obj.GetType().Name}]: {field}"),
+                        Label = new GUIContent(GetLabelForFieldOfComponent(obj, field)),
                         Source = obj,
                         Name = field
                     };
@@ -160,6 +190,22 @@ namespace Narupa.Visualisation.Editor
                 foreach (var shortcut in GetShortcuts(go.transform.parent.gameObject,
                                                       destinationType))
                     yield return shortcut;
+        }
+
+        /// <summary>
+        /// User readable name for a field of a visualisation component.
+        /// </summary>
+        private static string GetLabelForFieldOfComponent(VisualisationComponent obj, string field)
+        {
+            if (obj.GetWrappedVisualisationNode() is IInputNode input && field == "input")
+            {
+                var property =
+                    VisualisationFrameProperties.All.FirstOrDefault(k => k.Key == input.Name);
+                return $"> {(property != null ? property.DisplayName : input.Name)}";
+            }
+
+            return
+                $"{ObjectNames.NicifyVariableName(obj.GetType().Name)} > {ObjectNames.NicifyVariableName(field)}";
         }
 
         private static IEnumerable<string> GetPropertiesOfType(
@@ -178,8 +224,6 @@ namespace Narupa.Visualisation.Editor
         {
             var sourceFieldWidth = 144;
 
-            var sourceDropdownRect = new Rect(rect.x - 16, rect.y, 16, rect.height);
-
             var destinationObject =
                 link.DestinationProperty.serializedObject.targetObject as IPropertyProvider;
             var destinationType = destinationObject
@@ -190,45 +234,24 @@ namespace Narupa.Visualisation.Editor
                     link.DestinationProperty.serializedObject.targetObject as MonoBehaviour,
                     destinationType).ToArray();
 
-            var shortcutIndex = EditorGUI.Popup(sourceDropdownRect, -1, shortcuts
-                                                                        .Select(shortcut =>
-                                                                                    shortcut.Label)
-                                                                        .ToArray());
+            var currentComponent = link.SourceComponent.objectReferenceValue;
 
-            if (shortcutIndex >= 0)
+            var currentField = link.SourceProperty.stringValue;
+
+            var currentShortcutIndex = shortcuts.IndexOf(s => s.Source == currentComponent
+                                                           && s.Name == currentField);
+
+            var shortcutIndex = EditorGUI.Popup(rect, currentShortcutIndex, shortcuts
+                                                                            .Select(shortcut =>
+                                                                                        shortcut
+                                                                                            .Label)
+                                                                            .ToArray());
+
+            if (shortcutIndex != currentShortcutIndex)
             {
                 var shortcut = shortcuts[shortcutIndex];
                 link.SourceComponent.objectReferenceValue = shortcut.Source;
                 link.SourceProperty.stringValue = shortcut.Name;
-            }
-
-            var sourceComponentRect = new Rect(rect.x,
-                                               rect.y,
-                                               rect.width - sourceFieldWidth - 4,
-                                               rect.height);
-            var sourceFieldRect = new Rect(rect.xMax - sourceFieldWidth - 4,
-                                           rect.y,
-                                           sourceFieldWidth,
-                                           rect.height);
-
-
-            EditorGUI.PropertyField(sourceComponentRect, link.SourceComponent, GUIContent.none);
-
-            if (link.SourceComponent.objectReferenceValue is IPropertyProvider sourceProvider)
-            {
-                var fields = GetPropertiesOfType(sourceProvider, destinationType).ToArray();
-
-                if (fields.Contains(link.SourceProperty.stringValue))
-                    GUI.color = Color.green;
-                else if (sourceProvider.CanDynamicallyProvideProperty(link.SourceProperty.stringValue,
-                                                           destinationType))
-                    GUI.color = Color.yellow;
-                else
-                    GUI.color = Color.red;
-
-                EditorGUI.PropertyField(sourceFieldRect, link.SourceProperty, GUIContent.none);
-
-                GUI.color = Color.white;
             }
         }
     }

@@ -8,10 +8,10 @@ using Narupa.Visualisation.Property;
 namespace Narupa.Visualisation.Node.Input
 {
     /// <summary>
-    /// Input for the visualisation system that provides a <see cref="T:string[]" /> value.
+    /// Input for the visualisation system that provides a <see cref="string[]" /> value.
     /// </summary>
     [Serializable]
-    public class StringArrayInputNode : InputNode<StringArrayProperty>
+    public class StringArrayInputNode : InputNode<StringArrayProperty, string[]>
     {
     }
 }

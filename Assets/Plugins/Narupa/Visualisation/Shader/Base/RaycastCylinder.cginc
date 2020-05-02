@@ -42,8 +42,8 @@
 // It returns the first intersection point and the corresponding value t. It discards the pixel if no intersection occurs.
 
 
-// Width of the gradient
-float _GradientWidth;
+// Shape of the factor which controls the fade of the bond colors
+float _ColorBlend;
 
 // The scales to apply to the particles
 float _ParticleScale;
@@ -176,8 +176,7 @@ fout frag (v2f i)
     
     float lerpt = 0.5 + 0.5 * proj;
     
-    lerpt = clamp((lerpt - 0.5) / (_GradientWidth + 0.0001) + 0.5, 0, 1);
-    o.color = DIFFUSE(lerp(i.color1, i.color2, lerpt), n, l, _Diffuse);
+    o.color = DIFFUSE(ColorSample(i.color1, i.color2, lerpt, _ColorBlend), n, l, _Diffuse);
     
     OUTPUT_FRAG_DEPTH(o, c + d * t);
     return o;

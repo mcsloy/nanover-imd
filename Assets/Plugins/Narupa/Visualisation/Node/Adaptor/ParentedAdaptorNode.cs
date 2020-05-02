@@ -33,12 +33,14 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// <inheritdoc cref="BaseAdaptorNode.Refresh"/>
         public override void Refresh()
         {
+            base.Refresh();
             if (adaptor.IsDirty)
             {
                 if (adaptor.HasNonNullValue())
                 {
                     foreach (var (key, property) in Properties)
-                        property.TrySetLinkedProperty(adaptor.Value.GetOrCreateProperty(key, property.PropertyType));
+                        property.TrySetLinkedProperty(
+                            adaptor.Value.GetOrCreateProperty(key, property.PropertyType));
                 }
                 else
                 {

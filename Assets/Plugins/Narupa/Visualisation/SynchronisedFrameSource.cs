@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using JetBrains.Annotations;
 using Narupa.Frame;
 using Narupa.Frame.Event;
 using UnityEngine;
@@ -19,7 +18,7 @@ namespace Narupa.Visualisation
                                            IFrameConsumer
     {
         /// <inheritdoc cref="ITrajectorySnapshot.CurrentFrame" />
-        public Frame.Frame CurrentFrame => snapshot?.CurrentFrame;
+        public Frame.Frame CurrentFrame => snapshot.CurrentFrame;
 
         /// <inheritdoc cref="ITrajectorySnapshot.FrameChanged" />
         public event FrameChanged FrameChanged;
@@ -37,10 +36,7 @@ namespace Narupa.Visualisation
                     snapshot.FrameChanged -= SnapshotOnFrameChanged;
                 snapshot = value;
                 if (snapshot != null)
-                {
                     snapshot.FrameChanged += SnapshotOnFrameChanged;
-                    changes = FrameChanges.All;
-                }
             }
         }
 
@@ -53,8 +49,7 @@ namespace Narupa.Visualisation
             this.changes.MergeChanges(changes);
         }
 
-        [NotNull]
-        private FrameChanges changes = FrameChanges.None;
+        private FrameChanges changes = new FrameChanges();
 
         private void Update()
         {
@@ -70,7 +65,7 @@ namespace Narupa.Visualisation
             if (changes.HasAnythingChanged)
             {
                 FrameChanged?.Invoke(snapshot.CurrentFrame, changes);
-                changes = FrameChanges.None;
+                changes = new FrameChanges();
             }
         }
     }

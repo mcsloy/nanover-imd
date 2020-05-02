@@ -40,6 +40,17 @@ namespace Narupa.Visualisation.Components
             return provider.GetProperty(key) as IReadOnlyProperty<T>;
         }
 
+        /// <inheritdoc cref="IPropertyProvider.GetProperty"/>
+        public static IReadOnlyProperty GetProperty(this IPropertyProvider provider,
+                                                    string key,
+                                                    Type type)
+        {
+            var property = provider.GetProperty(key);
+            if (property == null)
+                return null;
+            return type.IsAssignableFrom(property.PropertyType) ? property : null;
+        }
+
         /// <inheritdoc cref="IDynamicPropertyProvider.CanDynamicallyProvideProperty{T}"/>
         public static bool CanDynamicallyProvideProperty<T>(this IPropertyProvider provider,
                                                             string name)
@@ -48,11 +59,11 @@ namespace Narupa.Visualisation.Components
                 return dynamic.CanDynamicallyProvideProperty<T>(name);
             return false;
         }
-       
+
         /// <inheritdoc cref="IDynamicPropertyProvider.CanDynamicallyProvideProperty{T}"/>
         public static bool CanDynamicallyProvideProperty(this IPropertyProvider provider,
-                                                            string name,
-                                                            Type type)
+                                                         string name,
+                                                         Type type)
         {
             if (provider is IDynamicPropertyProvider dynamic)
                 return dynamic.CanDynamicallyProvideProperty(name, type);
@@ -61,8 +72,8 @@ namespace Narupa.Visualisation.Components
 
         /// <inheritdoc cref="IDynamicPropertyProvider.CanDynamicallyProvideProperty{T}"/>
         public static bool CanDynamicallyProvideProperty(this IDynamicPropertyProvider provider,
-                                              string name,
-                                              Type type)
+                                                         string name,
+                                                         Type type)
         {
             return (bool) typeof(IPropertyProvider)
                           .GetMethod(nameof(provider.CanDynamicallyProvideProperty),
@@ -77,12 +88,17 @@ namespace Narupa.Visualisation.Components
         }
 
         /// <inheritdoc cref="IDynamicPropertyProvider.GetOrCreateProperty{T}"/>
-        public static IReadOnlyProperty GetOrCreateProperty(this IDynamicPropertyProvider provider,
+        public static IReadOnlyProperty GetOrCreateProperty(this IPropertyProvider provider,
                                                             string name,
                                                             Type type)
         {
+            if (!(provider is IDynamicPropertyProvider dynamic))
+            {
+                return provider.GetProperty(name, type);
+            }
+
             return typeof(IDynamicPropertyProvider)
-                   .GetMethod(nameof(provider.GetOrCreateProperty),
+                   .GetMethod(nameof(dynamic.GetOrCreateProperty),
                               BindingFlags.Public
                             | BindingFlags.NonPublic
                             | BindingFlags.Instance)

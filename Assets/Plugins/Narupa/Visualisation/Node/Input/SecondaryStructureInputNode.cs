@@ -8,7 +8,7 @@ namespace Narupa.Visualisation.Node.Input
     /// Input for the visualisation system that provides a <see cref="SecondaryStructureAssignment" /> value.
     /// </summary>
     [Serializable]
-    public class SecondaryStructureArrayInputNode : InputNode<SecondaryStructureArrayProperty>
+    public class SecondaryStructureArrayInputNode : InputNode<SecondaryStructureArrayProperty, SecondaryStructureAssignment[]>
     {
     }
 }

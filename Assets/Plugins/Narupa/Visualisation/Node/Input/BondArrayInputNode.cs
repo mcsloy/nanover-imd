@@ -11,7 +11,7 @@ namespace Narupa.Visualisation.Node.Input
     /// Input for the visualisation system that provides a <see cref="BondPair" /> value.
     /// </summary>
     [Serializable]
-    public class BondArrayInputNode : InputNode<BondArrayProperty>
+    public class BondArrayInputNode : InputNode<BondArrayProperty, BondPair[]>
     {
     }
 }

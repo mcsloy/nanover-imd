@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5176173228503488438}
   - component: {fileID: 2187803143233138763}
   - component: {fileID: 4072638902273047189}
+  - component: {fileID: 743108242158130730}
   - component: {fileID: 1900448658886156697}
   - component: {fileID: 1900448658886156694}
   m_Layer: 0
@@ -165,6 +166,24 @@ MonoBehaviour:
     input:
       value: 0.05
       isValueProvided: 1
+--- !u!114 &743108242158130730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900448658886156695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: color blend
+    input:
+      value: 1
+      isValueProvided: 1
 --- !u!114 &1900448658886156697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,12 +218,18 @@ MonoBehaviour:
   - sourceComponent: {fileID: 6529192864124320622}
     sourceFieldName: input
     destinationFieldName: rendererColor
+  - sourceComponent: {fileID: 743108242158130730}
+    sourceFieldName: input
+    destinationFieldName: colorBlend
   node:
     material:
       value: {fileID: 2100000, guid: 8ab524378960e644f9a238927b43e467, type: 2}
       isValueProvided: 1
     mesh:
       value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+      isValueProvided: 1
+    colorBlend:
+      value: 0.5
       isValueProvided: 1
     bondScale:
       value: 0.06

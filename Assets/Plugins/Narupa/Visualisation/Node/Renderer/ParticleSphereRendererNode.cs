@@ -2,10 +2,12 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 using Narupa.Visualisation.Utility;
+using Plugins.Narupa.Visualisation.Node.Renderer;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -15,15 +17,21 @@ namespace Narupa.Visualisation.Node.Renderer
     /// Visualisation node for rendering particles using spheres.
     /// </summary>
     /// <remarks>
-    /// A call to <see cref="IndirectMeshRenderer.UpdateRenderer" /> should be made every frame. Depending
-    /// on use case, either call <see cref="IndirectMeshRenderer.Render" /> to draw for a single frame, or
+    /// A call to <see cref="UpdateRenderer" /> should be made every frame. Depending
+    /// on use case, either call <see cref="Render" /> to draw for a single frame, or
     /// add to a <see cref="CommandBuffer" /> using
-    /// <see cref="IndirectMeshRenderer.AppendToCommandBuffer" />.
+    /// <see cref="AppendToCommandBuffer" />.
     /// </remarks>
     [Serializable]
-    public class ParticleSphereRendererNode : IndirectMeshRenderer, IDisposable
+    public class ParticleSphereRendererNode : IndirectMeshRenderer, IDisposable, IVisualisationNode,
+                                              IRenderNode, ISerializationCallbackReceiver
     {
-        private readonly IndirectMeshDrawCommand drawCommand = new IndirectMeshDrawCommand();
+        private IndirectMeshDrawCommand drawCommand;
+
+        public void OnAfterDeserialize()
+        {
+            drawCommand = new IndirectMeshDrawCommand();
+        }
 
         /// <summary>
         /// Positions of particles.
@@ -41,16 +49,14 @@ namespace Narupa.Visualisation.Node.Renderer
         public IProperty<float[]> ParticleScales => particleScales;
 
         /// <summary>
-        /// Overall color of the renderer. Each particle color will be multiplied by this
-        /// value.
+        /// Color to use in the absence of per particle colors
         /// </summary>
-        public IProperty<UnityEngine.Color> RendererColor => rendererColor;
+        public IProperty<UnityEngine.Color> ParticleColor => particleColor;
 
         /// <summary>
-        /// Overall scaling of the renderer. Each particle scale will be multiplied by this
-        /// value.
+        /// Scale to use in the absence of per particle scales
         /// </summary>
-        public IProperty<float> RendererScale => rendererScale;
+        public IProperty<float> ParticleScale => particleScale;
 
         public IProperty<Mesh> Mesh => mesh;
 
@@ -67,10 +73,10 @@ namespace Narupa.Visualisation.Node.Renderer
         private FloatArrayProperty particleScales = new FloatArrayProperty();
 
         [SerializeField]
-        private ColorProperty rendererColor = new ColorProperty();
+        private ColorProperty particleColor = new ColorProperty();
 
         [SerializeField]
-        private FloatProperty rendererScale = new FloatProperty();
+        private FloatProperty particleScale = new FloatProperty();
 
         [SerializeField]
         private MeshProperty mesh = new MeshProperty();
@@ -79,11 +85,12 @@ namespace Narupa.Visualisation.Node.Renderer
         private MaterialProperty material = new MaterialProperty();
 #pragma warning restore 0649
 
-        public override bool ShouldRender => mesh.HasNonNullValue()
+        public override bool ShouldRender => drawCommand != null
+                                          && mesh.HasNonNullValue()
                                           && material.HasNonNullValue()
                                           && particlePositions.HasNonEmptyValue()
-                                          && rendererColor.HasValue
-                                          && rendererScale.HasValue
+                                          && particleColor.HasValue
+                                          && particleScale.HasValue
                                           && Transform != null
                                           && InstanceCount > 0;
 
@@ -91,8 +98,8 @@ namespace Narupa.Visualisation.Node.Renderer
 
         public override bool IsInputDirty => mesh.IsDirty
                                           || material.IsDirty
-                                          || rendererColor.IsDirty
-                                          || rendererScale.IsDirty
+                                          || particleColor.IsDirty
+                                          || particleScale.IsDirty
                                           || particlePositions.IsDirty
                                           || particleColors.IsDirty
                                           || particleScales.IsDirty;
@@ -103,10 +110,10 @@ namespace Narupa.Visualisation.Node.Renderer
             UpdateMeshAndMaterials();
 
             drawCommand.SetInstanceCount(InstanceCount);
-            drawCommand.SetFloat("_Scale", rendererScale.Value);
-            drawCommand.SetColor("_Color", rendererColor.Value);
-            rendererScale.IsDirty = false;
-            rendererColor.IsDirty = false;
+            drawCommand.SetFloat("_Scale", particleScales.HasValue ? 1f : particleScale.Value);
+            drawCommand.SetColor("_Color", particleColors.HasValue ? UnityEngine.Color.white : particleColor.Value);
+            particleScale.IsDirty = false;
+            particleColor.IsDirty = false;
 
             UpdateBuffers();
         }
@@ -164,6 +171,22 @@ namespace Narupa.Visualisation.Node.Renderer
             particleColors.IsDirty = true;
             particlePositions.IsDirty = true;
             particleScales.IsDirty = true;
+        }
+
+        public void Setup()
+        {
+            drawCommand = new IndirectMeshDrawCommand();
+        }
+
+        public void Refresh()
+        {
+            if (!Application.isPlaying)
+                ResetBuffers();
+        }
+
+        public void OnBeforeSerialize()
+        {
+            
         }
     }
 }

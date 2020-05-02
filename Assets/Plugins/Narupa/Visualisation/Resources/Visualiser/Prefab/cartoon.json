@@ -1,0 +1,6 @@
+{
+  "sequence": "polypeptide",
+  "color": "secondary structure",
+  "width": "secondary structure",
+  "render": "elliptic spline"
+}

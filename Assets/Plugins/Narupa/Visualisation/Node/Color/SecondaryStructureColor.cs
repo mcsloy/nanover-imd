@@ -16,23 +16,12 @@ namespace Narupa.Visualisation.Node.Color
         [SerializeField]
         private IntArrayProperty particleResidues;
 
+        [SerializeField]
+        private StringColorMappingProperty scheme;
+
         private UnityEngine.Color GetSecondaryStructureColor(SecondaryStructureAssignment i)
         {
-            switch (i)
-            {
-                case SecondaryStructureAssignment.ThreeTenHelix:
-                    return UnityEngine.Color.blue;
-                case SecondaryStructureAssignment.AlphaHelix:
-                    return UnityEngine.Color.magenta;
-                case SecondaryStructureAssignment.PiHelix:
-                    return UnityEngine.Color.red;
-                case SecondaryStructureAssignment.Turn:
-                    return UnityEngine.Color.cyan;
-                case SecondaryStructureAssignment.Sheet:
-                    return UnityEngine.Color.yellow;
-                default:
-                    return UnityEngine.Color.white;
-            }
+            return scheme.Value.Map(i.AsSymbol());
         }
 
         protected override bool IsInputValid => residueSecondaryStructure.HasNonEmptyValue() 
@@ -47,20 +36,14 @@ namespace Narupa.Visualisation.Node.Color
             particleResidues.IsDirty = false;
         }
 
-        protected override void ClearOutput()
-        {
-            colors.UndefineValue();
-        }
-
         protected override void UpdateOutput()
         {
             var secondaryStructure = this.residueSecondaryStructure.Value;
             var residues = this.particleResidues.Value;
-            var colorArray = colors.HasValue ? colors.Value : new UnityEngine.Color[0];
-            Array.Resize(ref colorArray, residues.Length);
+            output.Resize(residues.Length);
             for (var i = 0; i < residues.Length; i++)
-                colorArray[i] = GetSecondaryStructureColor(secondaryStructure[residues[i]]);
-            colors.Value = colorArray;
+                output.Value[i] = GetSecondaryStructureColor(secondaryStructure[residues[i]]);
+            output.MarkValueAsChanged();
         }
     }
 }

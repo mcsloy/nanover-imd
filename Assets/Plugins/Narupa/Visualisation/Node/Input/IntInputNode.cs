@@ -11,7 +11,7 @@ namespace Narupa.Visualisation.Node.Input
     /// Input for the visualisation system that provides a <see cref="int" /> value.
     /// </summary>
     [Serializable]
-    public class IntInputNode : InputNode<IntProperty>
+    public class IntInputNode : InputNode<IntProperty, int>
     {
     }
 }

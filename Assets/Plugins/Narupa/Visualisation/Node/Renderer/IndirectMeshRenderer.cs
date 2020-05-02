@@ -1,9 +1,10 @@
 using System;
+using Narupa.Visualisation;
 using Narupa.Visualisation.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Narupa.Visualisation.Node.Renderer
+namespace Plugins.Narupa.Visualisation.Node.Renderer
 {
     public abstract class IndirectMeshRenderer : IDisposable
     {
@@ -12,7 +13,7 @@ namespace Narupa.Visualisation.Node.Renderer
             UpdateRenderer();
             DrawCommand.AppendToCommandBuffer(buffer);
         }
-        
+
         /// <summary>
         /// Render the provided bonds
         /// </summary>
@@ -23,33 +24,33 @@ namespace Narupa.Visualisation.Node.Renderer
                 DrawCommand.MarkForRenderingThisFrame(camera);
             }
         }
-        
+
         protected abstract IndirectMeshDrawCommand DrawCommand { get; }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            DrawCommand.Dispose();
+            DrawCommand?.Dispose();
         }
-        
+
         /// <summary>
         /// Indicate that a deserialisation or other event which resets buffers has
         /// occured.
         /// </summary>
         public virtual void ResetBuffers()
         {
-            DrawCommand.ResetCommand();
+            DrawCommand?.ResetCommand();
         }
-        
+
         public abstract bool ShouldRender { get; }
-        
+
         public abstract bool IsInputDirty { get; }
 
         public abstract void UpdateInput();
-        
-        
+
+
         public Transform Transform { get; set; }
-        
+
         /// <summary>
         /// Update the draw command based upon the input values, by updating the mesh,
         /// material and buffers.
@@ -72,7 +73,7 @@ namespace Narupa.Visualisation.Node.Renderer
                 return true;
             }
 
-            DrawCommand.SetInstanceCount(0);
+            DrawCommand?.SetInstanceCount(0);
             return false;
         }
     }

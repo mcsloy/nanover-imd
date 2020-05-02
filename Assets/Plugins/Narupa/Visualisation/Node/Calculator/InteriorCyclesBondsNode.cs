@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Narupa.Frame;
 using Narupa.Visualisation.Properties.Collections;
-using Narupa.Visualisation.Property;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Node.Calculator
@@ -11,33 +10,35 @@ namespace Narupa.Visualisation.Node.Calculator
     /// Generates all internal bonds requires for a cycle.
     /// </summary>
     [Serializable]
-    public class InteriorCyclesBondsNode
+    public class InteriorCyclesBondsNode : SingleOutputNode<BondArrayProperty>
     {
         [SerializeField]
         private SelectionArrayProperty cycles = new SelectionArrayProperty();
 
-        private readonly BondArrayProperty interiorBonds = new BondArrayProperty();
+        protected override bool IsInputValid => cycles.HasValue;
+        protected override bool IsInputDirty => cycles.IsDirty;
 
-        public void Refresh()
+        protected override void ClearDirty()
         {
-            if (cycles.IsDirty && cycles.HasValue)
+            cycles.IsDirty = false;
+        }
+
+        protected override void UpdateOutput()
+        {
+            var bonds = new List<BondPair>();
+
+            foreach (var cycle in cycles.Value)
             {
-                var bonds = new List<BondPair>();
-                
-                foreach (var cycle in cycles.Value)
+                for (var i = 0; i < cycle.Count - 2; i++)
                 {
-                    for (var i = 0; i < cycle.Count - 2; i++)
+                    for (var j = i + 2; j < cycle.Count; j++)
                     {
-                        for (var j = i + 2; j < cycle.Count; j++)
-                        {
-                            bonds.Add(new BondPair(cycle[i], cycle[j]));
-                        }
+                        bonds.Add(new BondPair(cycle[i], cycle[j]));
                     }
                 }
-
-                interiorBonds.Value = bonds.ToArray();
-                cycles.IsDirty = false;
             }
+
+            output.Value = bonds.ToArray();
         }
     }
 }

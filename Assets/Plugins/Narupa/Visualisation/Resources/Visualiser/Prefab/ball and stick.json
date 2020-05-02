@@ -1,0 +1,7 @@
+{
+  "color": {
+      "type": "cpk",
+      "scheme": "jmol"
+    },
+  "render": "ball and stick"
+}

@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Narupa.Visualisation.Components;
-using Narupa.Visualisation.Components.Adaptor;
-using Narupa.Visualisation.Node.Input;
-using Narupa.Visualisation.Node.Output;
+using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Property;
 using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
-using UnityEngine;
 
 namespace Narupa.Visualisation.Editor
 {
@@ -22,9 +17,9 @@ namespace Narupa.Visualisation.Editor
         [MenuItem("Narupa/Generate GraphVIZ")]
         internal static void GenerateGraphViz()
         {
-            var root = Selection.activeGameObject;
+            var root = VisualiserPreviewTool.Instance?.CurrentVisualiser;
             if (root == null)
-                root = PrefabStageUtility.GetCurrentPrefabStage()?.prefabContentsRoot;
+                root = Selection.activeGameObject;
             if (root == null)
                 return;
 
@@ -38,16 +33,16 @@ namespace Narupa.Visualisation.Editor
 
             var gotoChildren = true;
 
-            while (root != null)
-            {
-                DrawObject(root, file, connections, gotoChildren);
-                gotoChildren = false;
-                root = root.transform.parent?.gameObject;
-            }
+            var nodes = root.GetComponent<VisualisationSceneGraph>();
+            var properties = new Dictionary<long, IReadOnlyProperty>();
+            foreach (var node in nodes.Nodes)
+                DrawObject(node, file, connections, properties);
 
+            if(VisualiserPreviewTool.Instance?.FrameAdaptor is FrameAdaptorNode adaptor)
+                DrawObject(adaptor, file, connections, properties);
+            
             foreach (var connection in connections)
                 file.WriteLine($"{connection.Item1} -> {connection.Item2};");
-
 
             file.WriteLine("}");
 
@@ -56,78 +51,31 @@ namespace Narupa.Visualisation.Editor
             EditorGUIUtility.systemCopyBuffer = str;
         }
 
-        internal static void DrawObject(GameObject root,
+        internal static void DrawObject(IVisualisationNode node,
                                         TextWriter file,
                                         List<(long, long)> connections,
-                                        bool gotoChildren)
+                                        Dictionary<long, IReadOnlyProperty> properties)
         {
-            file.WriteLine($"subgraph cluster_{GetId(root)} {{");
-            file.WriteLine($"label = \"{root.name}\"");
+            file.WriteLine($"subgraph cluster_{GetId(node)} {{");
+            file.WriteLine($"label = \"{node.GetType()}\"");
 
-            foreach (var child in root.GetComponents<VisualisationComponent>())
+            foreach (var (name, prop) in node.AsProvider().GetProperties())
             {
-                file.WriteLine($"subgraph cluster_{GetId(child)} {{");
-                file.WriteLine($"label = \"{child.GetType().Name}\"");
-                foreach (var (name, prop) in GetProperties(child))
-                {
-                    var label = name;
-                    if (child.GetWrappedVisualisationNode() is IInputNode input)
-                        label = input.Name;
-                    if (child.GetWrappedVisualisationNode() is IOutputNode output)
-                        label = output.Name;
-                    if (prop.HasValue && prop.PropertyType.IsArray)
-                        label +=
-                            $" {prop.PropertyType.GetElementType().Name}[{(prop.Value as Array).Length}]";
-                    var color = prop.HasValue ? "green" : "red";
-                    file.WriteLine($"{GetId(prop)} [label=\"{label}\" color={color} shape=box];");
-                    FindConnections(prop, connections);
-                }
-
-                if (child is SecondaryStructureAdaptor ss)
-                {
-                    var node = ss.Node;
-
-                    file.WriteLine($"subgraph cluster_{GetId(node.polypeptideSequence)} {{");
-                    file.WriteLine($"label = \"polypeptideSequence\"");
-                    foreach (var (name, prop) in VisualisationUtility.GetAllPropertyFields(
-                        node.polypeptideSequence))
-                    {
-                        var color = prop.HasValue ? "green" : "red";
-                        file.WriteLine(
-                            $"{GetId(prop)} [label=\"{name}\" color={color} shape=box];");
-                        FindConnections(prop, connections);
-                    }
-
-                    file.WriteLine("}");
-
-                    file.WriteLine($"subgraph cluster_{GetId(node.secondaryStructure)} {{");
-                    file.WriteLine($"label = \"secondaryStructure\"");
-                    foreach (var (name, prop) in VisualisationUtility.GetAllPropertyFields(
-                        node.secondaryStructure))
-                    {
-                        var color = prop.HasValue ? "green" : "red";
-                        file.WriteLine(
-                            $"{GetId(prop)} [label=\"{name}\" color={color} shape=box];");
-                        FindConnections(prop, connections);
-                    }
-
-                    file.WriteLine("}");
-                }
-
-                file.WriteLine("}");
-            }
-
-            if (gotoChildren)
-            {
-                foreach (var child in Enumerable
-                                      .Range(0, root.transform.childCount)
-                                      .Select(i => root.transform.GetChild(i)))
-                {
-                    DrawObject(child.gameObject, file, connections, gotoChildren);
-                }
+                DrawProperty(name, prop, file);
+                FindConnections(prop, connections, properties);
             }
 
             file.WriteLine("}");
+        }
+
+        private static void DrawProperty(string name, IReadOnlyProperty prop, TextWriter file)
+        {
+            var label = name;
+            if (prop.HasValue && prop.PropertyType.IsArray)
+                label +=
+                    $" {prop.PropertyType.GetElementType().Name}[{(prop.Value as Array).Length}]";
+            var color = prop.HasValue ? "green" : "red";
+            file.WriteLine($"{GetId(prop)} [label=\"{label}\" color={color} shape=box];");
         }
 
         internal static IEnumerable<(string, IReadOnlyProperty)> GetProperties(
@@ -141,7 +89,9 @@ namespace Narupa.Visualisation.Editor
             }
         }
 
-        internal static void FindConnections(IReadOnlyProperty prop, List<(long, long)> connections)
+        internal static void FindConnections(IReadOnlyProperty prop,
+                                             List<(long, long)> connections,
+                                             Dictionary<long, IReadOnlyProperty> properties)
         {
             if (prop is IProperty property && property.HasLinkedProperty)
             {
@@ -149,7 +99,9 @@ namespace Narupa.Visualisation.Editor
                 var conn = (GetId(prop), GetId(linked));
                 if (!connections.Contains(conn))
                     connections.Add(conn);
-                FindConnections(linked, connections);
+                properties[GetId(prop)] = prop;
+                properties[GetId(linked)] = linked;
+                FindConnections(linked, connections, properties);
             }
 
             if (prop is IFilteredProperty filtered)

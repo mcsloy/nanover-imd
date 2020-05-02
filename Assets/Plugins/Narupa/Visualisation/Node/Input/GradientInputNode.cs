@@ -12,7 +12,7 @@ namespace Narupa.Visualisation.Node.Input
     /// Input for the visualisation system that provides a <see cref="Gradient" /> value.
     /// </summary>
     [Serializable]
-    public class GradientInputNode : InputNode<GradientProperty>
+    public class GradientInputNode : InputNode<GradientProperty, Gradient>
     {
     }
 }

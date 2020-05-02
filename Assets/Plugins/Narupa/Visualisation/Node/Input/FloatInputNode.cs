@@ -11,7 +11,7 @@ namespace Narupa.Visualisation.Node.Input
     /// Input for the visualisation system that provides a <see cref="float" /> value.
     /// </summary>
     [Serializable]
-    public class FloatInputNode : InputNode<FloatProperty>
+    public class FloatInputNode : InputNode<FloatProperty, float>
     {
     }
 }
