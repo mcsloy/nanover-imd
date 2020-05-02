@@ -55,27 +55,21 @@ MonoBehaviour:
     00000000:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.residues
-          isValueProvided: 1
+        name: particle.residues
         input:
           value: 
           isValueProvided: 0
     00000001:
       type: {class: IntInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: residue.count
-          isValueProvided: 1
+        name: residue.count
         input:
           value: 0
           isValueProvided: 0
     00000002:
       type: {class: GradientInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: gradient
-          isValueProvided: 1
+        name: gradient
         input:
           value:
             serializedVersion: 2
@@ -163,9 +157,7 @@ MonoBehaviour:
     00000005:
       type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.colors
-          isValueProvided: 1
+        name: particle.colors
         output:
           value: []
           isValueProvided: 0

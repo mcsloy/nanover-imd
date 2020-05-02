@@ -178,49 +178,49 @@ MonoBehaviour:
     00000000:
       type: {class: Vector3ArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: particle.positions
+        name: 
         input:
           value: []
           isValueProvided: 0
     00000001:
       type: {class: ColorInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: color
+        name: 
         input:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
     00000002:
       type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: particle.scale
+        name: 
         input:
           value: 0.1
           isValueProvided: 1
     00000003:
       type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: bond.scale
+        name: 
         input:
           value: 0.05
           isValueProvided: 1
     00000004:
       type: {class: ColorArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: particle.colors
+        name: 
         input:
           value: []
           isValueProvided: 0
     00000005:
       type: {class: FloatArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: particle.scales
+        name: 
         input:
           value: []
           isValueProvided: 0
     00000006:
       type: {class: BondArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: bond.pairs
+        name: 
         input:
           value: []
           isValueProvided: 0
@@ -237,14 +237,14 @@ MonoBehaviour:
         particleScales:
           value: []
           isValueProvided: 0
-        rendererColor:
-          value: {r: 1, g: 1, b: 1, a: 1}
-          isValueProvided: 1
-        rendererScale:
-          value: 0.5
-          isValueProvided: 1
+        particleColor:
+          value: {r: 0, g: 0, b: 0, a: 0}
+          isValueProvided: 0
+        particleScale:
+          value: 0
+          isValueProvided: 0
         mesh:
-          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 3}
           isValueProvided: 1
         material:
           value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
@@ -257,7 +257,7 @@ MonoBehaviour:
           value: {fileID: 2100000, guid: 8ab524378960e644f9a238927b43e467, type: 2}
           isValueProvided: 1
         mesh:
-          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 3}
           isValueProvided: 1
         colorBlend:
           value: 0
@@ -289,7 +289,7 @@ MonoBehaviour:
     00000009:
       type: {class: ColorInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name: outline.color
+        name: 
         input:
           value: {r: 0, g: 0, b: 0, a: 0}
           isValueProvided: 1
@@ -345,14 +345,14 @@ MonoBehaviour:
         particleScales:
           value: []
           isValueProvided: 0
-        rendererColor:
+        particleColor:
           value: {r: 0, g: 0, b: 0, a: 0}
           isValueProvided: 0
-        rendererScale:
-          value: 0.6
-          isValueProvided: 1
+        particleScale:
+          value: 0
+          isValueProvided: 0
         mesh:
-          value: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+          value: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 3}
           isValueProvided: 1
         material:
           value: {fileID: 2100000, guid: bc819f6f12ed6794fa7beb2ac4014658, type: 2}
@@ -365,7 +365,7 @@ MonoBehaviour:
           value: {fileID: 2100000, guid: 83c9cf4769ff3f945b306bb6168a22ab, type: 2}
           isValueProvided: 1
         mesh:
-          value: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+          value: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 3}
           isValueProvided: 1
         colorBlend:
           value: 0

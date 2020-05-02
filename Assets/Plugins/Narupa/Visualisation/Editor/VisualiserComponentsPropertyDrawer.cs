@@ -87,6 +87,7 @@ namespace Narupa.Visualisation.Editor
                 var obj = property.serializedObject.targetObject as VisualisationComponent;
                 if (obj != null)
                 {
+                    Debug.Log("BOO!");
                     if (obj.GetWrappedVisualisationNode() is IInputNode node &&
                         property.name == "name")
                     {
@@ -238,7 +239,7 @@ namespace Narupa.Visualisation.Editor
 
             var currentField = link.SourceProperty.stringValue;
 
-            var currentShortcutIndex = shortcuts.IndexOf(s => s.Source == currentComponent
+            var currentShortcutIndex = shortcuts.FirstIndexOf(s => s.Source == currentComponent
                                                            && s.Name == currentField);
 
             var shortcutIndex = EditorGUI.Popup(rect, currentShortcutIndex, shortcuts

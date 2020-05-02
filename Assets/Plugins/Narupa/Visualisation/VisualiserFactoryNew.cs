@@ -11,8 +11,8 @@ using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Node.Output;
 using Narupa.Visualisation.Node.Protein;
 using Narupa.Visualisation.Property;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Valve.Newtonsoft.Json.Linq;
 using Object = UnityEngine.Object;
 
 namespace NarupaIMD.Selection

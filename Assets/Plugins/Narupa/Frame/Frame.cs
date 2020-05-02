@@ -127,8 +127,8 @@ namespace Narupa.Frame
         /// </summary>
         public LinearTransformation? BoxVectors
         {
-            get => Data.GetValueOrDefault<LinearTransformation>(StandardFrameProperties.BoxTransformation.Key);
-            set => Data[StandardFrameProperties.BoxTransformation.Key] = value;
+            get => Data.GetValueOrDefault<LinearTransformation>(StandardFrameKeys.BoxTransformation.Key);
+            set => Data[StandardFrameKeys.BoxTransformation.Key] = value;
         }
         
         /// <summary>

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
-  m_Name: residue index in entity 1
+  m_Name: residue index in entity
   m_EditorClassIdentifier: 
   nodes:
   - id: 0
@@ -98,36 +98,28 @@ MonoBehaviour:
     00000000:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.residues
-          isValueProvided: 1
+        name: particle.residues
         input:
           value: 
           isValueProvided: 0
     00000001:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: residue.chains
-          isValueProvided: 1
+        name: residue.chains
         input:
           value: 
           isValueProvided: 0
     00000002:
       type: {class: IntInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: chain.count
-          isValueProvided: 1
+        name: chain.count
         input:
           value: 0
           isValueProvided: 0
     00000003:
       type: {class: GradientInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: gradient
-          isValueProvided: 1
+        name: gradient
         input:
           value:
             serializedVersion: 2
@@ -218,18 +210,14 @@ MonoBehaviour:
     00000006:
       type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.colors
-          isValueProvided: 1
+        name: particle.colors
         output:
           value: []
           isValueProvided: 0
     00000007:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: 
-          isValueProvided: 0
+        name: 
         input:
           value: 
           isValueProvided: 0

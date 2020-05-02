@@ -22,15 +22,12 @@ namespace Narupa.Visualisation.Node.Output
         public Type OutputType => typeof(TProperty);
 
         [SerializeField]
-        private StringProperty name = new StringProperty()
-        {
-            Value = "$MISSING"
-        };
+        private string name;
 
         [SerializeField]
         private TProperty output = new TProperty();
 
-        public string Name => name.HasValue ? name : "$MISSING";
+        public string Name => name;
 
         public void Setup()
         {

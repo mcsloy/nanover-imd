@@ -92,45 +92,35 @@ MonoBehaviour:
     00000000:
       type: {class: Vector3ArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.positions
-          isValueProvided: 1
+        name: particle.positions
         input:
           value: []
           isValueProvided: 0
     00000001:
       type: {class: ColorInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: color
-          isValueProvided: 1
+        name: color
         input:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
     00000002:
       type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: scale
-          isValueProvided: 1
+        name: scale
         input:
           value: 0.05
           isValueProvided: 1
     00000003:
       type: {class: ColorArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.colors
-          isValueProvided: 1
+        name: particle.colors
         input:
           value: []
           isValueProvided: 0
     00000004:
       type: {class: BondArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: bond.pairs
-          isValueProvided: 1
+        name: bond.pairs
         input:
           value: []
           isValueProvided: 0

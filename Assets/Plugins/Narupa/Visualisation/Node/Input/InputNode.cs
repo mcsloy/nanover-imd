@@ -24,18 +24,15 @@ namespace Narupa.Visualisation.Node.Input
         public Type InputType => input.PropertyType;
 
         [SerializeField]
-        private StringProperty name = new StringProperty()
-        {
-            Value = "KEY"
-        };
+        private string name;
 
         [SerializeField]
         private TProperty input = new TProperty();
 
         public string Name
         {
-            get => !name.HasValue ? "$MISSING" : name;
-            set => name.Value = value;
+            get => name;
+            set => name = value;
         }
 
         public void Setup()

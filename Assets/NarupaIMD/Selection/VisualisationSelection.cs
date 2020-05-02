@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Narupa.Core;
 using Narupa.Core.Math;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
-using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Properties;
-using Plugins.Narupa.Core;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -196,12 +195,12 @@ namespace NarupaIMD.Selection
 
             // Construct a visualiser from any provided renderer info
             if (Selection.Renderer is object data)
-                visualiser = VisualiserFactory.ConstructVisualiser(data);
+                visualiser = VisualiserFactoryNew.ConstructVisualiser(data);
 
             // Use the predefined ball and stick renderer as a default
             if (visualiser == null)
             {
-                visualiser = VisualiserFactory.ConstructVisualiser("ball and stick");
+                visualiser = VisualiserFactoryNew.ConstructVisualiser("ball and stick");
             }
 
             if (visualiser != null)

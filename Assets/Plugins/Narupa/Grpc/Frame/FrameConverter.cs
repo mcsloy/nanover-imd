@@ -81,7 +81,7 @@ namespace Narupa.Grpc.Frame
                 [FrameData.BondArrayKey] = FrameConversions.ToBondPairArray,
                 [FrameData.ParticleElementArrayKey] = FrameConversions.ToElementArray,
                 [FrameData.ParticlePositionArrayKey] = Conversions.ToVector3Array,
-                [StandardFrameProperties.BoxTransformation.Key] 
+                [StandardFrameKeys.BoxTransformation.Key] 
                 = (obj) => (object) obj.ToLinearTransformation()
             };
 

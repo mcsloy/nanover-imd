@@ -12,80 +12,118 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
   m_Name: noodles
   m_EditorClassIdentifier: 
-  nodes: []
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  - id: 5
+  - id: 6
+  - id: 7
   links:
   - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
-      id: 1
+      id: 5
     destinationName: particlePositions
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: rendererColor
   - sourceObject:
       id: 2
     sourceName: input
     destinationObject:
-      id: 1
-    destinationName: rendererColor
+      id: 5
+    destinationName: rendererScale
   - sourceObject:
       id: 3
     sourceName: input
     destinationObject:
-      id: 1
-    destinationName: rendererScale
-  - sourceObject:
-      id: 4
-    sourceName: input
-    destinationObject:
-      id: 1
+      id: 5
     destinationName: particleColors
   - sourceObject:
-      id: 5
+      id: 3
     sourceName: input
     destinationObject:
-      id: 1
-    destinationName: particleScales
-  - sourceObject:
-      id: 4
-    sourceName: input
-    destinationObject:
-      id: 6
+      id: 8
     destinationName: particleColors
-  - sourceObject:
-      id: 5
-    sourceName: input
-    destinationObject:
-      id: 6
-    destinationName: particleScales
   - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
+      id: 8
+    destinationName: particlePositions
+  - sourceObject:
+      id: 4
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: bondPairs
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: bondScale
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: particleScale
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: rendererColor
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: particleScale
+  - sourceObject:
+      id: 5
+    sourceName: particlePositions
+    destinationObject:
       id: 6
     destinationName: particlePositions
   - sourceObject:
-      id: 7
+      id: 1
     sourceName: input
     destinationObject:
       id: 6
-    destinationName: bondPairs
+    destinationName: particleColor
   - sourceObject:
       id: 3
     sourceName: input
     destinationObject:
       id: 6
-    destinationName: bondScale
+    destinationName: particleColors
   - sourceObject:
-      id: 3
+      id: 2
     sourceName: input
     destinationObject:
       id: 6
     destinationName: particleScale
   - sourceObject:
-      id: 2
+      id: 4
     sourceName: input
     destinationObject:
       id: 6
-    destinationName: rendererColor
+    destinationName: bondPairs
+  - sourceObject:
+      id: 6
+    sourceName: splineSegment
+    destinationObject:
+      id: 7
+    destinationName: splineSegments
   references:
     version: 1
     00000000:
@@ -96,6 +134,34 @@ MonoBehaviour:
           value: []
           isValueProvided: 0
     00000001:
+      type: {class: ColorInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: color
+        input:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 1
+    00000002:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: scale
+        input:
+          value: 0.05
+          isValueProvided: 1
+    00000003:
+      type: {class: ColorArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.colors
+        input:
+          value: []
+          isValueProvided: 0
+    00000004:
+      type: {class: BondArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: bond.pairs
+        input:
+          value: []
+          isValueProvided: 0
+    00000005:
       type: {class: ParticleSphereRendererNode, ns: Narupa.Visualisation.Node.Renderer,
         asm: Narupa.Visualisation}
       data:
@@ -108,11 +174,11 @@ MonoBehaviour:
         particleScales:
           value: []
           isValueProvided: 0
-        rendererColor:
+        particleColor:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
-        rendererScale:
-          value: 0.5
+        particleScale:
+          value: 0
           isValueProvided: 1
         mesh:
           value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
@@ -120,35 +186,50 @@ MonoBehaviour:
         material:
           value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
           isValueProvided: 1
-    00000002:
-      type: {class: ColorInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+    00000006:
+      type: {class: CurvedBondNode, ns: Narupa.Visualisation.Node.Spline, asm: Narupa.Visualisation}
       data:
-        name: color
-        input:
+        particlePositions:
+          value: []
+          isValueProvided: 0
+        particleColor:
+          value: {r: 0, g: 0, b: 0, a: 0}
+          isValueProvided: 0
+        particleColors:
+          value: []
+          isValueProvided: 0
+        particleScale:
+          value: 0
+          isValueProvided: 0
+        particleScales:
+          value: []
+          isValueProvided: 0
+        bondPairs:
+          value: []
+          isValueProvided: 0
+    00000007:
+      type: {class: SplineRendererNode, ns: Narupa.Visualisation.Node.Renderer, asm: Narupa.Visualisation}
+      data:
+        useBox: 0
+        splineSegments:
+          value: []
+          isValueProvided: 0
+        rendererColor:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
-    00000003:
-      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
-      data:
-        name: scale
-        input:
-          value: 0.05
+        segments:
+          value: 24
           isValueProvided: 1
-    00000004:
-      type: {class: ColorArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
-      data:
-        name: particle.colors
-        input:
-          value: []
-          isValueProvided: 0
-    00000005:
-      type: {class: FloatArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
-      data:
-        name: particle.scales
-        input:
-          value: []
-          isValueProvided: 0
-    00000006:
+        sides:
+          value: 36
+          isValueProvided: 1
+        material:
+          value: {fileID: 2100000, guid: 50f24c4e50529f4439fed9e44de0bd49, type: 2}
+          isValueProvided: 1
+        splineRadius:
+          value: 1
+          isValueProvided: 1
+    00000008:
       type: {class: ParticleBondRendererNode, ns: Narupa.Visualisation.Node.Renderer,
         asm: Narupa.Visualisation}
       data:
@@ -159,7 +240,7 @@ MonoBehaviour:
           value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
           isValueProvided: 1
         colorBlend:
-          value: 0
+          value: 1
           isValueProvided: 1
         bondScale:
           value: 0
@@ -184,11 +265,4 @@ MonoBehaviour:
           isValueProvided: 1
         bondOrders:
           value: 
-          isValueProvided: 0
-    00000007:
-      type: {class: BondArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
-      data:
-        name: bond.pairs
-        input:
-          value: []
           isValueProvided: 0

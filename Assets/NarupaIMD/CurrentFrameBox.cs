@@ -39,7 +39,7 @@ namespace NarupaIMD
         /// </summary>
         private void OnFrameChanged(IFrame frame, FrameChanges changes)
         {
-            if (changes.HasChanged(StandardFrameProperties.BoxTransformation.Key))
+            if (changes.HasChanged(StandardFrameKeys.BoxTransformation.Key))
             {
                 var box = (frame as Frame)?.BoxVectors;
                 if (box == null)

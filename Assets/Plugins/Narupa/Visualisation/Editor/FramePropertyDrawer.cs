@@ -29,7 +29,7 @@ namespace Narupa.Visualisation.Editor
 
             var properties = VisualisationFrameProperties.All.Where(p => p.Type == type).ToArray();
             var currentIndex = isStandardProperty
-                                   ? properties.IndexOf(p => p.Key == value)
+                                   ? properties.FirstIndexOf(p => p.Key == value)
                                    : properties.Length;
 
             int index = -1;
@@ -38,7 +38,7 @@ namespace Narupa.Visualisation.Editor
                 index = EditorGUI.Popup(dropdownRect,
                                         "",
                                         currentIndex,
-                                        properties.Select(p => p.DisplayName)
+                                        properties.Select(p => $"{p.Key} ({p.DisplayName})")
                                                   .Concat("Custom...")
                                                   .ToArray());
             }
@@ -46,7 +46,7 @@ namespace Narupa.Visualisation.Editor
             {
                 index = EditorGUI.Popup(dropdownRect,
                                         currentIndex,
-                                        properties.Select(p => p.DisplayName)
+                                        properties.Select(p => $"{p.Key} ({p.DisplayName})")
                                                   .Concat("Custom...")
                                                   .ToArray());
             }

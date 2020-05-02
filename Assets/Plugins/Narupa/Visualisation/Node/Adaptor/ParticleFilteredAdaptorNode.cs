@@ -53,7 +53,7 @@ namespace Narupa.Visualisation.Node.Adaptor
             var property = base.GetOrCreateProperty<T>(name);
 
             if (property is IReadOnlyProperty<BondPair[]> bondPairProperty
-             && name.Equals(StandardFrameProperties.Bonds.Key))
+             && name.Equals(StandardFrameKeys.Bonds.Key))
             {
                 var bondFiltered = new FilterBondProperty(bondPairProperty, particleFilter);
                 filteredProperties[name] = bondFiltered;

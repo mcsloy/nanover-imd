@@ -11,11 +11,11 @@ using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Properties;
 using NarupaIMD.Selection;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditorInternal;
 using UnityEngine;
-using Valve.Newtonsoft.Json.Linq;
 
 namespace Narupa.Visualisation.Editor
 {
@@ -530,8 +530,6 @@ namespace Narupa.Visualisation.Editor
             {
                 if (Path.GetExtension(filename).Contains("cif"))
                 {
-                    if (Path.GetFileNameWithoutExtension(filename).Length == 3)
-                        return CifChemicalComponentImport.Import(reader, new Progress());
                     return CifImport.Import(reader, dictionary, new Progress());
                 }
             }

@@ -90,18 +90,14 @@ MonoBehaviour:
     00000000:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.residues
-          isValueProvided: 1
+        name: particle.residues
         input:
           value: 
           isValueProvided: 0
     00000001:
       type: {class: StringArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: residue.names
-          isValueProvided: 1
+        name: residue.names
         input:
           value: []
           isValueProvided: 0
@@ -109,9 +105,7 @@ MonoBehaviour:
       type: {class: StringColorMappingInputNode, ns: Narupa.Visualisation.Node.Input,
         asm: Narupa.Visualisation}
       data:
-        name:
-          value: scheme
-          isValueProvided: 1
+        name: scheme
         input:
           unityObject: {fileID: 11400000, guid: b8a52a4fd291f234682c86e2aa460fb4,
             type: 2}
@@ -131,9 +125,7 @@ MonoBehaviour:
     00000004:
       type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.colors
-          isValueProvided: 1
+        name: particle.colors
         output:
           value: []
           isValueProvided: 0
@@ -150,18 +142,14 @@ MonoBehaviour:
     00000006:
       type: {class: IntInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: chain.count
-          isValueProvided: 1
+        name: 
         input:
           value: 0
           isValueProvided: 0
     00000007:
       type: {class: GradientInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: gradient
-          isValueProvided: 1
+        name: 
         input:
           value:
             serializedVersion: 2
@@ -252,9 +240,7 @@ MonoBehaviour:
     0000000A:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: residue.chains
-          isValueProvided: 1
+        name: 
         input:
           value: 
           isValueProvided: 0

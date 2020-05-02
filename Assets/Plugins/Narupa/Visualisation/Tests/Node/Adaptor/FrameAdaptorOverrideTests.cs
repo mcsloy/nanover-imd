@@ -90,13 +90,13 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
         
         private static void AddOverride(FrameAdaptorOverrideTests test)
         {
-            var @override = test.adaptor.AddOverrideProperty<Vector3[]>(StandardFrameProperties.ParticlePositions.Key);
+            var @override = test.adaptor.AddOverrideProperty<Vector3[]>(StandardFrameKeys.ParticlePositions.Key);
             @override.Value = OverridePositions;
         }
         
         private static void RemoveOverride(FrameAdaptorOverrideTests test)
         {
-            test.adaptor.RemoveOverrideProperty<Vector3[]>(StandardFrameProperties.ParticlePositions.Key);
+            test.adaptor.RemoveOverrideProperty<Vector3[]>(StandardFrameKeys.ParticlePositions.Key);
         }
 
         [Test]

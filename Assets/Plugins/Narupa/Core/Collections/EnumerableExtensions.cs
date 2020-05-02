@@ -117,5 +117,33 @@ namespace Narupa.Core.Collections
         {
             return new PrettyEnumerable<T>(enumerable, toString);
         }
+        
+        /// <summary>
+        /// Find the index of the first item in an enumerable that matches a given predicate,
+        /// returning -1 if the item is not present.
+        /// </summary>
+        public static int FirstIndexOf<TElement>(this IEnumerable<TElement> list, Predicate<TElement> predicate)
+        {
+            var i = 0;
+            foreach (var thing in list)
+            {
+                if (predicate(thing))
+                    return i;
+                i++;
+            }
+
+            return -1;
+        }
+        
+        /// <summary>
+        /// Return a new enumerable which appends the given elements to an exisiting one.
+        /// </summary>
+        public static IEnumerable<TElement> Concat<TElement>(this IEnumerable<TElement> list, params TElement[] elements)
+        {
+            foreach (var item in list)
+                yield return item;
+            foreach (var item in elements)
+                yield return item;
+        }
     }
 }

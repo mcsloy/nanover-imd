@@ -49,7 +49,7 @@ namespace Narupa.Visualisation
             this.changes.MergeChanges(changes);
         }
 
-        private FrameChanges changes = new FrameChanges();
+        private FrameChanges changes = FrameChanges.None;
 
         private void Update()
         {
@@ -65,7 +65,7 @@ namespace Narupa.Visualisation
             if (changes.HasAnythingChanged)
             {
                 FrameChanged?.Invoke(snapshot.CurrentFrame, changes);
-                changes = new FrameChanges();
+                changes = FrameChanges.None;
             }
         }
     }

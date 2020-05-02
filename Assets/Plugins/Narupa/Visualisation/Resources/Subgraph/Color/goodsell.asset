@@ -67,36 +67,28 @@ MonoBehaviour:
     00000000:
       type: {class: ElementArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.elements
-          isValueProvided: 1
+        name: particle.elements
         input:
           value: 
           isValueProvided: 0
     00000001:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.residues
-          isValueProvided: 1
+        name: particle.residues
         input:
           value: 
           isValueProvided: 0
     00000002:
       type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: residue.chains
-          isValueProvided: 1
+        name: residue.chains
         input:
           value: 
           isValueProvided: 0
     00000003:
       type: {class: StringArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: residue.names
-          isValueProvided: 1
+        name: residue.names
         input:
           value: []
           isValueProvided: 0
@@ -122,9 +114,7 @@ MonoBehaviour:
     00000005:
       type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.colors
-          isValueProvided: 1
+        name: particle.colors
         output:
           value: []
           isValueProvided: 0
@@ -142,9 +132,7 @@ MonoBehaviour:
       type: {class: ElementColorMappingInputNode, ns: Narupa.Visualisation.Node.Input,
         asm: Narupa.Visualisation}
       data:
-        name:
-          value: 
-          isValueProvided: 0
+        name: 
         input:
           unityObject: {fileID: 11400000, guid: d9246a3960e1df3438615b81ea1b394e,
             type: 2}

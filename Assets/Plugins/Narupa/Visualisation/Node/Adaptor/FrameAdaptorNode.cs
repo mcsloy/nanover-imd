@@ -83,7 +83,7 @@ namespace Narupa.Visualisation.Node.Adaptor
 
             foreach (var (key, property) in Properties)
             {
-                if (changes?.GetIsChanged(key) ?? true)
+                if (changes?.HasChanged(key) ?? true)
                     GetPropertyValueFromFrame(key, property);
             }
         }

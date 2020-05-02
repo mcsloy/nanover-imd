@@ -49,7 +49,7 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// <inheritdoc cref="IDynamicPropertyProvider.GetPotentialProperties" />
         public IEnumerable<(string name, Type type)> GetPotentialProperties()
         {
-            return StandardFrameProperties.All.Select(a => (a.Key, a.Type));
+            return StandardFrameKeys.All.Select(a => (a.Key, a.Type));
         }
 
         /// <inheritdoc cref="IDynamicPropertyProvider.CanDynamicallyProvideProperty{T}" />

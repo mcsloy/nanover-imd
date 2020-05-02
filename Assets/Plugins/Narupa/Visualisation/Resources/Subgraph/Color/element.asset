@@ -30,20 +30,12 @@ MonoBehaviour:
     destinationObject:
       id: 2
     destinationName: mapping
-  - sourceObject:
-      id: 2
-    sourceName: output
-    destinationObject:
-      id: 3
-    destinationName: output
   references:
     version: 1
     00000000:
       type: {class: ElementArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.elements
-          isValueProvided: 1
+        name: particle.elements
         input:
           value: 
           isValueProvided: 0
@@ -51,9 +43,7 @@ MonoBehaviour:
       type: {class: ElementColorMappingInputNode, ns: Narupa.Visualisation.Node.Input,
         asm: Narupa.Visualisation}
       data:
-        name:
-          value: scheme
-          isValueProvided: 1
+        name: scheme
         input:
           unityObject: {fileID: 11400000, guid: d9246a3960e1df3438615b81ea1b394e,
             type: 2}
@@ -71,9 +61,7 @@ MonoBehaviour:
     00000003:
       type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
       data:
-        name:
-          value: particle.colors
-          isValueProvided: 1
+        name: particle.colors
         output:
           value: []
           isValueProvided: 0

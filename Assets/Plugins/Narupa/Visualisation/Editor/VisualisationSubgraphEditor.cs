@@ -133,7 +133,7 @@ namespace Narupa.Visualisation.Editor
                                                      l.node) + " / " +
                                                  ObjectNames.NicifyVariableName(l.key)).ToArray();
 
-                            var indexOf = possibleSources.IndexOf(
+                            var indexOf = possibleSources.FirstIndexOf(
                                 l => l.node == link.sourceObject && l.key == link.sourceName);
 
                             var newIndex = EditorGUI.Popup(propRect, indexOf, names);
@@ -152,6 +152,11 @@ namespace Narupa.Visualisation.Editor
                                                     GUIContent.none,
                                                     true);
                         }
+                    }
+                    else if (type != null && GetInputOrOutputType(type) is Type t)
+                    {
+                        FramePropertyDrawer.DrawFrameKeyProperty(
+                            propRect, child, t);
                     }
                     else
                     {
@@ -177,6 +182,21 @@ namespace Narupa.Visualisation.Editor
 
                 return h;
             };
+        }
+
+        /// <summary>
+        /// Checks to see if the given type implements <see cref="IInputNode{TValue}"/> or <see cref="IOutputNode{TType}"/>, and if so extracts the generic type.
+        /// </summary>
+        private Type GetInputOrOutputType(Type nodeType)
+        {
+            return nodeType.GetInterfaces()
+                           .FirstOrDefault(i => i.IsGenericType
+                                              &&
+                                                (i.GetGenericTypeDefinition() ==
+                                                 typeof(IInputNode<>) ||
+                                                 i.GetGenericTypeDefinition() ==
+                                                 typeof(IOutputNode<>)))
+                           ?.GetGenericArguments()[0];
         }
 
         private IEnumerable<SerializedProperty> GetChildren(SerializedProperty property)

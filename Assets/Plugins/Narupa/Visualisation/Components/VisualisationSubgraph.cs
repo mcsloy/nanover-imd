@@ -176,9 +176,6 @@ namespace Narupa.Visualisation.Components
                 return;
             }
 
-            Debug.Log(
-                $"{source.GetType().Name}/{link.sourceName} {destination.GetType().Name}/{link.destinationName}");
-
             destination.TrySetLinkedProperty(source);
         }
 
