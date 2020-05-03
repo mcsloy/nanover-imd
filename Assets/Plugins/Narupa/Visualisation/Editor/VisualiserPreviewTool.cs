@@ -258,10 +258,7 @@ namespace Narupa.Visualisation.Editor
 
                     if (GUILayout.Button("Generate Visualiser"))
                     {
-                        if (Deserialize(customVisualiserJson) is Dictionary<string, object> content)
-                        {
-                            SetVisualiserFromDictionary(content);
-                        }
+                        SetVisualiserFromJson(Deserialize(customVisualiserJson));
                     }
 
                     break;
@@ -300,7 +297,7 @@ namespace Narupa.Visualisation.Editor
             if (obj == currentVisualiser)
                 return;
 
-            Dictionary<string, object> content = null;
+            object content = null;
 
             if (obj is VisualisationSubgraph subgraph)
             {
@@ -329,6 +326,13 @@ namespace Narupa.Visualisation.Editor
                         ["scale"] = obj.name
                     };
                 }
+                else if (path.Contains("Subgraph/Filter"))
+                {
+                    content = new Dictionary<string, object>()
+                    {
+                        ["filter"] = obj.name
+                    };
+                }
                 else if (path.Contains("Subgraph/Render"))
                 {
                     content = new Dictionary<string, object>()
@@ -336,28 +340,33 @@ namespace Narupa.Visualisation.Editor
                         ["color"] = "element",
                         ["render"] = obj.name
                     };
-                    if (subgraph.GetInputNode<int[]>(VisualisationFrameKeys.SequenceLengths.Key) != null)
+                    if (subgraph.GetInputNode<int[]>(VisualisationFrameKeys.SequenceLengths.Key) !=
+                        null)
                     {
-                        content["color"] = "residue name";
-                        content["sequence"] = "polypeptide";
+                        content = new Dictionary<string, object>()
+                        {
+                            ["color"] = "residue name",
+                            ["sequence"] = "polypeptide",
+                            ["render"] = obj.name
+                        };
                     }
                 }
             }
             else if (obj is TextAsset text && AssetDatabase.GetAssetPath(obj).Contains("Prefab"))
             {
-                content = Deserialize(text.text) as Dictionary<string, object>;
+                content = Deserialize(text.text);
             }
 
             if (content != null)
             {
-                SetVisualiserFromDictionary(content);
+                SetVisualiserFromJson(content);
             }
         }
 
-        private void SetVisualiserFromDictionary(Dictionary<string, object> content)
+        private void SetVisualiserFromJson(object content)
         {
             if (currentVisualiser != null)
-                DestroyImmediate(currentVisualiser);
+                DestroyImmediate(currentVisualiser.gameObject);
 
             currentVisualiser = VisualiserFactory.ConstructVisualiser(content);
             currentVisualiser.hideFlags = HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy;

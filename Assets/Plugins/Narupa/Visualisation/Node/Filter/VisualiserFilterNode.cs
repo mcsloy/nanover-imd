@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Property;
 
@@ -14,8 +15,10 @@ namespace Narupa.Visualisation.Node.Filter
     /// </summary>
     public abstract class VisualiserFilterNode : GenericOutputNode
     {
-        private readonly IntArrayProperty particleFilter = new IntArrayProperty();
+        [NotNull]
+        private IntArrayProperty particleFilter = new IntArrayProperty();
 
+        [NotNull]
         private int[] filter = new int[0];
 
         /// <summary>

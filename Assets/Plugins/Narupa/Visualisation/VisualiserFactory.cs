@@ -41,6 +41,11 @@ namespace NarupaIMD.Selection
         private const string ScaleSubgraphPath = "Subgraph/Scale";
 
         /// <summary>
+        /// Path in the resources folder(s) where filter subgraphs exist
+        /// </summary>
+        private const string FilterSubgraphPath = "Subgraph/Filter";
+        
+        /// <summary>
         /// Path in the resources folder(s) where color subgraphs exist
         /// </summary>
         private const string WidthSubgraphPath = "Subgraph/Width";
@@ -104,6 +109,14 @@ namespace NarupaIMD.Selection
         {
             return Resources.Load<VisualisationSubgraph>($"{ScaleSubgraphPath}/{name}");
         }
+        
+        /// <summary>
+        /// Get a visualisation subgraph which is responsible for filtering particles.
+        /// </summary>
+        public static VisualisationSubgraph GetFilterSubgraph(string name)
+        {
+            return Resources.Load<VisualisationSubgraph>($"{FilterSubgraphPath}/{name}");
+        }
 
         /// <summary>
         /// Get a visualisation subgraph which is responsible for the width of particles in
@@ -128,6 +141,8 @@ namespace NarupaIMD.Selection
         public static VisualisationSceneGraph ConstructVisualiser(object data)
         {
             VisualisationSceneGraph visualiser = null;
+            
+            var gameObject = new GameObject();
 
             if (data is string visName)
             {
@@ -140,13 +155,39 @@ namespace NarupaIMD.Selection
             {
                 // A dictionary indicates the visualiser should be created from
                 // fields in dict
-                var factory = new VisualiserFactory(dict);
+                var factory = new VisualiserFactory(dict, gameObject);
                 visualiser = factory.visualiser;
+            }
+
+            if (data is IReadOnlyList<object> list)
+            {
+                visualiser = gameObject.AddComponent<VisualisationSceneGraph>();
+                var baseAdaptor = new ParentedAdaptorNode();
+                var filterAdaptor = new ParticleFilteredAdaptorNode();
+                filterAdaptor.ParentAdaptor.Value = baseAdaptor;
+                visualiser.AddNode(baseAdaptor);
+                visualiser.AddNode(filterAdaptor);
+                visualiser.SetAdaptors(baseAdaptor, filterAdaptor);
+                
+                foreach(var item in list)
+                {
+                    var i = item;
+                    if (item is string pref)
+                    {
+                        i = GetPredefinedVisualiser(pref);
+                    }
+
+                    if (i is Dictionary<string, object> d)
+                    {
+                        var factory = new VisualiserFactory(d, gameObject);
+                        factory.visualiser.SetParent(filterAdaptor);
+                    }
+                }
             }
 
             return visualiser;
         }
-
+        
         /// <summary>
         /// Key in a visualiser subgraph that indicates the subgraph to use.
         /// </summary>
@@ -176,6 +217,12 @@ namespace NarupaIMD.Selection
         /// dict with a type field) or an actual width.
         /// </summary>
         private const string WidthKeyword = "width";
+        
+        /// <summary>
+        /// Key in the root visualiser that indicates a filter subgraph (as a name or a
+        /// dict with a type field) .
+        /// </summary>
+        private const string FilterKeyword = "filter";
 
         /// <summary>
         /// Key in the root visualiser that can indicate either a subgraph (as a name or a
@@ -252,6 +299,10 @@ namespace NarupaIMD.Selection
 
         private void FindSubgraphs()
         {
+            // Parse the color keyword if it is a struct with the 'type' field, and hence
+            // describes a color subgraph
+            FindSubgraph(FilterKeyword, GetFilterSubgraph);
+
             // Parse the sequence subgraph
             var sequenceSubgraph = FindSubgraph(SequenceKeyword, GetSequenceSubgraph);
 
@@ -302,9 +353,9 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Generate a visualiser from a dictionary describing subgraphs and parameters.
         /// </summary>
-        private VisualiserFactory(Dictionary<string, object> dict)
+        private VisualiserFactory(Dictionary<string, object> dict, GameObject gameObject)
         {
-            gameObject = new GameObject();
+            this.gameObject = gameObject;
             visualiser = gameObject.AddComponent<VisualisationSceneGraph>();
             rootParameters = dict;
 

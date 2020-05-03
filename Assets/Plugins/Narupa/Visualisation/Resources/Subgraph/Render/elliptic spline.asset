@@ -22,6 +22,7 @@ MonoBehaviour:
   - id: 6
   - id: 7
   - id: 8
+  - id: 9
   links:
   - sourceObject:
       id: 0
@@ -39,61 +40,61 @@ MonoBehaviour:
       id: 1
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: sequenceCounts
   - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: vertexPositions
   - sourceObject:
       id: 3
     sourceName: outputNormals
     destinationObject:
-      id: 6
+      id: 7
     destinationName: vertexNormals
   - sourceObject:
       id: 2
     sourceName: tangents
     destinationObject:
-      id: 6
+      id: 7
     destinationName: vertexTangents
   - sourceObject:
       id: 5
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: vertexColors
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: splineSegments
     destinationObject:
-      id: 7
+      id: 8
     destinationName: splineSegments
   - sourceObject:
       id: 4
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: radius
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: radius
     destinationObject:
-      id: 8
+      id: 9
     destinationName: particleScale
   - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
-      id: 8
+      id: 9
     destinationName: particlePositions
   - sourceObject:
       id: 5
     sourceName: input
     destinationObject:
-      id: 8
+      id: 9
     destinationName: particleColors
   - sourceObject:
       id: 2
@@ -107,6 +108,12 @@ MonoBehaviour:
     destinationObject:
       id: 3
     destinationName: inputTangents
+  - sourceObject:
+      id: 6
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: vertexScales
   references:
     version: 1
     00000000:
@@ -159,6 +166,13 @@ MonoBehaviour:
           value: []
           isValueProvided: 0
     00000006:
+      type: {class: FloatArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.widths
+        input:
+          value: []
+          isValueProvided: 0
+    00000007:
       type: {class: SplineNode, ns: Narupa.Visualisation.Node.Spline, asm: Narupa.Visualisation}
       data:
         sequenceCounts:
@@ -185,7 +199,7 @@ MonoBehaviour:
         radius:
           value: 1
           isValueProvided: 1
-    00000007:
+    00000008:
       type: {class: SplineRendererNode, ns: Narupa.Visualisation.Node.Renderer, asm: Narupa.Visualisation}
       data:
         useBox: 0
@@ -207,7 +221,7 @@ MonoBehaviour:
         splineRadius:
           value: 0.1
           isValueProvided: 1
-    00000008:
+    00000009:
       type: {class: ParticleSphereRendererNode, ns: Narupa.Visualisation.Node.Renderer,
         asm: Narupa.Visualisation}
       data:
