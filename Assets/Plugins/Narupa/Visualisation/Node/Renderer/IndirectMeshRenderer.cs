@@ -1,12 +1,13 @@
 using System;
 using Narupa.Visualisation;
+using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Plugins.Narupa.Visualisation.Node.Renderer
 {
-    public abstract class IndirectMeshRenderer : IDisposable
+    public abstract class IndirectMeshRenderer : VisualisationNode, IDisposable
     {
         public void AppendToCommandBuffer(CommandBuffer buffer)
         {

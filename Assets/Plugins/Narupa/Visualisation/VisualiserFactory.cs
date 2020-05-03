@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Narupa.Core;
 using Narupa.Core.Science;
+using Narupa.Visualisation;
 using Narupa.Visualisation.Components;
-using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Node.Input;
-using Narupa.Visualisation.Node.Output;
 using Narupa.Visualisation.Node.Protein;
 using Narupa.Visualisation.Property;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -53,70 +53,90 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Get a prefab of a predefined visualiser with the given name.
         /// </summary>
-        public static GameObject GetPredefinedVisualiser(string name)
+        public static Dictionary<string, object> GetPredefinedVisualiser(string name)
         {
-            return Resources.Load<GameObject>($"{PrefabPath}/{name}");
+            var text = Resources.Load<TextAsset>($"{PrefabPath}/{name}");
+            return Deserialize(text.text) as Dictionary<string, object>;
+        }
+
+        private static object Deserialize(string json)
+        {
+            return ToObject(JToken.Parse(json));
+        }
+
+        private static object ToObject(JToken token)
+        {
+            switch (token.Type)
+            {
+                case JTokenType.Object:
+                    return token.Children<JProperty>()
+                                .ToDictionary(prop => prop.Name,
+                                              prop => ToObject(prop.Value));
+
+                case JTokenType.Array:
+                    return token.Select(ToObject).ToList();
+
+                default:
+                    return ((JValue) token).Value;
+            }
         }
 
         /// <summary>
         /// Get a visualisation subgraph which is responsible for rendering information.
         /// </summary>
-        public static GameObject GetRenderSubgraph(string name)
+        public static VisualisationSubgraph GetRenderSubgraph(string name)
         {
-            return Resources.Load<GameObject>($"{RenderSubgraphPath}/{name}");
+            return Resources.Load<VisualisationSubgraph>($"{RenderSubgraphPath}/{name}");
         }
 
         /// <summary>
         /// Get a visualisation subgraph which is responsible for coloring particles.
         /// </summary>
-        public static GameObject GetColorSubgraph(string name)
+        public static VisualisationSubgraph GetColorSubgraph(string name)
         {
-            return Resources.Load<GameObject>($"{ColorSubgraphPath}/{name}");
+            return Resources.Load<VisualisationSubgraph>($"{ColorSubgraphPath}/{name}");
         }
 
         /// <summary>
         /// Get a visualisation subgraph which is responsible for the scale of particles.
         /// </summary>
-        public static GameObject GetScaleSubgraph(string name)
+        public static VisualisationSubgraph GetScaleSubgraph(string name)
         {
-            return Resources.Load<GameObject>($"{ScaleSubgraphPath}/{name}");
+            return Resources.Load<VisualisationSubgraph>($"{ScaleSubgraphPath}/{name}");
         }
 
         /// <summary>
         /// Get a visualisation subgraph which is responsible for the width of particles in
         /// splines.
         /// </summary>
-        public static GameObject GetWidthSubgraph(string name)
+        public static VisualisationSubgraph GetWidthSubgraph(string name)
         {
-            return Resources.Load<GameObject>($"{WidthSubgraphPath}/{name}");
+            return Resources.Load<VisualisationSubgraph>($"{WidthSubgraphPath}/{name}");
         }
 
         /// <summary>
         /// Get a visualisation subgraph which is responsible for calculating sequences.
         /// </summary>
-        public static GameObject GetSequenceSubgraph(string name)
+        public static VisualisationSubgraph GetSequenceSubgraph(string name)
         {
-            return Resources.Load<GameObject>($"{SequenceSubgraphPath}/{name}");
-        }
-
-        private VisualiserFactory()
-        {
+            return Resources.Load<VisualisationSubgraph>($"{SequenceSubgraphPath}/{name}");
         }
 
         /// <summary>
         /// Construct a visualiser from the provided arbitrary C# data.
         /// </summary>
-        public static GameObject ConstructVisualiser(object data)
+        public static VisualisationSceneGraph ConstructVisualiser(object data)
         {
-            GameObject visualiser = null;
+            VisualisationSceneGraph visualiser = null;
 
             if (data is string visName)
             {
                 // A renderer specified by a single string is assumed
                 // to be a predefined visualiser
-                visualiser = Object.Instantiate(GetPredefinedVisualiser(visName));
+                data = GetPredefinedVisualiser(visName);
             }
-            else if (data is Dictionary<string, object> dict)
+
+            if (data is Dictionary<string, object> dict)
             {
                 // A dictionary indicates the visualiser should be created from
                 // fields in dict
@@ -185,10 +205,11 @@ namespace NarupaIMD.Selection
         /// </summary>
         private const string ResidueSecondaryStructureKey = "residue.secondarystructures";
 
-        private static (GameObject subgraph, Dictionary<string, object> parameters) GetSubgraph(
-            Dictionary<string, object> dict,
-            string key,
-            Func<string, GameObject> findSubgraph)
+        private static (VisualisationSubgraph subgraph, Dictionary<string, object> parameters)
+            GetSubgraph(
+                Dictionary<string, object> dict,
+                string key,
+                Func<string, VisualisationSubgraph> findSubgraph)
         {
             if (dict.TryGetValue<Dictionary<string, object>>(key, out var strut))
             {
@@ -213,7 +234,8 @@ namespace NarupaIMD.Selection
             return (null, null);
         }
 
-        GameObject AddSubgraph(GameObject subgraph, Dictionary<string, object> parameters)
+        VisualisationSubgraph AddSubgraph(VisualisationSubgraph subgraph,
+                                          Dictionary<string, object> parameters)
         {
             subgraphs.Add(subgraph);
             if (parameters != null)
@@ -221,7 +243,8 @@ namespace NarupaIMD.Selection
             return subgraph;
         }
 
-        GameObject FindSubgraph(string key, Func<string, GameObject> findSubgraph)
+        VisualisationSubgraph FindSubgraph(string key,
+                                           Func<string, VisualisationSubgraph> findSubgraph)
         {
             var (subgraph, parameters) = GetSubgraph(rootParameters, key, findSubgraph);
             return subgraph == null ? null : AddSubgraph(subgraph, parameters);
@@ -244,7 +267,7 @@ namespace NarupaIMD.Selection
             // describes a color subgraph
             FindSubgraph(ScaleKeyword, GetScaleSubgraph);
 
-            subgraphs.Add(GetColorSubgraph("color pulser"));
+            //subgraphs.Add(GetColorSubgraph("color pulser"));
 
             // Get the render subgraph from the render key
             var renderSubgraph = FindSubgraph(RenderKeyword, GetRenderSubgraph);
@@ -255,32 +278,41 @@ namespace NarupaIMD.Selection
             // If one hasn't already been provided, the default is one that generates sequences
             // based on entities.
             if (sequenceSubgraph == null
-             && subgraphs.Any(subgraph =>
-                                  FindInputNodeWithName<int[]>(
-                                      subgraph, SequenceLengthsKey) != null))
+             && subgraphs.Any(subgraph => subgraph.GetInputNode<int[]>(SequenceLengthsKey) != null))
             {
                 var subgraph = GetSequenceSubgraph(DefaultSequenceSubgraph);
                 subgraphs.Insert(0, subgraph);
             }
         }
 
-        private GameObject visualiser;
+        private VisualisationSceneGraph visualiser;
+
         private Dictionary<string, object> rootParameters;
 
-        private Dictionary<GameObject, Dictionary<string, object>> subgraphParameters =
-            new Dictionary<GameObject, Dictionary<string, object>>();
+        private Dictionary<VisualisationSubgraph, Dictionary<string, object>> subgraphParameters =
+            new Dictionary<VisualisationSubgraph, Dictionary<string, object>>();
 
-        private List<GameObject> subgraphs = new List<GameObject>();
-        private ParticleFilteredAdaptor filterAdaptor;
+        private List<VisualisationSubgraph> subgraphs = new List<VisualisationSubgraph>();
+
+        private ParentedAdaptorNode baseAdaptor;
+        private ParticleFilteredAdaptorNode filterAdaptor;
+
+        private GameObject gameObject;
 
         /// <summary>
         /// Generate a visualiser from a dictionary describing subgraphs and parameters.
         /// </summary>
         private VisualiserFactory(Dictionary<string, object> dict)
         {
-            visualiser = new GameObject();
+            gameObject = new GameObject();
+            visualiser = gameObject.AddComponent<VisualisationSceneGraph>();
             rootParameters = dict;
-            filterAdaptor = visualiser.AddComponent<ParticleFilteredAdaptor>();
+
+            baseAdaptor = new ParentedAdaptorNode();
+            filterAdaptor = new ParticleFilteredAdaptorNode();
+            filterAdaptor.ParentAdaptor.Value = baseAdaptor;
+            
+            visualiser.SetAdaptors(baseAdaptor, filterAdaptor);
 
             FindSubgraphs();
 
@@ -291,24 +323,49 @@ namespace NarupaIMD.Selection
             ResolveSubgraphAdaptors();
 
             ResolveSubgraphConnections();
+
+            visualiser.AddNode(baseAdaptor);
+            visualiser.AddNode(filterAdaptor);
+
+            foreach (var subgraph in subgraphs)
+            foreach (var node in subgraph.Nodes)
+                visualiser.AddNode(node);
+
+            visualiser.SetGraphs(subgraphs);
         }
 
+        /// <summary>
+        /// Resolve all adaptors that appear. 
+        /// </summary>
         private void ResolveSubgraphAdaptors()
         {
+            IDynamicPropertyProvider adaptor = filterAdaptor;
             foreach (var subgraph in subgraphs)
-            foreach (var node in subgraph.GetVisualisationNodesInChildren<ParentedAdaptorNode>())
-                node.ParentAdaptor.Value = filterAdaptor;
+            {
+                foreach (var node in subgraph.Nodes)
+                {
+                    if (node is DynamicPropertyProviderInputNode dynamicInput)
+                        dynamicInput.Input.Value = adaptor;
+                    if (node is IDynamicPropertyProvider provider)
+                        adaptor = provider;
+                }
+            }
         }
 
         private void CheckIfSecondaryStructureIsRequired()
         {
-           // If a subgraph requires secondary structure, then a secondary structure adaptor is inserted into the chain before the particle filter.
+            // If a subgraph requires secondary structure, then a secondary structure adaptor is inserted into the chain before the particle filter.
             if (subgraphs.Any(subgraph =>
-                                  FindInputNodeWithName<SecondaryStructureAssignment[]>(
-                                      subgraph, ResidueSecondaryStructureKey) != null))
+                                  subgraph.GetInputNode<SecondaryStructureAssignment[]>(
+                                      VisualisationFrameKeys.ResidueSecondaryStructure.Key) !=
+                                  null))
             {
-                var secondaryStructureAdaptor = visualiser.AddComponent<SecondaryStructureAdaptor>();
-                filterAdaptor.Node.ParentAdaptor.Value = secondaryStructureAdaptor;
+                var secondaryStructureAdaptor = new SecondaryStructureAdaptorNode();
+                var prop = baseAdaptor.AddOverrideProperty<SecondaryStructureAssignment[]>(
+                    VisualisationFrameKeys.ResidueSecondaryStructure.Key);
+                secondaryStructureAdaptor.LinkToAdaptor(baseAdaptor);
+                prop.LinkedProperty = secondaryStructureAdaptor.Assignments;
+                visualiser.AddNode(secondaryStructureAdaptor);
             }
         }
 
@@ -320,7 +377,7 @@ namespace NarupaIMD.Selection
             var subgraphIndex = 0;
             foreach (var subgraph in subgraphs)
             {
-                foreach (var input in subgraph.GetVisualisationNodesInChildren<IInputNode>())
+                foreach (var input in subgraph.GetNodes<IInputNode>())
                 {
                     ResolveSubgraphConnections(input, subgraph);
                 }
@@ -330,7 +387,7 @@ namespace NarupaIMD.Selection
         }
 
         private void ResolveSubgraphConnections(IInputNode input,
-                                                GameObject subgraph)
+                                                VisualisationSubgraph subgraph)
         {
             var subgraphIndex = subgraphs.IndexOf(subgraph);
 
@@ -338,7 +395,7 @@ namespace NarupaIMD.Selection
             if (subgraphParameters.ContainsKey(subgraph)
              && FindParameterAndSetInputNode(input, subgraphParameters[subgraph]))
                 return;
-            
+
             // It there a parameter in the root space which can provide a value
             if (FindParameterAndSetInputNode(input, rootParameters))
                 return;
@@ -348,21 +405,13 @@ namespace NarupaIMD.Selection
             {
                 var precedingSubgraph = subgraphs[i];
 
-                if (GetOutputNodeWithName(precedingSubgraph, input.Name)?.Output is
+                if (precedingSubgraph.GetOutputNode(input.Name)?.Output is
                         IReadOnlyProperty output)
                 {
                     input.Input.TrySetLinkedProperty(output);
                     return;
                 }
             }
-
-            // Look for an input node on the main object
-            foreach (var mainInput in GetInputNodes(visualiser))
-                if (input.Name == mainInput.Name)
-                {
-                    input.Input.TrySetLinkedProperty(mainInput.Input);
-                    return;
-                }
 
             // If there's a default value, that's okay
             if (input.Input.HasValue)
@@ -375,8 +424,7 @@ namespace NarupaIMD.Selection
 
                 if (GetAdaptor(precedingSubgraph) is IDynamicPropertyProvider adaptor)
                 {
-                    var outputProperty =
-                        adaptor.GetOrCreateProperty(input.Name, input.InputType);
+                    var outputProperty = adaptor.GetOrCreateProperty(input.Name, input.InputType);
                     input.Input.TrySetLinkedProperty(outputProperty);
                     return;
                 }
@@ -391,61 +439,24 @@ namespace NarupaIMD.Selection
 
         private void InstantiateSubgraphs()
         {
-            var newSubgraphs = new List<GameObject>();
+            var newSubgraphs = new List<VisualisationSubgraph>();
             foreach (var prefab in subgraphs)
             {
-                var subgraph = Object.Instantiate(prefab, visualiser.transform);
+                var subgraph = Object.Instantiate(prefab);
                 if (subgraphParameters.ContainsKey(prefab))
                     subgraphParameters[subgraph] = subgraphParameters[prefab];
                 newSubgraphs.Add(subgraph);
             }
+
             subgraphs = newSubgraphs;
-        }
-
-        /// <summary>
-        /// Iterate over all the <see cref="IInputNode" />s present in a given
-        /// <see cref="GameObject" />.
-        /// </summary>
-        private static IEnumerable<IInputNode> GetInputNodes(GameObject obj)
-        {
-            return obj.GetVisualisationNodes<IInputNode>();
-        }
-
-        /// <summary>
-        /// Find an <see cref="IOutputNode" /> present in a given <see cref="GameObject" />
-        /// with a given name.
-        /// </summary>
-        private static IOutputNode GetOutputNodeWithName(GameObject existing, string name)
-        {
-            return existing.GetVisualisationNodes<IOutputNode>().FirstOrDefault(
-                c => c.Name == name);
         }
 
         /// <summary>
         /// Find an <see cref="IDynamicPropertyProvider" /> present in a given <see cref="GameObject" />.
         /// </summary>
-        private static IDynamicPropertyProvider GetAdaptor(GameObject existing)
+        private static IDynamicPropertyProvider GetAdaptor(VisualisationSubgraph existing)
         {
-            return existing.GetVisualisationNodes<IDynamicPropertyProvider>().LastOrDefault();
-        }
-
-
-        private delegate bool TryParseObject<TValue>(object obj, out TValue value);
-
-        /// <summary>
-        /// Find an <see cref="IInputNode" /> on an object of the given name and type,
-        /// settings its value if it is present. Returns if this was successful.
-        /// </summary>
-        private static bool FindAndSetInputNode<TType>(GameObject obj, string name, TType value)
-        {
-            var node = FindInputNodeWithName<TType>(obj, name);
-            if (node != null)
-            {
-                node.Input.Value = value;
-                return true;
-            }
-
-            return false;
+            return existing.GetNodes<IDynamicPropertyProvider>().LastOrDefault();
         }
 
         /// <summary>
@@ -479,7 +490,7 @@ namespace NarupaIMD.Selection
                     return TryParseAndSetInputNode(floatInput,
                                                    parameter,
                                                    VisualisationParser.TryParseFloat);
-                
+
                 case IInputNode<string> stringInput:
                     return TryParseAndSetInputNode(stringInput,
                                                    parameter,
@@ -489,7 +500,7 @@ namespace NarupaIMD.Selection
                     return TryParseAndSetInputNode(mappingInput,
                                                    parameter,
                                                    VisualisationParser.TryParseElementColorMapping);
-                
+
                 case IInputNode<IMapping<string, Color>> stringColorInput:
                     return TryParseAndSetInputNode(stringColorInput,
                                                    parameter,
@@ -517,18 +528,6 @@ namespace NarupaIMD.Selection
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Find the visualisation node which wraps an input node type of TType and the
-        /// provided name.
-        /// </summary>
-        public static IInputNode<TValue> FindInputNodeWithName<TValue>(
-            GameObject obj,
-            string name)
-        {
-            return obj.GetVisualisationNodes<IInputNode<TValue>>()
-                      .FirstOrDefault(vis => vis.Name == name);
         }
     }
 }

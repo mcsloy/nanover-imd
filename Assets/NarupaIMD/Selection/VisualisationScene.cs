@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Narupa.Visualisation;
-using Narupa.Visualisation.Components.Adaptor;
+using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Property;
 using NarupaIMD.Interaction;
 using UnityEngine;
@@ -32,20 +32,20 @@ namespace NarupaIMD.Selection
         private InteractableScene interactableScene;
 
         /// <inheritdoc cref="InteractableScene.InteractedParticles"/>
-        public IReadOnlyProperty<int[]> InteractedParticles
-            => interactableScene.InteractedParticles;
+        public IReadOnlyProperty<int[]> InteractedParticles =>
+            interactableScene.InteractedParticles;
 
         /// <inheritdoc cref="FrameAdaptor" />
         /// <remarks>
         /// This is automatically generated on <see cref="Start()" />.
         /// </remarks>
-        private FrameAdaptor frameAdaptor;
+        private FrameAdaptorNode frameAdaptor;
 
         /// <summary>
         /// The <see cref="FrameAdaptor" /> that exposes all the data present in the frame
         /// in a way that is compatible with the visualisation system.
         /// </summary>
-        public FrameAdaptor FrameAdaptor => frameAdaptor;
+        public FrameAdaptorNode FrameAdaptor => frameAdaptor;
 
         [SerializeField]
         private VisualisationLayer layerPrefab;
@@ -79,9 +79,10 @@ namespace NarupaIMD.Selection
 
         private void OnEnable()
         {
-            frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
+            frameAdaptor = new FrameAdaptorNode();
             frameAdaptor.FrameSource = frameSource;
-            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles; 
+            frameAdaptor.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty =
+                InteractedParticles;
 
             simulation.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
@@ -99,8 +100,8 @@ namespace NarupaIMD.Selection
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             simulation.Multiplayer.SharedStateDictionaryKeyRemoved -=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
-            
-            Destroy(frameAdaptor);
+
+            frameAdaptor.Dispose();
         }
 
         /// <summary>

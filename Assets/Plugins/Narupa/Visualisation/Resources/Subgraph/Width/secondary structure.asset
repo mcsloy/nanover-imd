@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: secondary structure
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  links:
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: residueSecondaryStructure
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: particleResidues
+  - sourceObject:
+      id: 2
+    sourceName: scales
+    destinationObject:
+      id: 3
+    destinationName: output
+  references:
+    version: 1
+    00000000:
+      type: {class: SecondaryStructureArrayInputNode, ns: Narupa.Visualisation.Node.Input,
+        asm: Narupa.Visualisation}
+      data:
+        name: residue.secondarystructure
+        input:
+          value: 
+          isValueProvided: 0
+    00000001:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.residues
+        input:
+          value: 
+          isValueProvided: 0
+    00000002:
+      type: {class: SecondaryStructureScaleNode, ns: Narupa.Visualisation.Node.Scale,
+        asm: Narupa.Visualisation}
+      data:
+        residueSecondaryStructure:
+          value: 
+          isValueProvided: 0
+        particleResidues:
+          value: 
+          isValueProvided: 0
+        radius: 0
+        helixRadius: 1
+        turnRadius: 0
+        sheetRadius: 1
+    00000003:
+      type: {class: FloatArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
+      data:
+        name: particle.widths
+        output:
+          value: []
+          isValueProvided: 0

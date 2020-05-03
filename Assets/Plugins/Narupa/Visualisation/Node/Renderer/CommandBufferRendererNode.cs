@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Narupa.Core;
+using Narupa.Visualisation.Components;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
@@ -12,13 +14,26 @@ namespace Narupa.Visualisation.Node.Renderer
     /// which is a list of commands (rendering to textures, blitting, etc.)
     /// that can be executed at some point in the rendering pipeline.
     /// </summary>
-    public abstract class CommandBufferRendererNode : IDisposable
+    public abstract class CommandBufferRendererNode : VisualisationNode, IDisposable, IRenderNode
     {
         /// <summary>
         /// Cached store of per camera command buffers.
         /// </summary>
+        [NotNull]
         private Dictionary<Camera, List<(CameraEvent, CommandBuffer)>> buffers =
             new Dictionary<Camera, List<(CameraEvent, CommandBuffer)>>();
+        
+        /// <summary>
+        /// Materials created for this renderer. Stored so they
+        /// can be destroyed by <see cref="Dispose()"/>
+        /// </summary>
+        [NotNull]
+        private List<Material> materials = new List<Material>();
+        
+        /// <summary>
+        /// The transform to center this renderer on.
+        /// </summary>
+        public UnityEngine.Transform Transform { get; set; }
 
         /// <summary>
         /// Cleanup all buffers, removing them from the cameras.
@@ -41,12 +56,6 @@ namespace Narupa.Visualisation.Node.Renderer
             foreach (var material in materials)
                 Object.DestroyImmediate(material);
         }
-
-        /// <summary>
-        /// Materials created for this renderer. Stored so they
-        /// can be destroyed by <see cref="Cleanup()"/>
-        /// </summary>
-        private List<Material> materials = new List<Material>();
 
         /// <summary>
         /// Create a new material for use with this renderer.

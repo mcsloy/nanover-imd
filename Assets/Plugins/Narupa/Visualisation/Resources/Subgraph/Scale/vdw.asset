@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: vdw
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  links:
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 1
+    destinationName: elements
+  - sourceObject:
+      id: 1
+    sourceName: scales
+    destinationObject:
+      id: 2
+    destinationName: output
+  references:
+    version: 1
+    00000000:
+      type: {class: ElementArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.elements
+        input:
+          value: 
+          isValueProvided: 0
+    00000001:
+      type: {class: VdwScaleNode, ns: Narupa.Visualisation.Node.Scale, asm: Narupa.Visualisation}
+      data:
+        elements:
+          value: 
+          isValueProvided: 0
+        scale:
+          value: 0.5
+          isValueProvided: 1
+    00000002:
+      type: {class: FloatArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
+      data:
+        name: particle.scales
+        output:
+          value: []
+          isValueProvided: 0

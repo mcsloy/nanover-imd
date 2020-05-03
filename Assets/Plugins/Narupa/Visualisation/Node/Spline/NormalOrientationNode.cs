@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 using UnityEngine;
@@ -26,6 +27,7 @@ namespace Narupa.Visualisation.Node.Spline
         /// <summary>
         /// A set of rotated normals that minimises the rotation of the normals.
         /// </summary>
+        [NotNull]
         private Vector3ArrayProperty outputNormals = new Vector3ArrayProperty();
 
         /// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Spline;
 using Narupa.Visualisation.Properties;
@@ -35,7 +36,8 @@ namespace Narupa.Visualisation.Node.Renderer
         {
             Value = 6
         };
-
+        
+        [NotNull]
         private IndirectMeshDrawCommand drawCommand = new IndirectMeshDrawCommand();
 
         [SerializeField]
@@ -45,12 +47,6 @@ namespace Narupa.Visualisation.Node.Renderer
 
         [SerializeField]
         private FloatProperty splineRadius = new FloatProperty();
-
-        public override void Setup()
-        {
-            base.Setup();
-            drawCommand = drawCommand ?? new IndirectMeshDrawCommand();
-        }
 
         public void Render(Camera camera)
         {

@@ -81,7 +81,7 @@ namespace NarupaIMD.Selection
 
                 // Object is a string name of a predefined mapping
                 case string str:
-                    mapping = Resources.Load<ElementColorMapping>($"CPK/{str}");
+                    mapping = Resources.Load<ElementColorMapping>($"Mapping/{str}");
                     return true;
 
                 // Object is a dictionary, to be interpreted as element symbols to colors

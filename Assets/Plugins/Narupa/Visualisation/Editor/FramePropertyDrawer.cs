@@ -20,14 +20,14 @@ namespace Narupa.Visualisation.Editor
             var oldColor = GUI.color;
             GUI.color = GetColor(value);
             
-            var frameProperty = VisualisationFrameProperties.All.FirstOrDefault(p => p.Key == value);
+            var frameProperty = VisualisationFrameKeys.All.FirstOrDefault(p => p.Key == value);
             var isStandardProperty = frameProperty != null;
 
             var dropdownRect = isStandardProperty
                                    ? position
                                    : new Rect(position.xMax - 16, position.y, 16, position.height);
 
-            var properties = VisualisationFrameProperties.All.Where(p => p.Type == type).ToArray();
+            var properties = VisualisationFrameKeys.All.Where(p => p.Type == type).ToArray();
             var currentIndex = isStandardProperty
                                    ? properties.FirstIndexOf(p => p.Key == value)
                                    : properties.Length;

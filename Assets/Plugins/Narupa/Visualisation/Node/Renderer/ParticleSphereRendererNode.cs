@@ -2,6 +2,7 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
@@ -26,12 +27,8 @@ namespace Narupa.Visualisation.Node.Renderer
     public class ParticleSphereRendererNode : IndirectMeshRenderer, IDisposable, IVisualisationNode,
                                               IRenderNode, ISerializationCallbackReceiver
     {
-        private IndirectMeshDrawCommand drawCommand;
-
-        public void OnAfterDeserialize()
-        {
-            drawCommand = new IndirectMeshDrawCommand();
-        }
+        [NotNull]
+        private IndirectMeshDrawCommand drawCommand = new IndirectMeshDrawCommand();
 
         /// <summary>
         /// Positions of particles.

@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
@@ -22,16 +23,11 @@ namespace Narupa.Visualisation.Node.Color
         [SerializeField]
         private IntArrayProperty filter = new IntArrayProperty();
 
+        [NotNull]
         private ColorArrayProperty output = new ColorArrayProperty();
 
+        [NotNull]
         private UnityEngine.Color[] cachedArray = new UnityEngine.Color[0];
-
-        public override void Setup()
-        {
-            base.Setup();
-            output = output ?? new ColorArrayProperty();
-            cachedArray = cachedArray ?? new UnityEngine.Color[0];
-        }
 
         [SerializeField]
         private float speed = 6f;

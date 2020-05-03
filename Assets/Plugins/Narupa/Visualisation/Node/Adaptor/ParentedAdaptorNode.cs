@@ -15,7 +15,7 @@ namespace Narupa.Visualisation.Node.Adaptor
     {
         /// <inheritdoc cref="ParentAdaptor"/>
         [SerializeField]
-        private FrameAdaptorProperty adaptor = new FrameAdaptorProperty();
+        private DynamicProviderProperty adaptor = new DynamicProviderProperty();
 
         /// <summary>
         /// The adaptor that this adaptor inherits from.
@@ -23,11 +23,12 @@ namespace Narupa.Visualisation.Node.Adaptor
         public IProperty<IDynamicPropertyProvider> ParentAdaptor => adaptor;
 
         /// <inheritdoc cref="BaseAdaptorNode.OnCreateProperty{T}"/>
-        protected override void OnCreateProperty<T>(string key, IProperty<T> property)
+        protected override IReadOnlyProperty<T> OnCreateProperty<T>(string key, IProperty<T> property)
         {
             base.OnCreateProperty(key, property);
-            if (adaptor.HasNonNullValue())
+            if (adaptor.HasNonNullValue() && !IsPropertyOverriden(key))
                 property.LinkedProperty = adaptor.Value.GetOrCreateProperty<T>(key);
+            return property;
         }
 
         /// <inheritdoc cref="BaseAdaptorNode.Refresh"/>
@@ -39,13 +40,15 @@ namespace Narupa.Visualisation.Node.Adaptor
                 if (adaptor.HasNonNullValue())
                 {
                     foreach (var (key, property) in Properties)
-                        property.TrySetLinkedProperty(
-                            adaptor.Value.GetOrCreateProperty(key, property.PropertyType));
+                        if (!IsPropertyOverriden(key))
+                            property.TrySetLinkedProperty(
+                                adaptor.Value.GetOrCreateProperty(key, property.PropertyType));
                 }
                 else
                 {
                     foreach (var (key, property) in Properties)
-                        property.TrySetLinkedProperty(null);
+                        if (!IsPropertyOverriden(key))
+                            property.TrySetLinkedProperty(null);
                 }
 
                 adaptor.IsDirty = false;

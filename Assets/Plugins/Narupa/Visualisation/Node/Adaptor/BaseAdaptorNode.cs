@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Core;
 using Narupa.Core.Science;
 using Narupa.Frame;
@@ -19,15 +20,38 @@ namespace Narupa.Visualisation.Node.Adaptor
     public abstract class BaseAdaptorNode : VisualisationNode, IDynamicPropertyProvider
     {
         /// <inheritdoc cref="Properties" />
+        [NotNull]
         private Dictionary<string, IProperty> properties =
             new Dictionary<string, IProperty>();
         
-        public override void Setup()
+        [NotNull]
+        private List<string> propertyOverrides = new List<string>();
+        
+        /// <summary>
+        /// Add a property with the given type and name to this adaptor that is not
+        /// affected by the frame.
+        /// </summary>
+        public IProperty<TValue> AddOverrideProperty<TValue>(string name)
         {
-            base.Setup();
-            properties = properties ?? new Dictionary<string, IProperty>();
+            GetOrCreateProperty<TValue>(name);
+            propertyOverrides.Add(name);
+            return properties[name] as IProperty<TValue>;
         }
 
+        /// <summary>
+        /// Remove a property with the given type and name from this adaptor that is not
+        /// affected by the frame.
+        /// </summary>
+        public void RemoveOverrideProperty<TValue>(string name)
+        {
+            propertyOverrides.Remove(name);
+        }
+
+        protected bool IsPropertyOverriden(string key)
+        {
+            return propertyOverrides.Contains(key);
+        }
+   
         /// <summary>
         /// Dynamic properties created by the system, with the keys corresponding to the
         /// keys in the frame's data.
@@ -35,15 +59,15 @@ namespace Narupa.Visualisation.Node.Adaptor
         public IReadOnlyDictionary<string, IProperty> Properties => properties;
 
         /// <inheritdoc cref="IDynamicPropertyProvider.GetOrCreateProperty{T}" />
-        public virtual IReadOnlyProperty<T> GetOrCreateProperty<T>(string name)
+        public IReadOnlyProperty<T> GetOrCreateProperty<T>(string name)
         {
             if (GetProperty(name) is IReadOnlyProperty<T> existing)
                 return existing;
 
             var property = new SerializableProperty<T>();
             properties[name] = property;
-            OnCreateProperty(name, property);
-            return property;
+            
+            return OnCreateProperty(name, property);
         }
 
         /// <inheritdoc cref="IDynamicPropertyProvider.GetPotentialProperties" />
@@ -78,8 +102,9 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// <see cref="Properties" /> dictionary, but has not yet been returned to the
         /// requestor.
         /// </summary>
-        protected virtual void OnCreateProperty<T>(string key, IProperty<T> property)
+        protected virtual IReadOnlyProperty<T> OnCreateProperty<T>(string key, IProperty<T> property)
         {
+            return property;
         }
 
         /// <summary>

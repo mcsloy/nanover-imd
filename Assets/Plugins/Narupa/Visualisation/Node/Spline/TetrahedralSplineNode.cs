@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Frame;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
@@ -38,14 +39,19 @@ namespace Narupa.Visualisation.Node.Spline
         [SerializeField]
         private FloatProperty radius;
 
+        [NotNull]
         private Vector3ArrayProperty outputPositions = new Vector3ArrayProperty();
 
+        [NotNull]
         private BondArrayProperty outputBonds = new BondArrayProperty();
 
+        [NotNull]
         private SelectionArrayProperty outputFaces = new SelectionArrayProperty();
 
+        [NotNull]
         private ColorArrayProperty outputColors = new ColorArrayProperty();
 
+        [NotNull]
         private BondArrayProperty outputInteriorBonds = new BondArrayProperty();
 
         /// <inheritdoc cref="GenericOutputNode.IsInputValid"/>

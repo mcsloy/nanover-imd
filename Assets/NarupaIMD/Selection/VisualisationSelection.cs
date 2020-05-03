@@ -48,7 +48,7 @@ namespace NarupaIMD.Selection
         [SerializeField]
         private VisualisationLayer layer;
 
-        private GameObject currentVisualiser;
+        private VisualisationSceneGraph currentVisualiser;
 
         private void Awake()
         {
@@ -191,16 +191,16 @@ namespace NarupaIMD.Selection
                 return;
             }
 
-            GameObject visualiser = null;
+            VisualisationSceneGraph visualiser = null;
 
             // Construct a visualiser from any provided renderer info
             if (Selection.Renderer is object data)
-                visualiser = VisualiserFactoryNew.ConstructVisualiser(data);
+                visualiser = VisualiserFactory.ConstructVisualiser(data);
 
             // Use the predefined ball and stick renderer as a default
             if (visualiser == null)
             {
-                visualiser = VisualiserFactoryNew.ConstructVisualiser("ball and stick");
+                visualiser = VisualiserFactory.ConstructVisualiser("ball and stick");
             }
 
             if (visualiser != null)
@@ -217,7 +217,7 @@ namespace NarupaIMD.Selection
         /// Set the visualiser of this selection
         /// </summary>
         /// <param name="isPrefab">Is the argument a prefab, and hence needs instantiating?</param>
-        public void SetVisualiser(GameObject newVisualiser)
+        public void SetVisualiser(VisualisationSceneGraph newVisualiser)
         {
             if (currentVisualiser != null)
             {
@@ -243,15 +243,8 @@ namespace NarupaIMD.Selection
         private void SetupAdaptorAndFilter()
         {
             // Setup any filters so the visualiser only draws this selection.
-            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptorNode>();
-            if (filter != null)
-            {
-                filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
-                if (filter is ParticleFilteredAdaptorNode filtered)
-                {
-                    filtered.ParticleFilter.LinkedProperty = FilteredIndices;
-                }
-            }
+            currentVisualiser.SetParent(layer.Scene.FrameAdaptor);
+            currentVisualiser.SetFilter(FilteredIndices);
         }
 
         /// <summary>
@@ -261,12 +254,8 @@ namespace NarupaIMD.Selection
         /// </summary>
         private void StripDownAdaptorAndFilter()
         {
-            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptorNode>();
-            filter.ParentAdaptor.UndefineValue();
-            if (filter is ParticleFilteredAdaptorNode filtered)
-            {
-                filtered.ParticleFilter.LinkedProperty = null;
-            }
+            currentVisualiser.SetParent(null);
+            currentVisualiser.SetFilter(null);
         }
     }
 }

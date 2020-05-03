@@ -1,7 +1,7 @@
 {
   "color": {
-      "type": "element",
-      "scheme": "jmol element"
-    },
+    "type": "element",
+    "scheme": "narupa element"
+  },
   "render": "ball and stick"
 }

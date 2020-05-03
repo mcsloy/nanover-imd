@@ -32,12 +32,12 @@ namespace Narupa.Visualisation.Node.Renderer
 
         [SerializeField]
         private FloatProperty rendererScale = new FloatProperty();
-
         
-        /// <summary>
-        /// The transform to center this renderer on.
-        /// </summary>
-        public UnityEngine.Transform Transform { get; set; }
+        [SerializeField]
+        private MeshProperty sphereMesh = new MeshProperty();
+        
+        [SerializeField]
+        private MaterialProperty sphereMaterial = new MaterialProperty();
 
         /// <inheritdoc cref="CommandBufferRendererNode.Cleanup"/>
         public override void Dispose()
@@ -46,18 +46,17 @@ namespace Narupa.Visualisation.Node.Renderer
             renderer.ResetBuffers();
         }
 
-        /// <summary>
-        /// Setup this renderer.
-        /// </summary>
-        public void Setup()
+        public override void OnAfterDeserialize()
         {
+            base.OnAfterDeserialize();
             renderer.ParticlePositions.LinkedProperty = particlePositions;
             renderer.ParticleColors.LinkedProperty = particleColors;
             renderer.ParticleResidues.LinkedProperty = particleResidues;
             renderer.ParticleColor.LinkedProperty = rendererColor;
             renderer.ParticleScale.LinkedProperty = rendererScale;
 
-            renderer.Transform = Transform;
+            renderer.Mesh.LinkedProperty = sphereMesh;
+            renderer.Material.LinkedProperty = sphereMaterial;
         }
 
 #pragma warning disable 0649
@@ -76,6 +75,8 @@ namespace Narupa.Visualisation.Node.Renderer
         /// <inheritdoc cref="CommandBufferRendererNode.Render"/>
         public override void Render(Camera cam)
         {
+            renderer.Transform = Transform;
+            
             if (renderer.IsInputDirty && renderer.ShouldRender != isRendering)
             {
                 Dispose();

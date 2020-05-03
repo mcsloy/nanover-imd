@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Narupa.Core;
 using Narupa.Frame;
 using Narupa.Visualisation.Properties;
@@ -25,6 +26,7 @@ namespace Narupa.Visualisation.Node.Adaptor
         [SerializeField]
         private IntArrayProperty particleFilter = new IntArrayProperty();
 
+        [NotNull]
         private Dictionary<string, IReadOnlyProperty> filteredProperties =
             new Dictionary<string, IReadOnlyProperty>();
 
@@ -45,13 +47,10 @@ namespace Narupa.Visualisation.Node.Adaptor
         }
 
         /// <inheritdoc cref="BaseAdaptorNode.GetOrCreateProperty{T}"/>
-        public override IReadOnlyProperty<T> GetOrCreateProperty<T>(string name)
+        protected override IReadOnlyProperty<T> OnCreateProperty<T>(string name, IProperty<T> p)
         {
-            if (GetProperty(name) is IReadOnlyProperty<T> existing)
-                return existing;
-
-            var property = base.GetOrCreateProperty<T>(name);
-
+            var property = base.OnCreateProperty(name, p);
+            
             if (property is IReadOnlyProperty<BondPair[]> bondPairProperty
              && name.Equals(StandardFrameKeys.Bonds.Key))
             {

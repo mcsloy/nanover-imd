@@ -2,6 +2,7 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
 using UnityEngine;
@@ -14,7 +15,8 @@ namespace Narupa.Visualisation.Node.Scale
     [Serializable]
     public abstract class VisualiserScaleNode : GenericOutputNode
     {
-        protected readonly FloatArrayProperty scales = new FloatArrayProperty();
+        [NotNull]
+        protected FloatArrayProperty scales = new FloatArrayProperty();
 
         /// <summary>
         /// Scale array output.

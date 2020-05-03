@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using UnityEngine;
@@ -26,13 +27,8 @@ namespace Narupa.Visualisation.Node.Spline
         [SerializeField]
         private BondArrayProperty bondPairs = new BondArrayProperty();
 
+        [NotNull]
         private SplineArrayProperty splineSegment = new SplineArrayProperty();
-
-        public override void Setup()
-        {
-            base.Setup();
-            splineSegment = splineSegment ?? new SplineArrayProperty();
-        }
 
         protected override bool IsInputValid => particlePositions.HasValue && bondPairs.HasValue;
 

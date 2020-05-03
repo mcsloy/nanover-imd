@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: polypeptide
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  - id: 5
+  - id: 6
+  - id: 7
+  links:
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: atomResidues
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: atomNames
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: residueNames
+  - sourceObject:
+      id: 3
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: residueEntities
+  - sourceObject:
+      id: 5
+    sourceName: alphaCarbonSequences
+    destinationObject:
+      id: 6
+    destinationName: particleFilter
+  - sourceObject:
+      id: 4
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: adaptor
+  - sourceObject:
+      id: 5
+    sourceName: sequenceLengths
+    destinationObject:
+      id: 7
+    destinationName: output
+  references:
+    version: 1
+    00000000:
+      type: {class: StringArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.names
+        input:
+          value: []
+          isValueProvided: 0
+    00000001:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.residues
+        input:
+          value: 
+          isValueProvided: 0
+    00000002:
+      type: {class: StringArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: residue.names
+        input:
+          value: []
+          isValueProvided: 0
+    00000003:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: residue.chains
+        input:
+          value: 
+          isValueProvided: 0
+    00000004:
+      type: {class: DynamicPropertyProviderInputNode, ns: Narupa.Visualisation.Node.Input,
+        asm: Narupa.Visualisation}
+      data:
+        input:
+          unityObject: {fileID: 0}
+          isValueProvided: 0
+    00000005:
+      type: {class: PolypeptideSequenceNode, ns: Narupa.Visualisation.Node.Sequence,
+        asm: Narupa.Visualisation}
+      data:
+        atomNames:
+          value: []
+          isValueProvided: 0
+        atomResidues:
+          value: 
+          isValueProvided: 0
+        residueNames:
+          value: []
+          isValueProvided: 0
+        residueEntities:
+          value: 
+          isValueProvided: 0
+    00000006:
+      type: {class: ParticleFilteredAdaptorNode, ns: Narupa.Visualisation.Node.Adaptor,
+        asm: Narupa.Visualisation}
+      data:
+        adaptor:
+          unityObject: {fileID: 0}
+          isValueProvided: 0
+        particleFilter:
+          value: 
+          isValueProvided: 0
+    00000007:
+      type: {class: IntArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
+      data:
+        name: sequence.lengths
+        output:
+          value: 
+          isValueProvided: 0

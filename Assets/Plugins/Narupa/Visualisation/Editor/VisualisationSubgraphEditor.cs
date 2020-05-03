@@ -76,6 +76,9 @@ namespace Narupa.Visualisation.Editor
 
                 var y = rect.yMin + spacing;
 
+                if (!nodeProperty.managedReferenceFullTypename.Contains(' '))
+                    return;
+
                 var assemblyName = nodeProperty.managedReferenceFullTypename.Split(' ')[0];
                 var typeName = nodeProperty.managedReferenceFullTypename.Split(' ')[1];
                 var type = Type.GetType($"{typeName}, {assemblyName}");
@@ -124,7 +127,7 @@ namespace Narupa.Visualisation.Editor
                         if (isLinked)
                         {
                             var possibleSources = subgraph
-                                                  .GetPossibleSourcesForLink(nodeIndex, child.name)
+                                                  .GetPossibleSourcesForLinkToField(nodeIndex, child.name)
                                                   .ToArray();
 
                             var names = possibleSources

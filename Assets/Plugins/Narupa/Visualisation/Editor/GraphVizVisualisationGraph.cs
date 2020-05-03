@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Property;
 using UnityEditor;
+using UnityEngine;
 
 namespace Narupa.Visualisation.Editor
 {
@@ -19,7 +21,7 @@ namespace Narupa.Visualisation.Editor
         {
             var root = VisualiserPreviewTool.Instance?.CurrentVisualiser;
             if (root == null)
-                root = Selection.activeGameObject;
+                root = Selection.activeGameObject.GetComponent<VisualisationSceneGraph>();
             if (root == null)
                 return;
 
@@ -35,8 +37,23 @@ namespace Narupa.Visualisation.Editor
 
             var nodes = root.GetComponent<VisualisationSceneGraph>();
             var properties = new Dictionary<long, IReadOnlyProperty>();
-            foreach (var node in nodes.Nodes)
+
+            foreach (var subgraph in nodes.Subgraphs)
+            {
+                file.WriteLine($"subgraph cluster_{Mathf.Abs(subgraph.GetHashCode())} {{");
+                file.WriteLine($"label = \"{subgraph.name}\"");
+                
+                foreach (var node in subgraph.Nodes)
+                    DrawObject(node, file, connections, properties);
+                
+                file.WriteLine("}");
+            }
+
+            // Draw nodes that didn't appear in subgraphs
+            foreach (var node in nodes.Nodes.Except(nodes.Subgraphs.SelectMany(s => s.Nodes)))
+            {
                 DrawObject(node, file, connections, properties);
+            }
 
             if(VisualiserPreviewTool.Instance?.FrameAdaptor is FrameAdaptorNode adaptor)
                 DrawObject(adaptor, file, connections, properties);
@@ -76,17 +93,6 @@ namespace Narupa.Visualisation.Editor
                     $" {prop.PropertyType.GetElementType().Name}[{(prop.Value as Array).Length}]";
             var color = prop.HasValue ? "green" : "red";
             file.WriteLine($"{GetId(prop)} [label=\"{label}\" color={color} shape=box];");
-        }
-
-        internal static IEnumerable<(string, IReadOnlyProperty)> GetProperties(
-            VisualisationComponent child)
-        {
-            foreach (var prop in child.GetProperties())
-            {
-                yield return prop;
-                if (prop.property is IFilteredProperty filter)
-                    yield return (prop.name, filter.SourceProperty);
-            }
         }
 
         internal static void FindConnections(IReadOnlyProperty prop,

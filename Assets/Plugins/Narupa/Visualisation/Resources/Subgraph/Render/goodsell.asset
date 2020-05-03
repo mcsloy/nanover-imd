@@ -1,0 +1,173 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: goodsell
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  links:
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: particlePositions
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: particleColors
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: particleScales
+  - sourceObject:
+      id: 3
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: particleResidues
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: particlePositions
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: particleColors
+  - sourceObject:
+      id: 3
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: particleResidues
+  references:
+    version: 1
+    00000000:
+      type: {class: Vector3ArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.positions
+        input:
+          value: []
+          isValueProvided: 0
+    00000001:
+      type: {class: ColorArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.colors
+        input:
+          value: []
+          isValueProvided: 0
+    00000002:
+      type: {class: FloatArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.scales
+        input:
+          value: []
+          isValueProvided: 0
+    00000003:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.residues
+        input:
+          value: 
+          isValueProvided: 0
+    00000004:
+      type: {class: GoodsellRendererNode, ns: Narupa.Visualisation.Node.Renderer,
+        asm: Narupa.Visualisation}
+      data:
+        particlePositions:
+          value: []
+          isValueProvided: 0
+        particleColors:
+          value: []
+          isValueProvided: 0
+        particleResidues:
+          value: 
+          isValueProvided: 0
+        rendererColor:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 1
+        rendererScale:
+          value: 1
+          isValueProvided: 1
+        sphereMesh:
+          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+          isValueProvided: 1
+        sphereMaterial:
+          value: {fileID: 2100000, guid: ae9185f7e43b911488d6df6391ab9b65, type: 2}
+          isValueProvided: 1
+        cameraEvent: 11
+        shader: {fileID: 4800000, guid: 450c17dddf234aa5bd210a808a8c316b, type: 3}
+        renderer:
+          particlePositions:
+            value: []
+            isValueProvided: 0
+          particleColors:
+            value: []
+            isValueProvided: 0
+          particleScales:
+            value: []
+            isValueProvided: 0
+          particleColor:
+            value: {r: 0, g: 0, b: 0, a: 0}
+            isValueProvided: 0
+          particleScale:
+            value: 0
+            isValueProvided: 0
+          mesh:
+            value: {fileID: 0}
+            isValueProvided: 0
+          material:
+            value: {fileID: 0}
+            isValueProvided: 0
+          particleResidues:
+            value: 
+            isValueProvided: 0
+    00000005:
+      type: {class: GoodsellSphereRendererNode, ns: Narupa.Visualisation.Node.Renderer,
+        asm: Narupa.Visualisation}
+      data:
+        particlePositions:
+          value: []
+          isValueProvided: 0
+        particleColors:
+          value: []
+          isValueProvided: 0
+        particleScales:
+          value: []
+          isValueProvided: 0
+        particleColor:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 1
+        particleScale:
+          value: 1
+          isValueProvided: 1
+        mesh:
+          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+          isValueProvided: 1
+        material:
+          value: {fileID: 2100000, guid: ae9185f7e43b911488d6df6391ab9b65, type: 2}
+          isValueProvided: 1
+        particleResidues:
+          value: 
+          isValueProvided: 0

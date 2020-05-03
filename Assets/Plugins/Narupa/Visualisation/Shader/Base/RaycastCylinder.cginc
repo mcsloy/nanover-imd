@@ -137,8 +137,8 @@ v2f vert (appdata i)
     o.q = float4(c - p, s);
     o.d = float4(v - c, 0);
    
-    o.color1 = _Color * edge_color(0);
-    o.color2 = _Color * edge_color(1);
+    o.color1 = pow(edge_color(0), 1/2.2);
+    o.color2 = pow(edge_color(1), 1/2.2);
     return o;
 }
 
@@ -176,7 +176,7 @@ fout frag (v2f i)
     
     float lerpt = 0.5 + 0.5 * proj;
     
-    o.color = DIFFUSE(ColorSample(i.color1, i.color2, lerpt, _ColorBlend), n, l, _Diffuse);
+    o.color = DIFFUSE(_Color * pow(ColorSample(i.color1, i.color2, lerpt, _ColorBlend), 2.2), n, l, _Diffuse);
     
     OUTPUT_FRAG_DEPTH(o, c + d * t);
     return o;

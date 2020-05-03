@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Narupa.Core;
 using Narupa.Visualisation.Property;
 using UnityEngine;
 
@@ -99,12 +101,12 @@ namespace Narupa.Visualisation.Components
                 AddEmptyLink(node, key);
         }
 
-        public IEnumerable<(IVisualisationNode node, string key)> GetPossibleSourcesForLink(
+        public IEnumerable<(IVisualisationNode node, string key)> GetPossibleSourcesForLinkToField(
             int index,
-            string key)
+            string fieldName)
         {
             var destination = GetNode(index);
-            var destinationProperty = VisualisationUtility.GetPropertyField(destination, key);
+            var destinationProperty = VisualisationUtility.GetPropertyField(destination, fieldName);
             var destinationType = destinationProperty.PropertyType;
             for (var i = index - 1; i >= 0; i--)
             {
@@ -159,7 +161,7 @@ namespace Narupa.Visualisation.Components
         /// </summary>
         private void FindAndSetupLink(Link link)
         {
-            if (!(link.destinationObject.AsProvider().GetProperty(link.destinationName) is IProperty
+            if (!(FindDestinationProperty(link.destinationObject, link.destinationName) is IProperty
                       destination))
             {
                 Debug.LogWarning(
@@ -177,6 +179,20 @@ namespace Narupa.Visualisation.Components
             }
 
             destination.TrySetLinkedProperty(source);
+        }
+
+        private IProperty FindDestinationProperty(IVisualisationNode node, string fieldName)
+        {
+            var field = ReflectionUtility.GetFieldInSelfOrParents(node.GetType(),
+                                                                  fieldName,
+                                                                  BindingFlags.Instance |
+                                                                  BindingFlags.Public |
+                                                                  BindingFlags.NonPublic);
+
+            if (field == null)
+                return null;
+
+            return field.GetValue(node) as IProperty;
         }
 
         public IEnumerable<TType> GetNodes<TType>()

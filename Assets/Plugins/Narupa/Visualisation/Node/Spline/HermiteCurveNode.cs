@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
@@ -31,6 +32,7 @@ namespace Narupa.Visualisation.Node.Spline
         /// <summary>
         /// Set of normals, for each vertex for each sequence.
         /// </summary>
+        [NotNull]
         private Vector3ArrayProperty normals = new Vector3ArrayProperty();
 
         public IReadOnlyProperty<Vector3[]> Tangents => tangents;
@@ -38,6 +40,7 @@ namespace Narupa.Visualisation.Node.Spline
         /// <summary>
         /// Set of tangents, for each vertex for each sequence.
         /// </summary>
+        [NotNull]
         private Vector3ArrayProperty tangents = new Vector3ArrayProperty();
 
         /// <summary>

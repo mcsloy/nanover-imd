@@ -35,10 +35,6 @@ namespace Narupa.Visualisation.Node
         /// </summary>
         protected abstract void ClearOutput();
 
-        public override void Setup()
-        {
-        }
-
         /// <summary>
         /// Refresh the node.
         /// </summary>

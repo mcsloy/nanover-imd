@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
 using Narupa.Visualisation.Property;
@@ -37,6 +38,7 @@ namespace Narupa.Visualisation.Node.Spline
         [SerializeField]
         private FloatProperty radius;
 
+        [NotNull]
         private SplineArrayProperty splineSegments = new SplineArrayProperty();
 
         /// <inheritdoc cref="GenericOutputNode.IsInputValid"/>

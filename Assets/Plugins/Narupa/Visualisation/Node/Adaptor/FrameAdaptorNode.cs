@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Narupa.Core;
 using Narupa.Frame;
 using Narupa.Frame.Event;
@@ -22,39 +23,11 @@ namespace Narupa.Visualisation.Node.Adaptor
     [Serializable]
     public class FrameAdaptorNode : BaseAdaptorNode, IFrameConsumer, IDisposable
     {
-        private List<string> propertyOverrides = new List<string>();
-
-        public override void Setup()
-        {
-            base.Setup();
-            propertyOverrides = new List<string>();
-        }
-
-        /// <summary>
-        /// Add a property with the given type and name to this adaptor that is not
-        /// affected by the frame.
-        /// </summary>
-        public IProperty<TValue> AddOverrideProperty<TValue>(string name)
-        {
-            var prop = base.GetOrCreateProperty<TValue>(name) as IProperty<TValue>;
-            propertyOverrides.Add(name);
-            return prop;
-        }
-
-        /// <summary>
-        /// Remove a property with the given type and name from this adaptor that is not
-        /// affected by the frame.
-        /// </summary>
-        public void RemoveOverrideProperty<TValue>(string name)
-        {
-            propertyOverrides.Remove(name);
-            GetPropertyValueFromFrame(name, GetOrCreateProperty<TValue>(name) as IProperty);
-        }
-
         /// <inheritdoc cref="BaseAdaptorNode.OnCreateProperty{T}" />
-        protected override void OnCreateProperty<T>(string key, IProperty<T> property)
+        protected override IReadOnlyProperty<T> OnCreateProperty<T>(string key, IProperty<T> property)
         {
             GetPropertyValueFromFrame(key, property);
+            return property;
         }
 
         /// <summary>
@@ -63,7 +36,7 @@ namespace Narupa.Visualisation.Node.Adaptor
         /// </summary>
         private void GetPropertyValueFromFrame(string key, IProperty property)
         {
-            if (propertyOverrides.Contains(key))
+            if (IsPropertyOverriden(key))
                 return;
             if (FrameSource?.CurrentFrame != null
              && FrameSource.CurrentFrame.Data.TryGetValue(key, out var value))

@@ -1,0 +1,234 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: elliptic spline
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  - id: 5
+  - id: 6
+  - id: 7
+  - id: 8
+  links:
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: positions
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: sequences
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: sequenceCounts
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: vertexPositions
+  - sourceObject:
+      id: 3
+    sourceName: outputNormals
+    destinationObject:
+      id: 6
+    destinationName: vertexNormals
+  - sourceObject:
+      id: 2
+    sourceName: tangents
+    destinationObject:
+      id: 6
+    destinationName: vertexTangents
+  - sourceObject:
+      id: 5
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: vertexColors
+  - sourceObject:
+      id: 6
+    sourceName: splineSegments
+    destinationObject:
+      id: 7
+    destinationName: splineSegments
+  - sourceObject:
+      id: 4
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: radius
+  - sourceObject:
+      id: 6
+    sourceName: radius
+    destinationObject:
+      id: 8
+    destinationName: particleScale
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: particlePositions
+  - sourceObject:
+      id: 5
+    sourceName: input
+    destinationObject:
+      id: 8
+    destinationName: particleColors
+  - sourceObject:
+      id: 2
+    sourceName: normals
+    destinationObject:
+      id: 3
+    destinationName: inputNormals
+  - sourceObject:
+      id: 2
+    sourceName: tangents
+    destinationObject:
+      id: 3
+    destinationName: inputTangents
+  references:
+    version: 1
+    00000000:
+      type: {class: Vector3ArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.positions
+        input:
+          value: []
+          isValueProvided: 0
+    00000001:
+      type: {class: IntArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: sequence.lengths
+        input:
+          value: 
+          isValueProvided: 0
+    00000002:
+      type: {class: HermiteCurveNode, ns: Narupa.Visualisation.Node.Spline, asm: Narupa.Visualisation}
+      data:
+        positions:
+          value: []
+          isValueProvided: 0
+        sequences:
+          value: 
+          isValueProvided: 0
+        shape:
+          value: 0.8
+          isValueProvided: 1
+    00000003:
+      type: {class: NormalOrientationNode, ns: Narupa.Visualisation.Node.Spline, asm: Narupa.Visualisation}
+      data:
+        inputNormals:
+          value: []
+          isValueProvided: 0
+        inputTangents:
+          value: []
+          isValueProvided: 0
+    00000004:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: scale
+        input:
+          value: 0.1
+          isValueProvided: 1
+    00000005:
+      type: {class: ColorArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.colors
+        input:
+          value: []
+          isValueProvided: 0
+    00000006:
+      type: {class: SplineNode, ns: Narupa.Visualisation.Node.Spline, asm: Narupa.Visualisation}
+      data:
+        sequenceCounts:
+          value: 
+          isValueProvided: 0
+        vertexPositions:
+          value: []
+          isValueProvided: 0
+        vertexNormals:
+          value: []
+          isValueProvided: 0
+        vertexTangents:
+          value: []
+          isValueProvided: 0
+        vertexColors:
+          value: []
+          isValueProvided: 0
+        vertexScales:
+          value: []
+          isValueProvided: 0
+        color:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 1
+        radius:
+          value: 1
+          isValueProvided: 1
+    00000007:
+      type: {class: SplineRendererNode, ns: Narupa.Visualisation.Node.Renderer, asm: Narupa.Visualisation}
+      data:
+        useBox: 0
+        splineSegments:
+          value: []
+          isValueProvided: 0
+        rendererColor:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 1
+        segments:
+          value: 24
+          isValueProvided: 1
+        sides:
+          value: 24
+          isValueProvided: 1
+        material:
+          value: {fileID: 2100000, guid: c4ff711234eb21b44b2201ed56702aca, type: 2}
+          isValueProvided: 1
+        splineRadius:
+          value: 0.1
+          isValueProvided: 1
+    00000008:
+      type: {class: ParticleSphereRendererNode, ns: Narupa.Visualisation.Node.Renderer,
+        asm: Narupa.Visualisation}
+      data:
+        particlePositions:
+          value: []
+          isValueProvided: 0
+        particleColors:
+          value: []
+          isValueProvided: 0
+        particleScales:
+          value: []
+          isValueProvided: 0
+        particleColor:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 1
+        particleScale:
+          value: 1
+          isValueProvided: 1
+        mesh:
+          value: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+          isValueProvided: 1
+        material:
+          value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
+          isValueProvided: 1

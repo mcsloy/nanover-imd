@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Frame;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
@@ -41,6 +42,7 @@ namespace Narupa.Visualisation.Node.Calculator
         public IReadOnlyProperty<Cycle[]> Cycles => cycles;
 
         /// <inheritdoc cref="Cycles"/>
+        [NotNull]
         private ArrayProperty<Cycle> cycles = new ArrayProperty<Cycle>();
 
         /// <summary>
@@ -58,14 +60,8 @@ namespace Narupa.Visualisation.Node.Calculator
         public IReadOnlyProperty<int> CyclesCount => cyclesCount;
 
         /// <inheritdoc cref="CyclesCount"/>
+        [NotNull]
         private IntProperty cyclesCount = new IntProperty();
-
-        public override void Setup()
-        {
-            base.Setup();
-            cycles = cycles ?? new ArrayProperty<Cycle>();
-            cyclesCount = cyclesCount ?? new IntProperty();
-        }
 
         /// <inheritdoc cref="GenericOutputNode.IsInputDirty"/>
         protected override bool IsInputDirty => bonds.IsDirty || particleCount.IsDirty;

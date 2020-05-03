@@ -33,7 +33,7 @@ namespace Narupa.Visualisation.Editor
 
         public static VisualiserPreviewTool Instance { get; private set; }
 
-        public GameObject CurrentVisualiser => currentVisualiser;
+        public VisualisationSceneGraph CurrentVisualiser => currentVisualiser;
 
         public void OnEnable()
         {
@@ -147,7 +147,7 @@ namespace Narupa.Visualisation.Editor
 
             EditorUtility.ClearProgressBar();
             if (currentVisualiser != null)
-                DestroyImmediate(currentVisualiser);
+                DestroyImmediate(currentVisualiser.gameObject);
 
             currentVisualiser = null;
             currentMolecule = null;
@@ -322,6 +322,13 @@ namespace Narupa.Visualisation.Editor
                         ["color"] = obj.name
                     };
                 }
+                else if (path.Contains("Subgraph/Scale"))
+                {
+                    content = new Dictionary<string, object>()
+                    {
+                        ["scale"] = obj.name
+                    };
+                }
                 else if (path.Contains("Subgraph/Render"))
                 {
                     content = new Dictionary<string, object>()
@@ -329,7 +336,7 @@ namespace Narupa.Visualisation.Editor
                         ["color"] = "element",
                         ["render"] = obj.name
                     };
-                    if (subgraph.GetInputNode<int[]>(VisualiserFactory.SequenceLengthsKey) != null)
+                    if (subgraph.GetInputNode<int[]>(VisualisationFrameKeys.SequenceLengths.Key) != null)
                     {
                         content["color"] = "residue name";
                         content["sequence"] = "polypeptide";
@@ -352,8 +359,8 @@ namespace Narupa.Visualisation.Editor
             if (currentVisualiser != null)
                 DestroyImmediate(currentVisualiser);
 
-            currentVisualiser = VisualiserFactoryNew.ConstructVisualiser(content);
-            //currentVisualiser.hideFlags = HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy;
+            currentVisualiser = VisualiserFactory.ConstructVisualiser(content);
+            currentVisualiser.hideFlags = HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy;
             if (currentMolecule != null)
                 UpdateRenderer(currentMolecule);
         }
@@ -457,7 +464,7 @@ namespace Narupa.Visualisation.Editor
             public event FrameChanged FrameChanged;
         }
 
-        private GameObject currentVisualiser;
+        private VisualisationSceneGraph currentVisualiser;
 
         private IntArrayProperty highlightedParticles = new IntArrayProperty();
 
@@ -471,10 +478,10 @@ namespace Narupa.Visualisation.Editor
             if (currentVisualiser == null)
                 return;
 
-            var adaptor = currentVisualiser
-                          .GetVisualisationNodes<ParentedAdaptorNode>()
-                          .FirstOrDefault(a => !a.ParentAdaptor.HasValue);
-            if (adaptor != null)
+            if (currentVisualiser
+                .GetComponent<VisualisationSceneGraph>()
+                .Nodes
+                .FirstOrDefault(a => a is ParentedAdaptorNode node) is ParentedAdaptorNode adaptor)
             {
                 frameAdaptor = new FrameAdaptorNode
                 {
