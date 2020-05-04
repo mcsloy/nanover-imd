@@ -58,7 +58,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Get a prefab of a predefined visualiser with the given name.
         /// </summary>
-        public static Dictionary<string, object> GetPredefinedVisualiser(string name)
+        private static Dictionary<string, object> GetPredefinedVisualiser(string name)
         {
             var text = Resources.Load<TextAsset>($"{PrefabPath}/{name}");
             return Deserialize(text.text) as Dictionary<string, object>;
@@ -89,7 +89,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Get a visualisation subgraph which is responsible for rendering information.
         /// </summary>
-        public static VisualisationSubgraph GetRenderSubgraph(string name)
+        private static VisualisationSubgraph GetRenderSubgraph(string name)
         {
             return Resources.Load<VisualisationSubgraph>($"{RenderSubgraphPath}/{name}");
         }
@@ -97,7 +97,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Get a visualisation subgraph which is responsible for coloring particles.
         /// </summary>
-        public static VisualisationSubgraph GetColorSubgraph(string name)
+        private static VisualisationSubgraph GetColorSubgraph(string name)
         {
             return Resources.Load<VisualisationSubgraph>($"{ColorSubgraphPath}/{name}");
         }
@@ -105,7 +105,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Get a visualisation subgraph which is responsible for the scale of particles.
         /// </summary>
-        public static VisualisationSubgraph GetScaleSubgraph(string name)
+        private static VisualisationSubgraph GetScaleSubgraph(string name)
         {
             return Resources.Load<VisualisationSubgraph>($"{ScaleSubgraphPath}/{name}");
         }
@@ -113,7 +113,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Get a visualisation subgraph which is responsible for filtering particles.
         /// </summary>
-        public static VisualisationSubgraph GetFilterSubgraph(string name)
+        private static VisualisationSubgraph GetFilterSubgraph(string name)
         {
             return Resources.Load<VisualisationSubgraph>($"{FilterSubgraphPath}/{name}");
         }
@@ -122,7 +122,7 @@ namespace NarupaIMD.Selection
         /// Get a visualisation subgraph which is responsible for the width of particles in
         /// splines.
         /// </summary>
-        public static VisualisationSubgraph GetWidthSubgraph(string name)
+        private static VisualisationSubgraph GetWidthSubgraph(string name)
         {
             return Resources.Load<VisualisationSubgraph>($"{WidthSubgraphPath}/{name}");
         }
@@ -130,7 +130,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Get a visualisation subgraph which is responsible for calculating sequences.
         /// </summary>
-        public static VisualisationSubgraph GetSequenceSubgraph(string name)
+        private static VisualisationSubgraph GetSequenceSubgraph(string name)
         {
             return Resources.Load<VisualisationSubgraph>($"{SequenceSubgraphPath}/{name}");
         }
