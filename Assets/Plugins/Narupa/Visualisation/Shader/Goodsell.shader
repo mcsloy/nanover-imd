@@ -113,7 +113,9 @@ Shader "NarupaXR/Goodsell"
                 if(centerdepth < 0.0001)
                     discard;
                 
-                o.color = col * (1 - clamp((unit-3)/5.0, 0, 1));
+                
+                o.color.rgb = col.rgb * (1 - clamp((unit-3)/5.0, 0, 1));
+                o.color.a = 1;
                 o.depth = centerdepth;
                 
                 return o;

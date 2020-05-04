@@ -16,19 +16,26 @@ MonoBehaviour:
   - id: 0
   - id: 1
   - id: 2
+  - id: 3
   links:
   - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
-      id: 1
+      id: 2
     destinationName: elements
   - sourceObject:
-      id: 1
+      id: 2
     sourceName: scales
     destinationObject:
-      id: 2
+      id: 3
     destinationName: output
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 2
+    destinationName: scale
   references:
     version: 1
     00000000:
@@ -39,6 +46,13 @@ MonoBehaviour:
           value: 
           isValueProvided: 0
     00000001:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: scale
+        input:
+          value: 1
+          isValueProvided: 1
+    00000002:
       type: {class: VdwScaleNode, ns: Narupa.Visualisation.Node.Scale, asm: Narupa.Visualisation}
       data:
         elements:
@@ -47,7 +61,7 @@ MonoBehaviour:
         scale:
           value: 0.5
           isValueProvided: 1
-    00000002:
+    00000003:
       type: {class: FloatArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
       data:
         name: particle.scales

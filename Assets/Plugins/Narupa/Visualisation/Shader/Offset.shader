@@ -69,7 +69,7 @@
                 fixed4 color = i.color;
                 float3 n = normalize(i.normal.xyz);
                 float3 l = normalize(_WorldSpaceLightPos0.xyz);
-                return _Color * pow(color, 2.2) * saturate(lerp(1, dot(n, l), _Diffuse));
+                return fixed4(_Color.rgb * pow(color.rgb, 2.2) * saturate(lerp(1, dot(n, l), _Diffuse)), 1);
             }
 
             ENDCG
@@ -94,7 +94,7 @@
                 fixed4 color = i.color;
                 float3 n = normalize(i.normal.xyz);
                 float3 l = normalize(_WorldSpaceLightPos0.xyz);
-                return _Color * pow(color, 2.2) * saturate(lerp(1, dot(n, l), _Diffuse));;
+                return fixed4(_Color.rgb * pow(color.rgb, 2.2) * saturate(lerp(1, dot(n, l), _Diffuse)), 1);
             }
 
             ENDCG

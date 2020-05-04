@@ -7,7 +7,7 @@
 
     #define LIGHTING_CGINC_INCLUDED
     
-    #define DIFFUSE(c, n, l, d) c * saturate(lerp(1, dot(n, l), d));
+    #define DIFFUSE(c, n, l, d) float4(c.rgb * saturate(lerp(1, dot(n, l), d)), 1);
     
     float SmoothStep(float x, float blend) {
         if(blend > 0.98)

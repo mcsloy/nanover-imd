@@ -1,4 +1,8 @@
 {
   "color": "goodsell",
+  "scale": {
+    "type": "vdw",
+    "scale": 2.0
+  },
   "render": "goodsell"
 }

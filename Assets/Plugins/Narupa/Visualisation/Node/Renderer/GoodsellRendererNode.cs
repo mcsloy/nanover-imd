@@ -24,6 +24,9 @@ namespace Narupa.Visualisation.Node.Renderer
         private ColorArrayProperty particleColors = new ColorArrayProperty();
 
         [SerializeField]
+        private FloatArrayProperty particleScales = new FloatArrayProperty();
+        
+        [SerializeField]
         private IntArrayProperty particleResidues = new IntArrayProperty();
 #pragma warning restore 0649
 
@@ -54,6 +57,7 @@ namespace Narupa.Visualisation.Node.Renderer
             renderer.ParticleResidues.LinkedProperty = particleResidues;
             renderer.ParticleColor.LinkedProperty = rendererColor;
             renderer.ParticleScale.LinkedProperty = rendererScale;
+            renderer.ParticleScales.LinkedProperty = particleScales;
 
             renderer.Mesh.LinkedProperty = sphereMesh;
             renderer.Material.LinkedProperty = sphereMaterial;

@@ -1,7 +1,7 @@
 {
   "color": {
-    "type": "cpk",
-    "scheme": "narupa"
+    "type": "element",
+    "scheme": "narupa element"
   },
   "render": "liquorice"
 }
