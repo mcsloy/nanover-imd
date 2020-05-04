@@ -19,6 +19,12 @@ MonoBehaviour:
   - id: 3
   links:
   - sourceObject:
+      id: 2
+    sourceName: output
+    destinationObject:
+      id: 3
+    destinationName: output
+  - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
