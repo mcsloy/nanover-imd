@@ -73,12 +73,6 @@ MonoBehaviour:
       id: 8
     destinationName: splineSegments
   - sourceObject:
-      id: 4
-    sourceName: input
-    destinationObject:
-      id: 7
-    destinationName: radius
-  - sourceObject:
       id: 7
     sourceName: radius
     destinationObject:
@@ -197,7 +191,7 @@ MonoBehaviour:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
         radius:
-          value: 1
+          value: 0.1
           isValueProvided: 1
     00000008:
       type: {class: SplineRendererNode, ns: Narupa.Visualisation.Node.Renderer, asm: Narupa.Visualisation}
@@ -231,12 +225,15 @@ MonoBehaviour:
         particleColors:
           value: []
           isValueProvided: 0
-        particleScales:
-          value: []
-          isValueProvided: 0
         particleColor:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
+        defaultScale:
+          value: 0
+          isValueProvided: 0
+        particleScales:
+          value: []
+          isValueProvided: 0
         particleScale:
           value: 1
           isValueProvided: 1

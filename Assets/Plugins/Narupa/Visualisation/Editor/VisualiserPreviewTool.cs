@@ -568,7 +568,7 @@ namespace Narupa.Visualisation.Editor
                 return null;
 
             var moleculeFilepath = $"{Application.temporaryCachePath}/{id}.cif";
-
+            Debug.Log(moleculeFilepath);
             if (File.Exists(moleculeFilepath))
             {
                 return await LoadFile(moleculeFilepath);

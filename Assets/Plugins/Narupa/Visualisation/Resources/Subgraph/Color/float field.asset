@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a520b0a3004f41cd8d234747135eb3b8, type: 3}
+  m_Name: float field
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 0
+  - id: 1
+  - id: 2
+  - id: 3
+  - id: 4
+  - id: 5
+  links:
+  - sourceObject:
+      id: 4
+    sourceName: output
+    destinationObject:
+      id: 5
+    destinationName: output
+  - sourceObject:
+      id: 6
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: elements
+  - sourceObject:
+      id: 8
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: mapping
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: gradient
+  - sourceObject:
+      id: 0
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: values
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: minimumValue
+  - sourceObject:
+      id: 3
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: maximumValue
+  references:
+    version: 1
+    00000000:
+      type: {class: FloatArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: key
+        input:
+          value: []
+          isValueProvided: 0
+    00000001:
+      type: {class: GradientInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: gradient
+        input:
+          value:
+            serializedVersion: 2
+            key0: {r: 1, g: 0, b: 0, a: 1}
+            key1: {r: 0, g: 0, b: 0.9823529, a: 1}
+            key2: {r: 1, g: 1, b: 1, a: 0}
+            key3: {r: 0, g: 0, b: 0, a: 0}
+            key4: {r: 0, g: 0, b: 0, a: 0}
+            key5: {r: 0, g: 0, b: 0, a: 0}
+            key6: {r: 0, g: 0, b: 0, a: 0}
+            key7: {r: 0, g: 0, b: 0, a: 0}
+            ctime0: 0
+            ctime1: 65535
+            ctime2: 65535
+            ctime3: 0
+            ctime4: 0
+            ctime5: 0
+            ctime6: 0
+            ctime7: 0
+            atime0: 0
+            atime1: 65535
+            atime2: 0
+            atime3: 0
+            atime4: 0
+            atime5: 0
+            atime6: 0
+            atime7: 0
+            m_Mode: 0
+            m_NumColorKeys: 2
+            m_NumAlphaKeys: 2
+          isValueProvided: 1
+    00000002:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: min
+        input:
+          value: 0
+          isValueProvided: 1
+    00000003:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: max
+        input:
+          value: 1
+          isValueProvided: 1
+    00000004:
+      type: {class: GradientColorNode, ns: Narupa.Visualisation.Node.Color, asm: Narupa.Visualisation}
+      data:
+        gradient:
+          value:
+            serializedVersion: 2
+            key0: {r: 1, g: 1, b: 1, a: 1}
+            key1: {r: 1, g: 1, b: 1, a: 1}
+            key2: {r: 0, g: 0, b: 0, a: 0}
+            key3: {r: 0, g: 0, b: 0, a: 0}
+            key4: {r: 0, g: 0, b: 0, a: 0}
+            key5: {r: 0, g: 0, b: 0, a: 0}
+            key6: {r: 0, g: 0, b: 0, a: 0}
+            key7: {r: 0, g: 0, b: 0, a: 0}
+            ctime0: 0
+            ctime1: 65535
+            ctime2: 0
+            ctime3: 0
+            ctime4: 0
+            ctime5: 0
+            ctime6: 0
+            ctime7: 0
+            atime0: 0
+            atime1: 65535
+            atime2: 0
+            atime3: 0
+            atime4: 0
+            atime5: 0
+            atime6: 0
+            atime7: 0
+            m_Mode: 0
+            m_NumColorKeys: 2
+            m_NumAlphaKeys: 2
+          isValueProvided: 0
+        values:
+          value: []
+          isValueProvided: 0
+        minimumValue:
+          value: 0
+          isValueProvided: 1
+        maximumValue:
+          value: 1
+          isValueProvided: 1
+    00000005:
+      type: {class: ColorArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
+      data:
+        name: particle.colors
+        output:
+          value: []
+          isValueProvided: 0
+    00000006:
+      type: {class: ElementArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.elements
+        input:
+          value: 
+          isValueProvided: 0
+    00000007:
+      type: {class: ElementColorMappingNode, ns: Narupa.Visualisation.Node.Color,
+        asm: Narupa.Visualisation}
+      data:
+        elements:
+          value: 
+          isValueProvided: 0
+        mapping:
+          unityObject: {fileID: 0}
+          isValueProvided: 0
+    00000008:
+      type: {class: ElementColorMappingInputNode, ns: Narupa.Visualisation.Node.Input,
+        asm: Narupa.Visualisation}
+      data:
+        name: scheme
+        input:
+          unityObject: {fileID: 11400000, guid: d9246a3960e1df3438615b81ea1b394e,
+            type: 2}
+          isValueProvided: 1

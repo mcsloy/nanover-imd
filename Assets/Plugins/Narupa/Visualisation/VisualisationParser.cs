@@ -103,12 +103,12 @@ namespace NarupaIMD.Selection
                     return false;
             }
         }
-        
+
         /// <summary>
         /// Parse an <see cref="IMapping{string,Color}" /> from a C# object.
         /// </summary>
         public static bool TryParseStringColorMapping(object value,
-                                                       out IMapping<string, Color> mapping)
+                                                      out IMapping<string, Color> mapping)
         {
             mapping = null;
 
@@ -136,6 +136,49 @@ namespace NarupaIMD.Selection
                             return false;
 
                     mapping = mappingDictionary.AsMapping();
+                    return true;
+                }
+
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Parse an <see cref="IMapping{string,float}" /> from a C# object.
+        /// </summary>
+        public static bool TryParseStringFloatMapping(object value,
+                                                      out IMapping<string, float> mapping)
+        {
+            mapping = null;
+
+            switch (value)
+            {
+                // Object is already a mapping of elements to colors
+                case IMapping<string, float> actualValue:
+                    mapping = actualValue;
+                    return true;
+
+                // Object is a string name of a predefined mapping
+                case string str:
+                    mapping = Resources.Load<StringFloatMapping>($"Mapping/{str}");
+                    return true;
+
+                // Object is a dictionary, to be interpreted as element symbols to colors
+                case Dictionary<string, object> dict:
+                {
+                    var mappingDictionary = new Dictionary<string, float>();
+                    var defaultValue = default(float);
+                    foreach (var (key, val) in dict)
+                        if (key == "$default" && TryParseFloat(val, out defaultValue))
+                            continue;
+                        else if (TryParseString(key, out var str)
+                              && TryParseFloat(val, out var color))
+                            mappingDictionary.Add(str, color);
+                        else
+                            return false;
+
+                    mapping = mappingDictionary.AsMapping(defaultValue);
                     return true;
                 }
 
@@ -291,11 +334,15 @@ namespace NarupaIMD.Selection
                     number = it;
                     return true;
 
+                case long lng:
+                    number = lng;
+                    return true;
+
                 default:
                     return false;
             }
         }
-        
+
         /// <summary>
         /// Attempt to parse a string from a generic object.
         /// </summary>
@@ -309,11 +356,10 @@ namespace NarupaIMD.Selection
                 case string str:
                     strng = str;
                     return true;
-                
+
                 default:
                     return false;
             }
         }
-
     }
 }

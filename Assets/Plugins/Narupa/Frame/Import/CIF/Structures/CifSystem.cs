@@ -75,7 +75,7 @@ namespace Narupa.Frame.Import.CIF.Structures
         /// </summary>
         public virtual Frame GetFrame()
         {
-            return new Frame
+            var frame = new Frame
             {
                 ParticleElements = atoms.Select(atom => atom.Element).ToArray(),
                 ParticlePositions = atoms.Select(atom => atom.Position).ToArray(),
@@ -89,6 +89,8 @@ namespace Narupa.Frame.Import.CIF.Structures
                 ResidueCount = residues.Count,
                 EntityCount = asymmetricUnits.Count
             };
+            frame.Data["particle.bfactors"] = atoms.Select(atom => atom.BFactor).ToArray();
+            return frame;
         }
 
 
@@ -100,7 +102,8 @@ namespace Narupa.Frame.Import.CIF.Structures
                                Element element,
                                string atomName,
                                Vector3 position,
-                               string altId)
+                               string altId,
+                               float bfactor)
         {
             var atom = new CifAtom
             {
@@ -108,7 +111,8 @@ namespace Narupa.Frame.Import.CIF.Structures
                 Element = element,
                 AtomId = atomName,
                 Position = position,
-                AltId = altId
+                AltId = altId,
+                BFactor = bfactor
             };
             AddAtom(atom);
             residue.AddAtom(atom);

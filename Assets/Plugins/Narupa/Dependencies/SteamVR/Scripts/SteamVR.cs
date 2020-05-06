@@ -485,7 +485,7 @@ namespace Valve.VR
                 
                 // Check if the path is relative to the VR Manifest
                 string action_manifest_path = existingFile.applications[0].action_manifest_path;
-                if (action_manifest_path[0] != '/' && action_manifest_path[0] != '\\')
+                if (!Path.IsPathRooted(action_manifest_path))
                 {
                     action_manifest_path =
                         Path.GetFullPath(Path.Combine(Path.GetDirectoryName(fullPath), action_manifest_path));
@@ -495,7 +495,7 @@ namespace Valve.VR
                     action_manifest_path != fullManifestPath.FullName)
                 {
                     Debug.Log("<b>[SteamVR]</b> Deleting existing VRManifest because it has a different action manifest path:" +
-                              "\nExisting:" + existingFile.applications[0].action_manifest_path +
+                              "\nExisting:" + action_manifest_path +
                               "\nNew: " + fullManifestPath.FullName);
                     FileInfo existingInfo = new FileInfo(fullPath);
                     if (existingInfo.IsReadOnly)

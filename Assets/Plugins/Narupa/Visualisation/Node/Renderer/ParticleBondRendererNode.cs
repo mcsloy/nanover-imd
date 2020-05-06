@@ -2,6 +2,7 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using JetBrains.Annotations;
 using Narupa.Frame;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Properties;
@@ -17,8 +18,10 @@ namespace Narupa.Visualisation.Node.Renderer
     /// Visualisation node for rendering bonds between particles.
     /// </summary>
     [Serializable]
-    public class ParticleBondRendererNode : IndirectMeshRenderer, IDisposable, IVisualisationNode, IRenderNode, ISerializationCallbackReceiver
+    public class ParticleBondRendererNode : IndirectMeshRenderer, IDisposable, IVisualisationNode,
+                                            IRenderNode, ISerializationCallbackReceiver
     {
+        [NotNull]
         private IndirectMeshDrawCommand drawCommand = new IndirectMeshDrawCommand();
 
 #pragma warning disable 0649
@@ -30,6 +33,9 @@ namespace Narupa.Visualisation.Node.Renderer
 
         [SerializeField]
         private FloatProperty colorBlend = new FloatProperty();
+
+        [SerializeField]
+        private ColorProperty bondColor = new ColorProperty();
 #pragma warning restore 0649
 
         #region Input Properties
@@ -55,10 +61,9 @@ namespace Narupa.Visualisation.Node.Renderer
         public IProperty<float[]> ParticleScales => particleScales;
 
         /// <summary>
-        /// Overall color of the renderer. Each particle color will be multiplied by this
-        /// value.
+        /// Override color of the renderer. If set, this overrides any color from <see cref="ParticleColors"/> or <see cref="defaultColor"/>
         /// </summary>
-        public IProperty<UnityEngine.Color> RendererColor => rendererColor;
+        public IProperty<UnityEngine.Color> BondColor => bondColor;
 
         /// <summary>
         /// Scaling of the particles. Each particle scale will be multiplied by this
@@ -93,8 +98,8 @@ namespace Narupa.Visualisation.Node.Renderer
         private FloatArrayProperty particleScales = new FloatArrayProperty();
 
         [SerializeField]
-        private ColorProperty rendererColor = new ColorProperty();
-
+        private FloatProperty defaultParticleScale = new FloatProperty();
+        
         [SerializeField]
         private FloatProperty particleScale = new FloatProperty();
 
@@ -108,14 +113,13 @@ namespace Narupa.Visualisation.Node.Renderer
                                           && bondPairs.HasNonEmptyValue()
                                           && particlePositions.HasNonEmptyValue()
                                           && bondScale.HasValue
-                                          && rendererColor.HasValue
-                                          && particleScale.HasValue;
+                                          && (particleScale.HasValue || particleScales.HasValue || defaultParticleScale.HasValue);
 
         private int InstanceCount => bondPairs.Value.Length;
 
         public override bool IsInputDirty => mesh.IsDirty
                                           || material.IsDirty
-                                          || rendererColor.IsDirty
+                                          || bondColor.IsDirty
                                           || bondScale.IsDirty
                                           || particleScale.IsDirty
                                           || particlePositions.IsDirty
@@ -127,16 +131,29 @@ namespace Narupa.Visualisation.Node.Renderer
             UpdateMeshAndMaterials();
 
             drawCommand.SetFloat("_EdgeScale", bondScale.Value);
-            drawCommand.SetFloat("_ParticleScale", particleScale.Value);
-            drawCommand.SetFloat("_Scale", particleScale.Value);
-            drawCommand.SetColor("_Color", rendererColor.Value);
+            
+            if (particleScale.HasValue)
+                drawCommand.SetFloat("_ParticleScale", particleScale.Value);
+            else if (particleScales.HasValue)
+                drawCommand.SetFloat("_ParticleScale", 1f);
+            else
+                drawCommand.SetFloat("_ParticleScale", defaultParticleScale.Value);
+            
+            drawCommand.SetFloat("_Scale", 1);
+
+            if (bondColor.HasValue)
+                drawCommand.SetColor("_Color", bondColor.Value);
+            else
+                drawCommand.SetColor("_Color", UnityEngine.Color.white);
+            
             if (colorBlend.HasValue)
                 drawCommand.SetFloat("_ColorBlend", colorBlend.Value);
 
             bondScale.IsDirty = false;
             particleScale.IsDirty = false;
-            rendererColor.IsDirty = false;
-
+            bondColor.IsDirty = false;
+            defaultParticleScale.IsDirty = false;
+            
             UpdateBuffers();
 
             drawCommand.SetInstanceCount(InstanceCount);
@@ -162,19 +179,25 @@ namespace Narupa.Visualisation.Node.Renderer
 
         private void UpdateColorsIfDirty()
         {
-            if (particleColors.IsDirty && particleColors.HasNonEmptyValue())
+            if ((particleColors.IsDirty || bondColor.HasValue))
             {
-                InstancingUtility.SetColors(drawCommand, particleColors.Value);
-
+                if(!bondColor.HasValue && particleColors.HasNonEmptyValue())
+                    InstancingUtility.SetColors(drawCommand, particleColors.Value);
+                else
+                    InstancingUtility.SetColors(drawCommand, new UnityEngine.Color[0]);
+                
                 particleColors.IsDirty = false;
             }
         }
 
         private void UpdateScalesIfDirty()
         {
-            if (particleScales.IsDirty && particleScales.HasNonEmptyValue())
+            if (particleScales.IsDirty || particleScale.IsDirty)
             {
-                InstancingUtility.SetScales(drawCommand, particleScales.Value);
+                if (!particleScale.HasValue && particleScales.HasValue)
+                    InstancingUtility.SetScales(drawCommand, particleScales.Value);
+                else
+                    InstancingUtility.SetScales(drawCommand, new float[0]);
 
                 particleScales.IsDirty = false;
             }
@@ -197,8 +220,6 @@ namespace Narupa.Visualisation.Node.Renderer
             }
         }
 
-        private int[] filter = new int[0];
-
         private void UpdateMeshAndMaterials()
         {
             drawCommand.SetMesh(mesh);
@@ -219,20 +240,10 @@ namespace Narupa.Visualisation.Node.Renderer
             bondPairs.IsDirty = true;
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
-            if(!Application.isPlaying)
+            if (!Application.isPlaying)
                 ResetBuffers();
-        }
-
-        public void OnBeforeSerialize()
-        {
-            
-        }
-        
-        public void OnAfterDeserialize()
-        {
-            drawCommand = new IndirectMeshDrawCommand();
         }
     }
 }

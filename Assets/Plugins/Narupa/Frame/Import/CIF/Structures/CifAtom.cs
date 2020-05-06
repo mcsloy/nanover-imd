@@ -35,6 +35,8 @@ namespace Narupa.Frame.Import.CIF.Structures
         /// Position of the atom in nanometers.
         /// </summary>
         public Vector3 Position { get; set; }
+        
+        public float BFactor { get; set; }
 
         /// <summary>
         /// The residue this atom belongs to.

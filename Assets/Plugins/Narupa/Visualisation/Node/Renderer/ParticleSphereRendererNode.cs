@@ -67,10 +67,16 @@ namespace Narupa.Visualisation.Node.Renderer
         private ColorArrayProperty particleColors = new ColorArrayProperty();
 
         [SerializeField]
-        private FloatArrayProperty particleScales = new FloatArrayProperty();
+        private ColorProperty particleColor = new ColorProperty();
 
         [SerializeField]
-        private ColorProperty particleColor = new ColorProperty();
+        private FloatProperty defaultScale = new FloatProperty()
+        {
+            Value = 1f
+        };
+
+        [SerializeField]
+        private FloatArrayProperty particleScales = new FloatArrayProperty();
 
         [SerializeField]
         private FloatProperty particleScale = new FloatProperty();
@@ -86,8 +92,8 @@ namespace Narupa.Visualisation.Node.Renderer
                                           && mesh.HasNonNullValue()
                                           && material.HasNonNullValue()
                                           && particlePositions.HasNonEmptyValue()
-                                          && particleColor.HasValue
-                                          && particleScale.HasValue
+                                          && (particleScale.HasValue || particleScales.HasValue ||
+                                              defaultScale.HasValue)
                                           && Transform != null
                                           && InstanceCount > 0;
 
@@ -99,7 +105,8 @@ namespace Narupa.Visualisation.Node.Renderer
                                           || particleScale.IsDirty
                                           || particlePositions.IsDirty
                                           || particleColors.IsDirty
-                                          || particleScales.IsDirty;
+                                          || particleScales.IsDirty
+                                          || defaultScale.IsDirty;
 
 
         public override void UpdateInput()
@@ -107,10 +114,24 @@ namespace Narupa.Visualisation.Node.Renderer
             UpdateMeshAndMaterials();
 
             drawCommand.SetInstanceCount(InstanceCount);
-            drawCommand.SetFloat("_Scale", particleScales.HasValue ? 1f : particleScale.Value);
-            drawCommand.SetColor("_Color", particleColors.HasValue ? UnityEngine.Color.white : particleColor.Value);
+
+            if (particleScale.HasValue)
+                drawCommand.SetFloat("_Scale", particleScale.Value);
+            else if (particleScales.HasValue)
+                drawCommand.SetFloat("_Scale", 1f);
+            else
+                drawCommand.SetFloat("_Scale", defaultScale.Value);
+
+            if (particleColors.HasValue)
+                drawCommand.SetColor("_Color", UnityEngine.Color.white);
+            else if (particleColor.HasValue)
+                drawCommand.SetColor("_Color", particleColor.Value);
+            else
+                drawCommand.SetColor("_Color", UnityEngine.Color.white);
+
             particleScale.IsDirty = false;
             particleColor.IsDirty = false;
+            defaultScale.IsDirty = false;
 
             UpdateBuffers();
         }
@@ -134,19 +155,25 @@ namespace Narupa.Visualisation.Node.Renderer
 
         private void UpdateColorsIfDirty()
         {
-            if (particleColors.IsDirty && particleColors.HasNonEmptyValue())
+            if (particleColors.IsDirty)
             {
-                InstancingUtility.SetColors(drawCommand, particleColors.Value);
-
+                if (particleColors.HasValue)
+                    InstancingUtility.SetColors(drawCommand, particleColors.Value);
+                else
+                    InstancingUtility.SetColors(drawCommand, new UnityEngine.Color[0]);
+                
                 particleColors.IsDirty = false;
             }
         }
 
         private void UpdateScalesIfDirty()
         {
-            if (particleScales.IsDirty && particleScales.HasNonEmptyValue())
+            if (particleScales.IsDirty || particleScale.IsDirty)
             {
-                InstancingUtility.SetScales(drawCommand, particleScales.Value);
+                if (!particleScale.HasValue && particleScales.HasValue)
+                    InstancingUtility.SetScales(drawCommand, particleScales.Value);
+                else
+                    InstancingUtility.SetScales(drawCommand, new float[0]);
 
                 particleScales.IsDirty = false;
             }
@@ -170,20 +197,10 @@ namespace Narupa.Visualisation.Node.Renderer
             particleScales.IsDirty = true;
         }
 
-        public void Setup()
-        {
-            drawCommand = new IndirectMeshDrawCommand();
-        }
-
-        public void Refresh()
+        public override void Refresh()
         {
             if (!Application.isPlaying)
                 ResetBuffers();
-        }
-
-        public void OnBeforeSerialize()
-        {
-            
         }
     }
 }

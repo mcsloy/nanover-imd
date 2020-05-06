@@ -17,25 +17,39 @@ MonoBehaviour:
   - id: 1
   - id: 2
   - id: 3
+  - id: 4
+  - id: 5
   links:
   - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
-      id: 2
+      id: 4
     destinationName: residueSecondaryStructure
   - sourceObject:
       id: 1
     sourceName: input
     destinationObject:
-      id: 2
+      id: 4
     destinationName: particleResidues
   - sourceObject:
-      id: 2
+      id: 4
     sourceName: scales
     destinationObject:
-      id: 3
+      id: 5
     destinationName: output
+  - sourceObject:
+      id: 3
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: scheme
+  - sourceObject:
+      id: 2
+    sourceName: input
+    destinationObject:
+      id: 4
+    destinationName: scale
   references:
     version: 1
     00000000:
@@ -54,6 +68,22 @@ MonoBehaviour:
           value: 
           isValueProvided: 0
     00000002:
+      type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: scale
+        input:
+          value: 1
+          isValueProvided: 1
+    00000003:
+      type: {class: StringFloatMappingInputNode, ns: Narupa.Visualisation.Node.Input,
+        asm: Narupa.Visualisation}
+      data:
+        name: scheme
+        input:
+          unityObject: {fileID: 11400000, guid: f9c70043e1dcdba498218d0412963a48,
+            type: 2}
+          isValueProvided: 1
+    00000004:
       type: {class: SecondaryStructureScaleNode, ns: Narupa.Visualisation.Node.Scale,
         asm: Narupa.Visualisation}
       data:
@@ -63,11 +93,13 @@ MonoBehaviour:
         particleResidues:
           value: 
           isValueProvided: 0
-        radius: 0
-        helixRadius: 1
-        turnRadius: 0
-        sheetRadius: 1
-    00000003:
+        scheme:
+          unityObject: {fileID: 0}
+          isValueProvided: 0
+        scale:
+          value: 0
+          isValueProvided: 0
+    00000005:
       type: {class: FloatArrayOutputNode, ns: Narupa.Visualisation.Node.Output, asm: Narupa.Visualisation}
       data:
         name: particle.widths

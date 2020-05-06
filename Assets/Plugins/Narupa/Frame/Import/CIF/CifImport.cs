@@ -225,7 +225,7 @@ namespace Narupa.Frame.Import.CIF
             var indexAsymId = keywords.IndexOf("label_asym_id");
             var indexAltId = keywords.IndexOf("label_alt_id");
             var indexModelNum = keywords.IndexOf("pdbx_PDB_model_num");
-
+            var indexBFactor = keywords.IndexOf("B_iso_or_equiv");
             return data =>
             {
                 // Ignore atoms with PDB model numbers greater than 1.
@@ -258,6 +258,9 @@ namespace Narupa.Frame.Import.CIF
                                    "Failed to parse y coordinate");
                 var z = ParseFloat(data[indexZ],
                                    "Failed to parse z coordinate");
+
+                var bfactor = ParseFloat(data[indexBFactor],
+                                         "Failed to parse B Factor");
 
 
                 var asymId = ParseString(data[indexAsymId]);
@@ -304,7 +307,7 @@ namespace Narupa.Frame.Import.CIF
 
 
                 system.AddAtom(residue, id, element.Value, atomId,
-                               0.1f * new Vector3(x.Value, y.Value, z.Value), altId);
+                               0.1f * new Vector3(x.Value, y.Value, z.Value), altId, bfactor ?? 0);
             };
         }
     }

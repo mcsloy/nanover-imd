@@ -23,6 +23,7 @@ MonoBehaviour:
   - id: 7
   - id: 8
   - id: 9
+  - id: 10
   links:
   - sourceObject:
       id: 0
@@ -40,92 +41,86 @@ MonoBehaviour:
       id: 1
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: sequenceLengths
   - sourceObject:
       id: 0
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: positions
   - sourceObject:
       id: 2
     sourceName: normals
     destinationObject:
-      id: 6
+      id: 7
     destinationName: normals
   - sourceObject:
       id: 2
     sourceName: tangents
     destinationObject:
-      id: 6
+      id: 7
     destinationName: tangents
   - sourceObject:
       id: 3
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: colors
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputPositions
     destinationObject:
-      id: 7
+      id: 8
     destinationName: particlePositions
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputColors
     destinationObject:
-      id: 7
+      id: 8
     destinationName: particleColors
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: scales
     destinationObject:
-      id: 7
+      id: 8
     destinationName: particleScales
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputBonds
     destinationObject:
-      id: 8
+      id: 9
     destinationName: bondPairs
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputPositions
     destinationObject:
-      id: 8
+      id: 9
     destinationName: particlePositions
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputColors
     destinationObject:
-      id: 8
+      id: 9
     destinationName: particleColors
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputFaces
     destinationObject:
-      id: 9
+      id: 10
     destinationName: cycles
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputPositions
     destinationObject:
-      id: 9
+      id: 10
     destinationName: particlePositions
   - sourceObject:
-      id: 6
+      id: 7
     sourceName: outputColors
     destinationObject:
-      id: 9
+      id: 10
     destinationName: particleColors
-  - sourceObject:
-      id: 4
-    sourceName: input
-    destinationObject:
-      id: 7
-    destinationName: particleScale
   - sourceObject:
       id: 4
     sourceName: input
@@ -137,13 +132,25 @@ MonoBehaviour:
     sourceName: input
     destinationObject:
       id: 9
+    destinationName: particleScale
+  - sourceObject:
+      id: 4
+    sourceName: input
+    destinationObject:
+      id: 10
     destinationName: offset
   - sourceObject:
       id: 5
     sourceName: input
     destinationObject:
-      id: 6
+      id: 7
     destinationName: radius
+  - sourceObject:
+      id: 6
+    sourceName: input
+    destinationObject:
+      id: 7
+    destinationName: scales
   references:
     version: 1
     00000000:
@@ -194,6 +201,13 @@ MonoBehaviour:
           value: 0.4
           isValueProvided: 1
     00000006:
+      type: {class: FloatArrayInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
+      data:
+        name: particle.widths
+        input:
+          value: []
+          isValueProvided: 0
+    00000007:
       type: {class: TetrahedralSplineNode, ns: Narupa.Visualisation.Node.Spline, asm: Narupa.Visualisation}
       data:
         sequenceLengths:
@@ -221,9 +235,9 @@ MonoBehaviour:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
         radius:
-          value: 0.4
+          value: 1
           isValueProvided: 1
-    00000007:
+    00000008:
       type: {class: ParticleSphereRendererNode, ns: Narupa.Visualisation.Node.Renderer,
         asm: Narupa.Visualisation}
       data:
@@ -233,12 +247,15 @@ MonoBehaviour:
         particleColors:
           value: []
           isValueProvided: 0
-        particleScales:
-          value: []
-          isValueProvided: 0
         particleColor:
           value: {r: 1, g: 1, b: 1, a: 1}
           isValueProvided: 1
+        defaultScale:
+          value: 0
+          isValueProvided: 0
+        particleScales:
+          value: []
+          isValueProvided: 0
         particleScale:
           value: 0.1
           isValueProvided: 1
@@ -248,7 +265,7 @@ MonoBehaviour:
         material:
           value: {fileID: 2100000, guid: 393f247d900223443927eecea10d89e8, type: 2}
           isValueProvided: 1
-    00000008:
+    00000009:
       type: {class: ParticleBondRendererNode, ns: Narupa.Visualisation.Node.Renderer,
         asm: Narupa.Visualisation}
       data:
@@ -261,6 +278,9 @@ MonoBehaviour:
         colorBlend:
           value: 0
           isValueProvided: 1
+        bondColor:
+          value: {r: 0, g: 0, b: 0, a: 0}
+          isValueProvided: 0
         bondScale:
           value: 0.2
           isValueProvided: 1
@@ -276,16 +296,16 @@ MonoBehaviour:
         particleScales:
           value: []
           isValueProvided: 0
-        rendererColor:
-          value: {r: 1, g: 1, b: 1, a: 1}
-          isValueProvided: 1
+        defaultParticleScale:
+          value: 0
+          isValueProvided: 0
         particleScale:
           value: 0.1
           isValueProvided: 1
         bondOrders:
           value: 
           isValueProvided: 0
-    00000009:
+    0000000A:
       type: {class: CyclesRendererNode, ns: Narupa.Visualisation.Node.Renderer, asm: Narupa.Visualisation}
       data:
         material:

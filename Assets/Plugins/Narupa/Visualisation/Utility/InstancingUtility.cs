@@ -1,6 +1,7 @@
 // Copyright (c) Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using System.Linq;
 using System.Runtime.InteropServices;
 using Narupa.Core.Math;
 using Narupa.Frame;
@@ -28,7 +29,7 @@ namespace Narupa.Visualisation.Utility
         /// </summary>
         public static void SetColors(IndirectMeshDrawCommand command, Color[] colors)
         {
-            command.SetKeyword("COLOR_ARRAY");
+            command.SetKeyword("COLOR_ARRAY", colors.Length > 0);
             command.SetDataBuffer("ColorArray", colors);
         }
 
@@ -37,7 +38,7 @@ namespace Narupa.Visualisation.Utility
         /// </summary>
         public static void SetScales(IndirectMeshDrawCommand command, float[] scales)
         {
-            command.SetKeyword("SCALE_ARRAY");
+            command.SetKeyword("SCALE_ARRAY", scales.Length > 0);
             command.SetDataBuffer("ScaleArray", scales);
         }
 

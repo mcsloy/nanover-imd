@@ -20,47 +20,33 @@ namespace Narupa.Visualisation.Node.Scale
         private IntArrayProperty particleResidues;
 
         [SerializeField]
-        private float radius;
+        private StringFloatMappingProperty scheme;
 
         [SerializeField]
-        private float helixRadius;
-
-        [SerializeField]
-        private float turnRadius;
-
-        [SerializeField]
-        private float sheetRadius;
+        private FloatProperty scale;
 
         private float GetSecondaryStructureScale(SecondaryStructureAssignment i)
         {
-            switch (i)
-            {
-                case SecondaryStructureAssignment.ThreeTenHelix:
-                    return helixRadius;
-                case SecondaryStructureAssignment.AlphaHelix:
-                    return helixRadius;
-                case SecondaryStructureAssignment.PiHelix:
-                    return helixRadius;
-                case SecondaryStructureAssignment.Turn:
-                    return turnRadius;
-                case SecondaryStructureAssignment.Sheet:
-                    return sheetRadius;
-                default:
-                    return radius;
-            }
+            return scheme.Value.Map(i.AsSymbol()) * scale.Value;
         }
 
 
         protected override bool IsInputValid => residueSecondaryStructure.HasNonEmptyValue()
-                                             && particleResidues.HasNonNullValue();
+                                             && particleResidues.HasNonNullValue()
+                                             && scheme.HasNonNullValue()
+                                             && scale.HasValue;
 
         protected override bool IsInputDirty => residueSecondaryStructure.IsDirty
-                                             || particleResidues.IsDirty;
+                                             || particleResidues.IsDirty
+                                             || scheme.IsDirty
+                                             || scale.IsDirty;
 
         protected override void ClearDirty()
         {
             residueSecondaryStructure.IsDirty = false;
             particleResidues.IsDirty = false;
+            scheme.IsDirty = false;
+            scale.IsDirty = false;
         }
 
         protected override void ClearOutput()

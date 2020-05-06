@@ -124,6 +124,24 @@ MonoBehaviour:
     destinationObject:
       id: 7
     destinationName: splineSegments
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 6
+    destinationName: defaultColor
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: defaultColor
+  - sourceObject:
+      id: 1
+    sourceName: input
+    destinationObject:
+      id: 5
+    destinationName: particleColor
   references:
     version: 1
     00000000:
@@ -139,7 +157,7 @@ MonoBehaviour:
         name: color
         input:
           value: {r: 1, g: 1, b: 1, a: 1}
-          isValueProvided: 1
+          isValueProvided: 0
     00000002:
       type: {class: FloatInputNode, ns: Narupa.Visualisation.Node.Input, asm: Narupa.Visualisation}
       data:
@@ -171,12 +189,15 @@ MonoBehaviour:
         particleColors:
           value: []
           isValueProvided: 0
+        particleColor:
+          value: {r: 1, g: 1, b: 1, a: 1}
+          isValueProvided: 0
+        defaultScale:
+          value: 0
+          isValueProvided: 0
         particleScales:
           value: []
           isValueProvided: 0
-        particleColor:
-          value: {r: 1, g: 1, b: 1, a: 1}
-          isValueProvided: 1
         particleScale:
           value: 0
           isValueProvided: 1
@@ -192,7 +213,7 @@ MonoBehaviour:
         particlePositions:
           value: []
           isValueProvided: 0
-        particleColor:
+        defaultColor:
           value: {r: 0, g: 0, b: 0, a: 0}
           isValueProvided: 0
         particleColors:
@@ -242,6 +263,9 @@ MonoBehaviour:
         colorBlend:
           value: 1
           isValueProvided: 1
+        bondColor:
+          value: {r: 0, g: 0, b: 0, a: 0}
+          isValueProvided: 0
         bondScale:
           value: 0
           isValueProvided: 1
@@ -257,9 +281,9 @@ MonoBehaviour:
         particleScales:
           value: []
           isValueProvided: 0
-        rendererColor:
-          value: {r: 0, g: 0, b: 0, a: 0}
-          isValueProvided: 1
+        defaultParticleScale:
+          value: 0
+          isValueProvided: 0
         particleScale:
           value: 0
           isValueProvided: 1

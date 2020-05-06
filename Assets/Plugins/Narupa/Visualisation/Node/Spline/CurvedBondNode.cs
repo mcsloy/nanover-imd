@@ -13,7 +13,7 @@ namespace Narupa.Visualisation.Node.Spline
         private Vector3ArrayProperty particlePositions = new Vector3ArrayProperty();
 
         [SerializeField]
-        private ColorProperty particleColor = new ColorProperty();
+        private ColorProperty defaultColor = new ColorProperty();
         
         [SerializeField]
         private ColorArrayProperty particleColors = new ColorArrayProperty();
@@ -33,7 +33,7 @@ namespace Narupa.Visualisation.Node.Spline
         protected override bool IsInputValid => particlePositions.HasValue && bondPairs.HasValue;
 
         protected override bool IsInputDirty =>
-            particlePositions.IsDirty || bondPairs.IsDirty || particleColors.IsDirty || particleColor.IsDirty || particleScale.IsDirty || particleScales.IsDirty;
+            particlePositions.IsDirty || bondPairs.IsDirty || particleColors.IsDirty || defaultColor.IsDirty || particleScale.IsDirty || particleScales.IsDirty;
 
         private Vector3[] offsetArray = new Vector3[0];
         private int[] offsetCount = new int[0];
@@ -84,8 +84,7 @@ namespace Narupa.Visualisation.Node.Spline
             var particleScales = hasScales ?  this.particleScales.Value : null;
 
             
-            var defaultColor =
-                particleColor.HasValue ? particleColor.Value : UnityEngine.Color.white;
+            var defaultColor = this.defaultColor.HasValue ? this.defaultColor.Value : UnityEngine.Color.white;
 
             var defaultScale =
                 particleScale.HasValue ? particleScale.Value : 1f;

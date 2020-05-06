@@ -1,0 +1,14 @@
+{
+  "color": {
+    "type": "float field",
+    "key": "$particle.bfactors",
+    "min": 15,
+    "max": 50,
+    "gradient": [
+      "red",
+      "green",
+      "blue"
+    ]
+  },
+  "render": "ball and stick"
+}

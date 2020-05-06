@@ -41,11 +41,6 @@ namespace NarupaIMD.Selection
         private const string ScaleSubgraphPath = "Subgraph/Scale";
 
         /// <summary>
-        /// Path in the resources folder(s) where filter subgraphs exist
-        /// </summary>
-        private const string FilterSubgraphPath = "Subgraph/Filter";
-        
-        /// <summary>
         /// Path in the resources folder(s) where color subgraphs exist
         /// </summary>
         private const string WidthSubgraphPath = "Subgraph/Width";
@@ -110,14 +105,6 @@ namespace NarupaIMD.Selection
             return Resources.Load<VisualisationSubgraph>($"{ScaleSubgraphPath}/{name}");
         }
         
-        /// <summary>
-        /// Get a visualisation subgraph which is responsible for filtering particles.
-        /// </summary>
-        private static VisualisationSubgraph GetFilterSubgraph(string name)
-        {
-            return Resources.Load<VisualisationSubgraph>($"{FilterSubgraphPath}/{name}");
-        }
-
         /// <summary>
         /// Get a visualisation subgraph which is responsible for the width of particles in
         /// splines.
@@ -219,12 +206,6 @@ namespace NarupaIMD.Selection
         private const string WidthKeyword = "width";
         
         /// <summary>
-        /// Key in the root visualiser that indicates a filter subgraph (as a name or a
-        /// dict with a type field) .
-        /// </summary>
-        private const string FilterKeyword = "filter";
-
-        /// <summary>
         /// Key in the root visualiser that can indicate either a subgraph (as a name or a
         /// dict with a type field) or an actual color.
         /// </summary>
@@ -299,10 +280,6 @@ namespace NarupaIMD.Selection
 
         private void FindSubgraphs()
         {
-            // Parse the color keyword if it is a struct with the 'type' field, and hence
-            // describes a color subgraph
-            FindSubgraph(FilterKeyword, GetFilterSubgraph);
-
             // Parse the sequence subgraph
             var sequenceSubgraph = FindSubgraph(SequenceKeyword, GetSequenceSubgraph);
 
@@ -442,6 +419,14 @@ namespace NarupaIMD.Selection
         {
             var subgraphIndex = subgraphs.IndexOf(subgraph);
 
+            // If for an input "some.input" there's a provided "some.input": "$new.input", change
+            // the input name to "new.input"
+            if (subgraphParameters.ContainsKey(subgraph) &&
+                subgraphParameters[subgraph].ContainsKey(input.Name) &&
+                subgraphParameters[subgraph][input.Name] is string replacement &&
+                replacement.StartsWith("$"))
+                input.Name = replacement.Substring(1);
+
             // Is the value provided specifically for this subgraph in its parameters
             if (subgraphParameters.ContainsKey(subgraph)
              && FindParameterAndSetInputNode(input, subgraphParameters[subgraph]))
@@ -556,6 +541,11 @@ namespace NarupaIMD.Selection
                     return TryParseAndSetInputNode(stringColorInput,
                                                    parameter,
                                                    VisualisationParser.TryParseStringColorMapping);
+                
+                case IInputNode<IMapping<string, float>> stringFloatInput:
+                    return TryParseAndSetInputNode(stringFloatInput,
+                                                   parameter,
+                                                   VisualisationParser.TryParseStringFloatMapping);
             }
 
             return false;

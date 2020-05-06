@@ -187,12 +187,12 @@ namespace Narupa.Visualisation.Node.Spline
                     var tangent = tangents[index];
                     var normal = normals[index];
                     var binormal = Vector3.Cross(tangent, normal);
-                    var color = this.color.Value * (colors.HasValue
+                    var color = (colors.HasValue
                                                         ? colors.Value[index]
-                                                        : UnityEngine.Color.white);
-                    var radius = this.radius.Value * (scales.HasValue
+                                                        : this.color.Value);
+                    var radius = (scales.HasValue
                                                           ? scales.Value[index]
-                                                          : 1f);
+                                                          : this.radius.Value);
 
                     outputPositions[index * 2] = position + radius * binormal;
                     outputPositions[index * 2 + 1] = position - radius * binormal;
