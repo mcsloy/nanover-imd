@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using Narupa.Session;
 using UnityEditor;
 using UnityEngine;
@@ -14,23 +14,7 @@ namespace NarupaIMD.Editor
             window.titleContent = new GUIContent("Shared State");
             window.Show();
         }
-
-        private Dictionary<string, object> data = new Dictionary<string, object>
-        {
-            ["myfloat"] = 1.2f,
-            ["mystring"] = "abc",
-            ["myint"] = 12,
-            ["mystruct"] = new Dictionary<string, object>
-            {
-                ["mybool"] = false
-            },
-            ["mylist"] = new List<object>
-            {
-                1.2f,
-                "xyz"
-            }
-        };
-
+        
         private Vector2 scrollPos;
         
         private NarupaMultiplayer multiplayer;
