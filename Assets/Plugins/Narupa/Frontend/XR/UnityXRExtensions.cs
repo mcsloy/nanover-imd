@@ -57,12 +57,12 @@ namespace Narupa.Frontend.XR
         /// <summary>
         /// Return the node state's pose matrix, if available.
         /// </summary>
-        public static Transformation? GetPose(this XRNodeState node)
+        public static UnitScaleTransformation? GetPose(this XRNodeState node)
         {
             if (node.TryGetPosition(out var position)
              && node.TryGetRotation(out var rotation))
             {
-                return new Transformation(position, rotation, Vector3.one);
+                return new UnitScaleTransformation(position, rotation);
             }
 
             return null;
@@ -75,27 +75,9 @@ namespace Narupa.Frontend.XR
         /// Thrown when there are
         /// multiple nodes of this type
         /// </exception>
-        public static Transformation? GetSinglePose(this XRNode nodeType)
+        public static UnitScaleTransformation? GetTransformation(this XRNode nodeType)
         {
             return nodeType.GetSingleNodeState()?.GetPose();
-        }
-        
-        public static IPosedObject WrapAsPosedObject(this XRNode nodeType)
-        {
-            var wrapper = new DirectPosedObject();
-
-            UpdatePoseInBackground().AwaitInBackground();
-
-            async Task UpdatePoseInBackground()
-            {
-                while (true)
-                {
-                    wrapper.SetPose(nodeType.GetSinglePose());
-                    await Task.Delay(1);
-                }
-            }
-
-            return wrapper;
         }
 
         private static readonly List<XRNodeState> nodeStates = new List<XRNodeState>();

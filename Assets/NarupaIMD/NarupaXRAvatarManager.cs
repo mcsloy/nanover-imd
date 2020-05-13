@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
-using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
 using Narupa.Grpc.Multiplayer;
-using Narupa.Session;
 using NarupaIMD;
 using NarupaIMD.UI;
 using UnityEngine;
@@ -20,10 +17,10 @@ namespace NarupaXR
 #pragma warning disable 0649
         [SerializeField]
         private NarupaMultiplayer multiplayer;
-        
+
         [SerializeField]
         private NarupaXRPrototype application;
-        
+
         [SerializeField]
         private NarupaImdSimulation simulation;
 
@@ -33,10 +30,10 @@ namespace NarupaXR
         [SerializeField]
         private AvatarModel controllerPrefab;
 #pragma warning restore 0649
-        
+
         private IndexedPool<AvatarModel> headsetObjects;
         private IndexedPool<AvatarModel> controllerObjects;
-        
+
         private Coroutine sendAvatarsCoroutine;
 
         private void Update()
@@ -57,7 +54,7 @@ namespace NarupaXR
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
-            
+
             multiplayer.Session.MultiplayerJoined += SessionOnMultiplayerJoined;
         }
 
@@ -75,17 +72,21 @@ namespace NarupaXR
 
         private IEnumerator SendAvatars()
         {
-            var leftHand = XRNode.LeftHand.WrapAsPosedObject();
-            var rightHand = XRNode.RightHand.WrapAsPosedObject();
-            var headset = XRNode.Head.WrapAsPosedObject();
-
             while (true)
             {
+                // multiplayer to world transformation
+                var worldToMultiplayer = UnitScaleTransformation
+                                         .FromTransformRelativeToWorld(transform).inverse;
                 if (simulation.Multiplayer.HasPlayer)
+                {
+                    var headTransform = XRNode.Head.GetTransformation();
+                    var leftHandTransform = XRNode.LeftHand.GetTransformation();
+                    var rightHandTransform = XRNode.RightHand.GetTransformation();
                     simulation.Multiplayer.Avatars.LocalAvatar.SetTransformations(
-                        TransformPoseWorldToCalibrated(headset.Pose),
-                        TransformPoseWorldToCalibrated(leftHand.Pose),
-                        TransformPoseWorldToCalibrated(rightHand.Pose));
+                        worldToMultiplayer * headTransform,
+                        worldToMultiplayer * leftHandTransform,
+                        worldToMultiplayer * rightHandTransform);
+                }
 
                 simulation.Multiplayer.Avatars.FlushLocalAvatar();
 
@@ -103,7 +104,8 @@ namespace NarupaXR
 
             var controllers = simulation.Multiplayer
                                         .Avatars.OtherPlayerAvatars
-                                        .SelectMany(avatar => avatar.Components, (avatar, component) =>
+                                        .SelectMany(avatar => avatar.Components,
+                                                    (avatar, component) =>
                                                         (Avatar: avatar, Component: component))
                                         .Where(res => res.Component.Name == Avatar.LeftHandName
                                                    || res.Component.Name == Avatar.RightHandName);
@@ -111,30 +113,14 @@ namespace NarupaXR
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
 
-            void UpdateAvatarComponent((Avatar Avatar, AvatarComponent Component) value, AvatarModel model)
+            void UpdateAvatarComponent((Avatar Avatar, AvatarComponent Component) value,
+                                       AvatarModel model)
             {
-                var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;
-                model.transform.localPosition = transformed.Position;
-                model.transform.localRotation = transformed.Rotation;
+                model.transform.localPosition = value.Component.Position;
+                model.transform.localRotation = value.Component.Rotation;
                 model.SetPlayerColor(value.Avatar.Color);
                 model.SetPlayerName(value.Avatar.Name);
             }
-        }
-
-        public Transformation? TransformPoseCalibratedToWorld(Transformation? pose)
-        {
-            if (pose is Transformation calibratedPose)
-                return application.CalibratedSpace.TransformPoseCalibratedToWorld(calibratedPose);
-
-            return null;
-        }
-
-        public Transformation? TransformPoseWorldToCalibrated(Transformation? pose)
-        {
-            if (pose is Transformation worldPose)
-                return application.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
-
-            return null;
         }
     }
 }

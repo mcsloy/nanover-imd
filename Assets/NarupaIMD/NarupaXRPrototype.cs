@@ -1,11 +1,14 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using System.Linq;
 using Essd;
+using Narupa.Core.Math;
 using Narupa.Frontend.XR;
 using NarupaIMD;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.XR;
 using Text = TMPro.TextMeshProUGUI;
 
 namespace NarupaXR
@@ -23,8 +26,6 @@ namespace NarupaXR
 #pragma warning restore 0649
 
         public NarupaImdSimulation Simulation => simulation;
-
-        public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
 
         [SerializeField]
         private UnityEvent connectionEstablished;
@@ -71,9 +72,39 @@ namespace NarupaXR
         private void Update()
         {
             if(isColocationActive)
-                CalibratedSpace.CalibrateFromLighthouses();
-            else
-                CalibratedSpace.ResetCalibration();
+                CalibrateFromLighthouses();
+        }
+        
+        public void CalibrateFromLighthouses()
+        {
+            var trackers = XRNode.TrackingReference.GetNodeStates()
+                                 .OrderBy(state => state.uniqueID)
+                                 .Take(2)
+                                 .ToList();
+
+            if (trackers.Count == 2
+             && trackers[0].GetPose() is UnitScaleTransformation pose0
+             && trackers[1].GetPose() is UnitScaleTransformation pose1)
+            {
+                CalibrateFromTwoControlPoints(pose0.position, pose1.position);
+            }
+        }
+
+        /// <summary>
+        /// Calibrate the space from our personal world position of two 
+        /// physical points.
+        /// </summary>
+        public void CalibrateFromTwoControlPoints(Vector3 worldPoint0, 
+                                                  Vector3 worldPoint1)
+        {
+            var position = 0.5f * (worldPoint0 + worldPoint1);
+            position.y = 0;
+            var forward = worldPoint1 - worldPoint0;
+            forward.y = 0;
+            var rotation = Quaternion.LookRotation(forward, Vector3.up);
+
+            simulation.transform.position = position;
+            simulation.transform.rotation = rotation;
         }
     }
 }

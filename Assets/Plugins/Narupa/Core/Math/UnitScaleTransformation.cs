@@ -171,6 +171,16 @@ namespace Narupa.Core.Math
             return
                 $"UnitTransformation(Position: ({pos.x}, {pos.y}, {pos.z}), Rotation: ({rot.x}, {rot.y}, {rot.z}))";
         }
+        
+        /// <summary>
+        /// Construct a transformation from the translation and rotation
+        /// of a Unity <see cref="Transform" /> relative to world space.
+        /// </summary>
+        public static UnitScaleTransformation FromTransformRelativeToWorld(Transform transform)
+        {
+            return new UnitScaleTransformation(transform.position,
+                                               transform.rotation);
+        }
 
         #endregion
     }

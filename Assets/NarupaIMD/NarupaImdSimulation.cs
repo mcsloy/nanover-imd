@@ -206,9 +206,7 @@ namespace NarupaIMD
         /// </summary>
         public void ResetBox()
         {
-            var calibPose = application.CalibratedSpace
-                                       .TransformPoseWorldToCalibrated(Transformation.Identity);
-            Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
+            Multiplayer.SimulationPose.UpdateValueWithLock(Transformation.Identity);
         }
     }
 }

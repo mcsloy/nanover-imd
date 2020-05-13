@@ -89,9 +89,9 @@ namespace Narupa.Grpc.Multiplayer
     {
         public string Name;
 
-        private Vector3 Position;
+        public Vector3 Position;
 
-        private Quaternion Rotation;
+        public Quaternion Rotation;
         
         private const string FieldName = "name";
         private const string FieldPosition = "position";

@@ -73,10 +73,9 @@ namespace NarupaXR.Interaction
         /// </summary>
         private void CopyMultiplayerPoseToLocal()
         {
-            var worldPose = prototype.CalibratedSpace
-                                     .TransformPoseCalibratedToWorld(multiplayer.SimulationPose
-                                                                                .Value);
-            worldPose.CopyToTransformRelativeToParent(sceneTransform);
+            multiplayer.SimulationPose
+                       .Value
+                       .CopyToTransformRelativeToParent(sceneTransform);
         }
 
         /// <summary>
@@ -116,11 +115,9 @@ namespace NarupaXR.Interaction
             {
                 if (CurrentlyEditingScene)
                 {
-                    var worldPose = Transformation.FromTransformRelativeToParent(sceneTransform);
-                    ClampToSensibleValues(worldPose);
-                    var calibPose = prototype.CalibratedSpace
-                                             .TransformPoseWorldToCalibrated(worldPose);
-                    multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
+                    var multiplayerPose = Transformation.FromTransformRelativeToParent(sceneTransform);
+                    ClampToSensibleValues(multiplayerPose);
+                    multiplayer.SimulationPose.UpdateValueWithLock(multiplayerPose);
                 }
 
                 await Task.Delay(10);
