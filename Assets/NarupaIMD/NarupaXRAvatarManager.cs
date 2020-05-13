@@ -59,6 +59,18 @@ namespace NarupaXR
             );
             
             multiplayer.Session.MultiplayerJoined += SessionOnMultiplayerJoined;
+            PlayerColor.PlayerColorChanged += PlayerColorOnPlayerColorChanged;
+            PlayerName.PlayerNameChanged += PlayerNameOnPlayerNameChanged;
+        }
+
+        private void PlayerNameOnPlayerNameChanged()
+        {
+            multiplayer.Session.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
+        }
+
+        private void PlayerColorOnPlayerColorChanged()
+        {
+            multiplayer.Session.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
         }
 
         private void SessionOnMultiplayerJoined()
@@ -71,6 +83,9 @@ namespace NarupaXR
         private void OnDisable()
         {
             StopCoroutine(sendAvatarsCoroutine);
+            multiplayer.Session.MultiplayerJoined -= SessionOnMultiplayerJoined;
+            PlayerColor.PlayerColorChanged -= PlayerColorOnPlayerColorChanged;
+            PlayerName.PlayerNameChanged -= PlayerNameOnPlayerNameChanged;
         }
 
         private IEnumerator SendAvatars()
