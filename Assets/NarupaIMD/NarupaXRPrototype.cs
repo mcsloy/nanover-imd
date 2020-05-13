@@ -32,6 +32,9 @@ namespace NarupaXR
         private void Awake()
         {
             simulation.ConnectionEstablished += connectionEstablished.Invoke;
+            Colocation.ColocationSettingChanged +=
+                () => isColocationActive = Colocation.IsEnabled();
+            isColocationActive = Colocation.IsEnabled();
         }
 
         /// <summary>
@@ -63,9 +66,14 @@ namespace NarupaXR
         /// </summary>
         public void Quit() => Application.Quit();
 
+        private bool isColocationActive = false;
+        
         private void Update()
         {
-            CalibratedSpace.CalibrateFromLighthouses();
+            if(isColocationActive)
+                CalibratedSpace.CalibrateFromLighthouses();
+            else
+                CalibratedSpace.ResetCalibration();
         }
     }
 }

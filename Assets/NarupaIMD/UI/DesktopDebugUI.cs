@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Narupa.Frontend.XR;
 using NarupaIMD;
 using UnityEngine;
 
@@ -88,6 +89,11 @@ namespace NarupaXR
             GUILayout.Box("Misc");
             if (GUILayout.Button("Quit"))
                 application.Quit();
+
+            var colocated = Colocation.IsEnabled();
+            var newColocated = GUILayout.Toggle(colocated, "Colocated");
+            if(newColocated != colocated)
+                Colocation.SetEnabled(newColocated);
 
             GUILayout.EndArea();
 

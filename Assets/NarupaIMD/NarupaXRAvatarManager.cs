@@ -5,10 +5,13 @@ using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
+using Narupa.Grpc.Multiplayer;
 using Narupa.Session;
 using NarupaIMD;
+using NarupaIMD.UI;
 using UnityEngine;
 using UnityEngine.XR;
+using Avatar = Narupa.Grpc.Multiplayer.Avatar;
 
 namespace NarupaXR
 {
@@ -25,14 +28,14 @@ namespace NarupaXR
         private NarupaImdSimulation simulation;
 
         [SerializeField]
-        private Transform headsetPrefab;
+        private AvatarModel headsetPrefab;
 
         [SerializeField]
-        private Transform controllerPrefab;
+        private AvatarModel controllerPrefab;
 #pragma warning restore 0649
         
-        private IndexedPool<Transform> headsetObjects;
-        private IndexedPool<Transform> controllerObjects;
+        private IndexedPool<AvatarModel> headsetObjects;
+        private IndexedPool<AvatarModel> controllerObjects;
         
         private Coroutine sendAvatarsCoroutine;
 
@@ -43,18 +46,25 @@ namespace NarupaXR
 
         private void OnEnable()
         {
-            headsetObjects = new IndexedPool<Transform>(
+            headsetObjects = new IndexedPool<AvatarModel>(
                 () => Instantiate(headsetPrefab),
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
 
-            controllerObjects = new IndexedPool<Transform>(
+            controllerObjects = new IndexedPool<AvatarModel>(
                 () => Instantiate(controllerPrefab),
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
             
+            multiplayer.Session.MultiplayerJoined += SessionOnMultiplayerJoined;
+        }
+
+        private void SessionOnMultiplayerJoined()
+        {
+            multiplayer.Session.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
+            multiplayer.Session.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
             sendAvatarsCoroutine = StartCoroutine(SendAvatars());
         }
 
@@ -72,7 +82,7 @@ namespace NarupaXR
             while (true)
             {
                 if (simulation.Multiplayer.HasPlayer)
-                    simulation.Multiplayer.SetVRAvatar(
+                    simulation.Multiplayer.Avatars.LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
@@ -83,41 +93,28 @@ namespace NarupaXR
 
         private void UpdateRendering()
         {
-            var localPlayerId = simulation.Multiplayer.PlayerId;
             var headsets = simulation.Multiplayer
-                                     .Avatars.Values
-                                     .SelectMany(avatar => avatar.Components.Select(pair => new
-                                     {
-                                         avatar.PlayerId,
-                                         Name = pair.Key,
-                                         Pose = pair.Value
-                                     }))
-                                     .Where(component => component.Name == MultiplayerSession.HeadsetName)
-                                     .Where(component => component.PlayerId != localPlayerId)
-                                     .Select(component => component.Pose)
-                                     .OfType<Transformation>();
+                                     .Avatars.OtherPlayerAvatars
+                                     .SelectMany(avatar => avatar.Components, (avatar, component) =>
+                                                     (Avatar: avatar, Component: component))
+                                     .Where(res => res.Component.Name == Avatar.HeadsetName);
 
             var controllers = simulation.Multiplayer
-                                        .Avatars.Values
-                                        .SelectMany(avatar => avatar.Components.Select(pair => new
-                                        {
-                                            avatar.PlayerId,
-                                            Name = pair.Key,
-                                            Pose = pair.Value
-                                        }))
-                                        .Where(component => component.Name == MultiplayerSession.LeftHandName 
-                                                         || component.Name == MultiplayerSession.RightHandName)
-                                        .Where(component => component.PlayerId != localPlayerId)
-                                        .Select(component => component.Pose)
-                                        .OfType<Transformation>();
+                                        .Avatars.OtherPlayerAvatars
+                                        .SelectMany(avatar => avatar.Components, (avatar, component) =>
+                                                        (Avatar: avatar, Component: component))
+                                        .Where(res => res.Component.Name == Avatar.LeftHandName
+                                                   || res.Component.Name == Avatar.RightHandName);
 
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
 
-            void UpdateAvatarComponent(Transformation pose, Transform transform)
+            void UpdateAvatarComponent((Avatar Avatar, AvatarComponent Component) value, AvatarModel model)
             {
-                var transformed = TransformPoseCalibratedToWorld(pose).Value;
-                transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);
+                var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;
+                model.transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);
+                model.SetPlayerColor(value.Avatar.Color);
+                model.SetPlayerName(value.Avatar.Name);
             }
         }
 
