@@ -112,7 +112,8 @@ namespace NarupaXR
             void UpdateAvatarComponent((Avatar Avatar, AvatarComponent Component) value, AvatarModel model)
             {
                 var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;
-                model.transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);
+                model.transform.localPosition = transformed.Position;
+                model.transform.localRotation = transformed.Rotation;
                 model.SetPlayerColor(value.Avatar.Color);
                 model.SetPlayerName(value.Avatar.Name);
             }
