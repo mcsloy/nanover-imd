@@ -31,6 +31,8 @@ namespace NarupaIMD.Editor
             }
         };
 
+        private Vector2 scrollPos;
+        
         private NarupaMultiplayer multiplayer;
 
         private void OnGUI()
@@ -42,8 +44,10 @@ namespace NarupaIMD.Editor
             }
             if (multiplayer == null)
                 multiplayer = FindObjectOfType<NarupaMultiplayer>();
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
             if(multiplayer != null)
                 DrawObject(multiplayer.Session.SharedStateDictionary);
+            EditorGUILayout.EndScrollView();
         }
 
         private void DrawObject(object value, string key = null)
