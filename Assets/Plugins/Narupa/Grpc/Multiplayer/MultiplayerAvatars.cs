@@ -61,11 +61,12 @@ namespace Narupa.Grpc.Multiplayer
                 {
                     ID = id
                 });
+            avatars[id].FromData(value);
         }
 
-        public void RemoveAvatar(string id)
+        private void RemoveAvatar(string id)
         {
-            multiplayer.RemoveSharedStateKey(GetAvatarKey(id));
+            avatars.Remove(id);
         }
         
         private Dictionary<string, Avatar> avatars = new Dictionary<string, Avatar>();
@@ -74,5 +75,10 @@ namespace Narupa.Grpc.Multiplayer
             avatars.Values.Where(avatar => avatar.ID != multiplayer.PlayerId);
 
         public Avatar LocalAvatar => avatars[multiplayer.PlayerId];
+
+        public void FlushLocalAvatar()
+        {
+            multiplayer.SetSharedState(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
+        }
     }
 }
