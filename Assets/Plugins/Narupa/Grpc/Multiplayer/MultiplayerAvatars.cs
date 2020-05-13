@@ -24,7 +24,7 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnKeyUpdated(string key, object value)
         {
-            if (IsAvatarKey(key, out var id) && id == multiplayer.PlayerId && value is Dictionary<string, object> dict)
+            if (IsAvatarKey(key, out var id) && id != multiplayer.PlayerId && value is Dictionary<string, object> dict)
             {
                 CreateOrUpdateAvatar(id, dict);
             }
@@ -32,7 +32,7 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnKeyRemoved(string key)
         {
-            if(IsAvatarKey(key, out var id) && id == multiplayer.PlayerId)
+            if(IsAvatarKey(key, out var id) && id != multiplayer.PlayerId)
                 RemoveAvatar(id);
         }
 
@@ -79,6 +79,11 @@ namespace Narupa.Grpc.Multiplayer
         public void FlushLocalAvatar()
         {
             multiplayer.SetSharedState(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
+        }
+
+        public void CloseClient()
+        {
+            multiplayer.RemoveSharedStateKey(GetAvatarKey(multiplayer.PlayerId));
         }
     }
 }

@@ -115,6 +115,9 @@ namespace Narupa.Session
         /// </summary>
         public void CloseClient()
         {
+            Avatars.CloseClient();
+            FlushValues();
+            
             client?.CloseAndCancelAllSubscriptions();
             client?.Dispose();
             client = null;
