@@ -39,6 +39,14 @@ namespace Valve.VR
         
         private static SteamVR_Action_Boolean p_inAppUI_Click;
         
+        private static SteamVR_Action_Boolean p_inAppUI_StartTeleport;
+        
+        private static SteamVR_Action_Boolean p_inAppUI_PerformTeleport;
+        
+        private static SteamVR_Action_Boolean p_inAppUI_CancelTeleport;
+        
+        private static SteamVR_Action_Vector2 p_inAppUI_TeleportAngle;
+        
         public static SteamVR_Action_Pose application_Pose
         {
             get
@@ -127,6 +135,38 @@ namespace Valve.VR
             }
         }
         
+        public static SteamVR_Action_Boolean inAppUI_StartTeleport
+        {
+            get
+            {
+                return SteamVR_Actions.p_inAppUI_StartTeleport.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean inAppUI_PerformTeleport
+        {
+            get
+            {
+                return SteamVR_Actions.p_inAppUI_PerformTeleport.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Boolean inAppUI_CancelTeleport
+        {
+            get
+            {
+                return SteamVR_Actions.p_inAppUI_CancelTeleport.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
+        public static SteamVR_Action_Vector2 inAppUI_TeleportAngle
+        {
+            get
+            {
+                return SteamVR_Actions.p_inAppUI_TeleportAngle.GetCopy<SteamVR_Action_Vector2>();
+            }
+        }
+        
         private static void InitializeActionArrays()
         {
             Valve.VR.SteamVR_Input.actions = new Valve.VR.SteamVR_Action[] {
@@ -140,7 +180,11 @@ namespace Valve.VR
                     SteamVR_Actions.fullScreenUI_Click,
                     SteamVR_Actions.inAppUI_QuickActions,
                     SteamVR_Actions.inAppUI_ToolActions,
-                    SteamVR_Actions.inAppUI_Click};
+                    SteamVR_Actions.inAppUI_Click,
+                    SteamVR_Actions.inAppUI_StartTeleport,
+                    SteamVR_Actions.inAppUI_PerformTeleport,
+                    SteamVR_Actions.inAppUI_CancelTeleport,
+                    SteamVR_Actions.inAppUI_TeleportAngle};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.application_Pose,
                     SteamVR_Actions.simulation_GrabSpace,
@@ -152,7 +196,11 @@ namespace Valve.VR
                     SteamVR_Actions.fullScreenUI_Click,
                     SteamVR_Actions.inAppUI_QuickActions,
                     SteamVR_Actions.inAppUI_ToolActions,
-                    SteamVR_Actions.inAppUI_Click};
+                    SteamVR_Actions.inAppUI_Click,
+                    SteamVR_Actions.inAppUI_StartTeleport,
+                    SteamVR_Actions.inAppUI_PerformTeleport,
+                    SteamVR_Actions.inAppUI_CancelTeleport,
+                    SteamVR_Actions.inAppUI_TeleportAngle};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[0];
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[0];
             Valve.VR.SteamVR_Input.actionsPose = new Valve.VR.SteamVR_Action_Pose[] {
@@ -167,9 +215,13 @@ namespace Valve.VR
                     SteamVR_Actions.fullScreenUI_Click,
                     SteamVR_Actions.inAppUI_QuickActions,
                     SteamVR_Actions.inAppUI_ToolActions,
-                    SteamVR_Actions.inAppUI_Click};
+                    SteamVR_Actions.inAppUI_Click,
+                    SteamVR_Actions.inAppUI_StartTeleport,
+                    SteamVR_Actions.inAppUI_PerformTeleport,
+                    SteamVR_Actions.inAppUI_CancelTeleport};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[0];
-            Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[0];
+            Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[] {
+                    SteamVR_Actions.inAppUI_TeleportAngle};
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
             Valve.VR.SteamVR_Input.actionsSkeleton = new Valve.VR.SteamVR_Action_Skeleton[0];
             Valve.VR.SteamVR_Input.actionsNonPoseNonSkeletonIn = new Valve.VR.ISteamVR_Action_In[] {
@@ -182,7 +234,11 @@ namespace Valve.VR
                     SteamVR_Actions.fullScreenUI_Click,
                     SteamVR_Actions.inAppUI_QuickActions,
                     SteamVR_Actions.inAppUI_ToolActions,
-                    SteamVR_Actions.inAppUI_Click};
+                    SteamVR_Actions.inAppUI_Click,
+                    SteamVR_Actions.inAppUI_StartTeleport,
+                    SteamVR_Actions.inAppUI_PerformTeleport,
+                    SteamVR_Actions.inAppUI_CancelTeleport,
+                    SteamVR_Actions.inAppUI_TeleportAngle};
         }
         
         private static void PreInitActions()
@@ -198,6 +254,10 @@ namespace Valve.VR
             SteamVR_Actions.p_inAppUI_QuickActions = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/InAppUI/in/QuickActions")));
             SteamVR_Actions.p_inAppUI_ToolActions = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/InAppUI/in/ToolActions")));
             SteamVR_Actions.p_inAppUI_Click = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/InAppUI/in/Click")));
+            SteamVR_Actions.p_inAppUI_StartTeleport = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/InAppUI/in/StartTeleport")));
+            SteamVR_Actions.p_inAppUI_PerformTeleport = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/InAppUI/in/PerformTeleport")));
+            SteamVR_Actions.p_inAppUI_CancelTeleport = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/InAppUI/in/CancelTeleport")));
+            SteamVR_Actions.p_inAppUI_TeleportAngle = ((SteamVR_Action_Vector2)(SteamVR_Action.Create<SteamVR_Action_Vector2>("/actions/InAppUI/in/TeleportAngle")));
         }
     }
 }

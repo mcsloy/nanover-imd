@@ -58,6 +58,11 @@ namespace Narupa.Frontend.Controllers
         public VrController RightController => rightController;
 
         /// <summary>
+        /// Triggered when the input mode is changed. Parameters are the former and new input modes.
+        /// </summary>
+        public Action<ControllerInputMode, ControllerInputMode> ModeChanged;
+
+        /// <summary>
         /// Get the <see cref="VrController" /> corresponding to the given input source.
         /// </summary>
         /// <param name="inputSource">
@@ -108,11 +113,16 @@ namespace Narupa.Frontend.Controllers
                 }
             if(!inserted)
                 modes.Add(mode);
-            if (CurrentInputMode != current)
+            UpdateInputMode(current);
+        }
+
+        private void UpdateInputMode(ControllerInputMode previous)
+        {
+            if (CurrentInputMode != previous)
             {
-                if (current != null)
+                if (previous != null)
                 {
-                    current.OnModeEnded();
+                    previous.OnModeEnded();
                 }
                 if (CurrentInputMode != null)
                 {
@@ -120,26 +130,17 @@ namespace Narupa.Frontend.Controllers
                     SetupLeftController();
                     SetupRightController();
                 }
+                ModeChanged?.Invoke(previous, CurrentInputMode);
             }
         }
 
         public void RemoveInputMode(ControllerInputMode mode)
         {
+            if (!modes.Contains(mode))
+                return;
             var current = CurrentInputMode;
             modes.Remove(mode);
-            if (CurrentInputMode != current)
-            {
-                if (current != null)
-                {
-                    current.OnModeEnded();
-                }
-                if (CurrentInputMode != null)
-                {
-                    CurrentInputMode.OnModeStarted();
-                    SetupLeftController();
-                    SetupRightController();
-                }
-            }
+            UpdateInputMode(current);
         }
 
         /// <summary>

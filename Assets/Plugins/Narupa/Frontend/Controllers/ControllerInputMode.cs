@@ -27,12 +27,12 @@ namespace Narupa.Frontend.Controllers
 
         public abstract int Priority { get; }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             controllers.AddInputMode(this);
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             controllers.RemoveInputMode(this);
         }

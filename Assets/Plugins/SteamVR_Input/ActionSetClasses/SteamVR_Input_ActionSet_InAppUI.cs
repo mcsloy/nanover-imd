@@ -40,5 +40,37 @@ namespace Valve.VR
                 return SteamVR_Actions.inAppUI_Click;
             }
         }
+        
+        public virtual SteamVR_Action_Boolean StartTeleport
+        {
+            get
+            {
+                return SteamVR_Actions.inAppUI_StartTeleport;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean PerformTeleport
+        {
+            get
+            {
+                return SteamVR_Actions.inAppUI_PerformTeleport;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean CancelTeleport
+        {
+            get
+            {
+                return SteamVR_Actions.inAppUI_CancelTeleport;
+            }
+        }
+        
+        public virtual SteamVR_Action_Vector2 TeleportAngle
+        {
+            get
+            {
+                return SteamVR_Actions.inAppUI_TeleportAngle;
+            }
+        }
     }
 }

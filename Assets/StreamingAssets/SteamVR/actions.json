@@ -49,6 +49,22 @@
       "name": "/actions/InAppUI/in/Click",
       "type": "boolean",
       "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/InAppUI/in/StartTeleport",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/InAppUI/in/PerformTeleport",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/InAppUI/in/CancelTeleport",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/InAppUI/in/TeleportAngle",
+      "type": "vector2"
     }
   ],
   "action_sets": [
