@@ -87,6 +87,8 @@ namespace NarupaXR
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
 
+                simulation.Multiplayer.Avatars.FlushLocalAvatar();
+
                 yield return null;
             }
         }

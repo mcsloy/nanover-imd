@@ -286,10 +286,9 @@ namespace Narupa.Session
         {
             if (@object is List<object> list)
             {
-                var values = list.Select(value => Convert.ToSingle(value)).ToList();
-                var position = new Vector3(values[0], values[1], values[2]);
-                var rotation = new Quaternion(values[3], values[4], values[5], values[6]);
-                var scale = new Vector3(values[7], values[8], values[9]);
+                var position = list.GetVector3(0);
+                var rotation = list.GetQuaternion(3);
+                var scale = list.GetVector3(7);
 
                 return new Transformation(position, rotation, scale);
             }
