@@ -35,9 +35,15 @@ namespace NarupaIMD.Editor
 
         private void OnGUI()
         {
+            if (!Application.isPlaying)
+            {
+                EditorGUILayout.LabelField("Application not running.");
+                return;
+            }
             if (multiplayer == null)
-                multiplayer = GameObject.FindObjectOfType<NarupaMultiplayer>();
-            DrawObject(multiplayer.Session.SharedStateDictionary);
+                multiplayer = FindObjectOfType<NarupaMultiplayer>();
+            if(multiplayer != null)
+                DrawObject(multiplayer.Session.SharedStateDictionary);
         }
 
         private void DrawObject(object value, string key = null)
