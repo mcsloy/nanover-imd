@@ -116,6 +116,7 @@ namespace NarupaXR
             void UpdateAvatarComponent((Avatar Avatar, AvatarComponent Component) value,
                                        AvatarModel model)
             {
+                model.transform.parent = this.transform;
                 model.transform.localPosition = value.Component.Position;
                 model.transform.localRotation = value.Component.Rotation;
                 model.SetPlayerColor(value.Avatar.Color);
