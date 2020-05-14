@@ -11,7 +11,6 @@ using NarupaIMD;
 using NarupaIMD.UI;
 using UnityEngine;
 using UnityEngine.XR;
-using Avatar = Narupa.Grpc.Multiplayer.Avatar;
 
 namespace NarupaXR
 {
@@ -114,19 +113,19 @@ namespace NarupaXR
                                      .Avatars.OtherPlayerAvatars
                                      .SelectMany(avatar => avatar.Components, (avatar, component) =>
                                                      (Avatar: avatar, Component: component))
-                                     .Where(res => res.Component.Name == Avatar.HeadsetName);
+                                     .Where(res => res.Component.Name == MultiplayerAvatar.HeadsetName);
 
             var controllers = simulation.Multiplayer
                                         .Avatars.OtherPlayerAvatars
                                         .SelectMany(avatar => avatar.Components, (avatar, component) =>
                                                         (Avatar: avatar, Component: component))
-                                        .Where(res => res.Component.Name == Avatar.LeftHandName
-                                                   || res.Component.Name == Avatar.RightHandName);
+                                        .Where(res => res.Component.Name == MultiplayerAvatar.LeftHandName
+                                                   || res.Component.Name == MultiplayerAvatar.RightHandName);
 
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
 
-            void UpdateAvatarComponent((Avatar Avatar, AvatarComponent Component) value, AvatarModel model)
+            void UpdateAvatarComponent((MultiplayerAvatar Avatar, MultiplayerAvatar.Component Component) value, AvatarModel model)
             {
                 var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;
                 model.transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);

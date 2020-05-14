@@ -5,11 +5,15 @@ using Narupa.Session;
 
 namespace Narupa.Grpc.Multiplayer
 {
+    /// <summary>
+    /// Part of the <see cref="MultiplayerSession"/> who is in charge of managing multiplayer
+    /// avatars.
+    /// </summary>
     public class MultiplayerAvatars
     {
         private MultiplayerSession multiplayer;
 
-        public MultiplayerAvatars(MultiplayerSession session)
+        internal MultiplayerAvatars(MultiplayerSession session)
         {
             multiplayer = session;
             multiplayer.SharedStateDictionaryKeyUpdated += OnKeyUpdated;
@@ -19,7 +23,7 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnMultiplayerJoined()
         {
-            LocalAvatar = new Avatar()
+            LocalAvatar = new MultiplayerAvatar()
             {
                 ID = multiplayer.PlayerId
             };
@@ -40,12 +44,12 @@ namespace Narupa.Grpc.Multiplayer
         }
 
 
-        public string GetAvatarKey(string playerId)
+        private static string GetAvatarKey(string playerId)
         {
             return $"avatar.{playerId}";
         }
 
-        public bool IsAvatarKey(string key, out string playerId)
+        private static bool IsAvatarKey(string key, out string playerId)
         {
             if (key.StartsWith("avatar."))
             {
@@ -60,7 +64,7 @@ namespace Narupa.Grpc.Multiplayer
         private void CreateOrUpdateAvatar(string id, Dictionary<string, object> value = null)
         {
             if(!avatars.ContainsKey(id))
-                avatars.Add(id, new Avatar()
+                avatars.Add(id, new MultiplayerAvatar()
                 {
                     ID = id
                 });
@@ -72,20 +76,31 @@ namespace Narupa.Grpc.Multiplayer
             avatars.Remove(id);
         }
         
-        private Dictionary<string, Avatar> avatars = new Dictionary<string, Avatar>();
+        private Dictionary<string, MultiplayerAvatar> avatars = new Dictionary<string, MultiplayerAvatar>();
 
-        public IEnumerable<Avatar> OtherPlayerAvatars =>
+        /// <summary>
+        /// A list of <see cref="MultiplayerAvatar"/> which are not the current player.
+        /// </summary>
+        public IEnumerable<MultiplayerAvatar> OtherPlayerAvatars =>
             avatars.Values.Where(avatar => avatar.ID != multiplayer.PlayerId);
 
-        public Avatar LocalAvatar = new Avatar();
+        /// <summary>
+        /// The <see cref="MultiplayerAvatar"/> which is the local player, and hence
+        /// not controlled by the shared state dictionary.
+        /// </summary>
+        public MultiplayerAvatar LocalAvatar = new MultiplayerAvatar();
 
+        /// <summary>
+        /// Add your local avatar to the shared state dictionary
+        /// </summary>
         public void FlushLocalAvatar()
         {
             multiplayer.SetSharedState(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
         }
 
-        public void CloseClient()
+        internal void CloseClient()
         {
+            // Remove the avatar from multiplayer
             multiplayer.RemoveSharedStateKey(GetAvatarKey(multiplayer.PlayerId));
         }
     }
