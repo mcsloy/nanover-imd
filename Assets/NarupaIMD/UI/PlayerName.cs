@@ -48,6 +48,11 @@ namespace NarupaIMD.UI
             PlayerNameChanged?.Invoke();
         }
 
+        public void SetPlayerName(string name)
+        {
+            PlayerPrefs.SetString(NameKey, name);
+        }
+
         public static event Action PlayerNameChanged;
 
         private void Awake()

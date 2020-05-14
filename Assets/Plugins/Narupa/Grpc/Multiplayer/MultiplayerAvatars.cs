@@ -19,12 +19,15 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnMultiplayerJoined()
         {
-            CreateOrUpdateAvatar(multiplayer.PlayerId);
+            LocalAvatar = new Avatar()
+            {
+                ID = multiplayer.PlayerId
+            };
         }
 
         private void OnKeyUpdated(string key, object value)
         {
-            if (IsAvatarKey(key, out var id) && id != multiplayer.PlayerId && value is Dictionary<string, object> dict)
+            if (IsAvatarKey(key, out var id) && value is Dictionary<string, object> dict)
             {
                 CreateOrUpdateAvatar(id, dict);
             }
@@ -32,7 +35,7 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnKeyRemoved(string key)
         {
-            if(IsAvatarKey(key, out var id) && id != multiplayer.PlayerId)
+            if(IsAvatarKey(key, out var id))
                 RemoveAvatar(id);
         }
 
@@ -74,7 +77,7 @@ namespace Narupa.Grpc.Multiplayer
         public IEnumerable<Avatar> OtherPlayerAvatars =>
             avatars.Values.Where(avatar => avatar.ID != multiplayer.PlayerId);
 
-        public Avatar LocalAvatar => avatars[multiplayer.PlayerId];
+        public Avatar LocalAvatar = new Avatar();
 
         public void FlushLocalAvatar()
         {

@@ -1970,6 +1970,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7329113136387813182, guid: f80853092f7773849b0f9de99a6fda6f,
         type: 3}
+      propertyPath: textChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7329113136387813182, guid: f80853092f7773849b0f9de99a6fda6f,
+        type: 3}
       propertyPath: button
       value: 
       objectReference: {fileID: 2473876514043969868}
@@ -1978,6 +1983,31 @@ PrefabInstance:
       propertyPath: text
       value: 
       objectReference: {fileID: 3698763748470933409}
+    - target: {fileID: 7329113136387813182, guid: f80853092f7773849b0f9de99a6fda6f,
+        type: 3}
+      propertyPath: textChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7329113136387813182, guid: f80853092f7773849b0f9de99a6fda6f,
+        type: 3}
+      propertyPath: textChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7329113136387813182, guid: f80853092f7773849b0f9de99a6fda6f,
+        type: 3}
+      propertyPath: textChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3950169718981263475}
+    - target: {fileID: 7329113136387813182, guid: f80853092f7773849b0f9de99a6fda6f,
+        type: 3}
+      propertyPath: textChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetPlayerName
+      objectReference: {fileID: 0}
+    - target: {fileID: 7329113136387813182, guid: f80853092f7773849b0f9de99a6fda6f,
+        type: 3}
+      propertyPath: textChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8142062345457763529, guid: f80853092f7773849b0f9de99a6fda6f,
         type: 3}
       propertyPath: m_SizeDelta.x
