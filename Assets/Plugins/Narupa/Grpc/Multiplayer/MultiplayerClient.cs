@@ -92,7 +92,7 @@ namespace Narupa.Network
         /// <remarks>
         /// Corresponds to the SubscribeAllResourceValues gRPC call.
         /// </remarks>
-        public IncomingStream<ResourceValuesUpdate> SubscribeAllResourceValues(float updateInterval = 0,
+        public IncomingStream<ResourceValuesUpdate> SubscribeAllResourceValues(float updateInterval = DefaultUpdateInterval,
                                                                                CancellationToken externalToken = default)
         {
             var request = new SubscribeAllResourceValuesRequest
