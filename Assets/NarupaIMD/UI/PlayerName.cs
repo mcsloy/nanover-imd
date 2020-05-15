@@ -42,15 +42,10 @@ namespace NarupaIMD.UI
             return "User";
         }
         
-        public static void GetPlayerName(string name)
-        {
-            PlayerPrefs.SetString(NameKey, name);
-            PlayerNameChanged?.Invoke();
-        }
-
         public void SetPlayerName(string name)
         {
             PlayerPrefs.SetString(NameKey, name);
+            PlayerNameChanged?.Invoke();
         }
 
         public static event Action PlayerNameChanged;
