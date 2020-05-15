@@ -32,7 +32,7 @@ namespace NarupaIMD.UI.Teleport
         private TeleportAim aim;
 
         [SerializeField]
-        private Transform ghostHeadset;
+        private AvatarModel ghostHeadset;
 
         protected override void OnEnable()
         {
@@ -52,6 +52,7 @@ namespace NarupaIMD.UI.Teleport
         {
             foreach(var set in actionSets)
                 set.Activate();
+            ghostHeadset.SetPlayerColor(PlayerColor.GetPlayerColor());
         }
     
         public override void OnModeEnded()
@@ -72,7 +73,7 @@ namespace NarupaIMD.UI.Teleport
             var headToDestination = destinationSpace * headSpace.inverse;
             
             var newTransform = headToDestination * Transformation.FromTransformRelativeToWorld(headTransform);
-            newTransform.CopyToTransformRelativeToWorld(ghostHeadset);
+            newTransform.CopyToTransformRelativeToWorld(ghostHeadset.transform);
         }
 
 
