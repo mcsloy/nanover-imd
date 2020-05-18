@@ -140,7 +140,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
             {
                 Assert.AreEqual(MultiplayerResourceLockState.Locked, value.LockState);
                 Assert.IsTrue(state.Locks.TryGetValue("abc", out var v)
-                           && v.Equals(session.PlayerId));
+                           && v.Equals(session.SharedState.Token));
             }
 
             await AsyncAssert.PassesWithinTimeout(LockSuccessful);
@@ -153,7 +153,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
             value2.ObtainLock();
 
             void DoesPlayer2HaveLock() => Assert.IsTrue(state.Locks.TryGetValue("abc", out var v1)
-                                                     && v1.Equals(session2.PlayerId));
+                                                     && v1.Equals(session2.SharedState.Token));
 
             await AsyncAssert.PassesWithinTimeout(DoesPlayer2HaveLock);
 
@@ -177,7 +177,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
             value2.ObtainLock();
 
             void DoesPlayer2HaveLock() => Assert.IsTrue(state.Locks.TryGetValue("abc", out var v1)
-                                                     && v1.Equals(session2.PlayerId));
+                                                     && v1.Equals(session2.SharedState.Token));
 
             await AsyncAssert.PassesWithinTimeout(DoesPlayer2HaveLock);
 
@@ -193,7 +193,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
                 Assert.AreEqual(MultiplayerResourceLockState.Locked, value1.LockState);
 
             void DoesPlayer1HaveLock() => Assert.IsTrue(state.Locks.TryGetValue("abc", out var v1)
-                                                     && v1.Equals(session.PlayerId));
+                                                     && v1.Equals(session.SharedState.Token));
 
             await AsyncAssert.PassesWithinTimeout(IsPlayer1LockRejected);
             await AsyncAssert.PassesWithinTimeout(DoesPlayer2HaveLock);

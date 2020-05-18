@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Narupa.Core.Async;
@@ -13,7 +14,7 @@ namespace Narupa.Grpc
 {
     public class ClientSharedState
     {
-        private string Token { get; }
+        public string Token { get; }
         
         private GrpcClient client;
 
@@ -85,11 +86,11 @@ namespace Narupa.Grpc
         {
             if (valueFlushingTask == null)
             {
-                valueFlushingTask = CallbackInterval(FlushValues, ValuePublishInterval);
-                valueFlushingTask.AwaitInBackground();
+                valueFlushingTask = CallbackInterval(FlushValues, ValuePublishInterval, client.GetCancellationToken());
+                valueFlushingTask.AwaitInBackgroundIgnoreCancellation();
             }
 
-            IncomingValueUpdates = client.SubscribeStateUpdates();
+            IncomingValueUpdates = client.SubscribeStateUpdates(externalToken: client.GetCancellationToken());
             IncomingValueUpdates.MessageReceived += OnStateUpdate;
             IncomingValueUpdates.StartReceiving().AwaitInBackgroundIgnoreCancellation();
         }
@@ -177,12 +178,12 @@ namespace Narupa.Grpc
             pendingRemovals.Clear();
         }
 
-        private static async Task CallbackInterval(Action callback, int interval)
+        private static async Task CallbackInterval(Action callback, int interval, CancellationToken token = default)
         {
             while (true)
             {
                 callback();
-                await Task.Delay(interval);
+                await Task.Delay(interval, token);
             }
         }
     }
