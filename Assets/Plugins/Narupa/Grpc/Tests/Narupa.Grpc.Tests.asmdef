@@ -4,25 +4,29 @@
         "Narupa.Grpc",
         "Narupa.Testing",
         "Narupa.Frame",
-        "Narupa.Core"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Narupa.Core",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
+    "overrideReferences": true,
     "precompiledReferences": [
         "Narupa.Protocol.dll",
         "Google.Protobuf.dll",
         "Grpc.Core.Api.dll",
         "Grpc.Core.dll",
-        "NSubstitute.dll"
+        "NSubstitute.dll",
+        "nunit.framework.dll",
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
-    "defineConstraints": [],
-    "versionDefines": []
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
