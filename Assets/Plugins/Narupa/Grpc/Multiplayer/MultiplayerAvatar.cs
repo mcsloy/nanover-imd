@@ -108,7 +108,7 @@ namespace Narupa.Grpc.Multiplayer
                 }
             }
         }
-        
+
         /// <summary>
         /// A part of an avatar, such as a headset or controller.
         /// </summary>
@@ -128,14 +128,14 @@ namespace Narupa.Grpc.Multiplayer
             /// The rotation of the component.
             /// </summary>
             public Quaternion Rotation;
-        
+
             private const string FieldName = "name";
             private const string FieldPosition = "position";
             private const string FieldRotation = "rotation";
 
             public Component()
             {
-            
+
             }
 
             public Component(string name, Vector3 position, Quaternion rotation)
@@ -150,7 +150,7 @@ namespace Narupa.Grpc.Multiplayer
             /// </summary>
             public UnitScaleTransformation Transformation =>
                 new UnitScaleTransformation(Position, Rotation);
-        
+
             /// <summary>
             /// Convert to a dictionary structure for serialisation.
             /// </summary>
@@ -159,8 +159,19 @@ namespace Narupa.Grpc.Multiplayer
                 return new Dictionary<string, object>()
                 {
                     [FieldName] = Name,
-                    [FieldPosition] = new List<object> {Position.x, Position.y, Position.z},
-                    [FieldRotation] = new List<object> {Rotation.x, Rotation.y, Rotation.z, Rotation.w},
+                    [FieldPosition] = new List<object>
+                    {
+                        Position.x,
+                        Position.y,
+                        Position.z
+                    },
+                    [FieldRotation] = new List<object>
+                    {
+                        Rotation.x,
+                        Rotation.y,
+                        Rotation.z,
+                        Rotation.w
+                    },
                 };
             }
 

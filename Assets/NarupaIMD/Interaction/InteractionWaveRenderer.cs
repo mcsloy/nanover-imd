@@ -2,8 +2,9 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace NarupaXR.Interaction
+namespace NarupaIMD.Interaction
 {
     /// <summary>
     /// Renders Mike's pretty sine wave between two points. (From Narupa 1)
@@ -11,8 +12,9 @@ namespace NarupaXR.Interaction
     public class InteractionWaveRenderer : MonoBehaviour
     {
 #pragma warning disable 0649
+        [FormerlySerializedAs("narupaXR")]
         [SerializeField]
-        private NarupaXRPrototype narupaXR;
+        private NarupaIMDPrototype narupa;
         [SerializeField]
         private LineRenderer lineRenderer;
 

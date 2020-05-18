@@ -1,17 +1,15 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Narupa.Core.Math;
 using Narupa.Frontend.Input;
 using Narupa.Frontend.Manipulation;
-using NarupaIMD;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace NarupaXR.Interaction
+namespace NarupaIMD.Interaction
 {
     /// <summary>
     /// Simulates two randomly moving controllers grabbing and manipulating the

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
-using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
@@ -12,17 +10,17 @@ using NarupaIMD.UI;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace NarupaXR
+namespace NarupaIMD
 {
-    public class NarupaXRAvatarManager : MonoBehaviour
+    public class NarupaAvatarManager : MonoBehaviour
     {
 #pragma warning disable 0649
         [SerializeField]
         private NarupaMultiplayer multiplayer;
         
         [SerializeField]
-        private NarupaXRPrototype application;
-        
+        private NarupaIMDPrototype application;
+
         [SerializeField]
         private NarupaImdSimulation simulation;
 
@@ -96,12 +94,14 @@ namespace NarupaXR
             while (true)
             {
                 if (simulation.Multiplayer.HasPlayer)
+                {
                     simulation.Multiplayer.Avatars.LocalAvatar.SetTransformations(
-                        TransformPoseWorldToCalibrated(headset.Pose),
+                            TransformPoseWorldToCalibrated(headset.Pose),
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
 
                 simulation.Multiplayer.Avatars.FlushLocalAvatar();
+                }
 
                 yield return null;
             }
@@ -124,7 +124,7 @@ namespace NarupaXR
 
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
-
+            
             void UpdateAvatarComponent((MultiplayerAvatar Avatar, MultiplayerAvatar.Component Component) value, AvatarModel model)
             {
                 var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;

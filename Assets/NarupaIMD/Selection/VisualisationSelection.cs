@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Narupa.Core;
 using Narupa.Core.Math;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Properties;
-using Plugins.Narupa.Core;
 using UnityEngine;
 
 namespace NarupaIMD.Selection

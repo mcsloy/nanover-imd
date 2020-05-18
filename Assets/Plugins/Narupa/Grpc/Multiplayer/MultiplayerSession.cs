@@ -77,6 +77,7 @@ namespace Narupa.Session
         public int ValuePublishInterval { get; set; } = 1000 / 30;
 
         private MultiplayerClient client;
+
         private IncomingStream<ResourceValuesUpdate> IncomingValueUpdates { get; set; }
 
         private Dictionary<string, object> pendingValues
@@ -127,7 +128,7 @@ namespace Narupa.Session
 
             ClearSharedState();
             pendingValues.Clear();
-            pendingValues.Clear();
+            pendingRemovals.Clear();
         }
 
         /// <summary>
@@ -172,6 +173,7 @@ namespace Narupa.Session
             pendingValues.Remove(key);
             pendingRemovals.Add(key);
         }
+
 
         /// <summary>
         /// Get a key in the shared state dictionary.
