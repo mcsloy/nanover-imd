@@ -44,8 +44,9 @@ namespace Narupa.Grpc
 
         public ClientSharedState(GrpcClient grpcClient)
         {
-            this.client = grpcClient;
-            this.Token = Guid.NewGuid().ToString();
+            client = grpcClient;
+            Token = Guid.NewGuid().ToString();
+            StartTasks();
         }
 
         /// <summary>

@@ -25,23 +25,14 @@ namespace Narupa.Session
     {
         public const string SimulationPoseKey = "scene";
         
-        public MultiplayerAvatars Avatars { get; }
+        public MultiplayerAvatars Avatars { get; private set; }
 
         public ClientSharedState SharedState => client.SharedState;
-
-        public MultiplayerSession()
-        {
-            Avatars = new MultiplayerAvatars(this);
-
-            SimulationPose = SharedState.GetResource(SimulationPoseKey, 
-                                                     PoseFromObject, 
-                                                     PoseToObject);
-        }
 
         /// <summary>
         /// The transformation of the simulation box.
         /// </summary>
-        public readonly SharedStateResource<Transformation> SimulationPose;
+        public SharedStateResource<Transformation> SimulationPose { get; private set; }
 
         /// <summary>
         /// Is there an open client on this session?
@@ -76,6 +67,11 @@ namespace Narupa.Session
             CloseClient();
 
             client = new MultiplayerClient(connection);
+
+            Avatars = new MultiplayerAvatars(this);
+            SimulationPose = SharedState.GetResource(SimulationPoseKey, 
+                                                     PoseFromObject, 
+                                                     PoseToObject);
         }
 
         /// <summary>
@@ -83,11 +79,13 @@ namespace Narupa.Session
         /// </summary>
         public void CloseClient()
         {
-            Avatars.CloseClient();
+            Avatars?.CloseClient();
             
             client?.CloseAndCancelAllSubscriptions();
             client?.Dispose();
             client = null;
+
+            SimulationPose = null;
 
             PlayerName = null;
             PlayerId = null;
