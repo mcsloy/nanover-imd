@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NarupaXR.Examples
@@ -27,15 +28,24 @@ namespace NarupaXR.Examples
 
         private void Update()
         {
-            imdClient.InteractiveSession.SetInteraction(streamId, 
-                                                        transform.position, 
-                                                        force, 
-                                                        particles: new [] {atomIndex});
+            var interaction = new Narupa.Grpc.Interactive.Interaction
+            {
+                Position = transform.position,
+                Properties = new Narupa.Grpc.Interactive.Interaction.InteractionProperties()
+                {
+                    Scale = force,
+                },
+                Particles = new List<int>
+                {
+                    atomIndex
+                }
+            };
+            imdClient.InteractiveSession.PushInteraction(interaction);
         }
 
         private void OnDisable()
         {
-            imdClient.InteractiveSession.UnsetInteraction(streamId);
+            imdClient.InteractiveSession.RemoveInteraction(streamId);
         }
     }
 }

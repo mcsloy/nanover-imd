@@ -2,7 +2,9 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using Narupa.Core.Math;
+using Narupa.Grpc.Interactive;
 using Narupa.Session;
 using UnityEngine;
 
@@ -43,13 +45,13 @@ namespace Narupa.Frontend.Manipulation
         /// </summary>
         public IActiveManipulation StartParticleGrab(UnitScaleTransformation grabberPose)
         {
-            if (InteractableParticles.GetParticleGrab(grabberPose) is ActiveParticleGrab grab)
+            if (InteractableParticles.GetParticleGrab(grabberPose) is InteractionParticleGrab grab)
                 return StartParticleGrab(grabberPose, grab);
             return null;
         }
 
         private ActiveParticleGrab StartParticleGrab(UnitScaleTransformation grabberPose,
-                                                     ActiveParticleGrab grab)
+                                                     InteractionParticleGrab grab)
         {
             grab.UpdateManipulatorPose(grabberPose);
             grab.ParticleGrabUpdated += () => OnParticleGrabUpdated(grab);
@@ -59,21 +61,21 @@ namespace Narupa.Frontend.Manipulation
             return grab;
         }
 
-        private void OnParticleGrabUpdated(ActiveParticleGrab grab)
+        private void OnParticleGrabUpdated(InteractionParticleGrab grab)
         {
             var position = transform.InverseTransformPoint(grab.GrabPosition);
 
-            imdSession.SetInteraction(grab.Id,
-                                      position,
-                                      forceScale: ForceScale,
-                                      particles: grab.ParticleIndices,
-                                      properties: grab.Properties);
+            var interaction = grab.Interaction;
+            interaction.Position = position;
+            interaction.Properties.Scale = ForceScale;
+                    
+            imdSession.PushInteraction(interaction);
         }
 
-        private void EndParticleGrab(ActiveParticleGrab grab)
+        private void EndParticleGrab(InteractionParticleGrab grab)
         {
             activeGrabs.Remove(grab);
-            imdSession.UnsetInteraction(grab.Id);
+            imdSession.RemoveInteraction(grab.Id);
         }
     }
 }

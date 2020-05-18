@@ -7,7 +7,7 @@ namespace Narupa.Grpc.Serialization
     public class Serialization
     {
         /// <summary>
-        /// Serialize an object to a data structure consisting of
+        /// Serialize an object from a data structure consisting of
         /// <see cref="Dictionary{TKey,TValue}" />,
         /// <see cref="List{Object}" />, <see cref="string" />, <see cref="float" />,
         /// <see cref="string" /> and <see cref="bool" />, using a
@@ -19,6 +19,22 @@ namespace Narupa.Grpc.Serialization
             {
                 var serializer = new JsonSerializer();
                 return serializer.Deserialize<T>(reader);
+            }
+        }
+        
+        /// <summary>
+        /// Update an object from a data structure consisting of
+        /// <see cref="Dictionary{TKey,TValue}" />,
+        /// <see cref="List{Object}" />, <see cref="string" />, <see cref="float" />,
+        /// <see cref="string" /> and <see cref="bool" />, using a
+        /// <see cref="JsonSerializer" />.
+        /// </summary>
+        public static void UpdateFromDataStructure(object data, object target)
+        {
+            using (var reader = new CSharpObjectReader(data))
+            {
+                var serializer = new JsonSerializer();
+                serializer.Populate(reader, target);
             }
         }
 

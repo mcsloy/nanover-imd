@@ -31,11 +31,6 @@ namespace Narupa.Frontend.Manipulation
         public Vector3 GrabPosition { get; private set; }
 
         /// <summary>
-        /// A set of properties associated with this manipulation.
-        /// </summary>
-        public Dictionary<string, object> Properties { get; } = new Dictionary<string, object>();
-
-        /// <summary>
         /// Callback for when the grab position is updated.
         /// </summary>
         public event Action ParticleGrabUpdated;
@@ -57,13 +52,6 @@ namespace Narupa.Frontend.Manipulation
         public void EndManipulation()
         {
             ManipulationEnded?.Invoke();
-        }
-
-        private const string KeyResetVelocities = "reset_velocities";
-
-        public bool ResetVelocities
-        {
-            set => Properties[KeyResetVelocities] = value;
         }
     }
 }

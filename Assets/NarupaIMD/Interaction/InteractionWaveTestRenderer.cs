@@ -55,12 +55,12 @@ namespace NarupaXR.Interaction
             var interactions = narupaXR.Sessions.Imd.Interactions;
             var frame = narupaXR.FrameSynchronizer.CurrentFrame;
             
-            wavePool.MapConfig(interactions.Values, MapConfigToInstance);
+            wavePool.MapConfig(interactions, MapConfigToInstance);
             
-            void MapConfigToInstance(ImdSession.InteractionData interaction, 
+            void MapConfigToInstance(Narupa.Grpc.Interactive.Interaction interaction, 
                                      InteractionWaveRenderer renderer)
             {
-                var particlePositionSim = computeParticleCentroid(interaction.ParticleIds);
+                var particlePositionSim = computeParticleCentroid(interaction.Particles);
                 var particlePositionWorld = transform.TransformPoint(particlePositionSim);
                 
                 renderer.SetPositionAndForce(transform.TransformPoint(interaction.Position),

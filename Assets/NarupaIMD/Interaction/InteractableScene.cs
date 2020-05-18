@@ -39,7 +39,7 @@ namespace NarupaXR.Interaction
             var interactions = prototype.Sessions.Imd.Interactions;
             var pts = new List<int>();
             foreach (var interaction in interactions)
-                pts.AddRange(interaction.Value.ParticleIds);
+                pts.AddRange(interaction.Particles);
             interactedParticles.Value = pts.ToArray();
         }
 
@@ -47,7 +47,7 @@ namespace NarupaXR.Interaction
         /// Attempt to grab the nearest particle, returning null if no interaction is possible.
         /// </summary>
         /// <param name="grabberPose">The transformation of the grabbing pivot.</param>
-        public ActiveParticleGrab GetParticleGrab(Transformation grabberPose)
+        public InteractionParticleGrab GetParticleGrab(Transformation grabberPose)
         {
             var particleIndex = GetClosestParticleToWorldPosition(grabberPose.Position);
 
@@ -61,9 +61,10 @@ namespace NarupaXR.Interaction
 
             var indices = GetIndicesInSelection(selection, particleIndex.Value);
 
-            var grab = new ActiveParticleGrab(indices);
+            var grab = new InteractionParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
-                grab.ResetVelocities = true;
+                grab.Interaction.Properties.ResetVelocities = true;
+            
             return grab;
         }
         
