@@ -1,10 +1,9 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using NarupaIMD;
 using UnityEngine;
 
-namespace NarupaXR
+namespace NarupaIMD.UI
 {
     /// <summary>
     /// Component that exposes the trajectory playback commands to Unity UI

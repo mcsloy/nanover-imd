@@ -7,7 +7,7 @@ using Narupa.Grpc.Trajectory;
 using Narupa.Session;
 using UnityEngine;
 
-namespace NarupaXR.Examples
+namespace NarupaIMD.Examples
 {
     /// <summary>
     /// Example Interactive Molecular Dynamics client. Connects to a remote

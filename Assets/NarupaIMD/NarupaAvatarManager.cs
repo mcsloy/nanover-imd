@@ -9,16 +9,16 @@ using NarupaIMD.UI;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace NarupaXR
+namespace NarupaIMD
 {
-    public class NarupaXRAvatarManager : MonoBehaviour
+    public class NarupaAvatarManager : MonoBehaviour
     {
 #pragma warning disable 0649
         [SerializeField]
         private NarupaMultiplayer multiplayer;
 
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaIMDPrototype application;
 
         [SerializeField]
         private NarupaImdSimulation simulation;
@@ -100,9 +100,9 @@ namespace NarupaXR
                         worldToMultiplayer * headTransform,
                         worldToMultiplayer * leftHandTransform,
                         worldToMultiplayer * rightHandTransform);
-                }
 
-                simulation.Multiplayer.Avatars.FlushLocalAvatar();
+                    simulation.Multiplayer.Avatars.FlushLocalAvatar();
+                }
 
                 yield return null;
             }

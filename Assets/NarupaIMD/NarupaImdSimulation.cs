@@ -9,8 +9,7 @@ using Narupa.Grpc;
 using Narupa.Grpc.Trajectory;
 using Narupa.Session;
 using Narupa.Visualisation;
-using NarupaXR;
-using NarupaXR.Interaction;
+using NarupaIMD.Interaction;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -38,7 +37,7 @@ namespace NarupaIMD
         private InteractableScene interactableScene;
 
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaIMDPrototype application;
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public ImdSession Imd { get; } = new ImdSession();

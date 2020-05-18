@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/NarupaIMD/NarupaXR Scene.unity
+    path: Assets/NarupaIMD/Narupa iMD Scene.unity
     guid: 9004003917e9e3c41867ba1a880c5401
   m_configObjects: {}

@@ -1,12 +1,10 @@
-﻿using Essd;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Essd;
 using Narupa.Frontend.XR;
-using NarupaIMD;
 using UnityEngine;
 
-namespace NarupaXR
+namespace NarupaIMD.UI
 {
     /// <summary>
     /// Unity Immediate Mode GUI for connecting, configuring, etc from the
@@ -15,7 +13,7 @@ namespace NarupaXR
     public class DesktopDebugUI : MonoBehaviour
     {
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaIMDPrototype application;
         
         [SerializeField]
         private NarupaImdSimulation simulation;

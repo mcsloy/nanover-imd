@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Property;
-using NarupaXR;
-using NarupaXR.Interaction;
+using NarupaIMD.Interaction;
 using UnityEngine;
 
 namespace NarupaIMD.Selection

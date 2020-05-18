@@ -8,7 +8,7 @@ using Narupa.Visualisation;
 using Narupa.Visualisation.Utility;
 using UnityEngine;
 
-namespace NarupaXR.Examples
+namespace NarupaIMD.Examples
 {
     /// <summary>
     /// Example of how to use the IndirectMeshDrawCommand for rendering particles.

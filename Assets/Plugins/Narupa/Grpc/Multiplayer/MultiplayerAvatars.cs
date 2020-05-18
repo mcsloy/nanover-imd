@@ -39,7 +39,7 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnKeyRemoved(string key)
         {
-            if(IsAvatarKey(key, out var id))
+            if (IsAvatarKey(key, out var id))
                 RemoveAvatar(id);
         }
 
@@ -53,17 +53,17 @@ namespace Narupa.Grpc.Multiplayer
         {
             if (key.StartsWith("avatar."))
             {
-               playerId = key.Substring(7);
-               return true;
+                playerId = key.Substring(7);
+                return true;
             }
 
             playerId = default;
             return false;
         }
-        
+
         private void CreateOrUpdateAvatar(string id, Dictionary<string, object> value = null)
         {
-            if(!avatars.ContainsKey(id))
+            if (!avatars.ContainsKey(id))
                 avatars.Add(id, new MultiplayerAvatar()
                 {
                     ID = id
@@ -75,8 +75,9 @@ namespace Narupa.Grpc.Multiplayer
         {
             avatars.Remove(id);
         }
-        
-        private Dictionary<string, MultiplayerAvatar> avatars = new Dictionary<string, MultiplayerAvatar>();
+
+        private Dictionary<string, MultiplayerAvatar> avatars =
+            new Dictionary<string, MultiplayerAvatar>();
 
         /// <summary>
         /// A list of <see cref="MultiplayerAvatar"/> which are not the current player.
