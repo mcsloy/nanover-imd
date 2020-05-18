@@ -10,7 +10,7 @@ namespace Narupa.Grpc.Multiplayer
     /// service.
     /// </summary>
     /// <typeparam name="TValue">The type to interpret the value of this key as.</typeparam>
-    public class MultiplayerResource<TValue>
+    public class SharedStateResource<TValue>
     {
         /// <summary>
         /// Is the current value a local value that is pending being sent to the server.
@@ -30,15 +30,15 @@ namespace Narupa.Grpc.Multiplayer
         /// An optional converter for converting the value
         /// provided to one suitable for serialisation to protobuf.
         /// </param>
-        public MultiplayerResource(MultiplayerSession session,
+        public SharedStateResource(ClientSharedState sharedState,
                                    string key,
                                    Converter<object, TValue> objectToValue = null,
                                    Converter<TValue, object> valueToObject = null)
         {
-            this.session = session;
+            this.sharedState = sharedState;
             ResourceKey = key;
             LockState = MultiplayerResourceLockState.Unlocked;
-            session.SharedStateDictionaryKeyUpdated += SharedStateDictionaryKeyUpdated;
+            sharedState.KeyUpdated += SharedStateDictionaryKeyUpdated;
             this.objectToValue = objectToValue;
             this.valueToObject = valueToObject;
         }
@@ -103,7 +103,7 @@ namespace Narupa.Grpc.Multiplayer
 
         private TValue GetRemoteValue()
         {
-            return ObjectToValue(session.GetSharedState(ResourceKey));
+            return ObjectToValue(sharedState.GetValue(ResourceKey));
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private void CopyLocalValueToRemote()
         {
-            session.SetSharedState(ResourceKey, ValueToObject(value));
+            sharedState.SetValue(ResourceKey, ValueToObject(value));
         }
         
         private TValue value;
@@ -126,7 +126,7 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public MultiplayerResourceLockState LockState { get; private set; }
 
-        private MultiplayerSession session;
+        private ClientSharedState sharedState;
 
         /// <summary>
         /// Value of this resource. Mirrors the value in the remote dictionary, unless a
@@ -154,7 +154,7 @@ namespace Narupa.Grpc.Multiplayer
         private async Task ObtainLockAsync()
         {
             LockState = MultiplayerResourceLockState.Pending;
-            var success = await session.LockResource(ResourceKey);
+            var success = await sharedState.LockKey(ResourceKey, 1f);
             LockState = success
                             ? MultiplayerResourceLockState.Locked
                             : MultiplayerResourceLockState.Unlocked;
@@ -189,7 +189,7 @@ namespace Narupa.Grpc.Multiplayer
                 LockState = MultiplayerResourceLockState.Unlocked;
                 CopyRemoteValueToLocal();
                 LockReleased?.Invoke();
-                await session.ReleaseResource(ResourceKey);
+                await sharedState.ReleaseKey(ResourceKey);
             }
         }
 

@@ -7,15 +7,12 @@ using System.Threading.Tasks;
 using Narupa.Protocol.Multiplayer;
 using Narupa.Network;
 using UnityEngine;
-using Avatar = Narupa.Protocol.Multiplayer.Avatar;
 using System.Linq;
-using Grpc.Core;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Grpc;
 using Narupa.Grpc.Multiplayer;
 using Narupa.Grpc.Stream;
-using UnityEngine.Profiling;
 
 namespace Narupa.Session
 {
@@ -30,25 +27,21 @@ namespace Narupa.Session
         
         public MultiplayerAvatars Avatars { get; }
 
+        public ClientSharedState SharedState => client.SharedState;
+
         public MultiplayerSession()
         {
             Avatars = new MultiplayerAvatars(this);
-            
-            SimulationPose =
-                new MultiplayerResource<Transformation>(this, SimulationPoseKey, PoseFromObject,
-                                                        PoseToObject);
+
+            SimulationPose = SharedState.GetResource(SimulationPoseKey, 
+                                                     PoseFromObject, 
+                                                     PoseToObject);
         }
 
         /// <summary>
         /// The transformation of the simulation box.
         /// </summary>
-        public readonly MultiplayerResource<Transformation> SimulationPose;
-
-        /// <summary>
-        /// Dictionary of the currently known shared state.
-        /// </summary>
-        public Dictionary<string, object> SharedStateDictionary { get; } =
-            new Dictionary<string, object>();
+        public readonly SharedStateResource<Transformation> SimulationPose;
 
         /// <summary>
         /// Is there an open client on this session?
@@ -70,27 +63,7 @@ namespace Narupa.Session
         /// </summary>
         public string PlayerId { get; private set; }
 
-        /// <summary>
-        /// How many milliseconds to put between sending our requested value
-        /// changes.
-        /// </summary>
-        public int ValuePublishInterval { get; set; } = 1000 / 30;
-
         private MultiplayerClient client;
-
-        private IncomingStream<ResourceValuesUpdate> IncomingValueUpdates { get; set; }
-
-        private Dictionary<string, object> pendingValues
-            = new Dictionary<string, object>();
-
-        private List<string> pendingRemovals
-            = new List<string>();
-
-        private Task valueFlushingTask;
-
-        public event Action<string, object> SharedStateDictionaryKeyUpdated;
-
-        public event Action<string> SharedStateDictionaryKeyRemoved;
 
         public event Action MultiplayerJoined;
 
@@ -103,12 +76,6 @@ namespace Narupa.Session
             CloseClient();
 
             client = new MultiplayerClient(connection);
-
-            if (valueFlushingTask == null)
-            {
-                valueFlushingTask = CallbackInterval(FlushValues, ValuePublishInterval);
-                valueFlushingTask.AwaitInBackground();
-            }
         }
 
         /// <summary>
@@ -117,7 +84,6 @@ namespace Narupa.Session
         public void CloseClient()
         {
             Avatars.CloseClient();
-            FlushValues();
             
             client?.CloseAndCancelAllSubscriptions();
             client?.Dispose();
@@ -125,10 +91,6 @@ namespace Narupa.Session
 
             PlayerName = null;
             PlayerId = null;
-
-            ClearSharedState();
-            pendingValues.Clear();
-            pendingRemovals.Clear();
         }
 
         /// <summary>
@@ -145,135 +107,13 @@ namespace Narupa.Session
             PlayerName = playerName;
             PlayerId = response.PlayerId;
 
-            IncomingValueUpdates = client.SubscribeAllResourceValues();
-            IncomingValueUpdates.MessageReceived += OnResourceValuesUpdateReceived;
-            IncomingValueUpdates.StartReceiving().AwaitInBackgroundIgnoreCancellation();
-
             MultiplayerJoined?.Invoke();
         }
         
-        /// <summary>
-        /// Set the given key in the shared state dictionary, which will be
-        /// sent to the server according in the future according to the publish 
-        /// interval.
-        /// </summary>
-        public void SetSharedState(string key, object value)
-        {
-            pendingValues[key] = value.ToProtobufValue();
-            pendingRemovals.Remove(key);
-        }
-        
-        /// <summary>
-        /// Remove the given key from the shared state dictionary, which will be
-        /// sent to the server according in the future according to the publish 
-        /// interval.
-        /// </summary>
-        public void RemoveSharedStateKey(string key)
-        {
-            pendingValues.Remove(key);
-            pendingRemovals.Add(key);
-        }
-
-
-        /// <summary>
-        /// Get a key in the shared state dictionary.
-        /// </summary>
-        public object GetSharedState(string key)
-        {
-            return SharedStateDictionary.TryGetValue(key, out var value) ? value : null;
-        }
-
-        /// <summary>
-        /// Attempt to gain exclusive write access to the shared value of the given key.
-        /// </summary>
-        public async Task<bool> LockResource(string id)
-        {
-            return await client.LockResource(PlayerId, id);
-        }
-
-        /// <summary>
-        /// Release the lock on the given object of a given key.
-        /// </summary>
-        public async Task<bool> ReleaseResource(string id)
-        {
-            return await client.ReleaseResource(PlayerId, id);
-        }
-
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            FlushValues();
-
             CloseClient();
-        }
-
-        private void ClearSharedState()
-        {
-            var keys = SharedStateDictionary.Keys.ToList();
-            SharedStateDictionary.Clear();
-
-            foreach (var key in keys)
-            {
-                try
-                {
-                    SharedStateDictionaryKeyRemoved?.Invoke(key);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                }
-            }
-        }
-
-        private void OnResourceValuesUpdateReceived(ResourceValuesUpdate update)
-        {
-            if (update.ResourceValueChanges != null)
-            {
-                foreach (var pair in update.ResourceValueChanges.Fields)
-                {
-                    var value = pair.Value.ToObject();
-                    SharedStateDictionary[pair.Key] = value;
-                    SharedStateDictionaryKeyUpdated?.Invoke(pair.Key, value);
-                }
-            }
-
-            if (update.ResourceValueRemovals != null)
-            {
-                foreach (var key in update.ResourceValueRemovals)
-                {
-                    SharedStateDictionaryKeyRemoved?.Invoke(key);
-                }
-            }
-        }
-
-        private void FlushValues()
-        {
-            if (!IsOpen || !HasPlayer)
-                return;
-
-            foreach (var pair in pendingValues)
-            {
-                client.SetResourceValue(PlayerId, pair.Key, pair.Value.ToProtobufValue())
-                      .AwaitInBackgroundIgnoreCancellation();
-            }
-            
-            foreach (var key in pendingRemovals)
-            {
-                client.RemoveResourceKey(PlayerId, key)
-                      .AwaitInBackgroundIgnoreCancellation();
-            }
-            
-            pendingValues.Clear();
-            pendingRemovals.Clear();
-        }
-
-        private static async Task CallbackInterval(Action callback, int interval)
-        {
-            while (true)
-            {
-                callback();
-                await Task.Delay(interval);
-            }
         }
 
         private static object PoseToObject(Transformation pose)
@@ -302,9 +142,6 @@ namespace Narupa.Session
             throw new ArgumentOutOfRangeException();
         }
 
-        public MultiplayerResource<object> GetSharedResource(string key)
-        {
-            return new MultiplayerResource<object>(this, key);
-        }
+
     }
 }

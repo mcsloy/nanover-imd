@@ -20,9 +20,6 @@ namespace Narupa.Network
     public class MultiplayerClient :
         GrpcClient<Multiplayer.MultiplayerClient>
     {
-        // Chosen as an acceptable minimum rate that should ideally be 
-        // explicitly increased.
-        private const float DefaultUpdateInterval = 1f / 30f;
 
         public MultiplayerClient([NotNull] GrpcConnection connection) : base(connection)
         {
@@ -44,24 +41,7 @@ namespace Narupa.Network
             return await Client.CreatePlayerAsync(request);
         }
 
-        /// <summary>
-        /// Starts an <see cref="IncomingStream{ResourceValuesUpdate}" /> on 
-        /// which the server provides updates to the shared key/value store at 
-        /// the requested time interval (in seconds).
-        /// </summary>
-        /// <remarks>
-        /// Corresponds to the SubscribeAllResourceValues gRPC call.
-        /// </remarks>
-        public IncomingStream<ResourceValuesUpdate> SubscribeAllResourceValues(float updateInterval = DefaultUpdateInterval,
-                                                                               CancellationToken externalToken = default)
-        {
-            var request = new SubscribeAllResourceValuesRequest
-            {
-                UpdateInterval = updateInterval,
-            };
-
-            return GetIncomingStream(Client.SubscribeAllResourceValues, request, externalToken);
-        }
+       
 
         /// <summary>
         /// Attempts a change, on behalf of the given player, to the shared

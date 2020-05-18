@@ -5,46 +5,43 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using JetBrains.Annotations;
 using Narupa.Core.Async;
 using Narupa.Grpc.Stream;
 using Narupa.Protocol.Command;
+using Narupa.Protocol.State;
 
 namespace Narupa.Grpc
 {
-    /// <summary>
-    /// Base implementation of a C# wrapper around a gRPC client to a specific service.
-    /// </summary>
-    public abstract class GrpcClient<TClient> : Cancellable, IAsyncClosable
-        where TClient : ClientBase<TClient>
+    public abstract class GrpcClient : Cancellable, IAsyncClosable
     {
-        /// <summary>
-        /// gRPC Client that provides access to RPC calls.
-        /// </summary>
-        protected TClient Client { get; }
+        // Chosen as an acceptable minimum rate that should ideally be 
+        // explicitly increased.
+        private const float DefaultUpdateInterval = 1f / 30f;
 
         /// <summary>
         /// The client used to access the Command service on the same port as this client.
         /// </summary>
         protected Command.CommandClient CommandClient { get; }
+        
+        protected State.StateClient StateClient { get; }
+        
+        public ClientSharedState SharedState { get; }
 
-        /// <summary>
-        /// Create a client to a server described by the provided
-        /// <see cref="GrpcConnection" />.
-        /// </summary>
-        public GrpcClient([NotNull] GrpcConnection connection) : base(
+        protected GrpcClient([NotNull] GrpcConnection connection) : base(
             connection.GetCancellationToken())
         {
             if (connection.IsCancelled)
                 throw new ArgumentException("Connection has already been shutdown.");
 
-            Client = (TClient) Activator.CreateInstance(typeof(TClient), connection.Channel);
-
             CommandClient = new Command.CommandClient(connection.Channel);
+            StateClient = new State.StateClient(connection.Channel);
+            SharedState = new ClientSharedState(this);
         }
-
-
+        
+        
         /// <summary>
         /// Run a command on a gRPC service that uses the command service.
         /// </summary>
@@ -98,6 +95,7 @@ namespace Narupa.Grpc
         /// <inheritdoc cref="IAsyncClosable.CloseAsync" />
         public Task CloseAsync()
         {
+            SharedState.Close();
             Cancel();
 
             return Task.CompletedTask;
@@ -106,6 +104,89 @@ namespace Narupa.Grpc
         public void CloseAndCancelAllSubscriptions()
         {
             CloseAsync();
+        }
+        
+        /// <summary>
+        /// Starts an <see cref="IncomingStream{StateUpdate}" /> on 
+        /// which the server provides updates to the shared key/value store at 
+        /// the requested time interval (in seconds).
+        /// </summary>
+        /// <remarks>
+        /// Corresponds to the SubscribeStateUpdates gRPC call.
+        /// </remarks>
+        public IncomingStream<StateUpdate> SubscribeStateUpdates(float updateInterval = DefaultUpdateInterval,
+                                                                 CancellationToken externalToken = default)
+        {
+            var request = new SubscribeStateUpdatesRequest
+            {
+                UpdateInterval = updateInterval,
+            };
+
+            return GetIncomingStream(StateClient.SubscribeStateUpdates, request, externalToken);
+        }
+        
+        public async Task<bool> UpdateState(string token, Dictionary<string, object> updates, List<string> removals)
+        {
+            var request = new UpdateStateRequest()
+            {
+                AccessToken = token,
+                Update = CreateStateUpdate(updates, removals)
+            };
+
+            var response = await StateClient.UpdateStateAsync(request);
+
+            return response.Success;
+        }
+        
+        public async Task<bool> UpdateLocks(string token, IDictionary<string, float> toAcquire, IEnumerable<string> toRemove)
+        {
+            var request = new UpdateLocksRequest
+            {
+                AccessToken = token,
+                LockKeys = CreateLockUpdate(toAcquire, toRemove)
+            };
+
+            var response = await StateClient.UpdateLocksAsync(request);
+
+            return response.Success;
+        }
+
+        private Struct CreateLockUpdate(IDictionary<string, float> toAcquire, IEnumerable<string> toRelease)
+        {
+            var str = toAcquire.ToProtobufStruct();
+            foreach(var releasedkey in toRelease)
+                str.Fields[releasedkey] = Value.ForNull();
+            return str;
+        }
+
+        private static StateUpdate CreateStateUpdate(IDictionary<string, object> updates, IEnumerable<string> removals)
+        {
+            var update = new StateUpdate();
+            var updatesAsStruct = updates.ToProtobufStruct();
+            update.ChangedKeys = updatesAsStruct;
+            foreach (var removal in removals)
+                update.ChangedKeys.Fields[removal] = Value.ForNull();
+            return update;
+        }
+    }
+    
+    /// <summary>
+    /// Base implementation of a C# wrapper around a gRPC client to a specific service.
+    /// </summary>
+    public abstract class GrpcClient<TClient> : GrpcClient where TClient : ClientBase<TClient>
+    {
+        /// <summary>
+        /// gRPC Client that provides access to RPC calls.
+        /// </summary>
+        protected TClient Client { get; }
+
+        /// <summary>
+        /// Create a client to a server described by the provided
+        /// <see cref="GrpcConnection" />.
+        /// </summary>
+        public GrpcClient([NotNull] GrpcConnection connection) : base(connection)
+        {
+            Client = (TClient) Activator.CreateInstance(typeof(TClient), connection.Channel);
         }
     }
 }

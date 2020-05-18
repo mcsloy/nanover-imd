@@ -85,9 +85,9 @@ namespace NarupaIMD.Selection
             frameAdaptor.FrameSource = frameSource;
             frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles; 
 
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated +=
+            narupaIMD.Sessions.Multiplayer.SharedState.KeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=
+            narupaIMD.Sessions.Multiplayer.SharedState.KeyRemoved +=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
             var baseLayer = AddLayer(BaseLayerName);
             rootSelection = ParticleSelection.CreateRootSelection();
@@ -97,9 +97,9 @@ namespace NarupaIMD.Selection
 
         private void OnDisable()
         {
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated -=
+            narupaIMD.Sessions.Multiplayer.SharedState.KeyUpdated -=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved -=
+            narupaIMD.Sessions.Multiplayer.SharedState.KeyRemoved -=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
         }
 
