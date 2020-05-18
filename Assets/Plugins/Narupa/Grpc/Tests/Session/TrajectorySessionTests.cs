@@ -119,7 +119,7 @@ namespace Narupa.Grpc.Tests.Session
         [AsyncTest]
         public async Task ArbitraryCommand()
         {
-            await session.Client.RunCommandAsync("some_command",
+            session.RunCommand("some_command",
                                                  new Dictionary<string, object>
                                                  {
                                                      ["abc"] = 1.23,

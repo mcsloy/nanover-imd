@@ -3,16 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Narupa.Protocol.Multiplayer;
-using Narupa.Network;
-using UnityEngine;
 using System.Linq;
-using Narupa.Core.Async;
+using System.Threading.Tasks;
 using Narupa.Core.Math;
 using Narupa.Grpc;
 using Narupa.Grpc.Multiplayer;
-using Narupa.Grpc.Stream;
+using Narupa.Network;
 
 namespace Narupa.Session
 {
@@ -21,23 +17,16 @@ namespace Narupa.Session
     /// local and remote avatars and maintains a copy of the latest values in
     /// the shared key/value store.
     /// </summary>
-    public sealed class MultiplayerSession : IDisposable
+    public sealed class MultiplayerSession : GrpcSession<MultiplayerClient>
     {
         public const string SimulationPoseKey = "scene";
-        
-        public MultiplayerAvatars Avatars { get; private set; }
 
-        public ClientSharedState SharedState => client.SharedState;
+        public MultiplayerAvatars Avatars { get; private set; }
 
         /// <summary>
         /// The transformation of the simulation box.
         /// </summary>
         public SharedStateResource<Transformation> SimulationPose { get; private set; }
-
-        /// <summary>
-        /// Is there an open client on this session?
-        /// </summary>
-        public bool IsOpen => client != null;
 
         /// <summary>
         /// Has this session created a user?
@@ -54,36 +43,32 @@ namespace Narupa.Session
         /// </summary>
         public string PlayerId { get; private set; }
 
-        private MultiplayerClient client;
-
         public event Action MultiplayerJoined;
 
-        /// <summary>
-        /// Connect to a Multiplayer service over the given connection. 
-        /// Closes any existing client.
-        /// </summary>
-        public void OpenClient(GrpcConnection connection)
+        protected override MultiplayerClient CreateClient(GrpcConnection connection)
         {
-            CloseClient();
+            return new MultiplayerClient(connection);
+        }
 
-            client = new MultiplayerClient(connection);
+        public override void OpenClient(GrpcConnection connection)
+        {
+            base.OpenClient(connection);
 
             Avatars = new MultiplayerAvatars(this);
-            SimulationPose = SharedState.GetResource(SimulationPoseKey, 
-                                                     PoseFromObject, 
-                                                     PoseToObject);
+            SimulationPose = SharedState.GetResource(SimulationPoseKey,
+                                                     PoseFromObject,
+                                                     PoseToObject,
+                                                     Transformation.Identity);
         }
 
         /// <summary>
         /// Close the current Multiplayer client and dispose all streams.
         /// </summary>
-        public void CloseClient()
+        public override void CloseClient()
         {
             Avatars?.CloseClient();
-            
-            client?.CloseAndCancelAllSubscriptions();
-            client?.Dispose();
-            client = null;
+
+            base.CloseClient();
 
             SimulationPose = null;
 
@@ -100,18 +85,12 @@ namespace Narupa.Session
             if (HasPlayer)
                 throw new InvalidOperationException($"Multiplayer already joined as {PlayerName}");
 
-            var response = await client.CreatePlayer(playerName);
+            var response = await Client.CreatePlayer(playerName);
 
             PlayerName = playerName;
             PlayerId = response.PlayerId;
 
             MultiplayerJoined?.Invoke();
-        }
-        
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            CloseClient();
         }
 
         private static object PoseToObject(Transformation pose)
@@ -139,7 +118,5 @@ namespace Narupa.Session
 
             throw new ArgumentOutOfRangeException();
         }
-
-
     }
 }

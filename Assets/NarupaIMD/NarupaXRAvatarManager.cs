@@ -88,6 +88,9 @@ namespace NarupaXR
 
         private void UpdateRendering()
         {
+            if (!narupa.Sessions.Multiplayer.IsOpen)
+                return;
+            
             var headsets = narupa.Sessions.Multiplayer
                                  .Avatars.OtherPlayerAvatars
                                  .SelectMany(avatar => avatar.Components, (avatar, component) =>

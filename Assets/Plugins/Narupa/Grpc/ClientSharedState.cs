@@ -80,6 +80,14 @@ namespace Narupa.Grpc
         {
             return sharedState.TryGetValue(key, out var value) ? value : null;
         }
+        
+        /// <summary>
+        /// Try to get a key in the shared state dictionary.
+        /// </summary>
+        public bool TryGetValue(string key, out object value)
+        {
+            return sharedState.TryGetValue(key, out value);
+        }
 
 
         public void StartTasks()
@@ -127,9 +135,14 @@ namespace Narupa.Grpc
             pendingRemovals.Clear();
         }
 
-        public SharedStateResource<T> GetResource<T>(string key, Converter<object, T> objectToValue = null, Converter<T, object> valueToObject = null)
+        public SharedStateResource<T> GetResource<T>(string key, Converter<object, T> objectToValue = null, Converter<T, object> valueToObject = null, T defaultValue = default)
         {
-            return new SharedStateResource<T>(this, key, objectToValue, valueToObject);
+            return new SharedStateResource<T>(this, key)
+            {
+                ObjectToValue = objectToValue,
+                ValueToObject = valueToObject,
+                DefaultValue = defaultValue
+            };
         }
         
         public SharedStateResource<object> GetResource(string key)
@@ -159,6 +172,7 @@ namespace Narupa.Grpc
                 var value = pair.Value.ToObject();
                 if (value == null)
                 {
+                    sharedState.Remove(pair.Key);
                     KeyRemoved?.Invoke(pair.Key);
                 }
                 else

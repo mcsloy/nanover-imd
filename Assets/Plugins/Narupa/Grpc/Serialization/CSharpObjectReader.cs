@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Narupa.Core;
 using Newtonsoft.Json;
@@ -54,6 +55,11 @@ namespace Narupa.Grpc.Serialization
                 case float flt:
                     yield return (JsonToken.Float, flt);
                     break;
+                case double dbl:
+                    yield return (JsonToken.Float, dbl);
+                    break;
+                default:
+                    throw new ArgumentException($"Cannot parse {obj}");
             }
         }
 

@@ -31,37 +31,36 @@ namespace Narupa.Grpc.Multiplayer
         /// provided to one suitable for serialisation to protobuf.
         /// </param>
         public SharedStateResource(ClientSharedState sharedState,
-                                   string key,
-                                   Converter<object, TValue> objectToValue = null,
-                                   Converter<TValue, object> valueToObject = null)
+                                   string key)
         {
             this.sharedState = sharedState;
             ResourceKey = key;
             LockState = MultiplayerResourceLockState.Unlocked;
             sharedState.KeyUpdated += SharedStateDictionaryKeyUpdated;
-            this.objectToValue = objectToValue;
-            this.valueToObject = valueToObject;
+            sharedState.KeyRemoved += SharedStateOnKeyRemoved;
         }
 
-        private readonly Converter<object, TValue> objectToValue;
+        public Converter<object, TValue> ObjectToValue { get; set; }
 
-        private readonly Converter<TValue, object> valueToObject;
+        public Converter<TValue, object> ValueToObject { get; set; }
+
+        public TValue DefaultValue { get; set; } = default;
 
         /// <summary>
         /// Convert the value provided to one suitable for serialisation to protobuf.
         /// </summary>
-        private object ValueToObject(TValue value)
+        private object ConvertValueToObject(TValue value)
         {
-            return valueToObject != null ? valueToObject(value) : value;
+            return ValueToObject != null ? ValueToObject(value) : value;
         }
 
         /// <summary>
         /// Convert the value in the dictionary to an appropriate value.
         /// </summary>
-        private TValue ObjectToValue(object obj)
+        private TValue ConvertObjectToValue(object obj)
         {
-            if (objectToValue != null)
-                return objectToValue(obj);
+            if (ObjectToValue != null)
+                return ObjectToValue(obj);
             if (obj is TValue v)
                 return v;
             return default;
@@ -100,10 +99,27 @@ namespace Narupa.Grpc.Multiplayer
                 RemoteValueChanged?.Invoke();
             }
         }
+        
+        
+        private void SharedStateOnKeyRemoved(string key)
+        {
+            if (key == ResourceKey)
+            {
+                CopyRemoteValueToLocal();
+                RemoteValueChanged?.Invoke();
+            }
+        }
 
         private TValue GetRemoteValue()
         {
-            return ObjectToValue(sharedState.GetValue(ResourceKey));
+            if(sharedState.TryGetValue(ResourceKey, out var value))
+                return ConvertObjectToValue(value);
+            return GetDefaultValue();
+        }
+
+        private TValue GetDefaultValue()
+        {
+            return DefaultValue;
         }
 
         /// <summary>
@@ -111,7 +127,7 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private void CopyLocalValueToRemote()
         {
-            sharedState.SetValue(ResourceKey, ValueToObject(value));
+            sharedState.SetValue(ResourceKey, ConvertValueToObject(value));
         }
         
         private TValue value;

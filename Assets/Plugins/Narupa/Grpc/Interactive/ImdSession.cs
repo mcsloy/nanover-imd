@@ -3,17 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
-using Narupa.Core;
-using Narupa.Core.Async;
 using Narupa.Grpc;
 using Narupa.Grpc.Interactive;
 using Narupa.Grpc.Serialization;
-using Narupa.Grpc.Stream;
-using Narupa.Protocol.Imd;
-using UnityEngine;
 
 namespace Narupa.Session
 {
@@ -21,19 +13,15 @@ namespace Narupa.Session
     /// Provides functionality to manage the sending of particle interactions
     /// over an <see cref="ImdClient"/>.
     /// </summary>
-    public class ImdSession : IDisposable
+    public class ImdSession : GrpcSession<ImdClient>
     {
-        private Dictionary<string, Interaction> interactions;
+        private Dictionary<string, Interaction>
+            interactions = new Dictionary<string, Interaction>();
 
         /// <summary>
         /// Dictionary of all currently known interactions.
         /// </summary>
         public IReadOnlyCollection<Interaction> Interactions => interactions.Values;
-
-        public OutgoingStreamCollection<ParticleInteraction, InteractionEndReply> 
-            InteractionStreams { get; private set; }
-
-        private ImdClient client;
 
         public Action<Interaction> InteractionStarted;
 
@@ -41,17 +29,16 @@ namespace Narupa.Session
 
         public Action<string> InteractionEnded;
 
-        /// <summary>
-        /// Connect to an IMD service over the given connection. Closes any 
-        /// existing client.
-        /// </summary>
-        public void OpenClient(GrpcConnection connection)
+        protected override ImdClient CreateClient(GrpcConnection connection)
         {
-            CloseClient();
+            return new ImdClient(connection);
+        }
 
-            client = new ImdClient(connection);
-            client.SharedState.KeyUpdated += SharedStateOnKeyUpdated;
-            client.SharedState.KeyRemoved += SharedStateOnKeyRemoved;
+        public override void OpenClient(GrpcConnection connection)
+        {
+            base.OpenClient(connection);
+            Client.SharedState.KeyUpdated += SharedStateOnKeyUpdated;
+            Client.SharedState.KeyRemoved += SharedStateOnKeyRemoved;
         }
 
         private void SharedStateOnKeyRemoved(string key)
@@ -90,15 +77,9 @@ namespace Narupa.Session
         /// <summary>
         /// Close the current IMD client and dispose all streams.
         /// </summary>
-        public void CloseClient()
+        public override void CloseClient()
         {
-            client?.CloseAndCancelAllSubscriptions();
-            client?.Dispose();
-            client = null;
-
-            InteractionStreams?.CloseAsync();
-            InteractionStreams?.Dispose();
-            InteractionStreams = null;
+            base.CloseClient();
 
             interactions.Clear();
         }
@@ -106,19 +87,13 @@ namespace Narupa.Session
         public void PushInteraction(Interaction interaction)
         {
             var id = $"interaction.{interaction.InteractionId}";
-            client.SharedState.SetValue(id, Serialization.ToDataStructure(interaction));
+            SharedState.SetValue(id, Serialization.ToDataStructure(interaction));
         }
-        
+
         public void RemoveInteraction(string id)
         {
             var key = $"interaction.{id}";
-            client.SharedState.RemoveKey(key);
-        }
-
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            CloseClient();
+            SharedState.RemoveKey(key);
         }
     }
 }

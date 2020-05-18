@@ -19,7 +19,7 @@ namespace Narupa.Grpc.Interactive
         public List<int> Particles;
 
         [DataMember(Name = "properties")]
-        public InteractionProperties Properties;
+        public InteractionProperties Properties = new InteractionProperties();
 
         [DataContract]
         public class InteractionProperties

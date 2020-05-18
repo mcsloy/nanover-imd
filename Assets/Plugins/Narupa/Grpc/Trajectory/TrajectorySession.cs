@@ -15,7 +15,7 @@ namespace Narupa.Grpc.Trajectory
     /// <see cref="ITrajectorySnapshot" /> where
     /// <see cref="ITrajectorySnapshot.CurrentFrame" /> is the latest received frame.
     /// </summary>
-    public class TrajectorySession : ITrajectorySnapshot, IDisposable
+    public class TrajectorySession : GrpcSession<TrajectoryClient>, ITrajectorySnapshot
     {
         /// <inheritdoc cref="ITrajectorySnapshot.CurrentFrame" />
         public Narupa.Frame.Frame CurrentFrame => trajectorySnapshot.CurrentFrame;
@@ -31,11 +31,6 @@ namespace Narupa.Grpc.Trajectory
         /// </summary>
         private readonly TrajectorySnapshot trajectorySnapshot = new TrajectorySnapshot();
 
-        /// <summary>
-        /// Underlying TrajectoryClient for receiving new frames.
-        /// </summary>
-        private TrajectoryClient trajectoryClient;
-
         private IncomingStream<GetFrameResponse> frameStream;
 
         public TrajectorySession()
@@ -43,18 +38,16 @@ namespace Narupa.Grpc.Trajectory
             trajectorySnapshot.FrameChanged += (sender, args) => FrameChanged?.Invoke(sender, args);
         }
 
-        /// <summary>
-        /// Connect to a trajectory service over the given connection and
-        /// listen in the background for frame changes. Closes any existing
-        /// client.
-        /// </summary>
-        public void OpenClient(GrpcConnection connection)
+        protected override TrajectoryClient CreateClient(GrpcConnection connection)
         {
-            CloseClient();
-            trajectorySnapshot.Clear();
+            return new TrajectoryClient(connection);
+        }
 
-            trajectoryClient = new TrajectoryClient(connection);
-            frameStream = trajectoryClient.SubscribeLatestFrames(1f / 30f);
+        public override void OpenClient(GrpcConnection connection)
+        {
+            base.OpenClient(connection);
+            
+            frameStream = Client.SubscribeLatestFrames(1f / 30f);
             frameStream.MessageReceived += Callback;
             frameStream.StartReceiving().AwaitInBackgroundIgnoreCancellation();
 
@@ -64,52 +57,43 @@ namespace Narupa.Grpc.Trajectory
                 trajectorySnapshot.SetCurrentFrame(frame, changes);
                 CurrentFrameIndex = (int) response.FrameIndex;
             }
+
         }
 
         /// <summary>
         /// Close the current trajectory client.
         /// </summary>
-        public void CloseClient()
+        public override void CloseClient()
         {
-            trajectoryClient?.CloseAndCancelAllSubscriptions();
-            trajectoryClient?.Dispose();
-            trajectoryClient = null;
+            trajectorySnapshot.Clear();
 
             frameStream?.CloseAsync();
             frameStream?.Dispose();
             frameStream = null;
         }
-
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            CloseClient();
-        }
         
         /// <inheritdoc cref="TrajectoryClient.CommandPlay"/>
         public void Play()
         {
-            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandPlay);
+            RunCommand(TrajectoryClient.CommandPlay);
         }
         
         /// <inheritdoc cref="TrajectoryClient.CommandPause"/>
         public void Pause()
         {
-            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandPause);
+            RunCommand(TrajectoryClient.CommandPause);
         }
         
         /// <inheritdoc cref="TrajectoryClient.CommandReset"/>
         public void Reset()
         {
-            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandReset);
+            RunCommand(TrajectoryClient.CommandReset);
         }
         
         /// <inheritdoc cref="TrajectoryClient.CommandStep"/>
         public void Step()
         {
-            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandStep);
+            RunCommand(TrajectoryClient.CommandStep);
         }
-
-        public TrajectoryClient Client => trajectoryClient;
     }
 }
