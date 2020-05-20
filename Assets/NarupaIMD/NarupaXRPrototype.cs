@@ -13,6 +13,7 @@ using UnityEngine.UI;
 using Text = TMPro.TextMeshProUGUI;
 
 using Essd;
+using Narupa.Core.Math;
 
 namespace NarupaXR
 {
@@ -91,6 +92,17 @@ namespace NarupaXR
         /// </summary>
         public void Quit() => Application.Quit();
 
+        
+        /// <summary>
+        /// Reset the box to the unit position.
+        /// </summary>
+        public void ResetBox()
+        {
+            var calibPose = CalibratedSpace
+                                     .TransformPoseWorldToCalibrated(Transformation.Identity);
+            Sessions.Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
+        }
+        
         private void Awake()
         {
             ManipulableSimulationSpace = new ManipulableScenePose(simulationSpaceTransform,

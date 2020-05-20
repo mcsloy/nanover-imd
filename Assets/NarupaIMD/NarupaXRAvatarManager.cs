@@ -4,6 +4,7 @@ using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
+using Narupa.Grpc.Multiplayer;
 using Narupa.Session;
 using UnityEngine;
 using UnityEngine.XR;
@@ -72,10 +73,14 @@ namespace NarupaXR
             while (true)
             {
                 if (narupa.Sessions.Multiplayer.HasPlayer)
-                    narupa.Sessions.Multiplayer.SetVRAvatar(
+                {
+                    narupa.Sessions.Multiplayer.Avatars.LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
+
+                    narupa.Sessions.Multiplayer.Avatars.FlushLocalAvatar();
+                }
 
                 yield return null;
             }
@@ -83,40 +88,27 @@ namespace NarupaXR
 
         private void UpdateRendering()
         {
-            var localPlayerId = narupa.Sessions.Multiplayer.PlayerId;
             var headsets = narupa.Sessions.Multiplayer
-                                 .Avatars.Values
-                                 .SelectMany(avatar => avatar.Components.Select(pair => new
-                                 {
-                                     avatar.PlayerId,
-                                     Name = pair.Key,
-                                     Pose = pair.Value
-                                 }))
-                                 .Where(component => component.Name == MultiplayerSession.HeadsetName)
-                                 .Where(component => component.PlayerId != localPlayerId)
-                                 .Select(component => component.Pose)
-                                 .OfType<Transformation>();
+                                 .Avatars.OtherPlayerAvatars
+                                 .SelectMany(avatar => avatar.Components, (avatar, component) =>
+                                                 (Avatar: avatar, Component: component))
+                                 .Where(res => res.Component.Name == MultiplayerAvatar.HeadsetName);
+
 
             var controllers = narupa.Sessions.Multiplayer
-                                    .Avatars.Values
-                                    .SelectMany(avatar => avatar.Components.Select(pair => new
-                                    {
-                                        avatar.PlayerId,
-                                        Name = pair.Key,
-                                        Pose = pair.Value
-                                    }))
-                                    .Where(component => component.Name == MultiplayerSession.LeftHandName 
-                                                     || component.Name == MultiplayerSession.RightHandName)
-                                    .Where(component => component.PlayerId != localPlayerId)
-                                    .Select(component => component.Pose)
-                                    .OfType<Transformation>();
+                                    .Avatars.OtherPlayerAvatars
+                                    .SelectMany(avatar => avatar.Components, (avatar, component) =>
+                                                    (Avatar: avatar, Component: component))
+                                    .Where(res => res.Component.Name == MultiplayerAvatar.LeftHandName
+                                               || res.Component.Name == MultiplayerAvatar.RightHandName);
+
 
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
 
-            void UpdateAvatarComponent(Transformation pose, Transform transform)
+            void UpdateAvatarComponent((MultiplayerAvatar Avatar, MultiplayerAvatar.Component Component) value, Transform transform)
             {
-                var transformed = TransformPoseCalibratedToWorld(pose).Value;
+                var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;
                 transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);
             }
         }
