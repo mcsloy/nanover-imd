@@ -25,6 +25,12 @@ public class SineConnectorRenderer : MonoBehaviour
     [SerializeField]
     private float amplitude;
 
+    [SerializeField]
+    private float width = 0.02f;
+
+    [SerializeField]
+    private float scaling = 0.1f;
+
     public Vector3 StartPosition
     {
         get => startPoint;
@@ -41,6 +47,14 @@ public class SineConnectorRenderer : MonoBehaviour
     {
         var dist = Vector3.Distance(startPoint, endPoint);
         var dir = endPoint - startPoint;
+        
+        var scaling = 1f + this.scaling / dist;
+
+        var frequency = this.frequency * scaling;
+        var amplitude = this.amplitude / scaling;
+        var width = this.width / scaling;
+        var segmentsPerMeter = Mathf.Clamp(this.segmentsPerMeter * scaling, 1, 10000f);
+        
         int segments = (int)Mathf.Max(2, segmentsPerMeter * dist);
 
         var cameraDir = Camera.main.transform.InverseTransformDirection(dir);
@@ -52,8 +66,10 @@ public class SineConnectorRenderer : MonoBehaviour
         up = (up - Vector3.Project(up, dir)).normalized;
 
         renderer.positionCount = segments;
-       
-        
+
+        renderer.startWidth = width;
+        renderer.endWidth = width;
+
         for (var i = 0; i < segments; i++)
         {
             float t = (float) i / (segments - 1f);
