@@ -148,48 +148,6 @@ namespace Narupa.Session
             IncomingValueUpdates = client.SubscribeAllResourceValues();
             IncomingValueUpdates.MessageReceived += OnResourceValuesUpdateReceived;
             IncomingValueUpdates.StartReceiving().AwaitInBackgroundIgnoreCancellation();
-<<<<<<< HEAD
-
-            MultiplayerJoined?.Invoke();
-        }
-
-        public void StartAvatars()
-        {
-            try
-            {
-                OutgoingAvatar = client.PublishAvatar(PlayerId);
-                IncomingAvatars = client.SubscribeAvatars(updateInterval: AvatarUpdateInterval,
-                                                          ignorePlayerId: PlayerId);
-
-                IncomingAvatars.MessageReceived += OnAvatarReceived;
-
-                OutgoingAvatar.StartSending().AwaitInBackgroundIgnoreCancellation();
-                IncomingAvatars.StartReceiving().AwaitInBackgroundIgnoreCancellation();
-            }
-            catch (RpcException e)
-            {
-            }
-        }
-
-        /// <summary>
-        /// Set the headset and hand poses of our avatar.
-        /// </summary>
-        public void SetVRAvatar(Transformation? headset = null,
-                                Transformation? leftHand = null,
-                                Transformation? rightHand = null)
-        {
-            var avatar = new MultiplayerAvatar
-            {
-                PlayerId = PlayerId,
-            };
-
-            if (headset is Transformation headsetPose)
-                avatar.Components[HeadsetName] = headsetPose;
-
-            if (leftHand is Transformation leftHandPose)
-                avatar.Components[LeftHandName] = leftHandPose;
-=======
->>>>>>> master
 
             MultiplayerJoined?.Invoke();
         }
