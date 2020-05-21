@@ -13,10 +13,12 @@ GameObject:
   - component: {fileID: -7470940349134249008}
   - component: {fileID: 1841712910847173454}
   - component: {fileID: -1157222868010095713}
+  - component: {fileID: 3150111848065498408}
   - component: {fileID: 2688622702517566676}
   - component: {fileID: 2948249340003140760}
   - component: {fileID: -5650612546705806100}
   - component: {fileID: 4064498582268436806}
+  - component: {fileID: -1885040846609657997}
   m_Layer: 0
   m_Name: particle velocity
   m_TagString: Untagged
@@ -142,6 +144,32 @@ MonoBehaviour:
     input:
       value: []
       isValueProvided: 0
+--- !u!114 &3150111848065498408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c39c5466bf374574ba65cdd14d56567f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection:
+  - sourceComponent: {fileID: -1157222868010095713}
+    sourceFieldName: output
+    destinationFieldName: input
+  - sourceComponent: {fileID: -1885040846609657997}
+    sourceFieldName: input
+    destinationFieldName: speed
+  node:
+    input:
+      value: []
+      isValueProvided: 0
+    speed:
+      value: 0.1
+      isValueProvided: 1
 --- !u!114 &2688622702517566676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputLinkCollection:
-  - sourceComponent: {fileID: -1157222868010095713}
+  - sourceComponent: {fileID: 3150111848065498408}
     sourceFieldName: output
     destinationFieldName: values
   - sourceComponent: {fileID: -7470940349134249008}
@@ -263,5 +291,23 @@ MonoBehaviour:
   node:
     name: max
     input:
-      value: 1
+      value: 0.2
+      isValueProvided: 1
+--- !u!114 &-1885040846609657997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: smooth.time
+    input:
+      value: 2
       isValueProvided: 1
