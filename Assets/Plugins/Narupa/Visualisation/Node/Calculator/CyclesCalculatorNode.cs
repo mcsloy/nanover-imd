@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Narupa.Core.Math;
 using Narupa.Frame;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Properties.Collections;
@@ -15,204 +14,157 @@ namespace Narupa.Visualisation.Node.Calculator
     /// to only include cycles wholely within a single residue.
     /// </summary>
     [Serializable]
-    public class CyclesCalculatorNode
+    public class CyclesCalculatorNode : GenericOutputNode
     {
-        [SerializeField]
-        private IntArrayProperty particleFilter = new IntArrayProperty();
-        
+        /// <summary>
+        /// Bonds involved in the molecule.
+        /// </summary>
+        public IProperty<BondPair[]> Bonds => bonds;
+
+        /// <inheritdoc cref="Bonds"/>
         [SerializeField]
         private BondArrayProperty bonds = new BondArrayProperty();
 
-        public IProperty<BondPair[]> Bonds => bonds;
 
+        /// <summary>
+        /// Total number of particles involved in the system.
+        /// </summary>
+        public IProperty<int> ParticleCount => particleCount;
+
+        /// <inheritdoc cref="ParticleCount"/>
         [SerializeField]
-        private IntArrayProperty particleResidues = new IntArrayProperty();
+        private IntProperty particleCount = new IntProperty();
 
-        public IProperty<int[]> ParticleResidues => particleResidues;
+        /// <summary>
+        /// List of set of indices that make up each cycle.
+        /// </summary>
+        public IReadOnlyProperty<Cycle[]> Cycles => cycles;
 
-        private readonly SelectionArrayProperty cycles = new SelectionArrayProperty();
+        /// <inheritdoc cref="Cycles"/>
+        private readonly ArrayProperty<Cycle> cycles = new ArrayProperty<Cycle>();
 
-        public IReadOnlyProperty<IReadOnlyList<int>[]> Cycles => cycles;
+        /// <summary>
+        /// Set of particle residue indices.
+        /// </summary>
+        public IReadOnlyProperty<int[]> ParticleResidues => particleResidues;
 
-        private readonly IntProperty cyclesCount = new IntProperty();
+        /// <inheritdoc cref="ParticleResidues"/>
+        private readonly IntArrayProperty particleResidues = new IntArrayProperty();
 
+        /// <summary>
+        /// Number of cycles.
+        /// </summary>
         public IReadOnlyProperty<int> CyclesCount => cyclesCount;
 
-        private readonly List<Cycle> cachedCycles = new List<Cycle>();
+        /// <inheritdoc cref="CyclesCount"/>
+        private readonly IntProperty cyclesCount = new IntProperty();
 
-        protected virtual bool IsInputDirty => bonds.IsDirty || particleResidues.IsDirty;
+        /// <inheritdoc cref="GenericOutputNode.IsInputDirty"/>
+        protected override bool IsInputDirty => bonds.IsDirty || particleCount.IsDirty;
 
-        protected virtual bool IsInputValid => bonds.HasNonEmptyValue();
+        /// <inheritdoc cref="GenericOutputNode.IsInputValid"/>
+        protected override bool IsInputValid => bonds.HasNonEmptyValue();
 
-        public void Refresh()
-        {
-            if (IsInputDirty)
-            {
-                cachedCycles.Clear();
-                if (IsInputValid)
-                {
-                    FindRings();
-                }
-
-                cycles.Value = cachedCycles.Where(IsNotFiltered).Select(cycle => cycle.ToList()).ToArray();
-                cyclesCount.Value = cachedCycles.Count;
-
-                ClearDirty();
-            }
-        }
-
-        private bool IsNotFiltered(Cycle cycle)
-        {
-            if (particleFilter.HasNonNullValue())
-            {
-                var array = particleFilter.Value;
-                foreach(var i in cycle)
-                    if (!SearchAlgorithms.BinarySearch(i, array))
-                        return false;
-            }
-
-            return true;
-        }
-
-        protected virtual void ClearDirty()
+        /// <inheritdoc cref="GenericOutputNode.ClearDirty"/>
+        protected override void ClearDirty()
         {
             bonds.IsDirty = false;
-            particleResidues.IsDirty = false;
+            particleCount.IsDirty = false;
+        }
+
+        /// <inheritdoc cref="GenericOutputNode.UpdateOutput"/>
+        protected override void UpdateOutput()
+        {
+            var particleCount = this.particleCount.Value;
+            var neighbourList = new List<int>[particleCount];
+            for (var i = 0; i < particleCount; i++)
+                neighbourList[i] = new List<int>();
+
+            foreach (var bond in bonds)
+            {
+                // Only include bonds within residues.
+                if (particleResidues.HasValue)
+                {
+                    var res1 = particleResidues.Value[bond.A];
+                    var res2 = particleResidues.Value[bond.B];
+                    if (res1 != res2)
+                        continue;
+                }
+                neighbourList[bond.A].Add(bond.B);
+                neighbourList[bond.B].Add(bond.A);
+            }
+
+            cycles.Value = ComputeChordlessCycles(particleCount, neighbourList).ToArray();
+            cyclesCount.Value = cycles.Value.Length;
+        }
+
+        /// <inheritdoc cref="GenericOutputNode.ClearOutput"/>
+        protected override void ClearOutput()
+        {
+            cycles.UndefineValue();
+            cyclesCount.UndefineValue();
         }
 
         /// <summary>
-        ///     Finds all cycles, given a set of bond pairs
+        /// Chordless cycle computation using https://arxiv.org/pdf/1309.1051.pdf
         /// </summary>
-        private void FindRings()
+        private IEnumerable<Cycle> ComputeChordlessCycles(int count, List<int>[] adjacency)
         {
-            if (particleResidues.HasNonEmptyValue())
-            {
-                var residueIds = particleResidues.Value;
-                var bondsPerResidueId = new List<BondPair>[residueIds.Max() + 1];
-                foreach (var bond in bonds.Value)
+            var T = new Queue<List<int>>();
+            for (var u = 0; u < count; u++)
+                foreach (var x in adjacency[u])
+                foreach (var y in adjacency[u])
                 {
-                    var resId = residueIds[bond.A];
-                    if (resId == residueIds[bond.B])
+                    // Ensure u < x
+                    if (u >= x)
+                        continue;
+
+                    // Ensure x < y and hence u < x < y
+                    if (x >= y)
+                        continue;
+
+                    if (adjacency[x].Contains(y))
                     {
-                        if (bondsPerResidueId[resId] == null)
-                            bondsPerResidueId[resId] = new List<BondPair>();
-                        bondsPerResidueId[resId].Add(bond);
+                        yield return new Cycle(x, u, y);
+                    }
+                    else
+                    {
+                        T.Enqueue(new List<int>
+                        {
+                            x,
+                            u,
+                            y
+                        });
                     }
                 }
 
-                foreach (var list in bondsPerResidueId)
-                    if (list != null)
-                        cachedCycles.AddRange(FindCycles(list));
-            }
-            else
+            while (T.Any())
             {
-                cachedCycles.AddRange(FindCycles(bonds.Value));
-            }
-        }
+                var p = T.Dequeue();
 
-        /// <summary>
-        ///     Finds a set of cycles in a graph. Copied from https://stackoverflow.com/a/14115627
-        /// </summary>
-        private IEnumerable<Cycle> FindCycles(IReadOnlyList<BondPair> graph)
-        {
-            if (graph.Count > 48)
-                return new Cycle[0];
+                if (p.Count == 6)
+                    continue;
 
-            var list = new List<Cycle>();
-            for (var i = 0; i < graph.Count; i++)
-            for (var j = 0; j < 2; j++)
-            {
-                FindNewCycles(graph, list, new[] { (int) graph[i][j] });
-            }
-
-            return list;
-        }
-
-        private void FindNewCycles(IReadOnlyList<BondPair> graph,
-                                   ICollection<Cycle> cyclesList,
-                                   int[] path)
-        {
-            if (path.Length > 6)
-                return;
-            var n = path[0];
-            var sub = new int[path.Length + 1];
-
-            for (var i = 0; i < graph.Count; i++)
-            for (var y = 0; y <= 1; y++)
-                if ((int) graph[i][y] == n)
-                    //  edge refers to our current node
+                var u2 = p[1];
+                var ut = p.Last();
+                foreach (var v in adjacency[ut])
                 {
-                    var x = (int) graph[i][(y + 1) % 2];
-                    if (!Visited(x, path))
-                        //  neighbor node not on path yet
-                    {
-                        sub[0] = x;
-                        Array.Copy(path, 0, sub, 1, path.Length);
-                        //  explore extended path
-                        FindNewCycles(graph, cyclesList, sub);
-                    }
-                    else if (path.Length > 2 && x == path[path.Length - 1])
-                        //  cycle found
-                    {
-                        var p = Normalize(path);
-                        var inv = Invert(p);
-                        if (IsNew(cyclesList, p) && IsNew(cyclesList, inv))
-                            cyclesList.Add(new Cycle(p));
-                    }
+                    if (v <= u2)
+                        continue;
+                    if (Enumerable.Range(1, p.Count - 2)
+                                  .Any(i => adjacency[p[i]].Contains(v)))
+                        continue;
+
+                    var p2 = new List<int>();
+                    p2.AddRange(p);
+                    p2.Add(v);
+
+                    if (adjacency[p[0]].Contains(v))
+                        yield return new Cycle(p2.ToArray());
+                    else
+                        T.Enqueue(p2);
                 }
-        }
-
-        private static bool ListEquals(IReadOnlyList<int> a, IReadOnlyList<int> b)
-        {
-            if (a.Count != b.Count)
-                return false;
-            for (var i = 0; i < a.Count; i++)
-                if (a[i] != b[i])
-                    return false;
-            return true;
-        }
-
-        private static int[] Invert(IReadOnlyList<int> path)
-        {
-            var p = new int[path.Count];
-
-            for (var i = 0; i < path.Count; i++)
-                p[i] = path[path.Count - 1 - i];
-
-            return Normalize(p);
-        }
-
-        //  rotate cycle path such that it begins with the smallest node
-        private static int[] Normalize(int[] path)
-        {
-            var p = new int[path.Length];
-            var x = Smallest(path);
-
-            Array.Copy(path, 0, p, 0, path.Length);
-
-            while (p[0] != x)
-            {
-                var n = p[0];
-                Array.Copy(p, 1, p, 0, p.Length - 1);
-                p[p.Length - 1] = n;
             }
-
-            return p;
-        }
-
-        private static bool IsNew(IEnumerable<Cycle> cyclesList, IReadOnlyList<int> path)
-        {
-            return !cyclesList.Any(p => ListEquals(p.Indices, path));
-        }
-
-        private static int Smallest(IEnumerable<int> path)
-        {
-            return path.Min();
-        }
-
-        private static bool Visited(int n, IEnumerable<int> path)
-        {
-            return path.Any(p => p == n);
         }
     }
 }

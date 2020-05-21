@@ -1,12 +1,13 @@
-﻿using Narupa.Frontend.XR;
-using Narupa.Session;
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
+using Narupa.Frontend.Utility;
+using Narupa.Frontend.XR;
+using Narupa.Grpc.Multiplayer;
+using Narupa.Session;
 using UnityEngine;
 using UnityEngine.XR;
-using Narupa.Frontend.Utility;
 
 namespace NarupaXR
 {
@@ -15,9 +16,16 @@ namespace NarupaXR
 #pragma warning disable 0649
         [SerializeField]
         private NarupaXRPrototype narupa;
+
+        [SerializeField]
+        private Transform headsetPrefab;
+
+        [SerializeField]
+        private Transform controllerPrefab;
 #pragma warning restore 0649
 
-        private IndexedPool<Transform> avatarObjects;
+        private IndexedPool<Transform> headsetObjects;
+        private IndexedPool<Transform> controllerObjects;
 
         private void Awake()
         {
@@ -31,15 +39,14 @@ namespace NarupaXR
 
         private void Setup()
         {
-            Transform CreateAvatarCube()
-            {
-                var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                cube.transform.localScale = Vector3.one * 0.1f;
-                return cube.transform;
-            }
+            headsetObjects = new IndexedPool<Transform>(
+                () => Instantiate(headsetPrefab),
+                transform => transform.gameObject.SetActive(true),
+                transform => transform.gameObject.SetActive(false)
+            );
 
-            avatarObjects = new IndexedPool<Transform>(
-                CreateAvatarCube, 
+            controllerObjects = new IndexedPool<Transform>(
+                () => Instantiate(controllerPrefab),
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
@@ -54,7 +61,7 @@ namespace NarupaXR
                 yield return null;
 
             narupa.Sessions.Multiplayer.JoinMultiplayer("NarupaXR")
-                                       .AwaitInBackground();
+                  .AwaitInBackground();
         }
 
         private IEnumerator SendAvatars()
@@ -66,9 +73,14 @@ namespace NarupaXR
             while (true)
             {
                 if (narupa.Sessions.Multiplayer.HasPlayer)
-                    narupa.Sessions.Multiplayer.SetVRAvatar(TransformPoseWorldToCalibrated(headset.Pose),
-                                                            TransformPoseWorldToCalibrated(leftHand.Pose),
-                                                            TransformPoseWorldToCalibrated(rightHand.Pose));
+                {
+                    narupa.Sessions.Multiplayer.Avatars.LocalAvatar.SetTransformations(
+                        TransformPoseWorldToCalibrated(headset.Pose),
+                        TransformPoseWorldToCalibrated(leftHand.Pose),
+                        TransformPoseWorldToCalibrated(rightHand.Pose));
+
+                    narupa.Sessions.Multiplayer.Avatars.FlushLocalAvatar();
+                }
 
                 yield return null;
             }
@@ -76,19 +88,27 @@ namespace NarupaXR
 
         private void UpdateRendering()
         {
-            var localPlayerId = narupa.Sessions.Multiplayer.PlayerId;
-            var components = narupa.Sessions.Multiplayer
-                .Avatars.Values
-                .SelectMany(avatar => avatar.Components.Select(pair => new { avatar.PlayerId, Name = pair.Key, Pose = pair.Value }))
-                .Where(component => component.PlayerId != localPlayerId)
-                .Select(component => component.Pose)
-                .OfType<Transformation>();
+            var headsets = narupa.Sessions.Multiplayer
+                                 .Avatars.OtherPlayerAvatars
+                                 .SelectMany(avatar => avatar.Components, (avatar, component) =>
+                                                 (Avatar: avatar, Component: component))
+                                 .Where(res => res.Component.Name == MultiplayerAvatar.HeadsetName);
 
-            avatarObjects.MapConfig(components, UpdateAvatarComponent);
 
-            void UpdateAvatarComponent(Transformation pose, Transform transform)
+            var controllers = narupa.Sessions.Multiplayer
+                                    .Avatars.OtherPlayerAvatars
+                                    .SelectMany(avatar => avatar.Components, (avatar, component) =>
+                                                    (Avatar: avatar, Component: component))
+                                    .Where(res => res.Component.Name == MultiplayerAvatar.LeftHandName
+                                               || res.Component.Name == MultiplayerAvatar.RightHandName);
+
+
+            headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
+            controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
+
+            void UpdateAvatarComponent((MultiplayerAvatar Avatar, MultiplayerAvatar.Component Component) value, Transform transform)
             {
-                var transformed = TransformPoseCalibratedToWorld(pose).Value;
+                var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;
                 transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);
             }
         }

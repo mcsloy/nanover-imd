@@ -8,7 +8,30 @@ and distributed under [GPLv3](LICENSE).
 See [the list of contributors](CONTRIBUTORS.md) for the individual authors of the project.
 
 
-# Installation
+# Installation (Windows Only)
+
+If you've not already set up anaconda: 
+
+* Install Anaconda (avoid Anaconda 2.7 as it is outdated)
+* Start the "Anaconda Powershell Prompt" where to type the next commands
+* Create a conda environment (here we call the environment "narupa"): `conda create -n narupa "python>3.6"`
+* Activate the conda environment: `conda activate narupa`
+
+Then:
+
+* Install the Narupa IMD package:
+
+```
+conda install -c irl narupa-imd
+```
+
+Run it! In the powershell prompt (Start Menu integration coming soon):
+
+```
+NarupaImd
+```
+
+# Installation for Development
 
 *  Clone this repository to a folder on your computer.
 *  Download Unity Hub by visiting the [Unity Download Page](https://unity3d.com/get-unity/download) and clicking the green **Download Unity Hub** button.
