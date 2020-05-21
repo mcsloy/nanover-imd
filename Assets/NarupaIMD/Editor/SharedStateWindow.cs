@@ -46,7 +46,7 @@ namespace NarupaIMD.Editor
             if (prototype != null)
             {
                 if (prototype.Sessions.Multiplayer.IsOpen)
-                    DrawSharedState(prototype.Sessions.Multiplayer.SharedStateDictionary);
+                    DrawSharedState(prototype.Sessions.Multiplayer.SharedState.CurrentSharedState);
                 else
                     EditorGUILayout.HelpBox("Session not connected", MessageType.Error);
             }
@@ -64,7 +64,7 @@ namespace NarupaIMD.Editor
 
         private void OnConnectToSession()
         {
-            prototype.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated += KeyUpdated;
+            prototype.Sessions.Multiplayer.SharedState.KeyUpdated += KeyUpdated;
         }
 
         private Dictionary<string, DateTime> lastUpdate = new Dictionary<string, DateTime>();
@@ -74,7 +74,7 @@ namespace NarupaIMD.Editor
             lastUpdate[key] = DateTime.Now;
         }
 
-        private void DrawSharedState(Dictionary<string, object> state)
+        private void DrawSharedState(IReadOnlyDictionary<string, object> state)
         {
             foreach (var (key, value) in state.OrderBy(kvp => kvp.Key))
             {
@@ -108,7 +108,7 @@ namespace NarupaIMD.Editor
         /// <param name="key"></param>
         private void RemoveKey(string key)
         {
-            prototype.Sessions.Multiplayer.RemoveSharedStateKey(key);
+            prototype.Sessions.Multiplayer.SharedState.RemoveKey(key);
         }
 
         private static Action<Rect> ShowHeaderContextMenu(Action deleteAction)

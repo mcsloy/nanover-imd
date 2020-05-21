@@ -95,14 +95,12 @@ namespace Narupa.Grpc.Serialization
         /// <inheritdoc cref="WritePropertyName"/>
         public override void WritePropertyName(string name)
         {
-            Debug.Log($"Write Property {name}");
             base.WritePropertyName(name);
             currentKey = name;
         }
 
         private void AddValue(object value)
         {
-            Debug.Log($"Write Value {value}");
             AddObject(value);
         }
 
