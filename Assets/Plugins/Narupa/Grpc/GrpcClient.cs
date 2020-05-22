@@ -94,6 +94,21 @@ namespace Narupa.Grpc
                 call,
                 GetCancellationToken(), externalToken);
         }
+        
+        /// <summary>
+        /// Create an outgoing stream from the definition of a gRPC call.
+        /// </summary>
+        protected BidirectionalStream<TOutgoing, TResponse> GetBidirectionalStream<TOutgoing, TResponse>(
+            BidirectionalStreamingCall<TOutgoing, TResponse> call,
+            CancellationToken externalToken = default)
+        {
+            if (IsCancelled)
+                throw new InvalidOperationException("The client is closed.");
+
+            return BidirectionalStream<TOutgoing, TResponse>.CreateStreamFromServerCall(
+                call,
+                GetCancellationToken(), externalToken);
+        }
 
         /// <inheritdoc cref="IAsyncClosable.CloseAsync" />
         public Task CloseAsync()
