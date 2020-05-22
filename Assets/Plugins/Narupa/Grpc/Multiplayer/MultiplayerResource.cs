@@ -111,6 +111,7 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private void CopyLocalValueToRemote()
         {
+            lastUpdateIndex = session.SendIndex;
             session.SetSharedState(ResourceKey, ValueToObject(value));
         }
         
@@ -181,6 +182,8 @@ namespace Narupa.Grpc.Multiplayer
             LockRejected?.Invoke();
         }
 
+        private int lastUpdateIndex = 0;
+
         private async Task ReleaseLockAsync()
         {
             if (LockState != MultiplayerResourceLockState.Unlocked)
@@ -226,7 +229,7 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private void CopyRemoteValueToLocal()
         {
-            if (!localValuePending)
+            if (!localValuePending && lastUpdateIndex <= session.RecieveIndex)
             {
                 value = GetRemoteValue();
                 ValueChanged?.Invoke();

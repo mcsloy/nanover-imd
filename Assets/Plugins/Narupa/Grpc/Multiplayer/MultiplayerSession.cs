@@ -99,6 +99,16 @@ namespace Narupa.Session
         private bool awaitingUpdate = false;
 
         /// <summary>
+        /// The index of the update you are about to send.
+        /// </summary>
+        public int SendIndex { get; private set; } = 0;
+
+        /// <summary>
+        /// The index of the update that you last recieved.
+        /// </summary>
+        public int RecieveIndex { get; private set; } = -1;
+
+        /// <summary>
         /// Connect to a Multiplayer service over the given connection. 
         /// Closes any existing client.
         /// </summary>
@@ -238,6 +248,7 @@ namespace Narupa.Session
 
         private void OnResourceValuesUpdateReceived(StateUpdate update)
         {
+            RecieveIndex++;
             try
             {
                 if (update.ChangedKeys != null)
@@ -281,6 +292,7 @@ namespace Narupa.Session
             
             ValueUpdates.QueueMessageAsync(request).AwaitInBackgroundIgnoreCancellation();
             Debug.Log("Send Update");
+            SendIndex++;
             pendingRemovals.Clear();
             pendingValues.Clear();
             awaitingUpdate = true;
