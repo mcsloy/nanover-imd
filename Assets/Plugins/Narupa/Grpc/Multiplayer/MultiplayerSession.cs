@@ -108,10 +108,8 @@ namespace Narupa.Session
 
             client = new MultiplayerClient(connection);
             
-            
             ValueUpdates = client.SubscribeStateUpdates();
             ValueUpdates.MessageReceived += OnResourceValuesUpdateReceived;
-            ValueUpdates.MessageReceived += _ => awaitingUpdate = false;
             ValueUpdates.StartStreams().AwaitInBackgroundIgnoreCancellation();
             
             if (valueFlushingTask == null)
@@ -240,19 +238,30 @@ namespace Narupa.Session
 
         private void OnResourceValuesUpdateReceived(StateUpdate update)
         {
-            foreach (var (key, value1) in update.ChangedKeys.Fields)
+            try
             {
-                var value = value1.ToObject();
-                if (value == null)
+                if (update.ChangedKeys != null)
                 {
-                    SharedStateDictionary.Remove(key);
-                    SharedStateDictionaryKeyRemoved?.Invoke(key);
+                    foreach (var (key, value1) in update.ChangedKeys.Fields)
+                    {
+                        var value = value1.ToObject();
+                        if (value == null)
+                        {
+                            SharedStateDictionary.Remove(key);
+                            SharedStateDictionaryKeyRemoved?.Invoke(key);
+                        }
+                        else
+                        {
+                            SharedStateDictionary[key] = value;
+                            SharedStateDictionaryKeyUpdated?.Invoke(key, value);
+                        }
+                    }
                 }
-                else
-                {
-                    SharedStateDictionary[key] = value;
-                    SharedStateDictionaryKeyUpdated?.Invoke(key, value);
-                }
+            }
+            finally
+            {
+                Debug.Log("Recieve Update");
+                awaitingUpdate = false;
             }
         }
 
@@ -271,9 +280,10 @@ namespace Narupa.Session
             };
             
             ValueUpdates.QueueMessageAsync(request).AwaitInBackgroundIgnoreCancellation();
-            
+            Debug.Log("Send Update");
             pendingRemovals.Clear();
             pendingValues.Clear();
+            awaitingUpdate = true;
         }
 
         private static async Task CallbackInterval(Action callback, int interval)
