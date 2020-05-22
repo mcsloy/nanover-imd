@@ -109,24 +109,26 @@ namespace Narupa.Grpc.Stream
             if (IsCancelled)
                 throw new InvalidOperationException("Stream has already been closed.");
 
-            sendingTask = StartSendingLoop();
+            sendingTask = StartSendingLoop(streamingCall.RequestStream,
+                messageQueue.Reader,
+                GetCancellationToken());
 
             return sendingTask;
         }
 
-        private async Task StartSendingLoop()
+        internal static async Task StartSendingLoop(IClientStreamWriter<TOutgoing> writer,
+                                                    ChannelReader<TOutgoing> messageQueue,
+                                                    CancellationToken token)
         {
-            var token = GetCancellationToken();
-
             try
             {
-                while (await messageQueue.Reader.WaitToReadAsync(token))
+                while (await messageQueue.WaitToReadAsync(token))
                 {
-                    var message = await messageQueue.Reader.ReadAsync(token);
-                    await streamingCall.RequestStream.WriteAsync(message);
+                    var message = await messageQueue.ReadAsync(token);
+                    await writer.WriteAsync(message);
                 }
 
-                await streamingCall.RequestStream.CompleteAsync();
+                await writer.CompleteAsync();
             }
             catch (OperationCanceledException)
             {

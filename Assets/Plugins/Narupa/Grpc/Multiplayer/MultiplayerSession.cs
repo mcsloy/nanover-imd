@@ -80,7 +80,7 @@ namespace Narupa.Session
 
         private MultiplayerClient client;
 
-        private IncomingStream<StateUpdate> IncomingValueUpdates { get; set; }
+        private BidirectionalStream<UpdateStateRequest, StateUpdate> ValueUpdates { get; set; }
 
         private Dictionary<string, object> pendingValues
             = new Dictionary<string, object>();
@@ -96,6 +96,8 @@ namespace Narupa.Session
 
         public event Action MultiplayerJoined;
 
+        private bool awaitingUpdate = false;
+
         /// <summary>
         /// Connect to a Multiplayer service over the given connection. 
         /// Closes any existing client.
@@ -105,7 +107,13 @@ namespace Narupa.Session
             CloseClient();
 
             client = new MultiplayerClient(connection);
-
+            
+            
+            ValueUpdates = client.SubscribeStateUpdates();
+            ValueUpdates.MessageReceived += OnResourceValuesUpdateReceived;
+            ValueUpdates.MessageReceived += _ => awaitingUpdate = false;
+            ValueUpdates.StartStreams().AwaitInBackgroundIgnoreCancellation();
+            
             if (valueFlushingTask == null)
             {
                 valueFlushingTask = CallbackInterval(FlushValues, ValuePublishInterval);
@@ -146,10 +154,6 @@ namespace Narupa.Session
 
             PlayerName = playerName;
             PlayerId = response.PlayerId;
-
-            IncomingValueUpdates = client.SubscribeStateUpdates();
-            IncomingValueUpdates.MessageReceived += OnResourceValuesUpdateReceived;
-            IncomingValueUpdates.StartReceiving().AwaitInBackgroundIgnoreCancellation();
 
             MultiplayerJoined?.Invoke();
         }
@@ -257,11 +261,19 @@ namespace Narupa.Session
             if (!IsOpen)
                 return;
 
-            client.UpdateState(Token, pendingValues, pendingRemovals)
-                              .AwaitInBackgroundIgnoreCancellation();
+            if (awaitingUpdate)
+                return;
             
-                        pendingValues.Clear();
-                        pendingRemovals.Clear();
+            var request = new UpdateStateRequest
+            {
+                AccessToken = Token,
+                Update = MultiplayerClient.CreateStateUpdate(pendingValues, pendingRemovals)
+            };
+            
+            ValueUpdates.QueueMessageAsync(request).AwaitInBackgroundIgnoreCancellation();
+            
+            pendingRemovals.Clear();
+            pendingValues.Clear();
         }
 
         private static async Task CallbackInterval(Action callback, int interval)

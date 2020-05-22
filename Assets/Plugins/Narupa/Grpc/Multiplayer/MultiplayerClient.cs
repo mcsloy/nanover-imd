@@ -63,15 +63,10 @@ namespace Narupa.Network
         /// <remarks>
         /// Corresponds to the SubscribeStateUpdates gRPC call.
         /// </remarks>
-        public IncomingStream<StateUpdate> SubscribeStateUpdates(float updateInterval = DefaultUpdateInterval,
+        public BidirectionalStream<UpdateStateRequest, StateUpdate> SubscribeStateUpdates(float updateInterval = DefaultUpdateInterval,
                                                                  CancellationToken externalToken = default)
         {
-            var request = new SubscribeStateUpdatesRequest
-            {
-                UpdateInterval = updateInterval,
-            };
-
-            return GetIncomingStream(StateClient.SubscribeStateUpdates, request, externalToken);
+            return GetBidirectionalStream(StateClient.SubscribeStateUpdates, externalToken);
         }
         
         public async Task<bool> UpdateState(string token, Dictionary<string, object> updates, List<string> removals)
@@ -108,7 +103,7 @@ namespace Narupa.Network
             return str;
         }
 
-        private static StateUpdate CreateStateUpdate(IDictionary<string, object> updates, IEnumerable<string> removals)
+        public static StateUpdate CreateStateUpdate(IDictionary<string, object> updates, IEnumerable<string> removals)
         {
             var update = new StateUpdate();
             var updatesAsStruct = updates.ToProtobufStruct();

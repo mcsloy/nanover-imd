@@ -67,13 +67,22 @@ namespace Narupa.Grpc.Stream
             if (IsCancelled)
                 throw new InvalidOperationException("Stream has already been closed.");
 
-            var enumerator =
-                new GrpcAsyncEnumeratorWrapper<TIncoming>(streamingCall.ResponseStream);
-
-            iterationTask = enumerator.ForEachAsync(OnMessageReceived,
-                                                    GetCancellationToken());
+            iterationTask = IncomingStreamTask(streamingCall.ResponseStream,
+                OnMessageReceived,
+                GetCancellationToken());
 
             return iterationTask;
+        }
+
+        internal static Task IncomingStreamTask(IAsyncStreamReader<TIncoming> reader, 
+                                        Action<TIncoming> onMessageReceived, 
+                                        CancellationToken cancellationToken)
+        {
+            var enumerator =
+                new GrpcAsyncEnumeratorWrapper<TIncoming>(reader);
+
+            return enumerator.ForEachAsync(onMessageReceived,
+                                           cancellationToken);
         }
 
         private void OnMessageReceived(TIncoming message)
