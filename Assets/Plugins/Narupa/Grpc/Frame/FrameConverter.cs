@@ -82,7 +82,7 @@ namespace Narupa.Grpc.Frame
                 [FrameData.ParticleElementArrayKey] = FrameConversions.ToElementArray,
                 [FrameData.ParticlePositionArrayKey] = Conversions.ToVector3Array,
                 [StandardFrameProperties.BoxTransformation.Key] 
-                = (obj) => (object) obj.ToLinearTransformation()
+                = (obj) => (object) obj.ToAffineTransformation()
             };
 
         /// <summary>

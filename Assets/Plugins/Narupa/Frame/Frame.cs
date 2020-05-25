@@ -125,9 +125,9 @@ namespace Narupa.Frame
         /// <summary>
         /// The transformation that represents the unit cell.
         /// </summary>
-        public LinearTransformation? BoxVectors
+        public AffineTransformation? BoxVectors
         {
-            get => Data.GetValueOrDefault<LinearTransformation>(StandardFrameProperties.BoxTransformation.Key);
+            get => Data.GetValueOrDefault<AffineTransformation>(StandardFrameProperties.BoxTransformation.Key);
             set => Data[StandardFrameProperties.BoxTransformation.Key] = value;
         }
         
