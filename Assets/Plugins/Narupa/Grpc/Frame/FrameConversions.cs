@@ -67,6 +67,8 @@ namespace Narupa.Grpc.Frame
         /// </summary>
         public static AffineTransformation ToAffineTransformation(this ValueArray valueArray)
         {
+            if (valueArray == null)
+                throw new ArgumentNullException("ValueArray is null");
             if (valueArray.ValuesCase != ValueArray.ValuesOneofCase.FloatValues)
                 throw new ArgumentException("ValueArray is of wrong type");
 

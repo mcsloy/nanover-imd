@@ -89,14 +89,14 @@ namespace Narupa.Grpc.Tests.Frame.Conversions
         public void Test9Floats([ValueSource(nameof(Get9FloatParameters))] (ValueArray, AffineTransformation) parameters)
         {
             var transformation = parameters.Item1.ToAffineTransformation();
-            Assert.AreEqual(parameters.Item1, transformation);
+            Assert.AreEqual(parameters.Item2, transformation);
         }
         
         [Test]
         public void Test12Floats([ValueSource(nameof(Get12FloatParameters))] (ValueArray, AffineTransformation) parameters)
         {
             var transformation = parameters.Item1.ToAffineTransformation();
-            Assert.AreEqual(parameters.Item1, transformation);
+            Assert.AreEqual(parameters.Item2, transformation);
         }
         
         [Test]
@@ -116,7 +116,7 @@ namespace Narupa.Grpc.Tests.Frame.Conversions
         public void ValueArray_Null()
         {
             ValueArray value = null;
-            Assert.Throws<ArgumentException>(() => value.ToAffineTransformation());
+            Assert.Throws<ArgumentNullException>(() => value.ToAffineTransformation());
         }
         
         [Test]
