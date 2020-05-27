@@ -25,7 +25,7 @@ namespace NarupaIMD.Editor
         private Vector2 scrollPos;
         private HashSet<string> expanded = new HashSet<string>();
 
-        private NarupaXRPrototype prototype;
+        private NarupaImdSimulation simulation;
 
         private void OnGUI()
         {
@@ -35,19 +35,19 @@ namespace NarupaIMD.Editor
                 return;
             }
 
-            if (prototype == null)
+            if (simulation == null)
             {
-                prototype = FindObjectOfType<NarupaXRPrototype>();
-                if (prototype != null)
+                simulation = FindObjectOfType<NarupaImdSimulation>();
+                if (simulation != null)
                     OnConnectToSession();
             }
 
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-            if (prototype != null)
+            if (simulation != null)
             {
-                if (prototype.Sessions.Multiplayer.IsOpen)
-                    DrawSharedState(prototype.Sessions.Multiplayer.SharedStateDictionary);
+                if (simulation.Multiplayer.IsOpen)
+                    DrawSharedState(simulation.Multiplayer.SharedStateDictionary);
                 else
                     EditorGUILayout.HelpBox("Session not connected", MessageType.Error);
             }
@@ -65,7 +65,7 @@ namespace NarupaIMD.Editor
 
         private void OnConnectToSession()
         {
-            prototype.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated += KeyUpdated;
+            simulation.Multiplayer.SharedStateDictionaryKeyUpdated += KeyUpdated;
         }
 
         private Dictionary<string, DateTime> lastUpdate = new Dictionary<string, DateTime>();
@@ -109,7 +109,7 @@ namespace NarupaIMD.Editor
         /// <param name="key"></param>
         private void RemoveKey(string key)
         {
-            prototype.Sessions.Multiplayer.RemoveSharedStateKey(key);
+            simulation.Multiplayer.RemoveSharedStateKey(key);
         }
 
         private static Action<Rect> ShowHeaderContextMenu(Action deleteAction)
