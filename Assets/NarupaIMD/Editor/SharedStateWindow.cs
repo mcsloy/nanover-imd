@@ -12,6 +12,7 @@ namespace NarupaIMD.Editor
     /// </summary>
     public class SharedStateWindow : EditorWindow
     {
+        [MenuItem("Narupa/Windows/Multiplayer Shared State")]
         [MenuItem("Window/Narupa/Multiplayer Shared State")]
         private static void Init()
         {

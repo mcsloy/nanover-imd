@@ -11,7 +11,7 @@ namespace NarupaIMD.Editor
         /// <summary>
         /// Play the current server.
         /// </summary>
-        [MenuItem("Narupa/Play")]
+        [MenuItem("Narupa/Commands/Play")]
         public static void PlayServer()
         {
             Object.FindObjectOfType<NarupaIMDPrototype>().Simulation.Trajectory?.Play();
@@ -20,7 +20,7 @@ namespace NarupaIMD.Editor
         /// <summary>
         /// Pause the current server.
         /// </summary>
-        [MenuItem("Narupa/Pause")]
+        [MenuItem("Narupa/Commands/Pause")]
         public static void PauseServer()
         {
             Object.FindObjectOfType<NarupaIMDPrototype>().Simulation.Trajectory?.Pause();
@@ -29,7 +29,7 @@ namespace NarupaIMD.Editor
         /// <summary>
         /// Reset the current server.
         /// </summary>
-        [MenuItem("Narupa/Reset")]
+        [MenuItem("Narupa/Commands/Reset")]
         public static void ResetServer()
         {
             Object.FindObjectOfType<NarupaIMDPrototype>().Simulation.Trajectory?.Reset();
@@ -38,7 +38,7 @@ namespace NarupaIMD.Editor
         /// <summary>
         /// Step the current server.
         /// </summary>
-        [MenuItem("Narupa/Step")]
+        [MenuItem("Narupa/Commands/Step")]
         public static void StepServer()
         {
             Object.FindObjectOfType<NarupaIMDPrototype>().Simulation.Trajectory?.Step();
