@@ -85,11 +85,8 @@ namespace Narupa.Grpc.Frame
                     new Vector3(floatArray[3], floatArray[4], floatArray[5]),
                     new Vector3(floatArray[6], floatArray[7], floatArray[8]));
 
-
             throw new ArgumentException(
-                    "Incorrect number of floats to specify a linear transformation");
-
-            
+                    "Incorrect number of floats to specify an affine transformation");
         }
     }
 }

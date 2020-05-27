@@ -27,7 +27,7 @@ namespace Narupa.Testing
         /// Get a random position within the supported range of coordinates.
         /// Coordinates outside this range are too imprecise to be worth supporting.
         /// </summary>
-        private static Vector3 GetRandomPosition()
+        public static Vector3 GetRandomPosition()
         {
             return new Vector3(Random.Range(-MaximumCoordinate, MaximumCoordinate),
                                Random.Range(-MaximumCoordinate, MaximumCoordinate),
@@ -37,7 +37,7 @@ namespace Narupa.Testing
         /// <summary>
         /// Get a uniformly random rotation.
         /// </summary>
-        private static Quaternion GetRandomRotation()
+        public static Quaternion GetRandomRotation()
         {
             return Random.rotation;
         }
