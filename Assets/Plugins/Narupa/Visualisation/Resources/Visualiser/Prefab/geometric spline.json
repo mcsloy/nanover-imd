@@ -1,0 +1,5 @@
+{
+  "sequence": "polypeptide",
+  "color": "residue index in entity",
+  "render": "geometric spline"
+}

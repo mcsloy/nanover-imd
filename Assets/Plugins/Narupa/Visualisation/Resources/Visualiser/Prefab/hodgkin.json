@@ -1,0 +1,22 @@
+{
+  "color": {
+    "type": "cpk",
+    "scheme": {
+      "C": "8E5234",
+      "O": "E08B14",
+      "N": "5E7242",
+      "S": "4D5377",
+      "P": "8E3D73",
+      "H": "E2E0E2"
+    }
+  },
+  "scale": {
+    "type": "vdw",
+    "scale": 0.25
+  },
+  "render": {
+    "type": "ball and stick",
+    "bond.scale": 0.01,
+    "bond.color": "564632"
+  }
+}

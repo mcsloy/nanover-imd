@@ -188,38 +188,36 @@ namespace NarupaIMD.Selection
             // The hide property turns off any visualiser
             if (Selection.HideRenderer)
             {
-                SetVisualiser(null, false);
+                SetVisualiser(null);
                 return;
             }
 
             GameObject visualiser = null;
-            var isPrefab = true;
 
             // Construct a visualiser from any provided renderer info
             if (Selection.Renderer is object data)
-                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
+                visualiser = VisualiserFactory.ConstructVisualiser(data);
 
             // Use the predefined ball and stick renderer as a default
             if (visualiser == null)
             {
-                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser("ball and stick");
+                visualiser = VisualiserFactory.ConstructVisualiser("ball and stick");
             }
 
             if (visualiser != null)
             {
-                SetVisualiser(visualiser, isPrefab);
+                SetVisualiser(visualiser);
             }
             else
             {
-                SetVisualiser(null, false);
+                SetVisualiser(null);
             }
         }
 
         /// <summary>
         /// Set the visualiser of this selection
         /// </summary>
-        /// <param name="isPrefab">Is the argument a prefab, and hence needs instantiating?</param>
-        public void SetVisualiser(GameObject newVisualiser, bool isPrefab = true)
+        public void SetVisualiser(GameObject newVisualiser)
         {
             if (currentVisualiser != null)
             {
@@ -230,16 +228,9 @@ namespace NarupaIMD.Selection
             if (newVisualiser == null)
                 return;
 
-            if (isPrefab)
-            {
-                currentVisualiser = Instantiate(newVisualiser, transform);
-            }
-            else
-            {
-                currentVisualiser = newVisualiser;
-                currentVisualiser.transform.parent = transform;
-                currentVisualiser.transform.SetToLocalIdentity();
-            }
+            currentVisualiser = newVisualiser;
+            currentVisualiser.transform.parent = transform;
+            currentVisualiser.transform.SetToLocalIdentity();
 
             SetupAdaptorAndFilter();
         }

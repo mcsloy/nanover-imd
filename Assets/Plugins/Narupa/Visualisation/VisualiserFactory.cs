@@ -10,6 +10,7 @@ using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Components.Input;
 using Narupa.Visualisation.Node.Color;
 using Narupa.Visualisation.Node.Input;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NarupaIMD.Selection
@@ -333,29 +334,62 @@ namespace NarupaIMD.Selection
         {
             return Resources.Load<GameObject>($"{SequenceSubgraphPath}/{name}");
         }
+        
+        private static object DeserializeJson(string json)
+        {
+            return JsonToObject(JToken.Parse(json));
+        }
+
+        private static object JsonToObject(JToken token)
+        {
+            switch (token.Type)
+            {
+                case JTokenType.Object:
+                    return token.Children<JProperty>()
+                                .ToDictionary(prop => prop.Name,
+                                              prop => JsonToObject(prop.Value));
+
+                case JTokenType.Array:
+                    return token.Select(JsonToObject).ToList();
+
+                default:
+                    return ((JValue) token).Value;
+            }
+        }
+        
+        /// <summary>
+        /// Load a predefined visualiser (stored as JSON) as a dictionary.
+        /// </summary>
+        private static Dictionary<string, object> GetPredefinedVisualiserDictionary(string name)
+        {
+            var text = Resources.Load<TextAsset>($"{PrefabPath}/{name}");
+            if(text == null)
+                return new Dictionary<string, object>();
+            return DeserializeJson(text.text) as Dictionary<string, object> 
+                ?? new Dictionary<string, object>();
+        }
 
         /// <summary>
         /// Construct a visualiser from the provided arbitrary C# data.
         /// </summary>
-        public static (GameObject visualiser, bool isPrefab) ConstructVisualiser(object data)
+        public static GameObject ConstructVisualiser(object data)
         {
             GameObject visualiser = null;
-            var isPrefab = true;
 
             if (data is string visName)
             {
                 // A renderer specified by a single string is assumed
                 // to be a predefined visualiser
-                visualiser = GetPredefinedVisualiser(visName);
+                data = GetPredefinedVisualiserDictionary(visName);
             }
-            else if (data is Dictionary<string, object> dict)
+            if (data is Dictionary<string, object> dict)
             {
                 // A dictionary indicates the visualiser should be created from
                 // fields in dict
-                (visualiser, isPrefab) = (GetVisualiserFromDictionary(dict), false);
+                visualiser = GetVisualiserFromDictionary(dict);
             }
 
-            return (visualiser, isPrefab);
+            return visualiser;
         }
 
         /// <summary>
