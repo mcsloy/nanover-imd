@@ -162,9 +162,6 @@ MonoBehaviour:
     particleCount:
       value: 0
       isValueProvided: 0
-    particleResidues:
-      value: 
-      isValueProvided: 0
 --- !u!114 &146005666751186440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +197,7 @@ MonoBehaviour:
   node:
     name: scale
     input:
-      value: 0.1
+      value: 0.05
       isValueProvided: 1
 --- !u!114 &6914795531129879102
 MonoBehaviour:

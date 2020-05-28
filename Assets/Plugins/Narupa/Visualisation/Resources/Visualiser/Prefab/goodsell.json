@@ -2,7 +2,7 @@
   "color": "goodsell",
   "scale": {
     "type": "vdw",
-    "scale": 2.0
+    "scale": 0.5
   },
   "render": "goodsell"
 }

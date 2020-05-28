@@ -91,7 +91,7 @@ MonoBehaviour:
   node:
     name: scale
     input:
-      value: 0.6
+      value: 0.5
       isValueProvided: 1
 --- !u!114 &3421694816922696361
 MonoBehaviour:
