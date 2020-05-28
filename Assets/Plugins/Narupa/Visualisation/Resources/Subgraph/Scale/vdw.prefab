@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8528582866378757812}
   - component: {fileID: -4052931970267063914}
+  - component: {fileID: -279525502772887379}
   - component: {fileID: 4905911803482447985}
   - component: {fileID: 6947444575870807714}
   m_Layer: 0
@@ -51,6 +52,24 @@ MonoBehaviour:
     input:
       value: 
       isValueProvided: 0
+--- !u!114 &-279525502772887379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8528582866378757822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59fb6635fa334c77838b8fb3a4c1b07b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: scale
+    input:
+      value: 1
+      isValueProvided: 1
 --- !u!114 &4905911803482447985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,12 +86,15 @@ MonoBehaviour:
   - sourceComponent: {fileID: -4052931970267063914}
     sourceFieldName: input
     destinationFieldName: elements
+  - sourceComponent: {fileID: -279525502772887379}
+    sourceFieldName: input
+    destinationFieldName: scale
   node:
     elements:
       value: 
       isValueProvided: 0
     scale:
-      value: 10
+      value: 1
       isValueProvided: 1
 --- !u!114 &6947444575870807714
 MonoBehaviour:
