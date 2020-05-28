@@ -47,25 +47,13 @@ namespace Narupa.Visualisation
             return visualiser;
         }
 
-
-        private GameObject visualiser;
-
-        private Dictionary<string, object> rootParameters;
-
-        private Dictionary<GameObject, Dictionary<string, object>> subgraphParameters =
-            new Dictionary<GameObject, Dictionary<string, object>>();
-
-        private List<GameObject> subgraphs = new List<GameObject>();
-
-        private ParentedAdaptorNode baseAdaptor;
-        private ParticleFilteredAdaptorNode filterAdaptor;
-
+        
         /// <summary>
         /// Generate a visualiser from a dictionary describing subgraphs and parameters.
         /// </summary>
         private VisualiserFactory(Dictionary<string, object> dict, GameObject gameObject)
         {
-            this.visualiser = gameObject;
+            visualiser = gameObject;
             rootParameters = dict;
 
             baseAdaptor = AddComponent<ParentedAdaptor>().Node;
@@ -80,6 +68,18 @@ namespace Narupa.Visualisation
 
             ResolveSubgraphConnections();
         }
+
+        private GameObject visualiser;
+
+        private Dictionary<string, object> rootParameters;
+
+        private Dictionary<GameObject, Dictionary<string, object>> subgraphParameters =
+            new Dictionary<GameObject, Dictionary<string, object>>();
+
+        private List<GameObject> subgraphs = new List<GameObject>();
+
+        private ParentedAdaptorNode baseAdaptor;
+        private ParticleFilteredAdaptorNode filterAdaptor;
 
         private T AddComponent<T>() where T : VisualisationComponent
         {
@@ -298,11 +298,5 @@ namespace Narupa.Visualisation
         /// The default subgraph for generating sequences.
         /// </summary>
         private const string DefaultSequenceSubgraph = "entities";
-
-        /// <summary>
-        /// The key for residue secondary structure. The presence of this key as an input
-        /// for a subgraph indicates that a secondary structure adaptor is required.
-        /// </summary>
-        private const string ResidueSecondaryStructureKey = "residue.secondarystructures";
     }
 }
