@@ -144,12 +144,12 @@ namespace Narupa.Visualisation
         {
             var subgraphIndex = subgraphs.IndexOf(subgraph);
 
-            // If for an input "some.input" there's a provided "some.input": "$new.input", change
+            // If for an input "some.input" there's a provided "some.input": "#new.input", change
             // the input name to "new.input"
             if (subgraphParameters.ContainsKey(subgraph) &&
                 subgraphParameters[subgraph].ContainsKey(input.Name) &&
                 subgraphParameters[subgraph][input.Name] is string replacement &&
-                replacement.StartsWith("$"))
+                replacement.StartsWith("#"))
                 input.Name = replacement.Substring(1);
 
             // Is the value provided specifically for this subgraph in its parameters
