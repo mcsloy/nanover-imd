@@ -81,7 +81,7 @@ namespace Narupa.Visualisation
 
                 // Object is a string name of a predefined mapping
                 case string str:
-                    mapping = Resources.Load<ElementColorMapping>($"Mapping/{str}");
+                    mapping = Resources.Load<ElementColorMapping>($"Visualiser/Mapping/{str}");
                     return true;
 
                 // Object is a dictionary, to be interpreted as element symbols to colors

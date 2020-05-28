@@ -9,15 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1027445834820768729}
-  - component: {fileID: 4545272566148289077}
   - component: {fileID: 3963503906544500847}
-  - component: {fileID: 3464585695043242776}
   - component: {fileID: 6936130919244846093}
-  - component: {fileID: 8089090521469392611}
-  - component: {fileID: 4659525984902923030}
+  - component: {fileID: -2886940925888067037}
   - component: {fileID: 4119878278907132683}
   m_Layer: 0
-  m_Name: Polypeptide Sequence
+  m_Name: entities
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,24 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4545272566148289077
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4265432535112186709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a72e54b13d84ba9abff43ae028eeb53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection: []
-  node:
-    name: particle.names
-    input:
-      value: []
-      isValueProvided: 0
 --- !u!114 &3963503906544500847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,24 +51,6 @@ MonoBehaviour:
     name: particle.residues
     input:
       value: 
-      isValueProvided: 0
---- !u!114 &3464585695043242776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4265432535112186709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a72e54b13d84ba9abff43ae028eeb53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection: []
-  node:
-    name: residue.names
-    input:
-      value: []
       isValueProvided: 0
 --- !u!114 &6936130919244846093
 MonoBehaviour:
@@ -109,7 +70,7 @@ MonoBehaviour:
     input:
       value: 
       isValueProvided: 0
---- !u!114 &8089090521469392611
+--- !u!114 &-2886940925888067037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118,56 +79,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 4265432535112186709}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7af20ce70c19474cb0cabc1f8e7c5d12, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a803530dfb64e0b924d66cf5a437670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inputLinkCollection:
-  - sourceComponent: {fileID: 4545272566148289077}
-    sourceFieldName: input
-    destinationFieldName: atomNames
-  - sourceComponent: {fileID: 3963503906544500847}
-    sourceFieldName: input
-    destinationFieldName: atomResidues
-  - sourceComponent: {fileID: 3464585695043242776}
-    sourceFieldName: input
-    destinationFieldName: residueNames
   - sourceComponent: {fileID: 6936130919244846093}
     sourceFieldName: input
     destinationFieldName: residueEntities
+  - sourceComponent: {fileID: 3963503906544500847}
+    sourceFieldName: input
+    destinationFieldName: particleResidues
   node:
-    atomNames:
-      value: []
-      isValueProvided: 0
-    atomResidues:
-      value: 
-      isValueProvided: 0
-    residueNames:
-      value: []
-      isValueProvided: 0
     residueEntities:
       value: 
       isValueProvided: 0
---- !u!114 &4659525984902923030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4265432535112186709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d9c1f4f34948e8bb51530d262fbcb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputLinkCollection:
-  - sourceComponent: {fileID: 8089090521469392611}
-    sourceFieldName: alphaCarbonSequences
-    destinationFieldName: particleFilter
-  node:
-    parentAdaptor:
-      unityObject: {fileID: 0}
-      isValueProvided: 0
-    particleFilter:
+    particleResidues:
       value: 
       isValueProvided: 0
 --- !u!114 &4119878278907132683
@@ -183,11 +109,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputLinkCollection:
-  - sourceComponent: {fileID: 8089090521469392611}
-    sourceFieldName: sequenceLengths
+  - sourceComponent: {fileID: -2886940925888067037}
+    sourceFieldName: entitySequenceLengths
     destinationFieldName: output
   node:
-    name: sequences.lengths
+    name: sequence.lengths
     output:
       value: 
       isValueProvided: 0

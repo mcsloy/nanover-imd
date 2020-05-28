@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Components.Adaptor;
+using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Node.Output;
 using Narupa.Visualisation.Property;
@@ -78,6 +79,9 @@ namespace Narupa.Visualisation.Editor
                     if (prop.HasValue && prop.PropertyType.IsArray)
                         label +=
                             $" {prop.PropertyType.GetElementType().Name}[{(prop.Value as Array).Length}]";
+                    if (child.GetWrappedVisualisationNode() is BaseAdaptorNode baseAdaptor
+                        && baseAdaptor.IsPropertyOverriden(name))
+                        label += " [overriden]";
                     var color = prop.HasValue ? "green" : "red";
                     file.WriteLine($"{GetId(prop)} [label=\"{label}\" color={color} shape=box];");
                     FindConnections(prop, connections);

@@ -43,7 +43,7 @@ namespace Narupa.Visualisation.Node.Adaptor
             propertyOverrides.Remove(name);
         }
 
-        protected bool IsPropertyOverriden(string key)
+        public bool IsPropertyOverriden(string key)
         {
             return propertyOverrides.Contains(key);
         }

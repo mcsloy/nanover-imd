@@ -25,7 +25,7 @@ namespace Narupa.Visualisation.Components
         private readonly List<GameObject> currentSubgraphs = new List<GameObject>();
 
         [SerializeField]
-        private FrameAdaptorProperty frameAdaptor = new FrameAdaptorProperty();
+        private DynamicPropertyProviderNode frameAdaptor = new DynamicPropertyProviderNode();
 
         /// <summary>
         /// The <see cref="FrameAdaptor" /> used to provide keys that are not provided

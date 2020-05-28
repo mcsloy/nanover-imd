@@ -179,6 +179,9 @@ MonoBehaviour:
     splineSegments:
       value: []
       isValueProvided: 0
+    rendererColor:
+      value: {r: 0, g: 0, b: 0, a: 0}
+      isValueProvided: 0
     segments: 32
     sides: 64
     material: {fileID: 2100000, guid: c4ff711234eb21b44b2201ed56702aca, type: 2}
@@ -217,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputLinkCollection: []
   node:
-    name: sequences.lengths
+    name: sequence.lengths
     input:
       value: 
       isValueProvided: 0

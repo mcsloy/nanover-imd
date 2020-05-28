@@ -142,26 +142,26 @@ namespace Narupa.Visualisation
         /// <summary>
         /// Path in the resources folder(s) where color subgraphs exist
         /// </summary>
-        private const string ColorSubgraphPath = "Subgraph/Color";
+        private const string ColorSubgraphPath = "Visualiser/Subgraph/Color";
 
         /// <summary>
         /// Path in the resources folder(s) where color subgraphs exist
         /// </summary>
-        private const string RenderSubgraphPath = "Subgraph/Render";
+        private const string RenderSubgraphPath = "Visualiser/Subgraph/Render";
 
         /// <summary>
         /// Path in the resources folder(s) where color subgraphs exist
         /// </summary>
-        private const string ScaleSubgraphPath = "Subgraph/Scale";
+        private const string ScaleSubgraphPath = "Visualiser/Subgraph/Scale";
 
         /// <summary>
         /// Path in the resources folder(s) where color subgraphs exist
         /// </summary>
-        private const string WidthSubgraphPath = "Subgraph/Width";
+        private const string WidthSubgraphPath = "Visualiser/Subgraph/Width";
 
         /// <summary>
         /// Path in the resources folder(s) where color subgraphs exist
         /// </summary>
-        private const string SequenceSubgraphPath = "Subgraph/Sequence";
+        private const string SequenceSubgraphPath = "Visualiser/Subgraph/Sequence";
     }
 }

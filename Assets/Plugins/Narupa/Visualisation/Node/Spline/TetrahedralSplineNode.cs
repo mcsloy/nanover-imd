@@ -27,7 +27,7 @@ namespace Narupa.Visualisation.Node.Spline
         private ColorArrayProperty colors = new ColorArrayProperty();
 
         [SerializeField]
-        private FloatArrayProperty scales = new FloatArrayProperty();
+        private FloatArrayProperty widths = new FloatArrayProperty();
 
         [SerializeField]
         private BondArrayProperty interiorBonds = new BondArrayProperty();
@@ -36,7 +36,7 @@ namespace Narupa.Visualisation.Node.Spline
         private ColorProperty color;
 
         [SerializeField]
-        private FloatProperty radius;
+        private FloatProperty width;
 
         private Vector3ArrayProperty outputPositions = new Vector3ArrayProperty();
 
@@ -54,7 +54,7 @@ namespace Narupa.Visualisation.Node.Spline
                                              && normals.HasNonNullValue()
                                              && tangents.HasNonNullValue()
                                              && color.HasNonNullValue()
-                                             && radius.HasNonNullValue();
+                                             && width.HasNonNullValue();
 
         /// <inheritdoc cref="GenericOutputNode.IsInputDirty"/>
         protected override bool IsInputDirty => sequenceLengths.IsDirty
@@ -63,9 +63,9 @@ namespace Narupa.Visualisation.Node.Spline
                                              || tangents.IsDirty
                                              || colors.IsDirty
                                              || color.IsDirty
-                                             || radius.IsDirty
+                                             || width.IsDirty
                                              || interiorBonds.IsDirty
-                                             || scales.IsDirty;
+                                             || widths.IsDirty;
 
         /// <inheritdoc cref="GenericOutputNode.ClearDirty"/>
         protected override void ClearDirty()
@@ -76,9 +76,9 @@ namespace Narupa.Visualisation.Node.Spline
             tangents.IsDirty = false;
             colors.IsDirty = false;
             color.IsDirty = false;
-            radius.IsDirty = false;
+            width.IsDirty = false;
             interiorBonds.IsDirty = false;
-            scales.IsDirty = false;
+            widths.IsDirty = false;
         }
 
         /// <inheritdoc cref="GenericOutputNode.UpdateOutput"/>
@@ -184,12 +184,12 @@ namespace Narupa.Visualisation.Node.Spline
                     var color = this.color.Value * (colors.HasValue
                                                         ? colors.Value[index]
                                                         : UnityEngine.Color.white);
-                    var radius = this.radius.Value * (scales.HasValue
-                                                          ? scales.Value[index]
+                    var width = this.width.Value * (widths.HasValue
+                                                          ? widths.Value[index]
                                                           : 1f);
 
-                    outputPositions[index * 2] = position + radius * binormal;
-                    outputPositions[index * 2 + 1] = position - radius * binormal;
+                    outputPositions[index * 2] = position + 0.5f * width * binormal;
+                    outputPositions[index * 2 + 1] = position - 0.5f * width * binormal;
                     outputColors[index * 2] = color;
                     outputColors[index * 2 + 1] = color;
                     index++;

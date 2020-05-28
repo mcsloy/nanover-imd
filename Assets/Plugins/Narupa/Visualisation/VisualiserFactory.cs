@@ -65,6 +65,8 @@ namespace Narupa.Visualisation
             CheckIfSecondaryStructureIsRequired();
 
             InstantiateSubgraphs();
+            
+            ResolveSubgraphAdaptors();
 
             ResolveSubgraphConnections();
         }
@@ -116,6 +118,26 @@ namespace Narupa.Visualisation
                 subgraphIndex++;
             }
         }
+        
+        
+        /// <summary>
+        /// Resolve all adaptors that appear. 
+        /// </summary>
+        private void ResolveSubgraphAdaptors()
+        {
+            IDynamicPropertyProvider adaptor = filterAdaptor;
+            foreach (var subgraph in subgraphs)
+            {
+                foreach (var node in subgraph.GetVisualisationNodes())
+                {
+                    if (node is DynamicPropertyProviderInputNode dynamicInput)
+                        dynamicInput.Input.Value = adaptor;
+                    if (node is IDynamicPropertyProvider provider)
+                        adaptor = provider;
+                }
+            }
+        }
+
 
         private void ResolveSubgraphConnections(IInputNode input,
                                                 GameObject subgraph)

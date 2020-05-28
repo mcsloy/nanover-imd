@@ -41,8 +41,9 @@ namespace Narupa.Visualisation.Node.Protein
 
             secondaryStructure.DsspOptions = options;
 
-            adaptor.AddOverrideProperty<SecondaryStructureAssignment[]>(
+            var overrideProperty = adaptor.AddOverrideProperty<SecondaryStructureAssignment[]>(
                 VisualiserFactory.ResidueSecondaryStructure.Key);
+            overrideProperty.LinkedProperty = this.assignments;
         }
 
         /// <inheritdoc cref="BaseAdaptorNode.Refresh"/>

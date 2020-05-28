@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1770168607486021212}
+  - component: {fileID: 1109446647941313638}
   - component: {fileID: 4678201469169922482}
   - component: {fileID: 5343576976142597960}
   - component: {fileID: 4287833373361117917}
@@ -41,6 +42,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1109446647941313638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770168607486021206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d5333252f644ff099b06cc9fd514aa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputLinkCollection: []
+  node:
+    name: particle.widths
+    input:
+      value: []
+      isValueProvided: 0
 --- !u!114 &4678201469169922482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,9 +117,9 @@ MonoBehaviour:
   - sourceComponent: {fileID: 4678201469169922482}
     sourceFieldName: sequences
     destinationFieldName: sequenceLengths
-  - sourceComponent: {fileID: -8179965035998276172}
+  - sourceComponent: {fileID: 1109446647941313638}
     sourceFieldName: input
-    destinationFieldName: radius
+    destinationFieldName: widths
   node:
     sequenceLengths:
       value: 
@@ -117,7 +136,7 @@ MonoBehaviour:
     colors:
       value: []
       isValueProvided: 0
-    scales:
+    widths:
       value: []
       isValueProvided: 0
     interiorBonds:
@@ -126,9 +145,9 @@ MonoBehaviour:
     color:
       value: {r: 0.9811321, g: 0.9765041, b: 0.9765041, a: 1}
       isValueProvided: 1
-    radius:
-      value: 0.4
-      isValueProvided: 0
+    width:
+      value: 0.25
+      isValueProvided: 1
 --- !u!114 &4287833373361117917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,7 +398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputLinkCollection: []
   node:
-    name: sequences.lengths
+    name: sequence.lengths
     input:
       value: 
       isValueProvided: 0

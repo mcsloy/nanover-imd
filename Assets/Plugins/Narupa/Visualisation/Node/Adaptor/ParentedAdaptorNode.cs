@@ -15,7 +15,7 @@ namespace Narupa.Visualisation.Node.Adaptor
     {
         /// <inheritdoc cref="ParentAdaptor"/>
         [SerializeField]
-        private FrameAdaptorProperty adaptor = new FrameAdaptorProperty();
+        private DynamicPropertyProviderNode adaptor = new DynamicPropertyProviderNode();
 
         /// <summary>
         /// The adaptor that this adaptor inherits from.
@@ -31,21 +31,34 @@ namespace Narupa.Visualisation.Node.Adaptor
             return property;
         }
 
+        public void GetValueFromParent(string key, IProperty property)
+        {
+            if (IsPropertyOverriden(key))
+                return;
+            
+            if (adaptor.HasNonNullValue())
+            {
+                property.TrySetLinkedProperty(adaptor.Value.GetOrCreateProperty(key, property.PropertyType));
+            }
+            else
+            {
+                property.TrySetLinkedProperty(null);
+            }
+        }
+        
+        public override void RemoveOverrideProperty(string name)
+        {
+            base.RemoveOverrideProperty(name);
+            GetValueFromParent(name, GetProperty(name) as IProperty);
+        }
+
         /// <inheritdoc cref="BaseAdaptorNode.Refresh"/>
         public override void Refresh()
         {
             if (adaptor.IsDirty)
             {
-                if (adaptor.HasNonNullValue())
-                {
-                    foreach (var (key, property) in Properties)
-                        property.TrySetLinkedProperty(adaptor.Value.GetOrCreateProperty(key, property.PropertyType));
-                }
-                else
-                {
-                    foreach (var (key, property) in Properties)
-                        property.TrySetLinkedProperty(null);
-                }
+                foreach (var (key, property) in Properties)
+                    GetValueFromParent(key, property);
 
                 adaptor.IsDirty = false;
             }

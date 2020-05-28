@@ -9,7 +9,7 @@ namespace Narupa.Visualisation.Properties
     /// Serializable <see cref="Property" /> for a <see cref="IDynamicPropertyProvider" /> value.
     /// </summary>
     [Serializable]
-    public class FrameAdaptorProperty : InterfaceProperty<IDynamicPropertyProvider>
+    public class DynamicPropertyProviderNode : InterfaceProperty<IDynamicPropertyProvider>
     {
     }
 }
