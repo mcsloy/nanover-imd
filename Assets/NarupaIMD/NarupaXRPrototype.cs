@@ -14,6 +14,7 @@ using Text = TMPro.TextMeshProUGUI;
 
 using Essd;
 using Narupa.Core.Math;
+using NarupaIMD;
 
 namespace NarupaXR
 {
@@ -46,6 +47,9 @@ namespace NarupaXR
 
         [SerializeField]
         private NarupaXRAvatarManager avatars;
+
+        [SerializeField]
+        private NarupaXRDebugger debugger;
 #pragma warning restore 0649
 
         public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
@@ -66,6 +70,8 @@ namespace NarupaXR
 
         public NarupaXRSessionManager Sessions { get; } = new NarupaXRSessionManager();
 
+        public NarupaXRDebugger Debugger => debugger;
+        
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>

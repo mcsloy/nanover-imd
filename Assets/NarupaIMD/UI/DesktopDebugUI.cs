@@ -25,6 +25,7 @@ namespace NarupaXR
         private string multiplayerPort = "38801";
 
         private bool discovery;
+        private bool debugger;
         private ICollection<ServiceHub> knownServiceHubs = new List<ServiceHub>();
 
         public float interactionForceMultiplier = 1000;
@@ -76,6 +77,11 @@ namespace NarupaXR
             GUILayout.Box("Debug");
             xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 
+            if (GUILayout.Button("Debugger"))
+            {
+                debugger = !debugger;
+            }
+            
             GUILayout.Box("Misc");
             if (GUILayout.Button("Quit"))
                 narupa.Quit();
@@ -84,9 +90,10 @@ namespace NarupaXR
 
             if (directConnect)
                 ShowDirectConnectWindow();
-
-            if (discovery)
+            else if (discovery)
                 ShowServiceDiscoveryWindow();
+            else if (debugger)
+                ShowDebugTimings();
         }
 
         private void ShowDirectConnectWindow()
@@ -151,6 +158,24 @@ namespace NarupaXR
                     }
                 }
             }
+
+            GUILayout.EndArea();
+        }
+        
+        private void ShowDebugTimings()
+        {
+            GUILayout.BeginArea(new Rect(192 + 16 * 2, 10, 192 * 2, 512));
+            GUILayout.Box("Debugging");
+
+            GUILayout.Label($"Current Frame Index: {narupa.Sessions.Trajectory.CurrentFrameIndex}");
+            
+            GUILayout.Label($"Received Frame Rate: {narupa.Debugger.FrameReceiving.AverageNumberPerSecond():#.0} /s");
+            
+            GUILayout.Label($"Multiplayer Delay: {1000f * narupa.Debugger.MultiplayerPingPong.AverageTimeDifference():#.0} ms");
+
+            GUILayout.Label($"Multiplayer Recieve Rate: {narupa.Debugger.MultiplayerReceive.AverageNumberPerSecond():#.0} /s");
+
+            GUILayout.Label($"Multiplayer Send Rate: {narupa.Debugger.MultiplayerSend.AverageNumberPerSecond():#.0} /s");
 
             GUILayout.EndArea();
         }
