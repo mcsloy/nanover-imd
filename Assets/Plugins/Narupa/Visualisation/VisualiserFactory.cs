@@ -1,395 +1,250 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Narupa.Core;
 using Narupa.Core.Science;
+using Narupa.Frame;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Components.Adaptor;
-using Narupa.Visualisation.Components.Input;
-using Narupa.Visualisation.Node.Color;
+using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Node.Input;
-using Newtonsoft.Json.Linq;
+using Narupa.Visualisation.Node.Protein;
+using Narupa.Visualisation.Property;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace NarupaIMD.Selection
+namespace Narupa.Visualisation
 {
     /// <summary>
     /// Construction methods for creating visualisers from nested data structures.
     /// </summary>
-    public static class VisualiserFactory
+    public partial class VisualiserFactory
     {
-        /// <summary>
-        /// Parse a gradient from a generic C# object. Possible values include a Unity
-        /// gradient or a list of items which can be interpreted as colors using
-        /// <see cref="TryParseColor" />.
-        /// </summary>
-        private static bool TryParseGradient(object value, out Gradient gradient)
-        {
-            gradient = null;
-
-            switch (value)
-            {
-                // Object is already a Gradient
-                case Gradient g:
-                    gradient = g;
-                    return true;
-
-                // Object is a list of colors
-                case IReadOnlyList<object> list:
-                {
-                    var colors = new List<Color>();
-
-                    // Parse each item of the list as a color
-                    foreach (var item in list)
-                    {
-                        if (!TryParseColor(item, out var color))
-                            return false;
-                        colors.Add(color);
-                    }
-
-                    // Construct a gradient from two or more colors
-                    if (colors.Count >= 2)
-                    {
-                        gradient = new Gradient();
-                        gradient.SetKeys(
-                            colors.Select((c, i) => new GradientColorKey(
-                                              c, (float) i / (colors.Count - 1)))
-                                  .ToArray(),
-                            new[]
-                            {
-                                new GradientAlphaKey(1, 0), new GradientAlphaKey(1, 1)
-                            });
-                        return true;
-                    }
-
-                    break;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Parse an <see cref="IMapping{TFrom,TTo}" /> from a C# object.
-        /// </summary>
-        private static bool TryParseElementColorMapping(object value,
-                                                        out IMapping<Element, Color> mapping)
-        {
-            mapping = null;
-
-            switch (value)
-            {
-                // Object is already a mapping of elements to colors
-                case IMapping<Element, Color> actualValue:
-                    mapping = actualValue;
-                    return true;
-
-                // Object is a string name of a predefined mapping
-                case string str:
-                    mapping = Resources.Load<ElementColorMapping>($"CPK/{str}");
-                    return true;
-
-                // Object is a dictionary, to be interpreted as element symbols to colors
-                case Dictionary<string, object> dict:
-                {
-                    var mappingDictionary = new Dictionary<Element, Color>();
-                    foreach (var (key, val) in dict)
-                        if (TryParseElement(key, out var element)
-                         && TryParseColor(val, out var color))
-                            mappingDictionary.Add(element, color);
-                        else
-                            return false;
-
-                    mapping = mappingDictionary.AsMapping();
-                    return true;
-                }
-
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Parse an element from either a string symbol or an integer atomic number.
-        /// </summary>
-        public static bool TryParseElement(object value, out Element element)
-        {
-            element = Element.Virtual;
-
-            switch (value)
-            {
-                // Object is potentially an atomic symbol
-                case string str:
-                {
-                    var potentialElement = ElementSymbols.GetFromSymbol(str);
-                    if (potentialElement.HasValue)
-                    {
-                        element = potentialElement.Value;
-                        return true;
-                    }
-
-                    break;
-                }
-
-                // Object is an atomic number
-                case int atomicNumber:
-                    if (atomicNumber >= 1 && atomicNumber <= 118)
-                    {
-                        element = (Element) atomicNumber;
-                        return true;
-                    }
-
-                    break;
-
-                // Object is an atomic number, but in float form
-                case double d:
-                {
-                    var atomicNumber = (int) d;
-                    if (atomicNumber >= 1 && atomicNumber <= 118)
-                    {
-                        element = (Element) atomicNumber;
-                        return true;
-                    }
-
-                    break;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Regex for parsing strings such as E4F924, #24fac8 and 0x2Ef9e2
-        /// </summary>
-        private const string RegexRgbHex =
-            @"^(?:#|0x)?([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])([A-Fa-f0-9][A-Fa-f0-9])$";
-
-        /// <summary>
-        /// Attempt to parse a color, from a name, hex code or array of rgba values.
-        /// </summary>
-        public static bool TryParseColor(object value, out Color color)
-        {
-            color = Color.white;
-
-            switch (value)
-            {
-                // Object is already a color
-                case Color c:
-                    color = c;
-                    return true;
-
-                // Object could be either a predefined color or a hex string
-                case string str:
-                {
-                    if (Colors.GetColorFromName(str) is Color c)
-                    {
-                        color = c;
-                        return true;
-                    }
-
-                    // Match hex color
-                    var match = Regex.Match(str, RegexRgbHex);
-
-                    if (match.Success)
-                    {
-                        color = new Color(int.Parse(match.Groups[1].Value,
-                                                    NumberStyles.HexNumber) / 255f,
-                                          int.Parse(match.Groups[2].Value,
-                                                    NumberStyles.HexNumber) / 255f,
-                                          int.Parse(match.Groups[3].Value,
-                                                    NumberStyles.HexNumber) / 255f,
-                                          1);
-                        return true;
-                    }
-
-                    break;
-                }
-
-                // Object could be a list of RGB values
-                case IReadOnlyList<object> list
-                    when list.Count == 3 && list.All(item => item is double):
-                    color = new Color((float) (double) list[0],
-                                      (float) (double) list[1],
-                                      (float) (double) list[2]);
-                    return true;
-
-                // Object could be a list of RGBA values
-                case IReadOnlyList<object> list
-                    when list.Count == 4 && list.All(item => item is double):
-                    color = new Color((float) (double) list[0],
-                                      (float) (double) list[1],
-                                      (float) (double) list[2],
-                                      (float) (double) list[3]);
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Attempt to parse a float from a generic object.
-        /// </summary>
-        private static bool TryParseFloat(object value, out float number)
-        {
-            number = default;
-
-            switch (value)
-            {
-                // Object is a float
-                case float flt:
-                    number = flt;
-                    return true;
-
-                // Object is a double
-                case double dbl:
-                    number = (float) dbl;
-                    return true;
-
-                // Object is an int
-                case int it:
-                    number = it;
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Path in the resources folder(s) where visualiser prefabs exist.
-        /// </summary>
-        private const string PrefabPath = "Visualiser/Prefab";
-
-        /// <summary>
-        /// Path in the resources folder(s) where color subgraphs exist
-        /// </summary>
-        private const string ColorSubgraphPath = "Subgraph/Color";
-
-        /// <summary>
-        /// Path in the resources folder(s) where color subgraphs exist
-        /// </summary>
-        private const string RenderSubgraphPath = "Subgraph/Render";
-
-        /// <summary>
-        /// Path in the resources folder(s) where color subgraphs exist
-        /// </summary>
-        private const string ScaleSubgraphPath = "Subgraph/Scale";
-
-        /// <summary>
-        /// Path in the resources folder(s) where color subgraphs exist
-        /// </summary>
-        private const string WidthSubgraphPath = "Subgraph/Width";
-
-        /// <summary>
-        /// Path in the resources folder(s) where color subgraphs exist
-        /// </summary>
-        private const string SequenceSubgraphPath = "Subgraph/Sequence";
-
-        /// <summary>
-        /// Get a prefab of a predefined visualiser with the given name.
-        /// </summary>
-        public static GameObject GetPredefinedVisualiser(string name)
-        {
-            return Resources.Load<GameObject>($"{PrefabPath}/{name}");
-        }
-
-        /// <summary>
-        /// Get a visualisation subgraph which is responsible for rendering information.
-        /// </summary>
-        public static GameObject GetRenderSubgraph(string name)
-        {
-            return Resources.Load<GameObject>($"{RenderSubgraphPath}/{name}");
-        }
-
-        /// <summary>
-        /// Get a visualisation subgraph which is responsible for coloring particles.
-        /// </summary>
-        public static GameObject GetColorSubgraph(string name)
-        {
-            return Resources.Load<GameObject>($"{ColorSubgraphPath}/{name}");
-        }
-
-        /// <summary>
-        /// Get a visualisation subgraph which is responsible for the scale of particles.
-        /// </summary>
-        public static GameObject GetScaleSubgraph(string name)
-        {
-            return Resources.Load<GameObject>($"{ScaleSubgraphPath}/{name}");
-        }
-
-        /// <summary>
-        /// Get a visualisation subgraph which is responsible for the width of particles in splines.
-        /// </summary>
-        public static GameObject GetWidthSubgraph(string name)
-        {
-            return Resources.Load<GameObject>($"{WidthSubgraphPath}/{name}");
-        }
-
-        /// <summary>
-        /// Get a visualisation subgraph which is responsible for calculating sequences.
-        /// </summary>
-        public static GameObject GetSequenceSubgraph(string name)
-        {
-            return Resources.Load<GameObject>($"{SequenceSubgraphPath}/{name}");
-        }
-        
-        private static object DeserializeJson(string json)
-        {
-            return JsonToObject(JToken.Parse(json));
-        }
-
-        private static object JsonToObject(JToken token)
-        {
-            switch (token.Type)
-            {
-                case JTokenType.Object:
-                    return token.Children<JProperty>()
-                                .ToDictionary(prop => prop.Name,
-                                              prop => JsonToObject(prop.Value));
-
-                case JTokenType.Array:
-                    return token.Select(JsonToObject).ToList();
-
-                default:
-                    return ((JValue) token).Value;
-            }
-        }
-        
-        /// <summary>
-        /// Load a predefined visualiser (stored as JSON) as a dictionary.
-        /// </summary>
-        private static Dictionary<string, object> GetPredefinedVisualiserDictionary(string name)
-        {
-            var text = Resources.Load<TextAsset>($"{PrefabPath}/{name}");
-            if(text == null)
-                return new Dictionary<string, object>();
-            return DeserializeJson(text.text) as Dictionary<string, object> 
-                ?? new Dictionary<string, object>();
-        }
-
         /// <summary>
         /// Construct a visualiser from the provided arbitrary C# data.
         /// </summary>
         public static GameObject ConstructVisualiser(object data)
         {
             GameObject visualiser = null;
+            
+            var gameObject = new GameObject();
 
             if (data is string visName)
             {
                 // A renderer specified by a single string is assumed
                 // to be a predefined visualiser
-                data = GetPredefinedVisualiserDictionary(visName);
+                data = GetPredefinedVisualiser(visName);
             }
+
             if (data is Dictionary<string, object> dict)
             {
                 // A dictionary indicates the visualiser should be created from
                 // fields in dict
-                visualiser = GetVisualiserFromDictionary(dict);
+                var factory = new VisualiserFactory(dict, gameObject);
+                visualiser = factory.visualiser;
             }
 
             return visualiser;
+        }
+
+
+        private GameObject visualiser;
+
+        private Dictionary<string, object> rootParameters;
+
+        private Dictionary<GameObject, Dictionary<string, object>> subgraphParameters =
+            new Dictionary<GameObject, Dictionary<string, object>>();
+
+        private List<GameObject> subgraphs = new List<GameObject>();
+
+        private ParentedAdaptorNode baseAdaptor;
+        private ParticleFilteredAdaptorNode filterAdaptor;
+
+        /// <summary>
+        /// Generate a visualiser from a dictionary describing subgraphs and parameters.
+        /// </summary>
+        private VisualiserFactory(Dictionary<string, object> dict, GameObject gameObject)
+        {
+            this.visualiser = gameObject;
+            rootParameters = dict;
+
+            baseAdaptor = AddComponent<ParentedAdaptor>().Node;
+            filterAdaptor = AddComponent<ParticleFilteredAdaptor>().Node;
+            filterAdaptor.ParentAdaptor.Value = baseAdaptor;
+            
+            FindAllSubgraphsInRootDictionary();
+
+            CheckIfSecondaryStructureIsRequired();
+
+            InstantiateSubgraphs();
+
+            ResolveSubgraphConnections();
+        }
+
+        private T AddComponent<T>() where T : VisualisationComponent
+        {
+            return visualiser.AddComponent<T>();
+        }
+            
+        public static readonly (string Key, Type Type) ResidueSecondaryStructure
+            = ("residue.secondarystructures", typeof(SecondaryStructureAssignment[]));
+
+        private void CheckIfSecondaryStructureIsRequired()
+        {
+            // If a subgraph requires secondary structure, then a secondary structure adaptor is inserted into the chain before the particle filter.
+            if (subgraphs.Any(subgraph => HasSubgraphInput(subgraph,
+                                                                        ResidueSecondaryStructure.Key)))
+            {
+                var secondaryStructureAdaptor = AddComponent<SecondaryStructureCalculator>().Node;
+                secondaryStructureAdaptor.LinkToAdaptor(baseAdaptor);
+            }
+        }
+
+        /// <summary>
+        /// Go through each input node of each subgraph, attempting to resolve the value of the input node.
+        /// </summary>
+        private void ResolveSubgraphConnections()
+        {
+            var subgraphIndex = 0;
+            foreach (var subgraph in subgraphs)
+            {
+                foreach (var input in GetSubgraphInputs(subgraph))
+                {
+                    ResolveSubgraphConnections(input, subgraph);
+                }
+
+                subgraphIndex++;
+            }
+        }
+
+        private void ResolveSubgraphConnections(IInputNode input,
+                                                GameObject subgraph)
+        {
+            var subgraphIndex = subgraphs.IndexOf(subgraph);
+
+            // If for an input "some.input" there's a provided "some.input": "$new.input", change
+            // the input name to "new.input"
+            if (subgraphParameters.ContainsKey(subgraph) &&
+                subgraphParameters[subgraph].ContainsKey(input.Name) &&
+                subgraphParameters[subgraph][input.Name] is string replacement &&
+                replacement.StartsWith("$"))
+                input.Name = replacement.Substring(1);
+
+            // Is the value provided specifically for this subgraph in its parameters
+            if (subgraphParameters.ContainsKey(subgraph)
+             && FindParameterAndSetInputNode(input, subgraphParameters[subgraph]))
+                return;
+
+            // It there a parameter in the root space which can provide a value
+            if (FindParameterAndSetInputNode(input, rootParameters))
+                return;
+
+            // Is there an output node in a preceding graph which is relevant
+            for (var i = subgraphIndex - 1; i >= 0; i--)
+            {
+                var precedingSubgraph = subgraphs[i];
+
+                if (GetSubgraphOutput(precedingSubgraph, input.Name)?.Output is
+                        IReadOnlyProperty output)
+                {
+                    input.Input.TrySetLinkedProperty(output);
+                    return;
+                }
+            }
+
+            // If there's a default value, that's okay
+            if (input.Input.HasValue)
+                return;
+
+            // Look for adaptors further up the chain
+            for (var i = subgraphIndex - 1; i >= 0; i--)
+            {
+                var precedingSubgraph = subgraphs[i];
+
+                if (GetLastAdaptorInSubgraph(precedingSubgraph) is IDynamicPropertyProvider adaptor)
+                {
+                    var outputProperty = adaptor.GetOrCreateProperty(input.Name, input.InputType);
+                    input.Input.TrySetLinkedProperty(outputProperty);
+                    return;
+                }
+            }
+
+            // Search for the key in the frame
+            input.Input.TrySetLinkedProperty(filterAdaptor.GetOrCreateProperty(input.Name,
+                                                                               input
+                                                                                   .Input
+                                                                                   .PropertyType));
+        }
+
+        private void InstantiateSubgraphs()
+        {
+            var newSubgraphs = new List<GameObject>();
+            foreach (var subgraph in subgraphs)
+            {
+                var newSubgraph = Object.Instantiate(subgraph, visualiser.transform);
+                if (subgraphParameters.ContainsKey(subgraph))
+                    subgraphParameters[newSubgraph] = subgraphParameters[subgraph];
+                newSubgraphs.Add(newSubgraph);
+            }
+
+            subgraphs = newSubgraphs;
+        }
+        
+        /// <summary>
+        /// For an input node <paramref name="input" />, look for a parameter in the
+        /// dictionary <paramref name="parameters" /> with the key corresponding to the
+        /// name of the node, and if present attempt to set the value of the input node to
+        /// the value of the parameter. Returns true if this is successful, and false if
+        /// there is no key in <paramref name="parameters" /> or the parameter value cannot
+        /// be parsed.
+        /// </summary>
+        private static bool FindParameterAndSetInputNode(IInputNode input,
+                                                         IReadOnlyDictionary<string, object>
+                                                             parameters)
+        {
+            if (!parameters.TryGetValue(input.Name, out var parameter))
+                return false;
+
+            switch (input)
+            {
+                case GradientInputNode gradientInput:
+                    if (VisualisationParser.TryParseGradient(parameter, out var gradient))
+                    {
+                        gradientInput.Input.Value = gradient;
+                        return true;
+                    }
+
+                    break;
+
+                case ColorInputNode colorInput:
+                    if (VisualisationParser.TryParseColor(parameter, out var color))
+                    {
+                        colorInput.Input.Value = color;
+                        return true;
+                    }
+
+                    break;
+
+                case FloatInputNode floatInput:
+                    if (VisualisationParser.TryParseFloat(parameter, out var @float))
+                    {
+                        floatInput.Input.Value = @float;
+                        return true;
+                    }
+
+                    break;
+
+                case ElementColorMappingInputNode mappingInput:
+                    if (VisualisationParser.TryParseElementColorMapping(parameter, out var mapping))
+                    {
+                        mappingInput.Input.Value = mapping;
+                        return true;
+                    }
+
+                    break;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -398,27 +253,33 @@ namespace NarupaIMD.Selection
         private static string TypeKeyword = "type";
 
         /// <summary>
-        /// Key in the root visualiser dictionary that indicates a sequence calculator. Will default to <see cref="DefaultSequenceSubgraph"/> if not provided and a sequence is required.
+        /// Key in the root visualiser dictionary that indicates a sequence calculator.
+        /// Will default to <see cref="DefaultSequenceSubgraph" /> if not provided and a
+        /// sequence is required.
         /// </summary>
         private const string SequenceKeyword = "sequence";
 
         /// <summary>
-        /// Key in the root visualiser that can indicate either a subgraph (as a name or a dict with a type field) or an actual color.
+        /// Key in the root visualiser that can indicate either a subgraph (as a name or a
+        /// dict with a type field) or an actual color.
         /// </summary>
         private const string ColorKeyword = "color";
 
         /// <summary>
-        /// Key in the root visualiser that can indicate either a subgraph (as a name or a dict with a type field) or an actual scale.
+        /// Key in the root visualiser that can indicate either a subgraph (as a name or a
+        /// dict with a type field) or an actual scale.
         /// </summary>
         private const string ScaleKeyword = "scale";
 
         /// <summary>
-        /// Key in the root visualiser that can indicate either a subgraph (as a name or a dict with a type field) or an actual width.
+        /// Key in the root visualiser that can indicate either a subgraph (as a name or a
+        /// dict with a type field) or an actual width.
         /// </summary>
         private const string WidthKeyword = "width";
-
+        
         /// <summary>
-        /// Key in the root visualiser that can indicate either a subgraph (as a name or a dict with a type field) or an actual color.
+        /// Key in the root visualiser that can indicate either a subgraph (as a name or a
+        /// dict with a type field) or an actual color.
         /// </summary>
         private const string RenderKeyword = "render";
 
@@ -428,9 +289,10 @@ namespace NarupaIMD.Selection
         private const string DefaultRenderSubgraph = "ball and stick";
 
         /// <summary>
-        /// The key for sequence lengths. This indicates that a sequence subgraph is required earlier in the chain to provide this.
+        /// The key for sequence lengths. This indicates that a sequence subgraph is
+        /// required earlier in the chain to provide this.
         /// </summary>
-        private const string SequenceLengthsKey = "sequences.lengths";
+        public const string SequenceLengthsKey = "sequence.lengths";
 
         /// <summary>
         /// The default subgraph for generating sequences.
@@ -438,234 +300,9 @@ namespace NarupaIMD.Selection
         private const string DefaultSequenceSubgraph = "entities";
 
         /// <summary>
-        /// The key for residue secondary structure. The presence of this key as an input for a subgraph indicates that a secondary structure adaptor is required.
+        /// The key for residue secondary structure. The presence of this key as an input
+        /// for a subgraph indicates that a secondary structure adaptor is required.
         /// </summary>
         private const string ResidueSecondaryStructureKey = "residue.secondarystructures";
-
-        private static (GameObject subgraph, Dictionary<string, object> parameters) GetSubgraph(
-            Dictionary<string, object> dict,
-            string key,
-            Func<string, GameObject> findSubgraph)
-        {
-            if (dict.TryGetValue<Dictionary<string, object>>(key, out var strut))
-            {
-                if (strut.TryGetValue<string>(TypeKeyword, out var type))
-                {
-                    var subgraph = findSubgraph(type);
-                    if (subgraph != null)
-                    {
-                        return (subgraph, strut);
-                    }
-                }
-            }
-            else if (dict.TryGetValue<string>(key, out var t))
-            {
-                var subgraph = findSubgraph(t);
-                if (subgraph != null)
-                {
-                    return (subgraph, null);
-                }
-            }
-
-            return (null, null);
-        }
-
-        private static (List<GameObject> subgraphs,
-            Dictionary<GameObject, Dictionary<string, object>> subgraphParameters) FindSubgraphs(
-                Dictionary<string, object> dict)
-        {
-            // Set of subgraphs to be used in the visualiser
-            var subgraphs = new List<GameObject>();
-
-            // Mapping of subgraph object to its dictionary representation
-            var subgraphParameters = new Dictionary<GameObject, Dictionary<string, object>>();
-
-            GameObject FindSubgraph(string key, Func<string, GameObject> findSubgraph)
-            {
-                var (subgraph, parameters) = GetSubgraph(dict, key, findSubgraph);
-                if (subgraph == null)
-                    return null;
-                subgraphs.Add(subgraph);
-                if (parameters != null)
-                    subgraphParameters.Add(subgraph, parameters);
-                return subgraph;
-            }
-
-            // Parse the sequence subgraph
-            var sequenceSubgraph = FindSubgraph(SequenceKeyword, GetSequenceSubgraph);
-
-            // Parse the color keyword if it is a struct with the 'type' field, and hence
-            // describes a color subgraph
-            FindSubgraph(ColorKeyword, GetColorSubgraph);
-
-            // Parse the color keyword if it is a struct with the 'type' field, and hence
-            // describes a color subgraph
-            FindSubgraph(WidthKeyword, GetWidthSubgraph);
-
-            // Parse the color keyword if it is a struct with the 'type' field, and hence
-            // describes a color subgraph
-            FindSubgraph(ScaleKeyword, GetScaleSubgraph);
-
-            subgraphs.Add(GetColorSubgraph("color pulser"));
-
-            // Get the render subgraph from the render key
-            var renderSubgraph = FindSubgraph(RenderKeyword, GetRenderSubgraph);
-            if (renderSubgraph == null)
-                subgraphs.Add(GetRenderSubgraph(DefaultRenderSubgraph));
-
-            // If a subgraph requires a set of sequence lengths, a sequence provider is required.
-            // If one hasn't already been provided, the default is one that generates sequences
-            // based on entities.
-            if (sequenceSubgraph == null
-             && subgraphs.Any(subgraph =>
-                                  FindInputNodeWithName<IntArrayInputNode>(
-                                      subgraph, SequenceLengthsKey) != null))
-            {
-                var subgraph = GetSequenceSubgraph(DefaultSequenceSubgraph);
-                subgraphs.Insert(0, subgraph);
-            }
-
-            return (subgraphs, subgraphParameters);
-        }
-
-        /// <summary>
-        /// Generate a visualiser from a dictionary describing subgraphs and parameters.
-        /// </summary>
-        private static GameObject GetVisualiserFromDictionary(Dictionary<string, object> dict)
-        {
-            // Create a basic dynamic visualiser, with a FrameAdaptor to
-            // read in frames and a DynamicVisualiserSubgraphs to contain the dynamic nodes
-            var visualiser = new GameObject();
-
-            var dynamic = visualiser.AddComponent<DynamicVisualiserSubgraphs>();
-
-
-            // The root dictionary
-            var globalParameters = dict;
-
-            var (subgraphs, subgraphParameters) = FindSubgraphs(globalParameters);
-
-            IDynamicPropertyProvider preAdaptor = null;
-
-            // If a subgraph requires secondary structure, then a secondary structure adaptor is inserted into the chain before the particle filter.
-            if (subgraphs.Any(subgraph =>
-                                  FindInputNodeWithName<SecondaryStructureArrayInputNode>(
-                                      subgraph, ResidueSecondaryStructureKey) != null))
-            {
-                preAdaptor = visualiser.AddComponent<SecondaryStructureAdaptor>();
-            }
-
-            var filterAdaptor = visualiser.AddComponent<ParticleFilteredAdaptor>();
-            if (preAdaptor != null)
-            {
-                filterAdaptor.Node.ParentAdaptor.Value = preAdaptor;
-            }
-
-            // For each input of each subgraph, see if either the subgraph's dictionary
-            // or the root dictionary have an item which could be the value for that input
-            foreach (var subgraph in subgraphs)
-            foreach (var input in subgraph.GetVisualisationNodes<IInputNode>())
-            {
-                if (subgraphParameters.ContainsKey(subgraph)
-                 && FindParameter(input, subgraphParameters[subgraph], visualiser))
-                    continue;
-                if (FindParameter(input, globalParameters, visualiser))
-                    continue;
-            }
-
-            // Setup adaptor and subgraphds
-            dynamic.FrameAdaptor = filterAdaptor;
-            dynamic.SetSubgraphs(subgraphs.ToArray());
-
-            return visualiser;
-        }
-
-        private delegate bool TryParseObject<TValue>(object obj, out TValue value);
-
-        /// <summary>
-        /// Given that there is an input to a subgraph with a given name, and provided with
-        /// a set of parameters, link up the input of the subgraph to a global input with a
-        /// value provided in the parameters.
-        /// </summary>
-        private static bool FindParameter<TInputType, TInputNodeType, TInputComponentType>(
-            string name,
-            IReadOnlyDictionary<string, object> parameters,
-            TryParseObject<TInputType> tryParseObject,
-            GameObject visualiser)
-            where TInputNodeType : IInputNode
-            where TInputComponentType : Component, IVisualisationComponent<TInputNodeType>
-        {
-            if (FindInputNodeWithName<TInputNodeType>(visualiser, name) != null)
-                return true;
-
-            if (parameters.TryGetValue(name, out var valueObject)
-             && tryParseObject(valueObject, out var value))
-            {
-                var inputNode = visualiser.AddComponent<TInputComponentType>();
-                inputNode.Node.Name = name;
-                inputNode.Node.Input.TrySetValue(value);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// For an input node, look through the dictionary of parameters to see if a value
-        /// was provided.
-        /// </summary>
-        private static bool FindParameter(IInputNode input,
-                                          IReadOnlyDictionary<string, object> parameters,
-                                          GameObject visualiser)
-        {
-            switch (input)
-            {
-                case GradientInputNode _:
-                    return FindParameter<Gradient, GradientInputNode, GradientInput>(
-                        input.Name,
-                        parameters,
-                        TryParseGradient,
-                        visualiser
-                    );
-
-                case ColorInputNode _:
-                    return FindParameter<Color, ColorInputNode, ColorInput>(
-                        input.Name,
-                        parameters,
-                        TryParseColor,
-                        visualiser
-                    );
-
-                case FloatInputNode _:
-                    return FindParameter<float, FloatInputNode, FloatInput>(
-                        input.Name,
-                        parameters,
-                        TryParseFloat,
-                        visualiser
-                    );
-
-                case ElementColorMappingInputNode _:
-                    return FindParameter<IMapping<Element, Color>, ElementColorMappingInputNode,
-                        ElementColorMappingInput>(
-                        input.Name,
-                        parameters,
-                        TryParseElementColorMapping,
-                        visualiser
-                    );
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Find the visualisation node which wraps an input node type of TType and the
-        /// provided name.
-        /// </summary>
-        private static TType FindInputNodeWithName<TType>(
-            GameObject obj,
-            string name) where TType : IInputNode
-        {
-            return obj.GetVisualisationNodes<TType>().FirstOrDefault(vis => vis.Name == name);
-        }
     }
 }

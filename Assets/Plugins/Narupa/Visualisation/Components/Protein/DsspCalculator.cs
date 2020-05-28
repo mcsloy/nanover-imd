@@ -2,8 +2,8 @@ using Narupa.Visualisation.Node.Protein;
 
 namespace Narupa.Visualisation.Components.Calculator
 {
-    /// <inheritdoc cref="SecondaryStructureNode" />
-    public class SecondaryStructure : VisualisationComponent<SecondaryStructureNode>
+    /// <inheritdoc cref="DsspCalculatorNode" />
+    public class DsspCalculator : VisualisationComponent<DsspCalculatorNode>
     {
         private void Update()
         {

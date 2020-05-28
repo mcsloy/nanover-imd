@@ -2,6 +2,7 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Narupa.Visualisation.Components
@@ -29,6 +30,15 @@ namespace Narupa.Visualisation.Components
             foreach(var comp in go.GetComponents<VisualisationComponent>())
                 if (comp.GetWrappedVisualisationNode() is TNode node)
                     yield return node;
+        }
+        
+        /// <summary>
+        /// Get all visualisation nodes in this game object.
+        /// </summary>
+        public static IEnumerable<object> GetVisualisationNodes(this GameObject go)
+        {
+            return go.GetComponents<VisualisationComponent>().Select(c
+                                                                         => c.GetWrappedVisualisationNode());
         }
         
         /// <summary>

@@ -12,7 +12,7 @@ namespace Narupa.Visualisation.Node.Protein
     /// Calculates secondary structure using the DSSP Algorithm.
     /// </summary>
     [Serializable]
-    public class SecondaryStructureNode
+    public class DsspCalculatorNode
     {
         #region Input Properties
 

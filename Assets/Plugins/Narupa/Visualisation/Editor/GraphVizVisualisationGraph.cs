@@ -83,37 +83,6 @@ namespace Narupa.Visualisation.Editor
                     FindConnections(prop, connections);
                 }
 
-                if (child is SecondaryStructureAdaptor ss)
-                {
-                    var node = ss.Node;
-
-                    file.WriteLine($"subgraph cluster_{GetId(node.polypeptideSequence)} {{");
-                    file.WriteLine($"label = \"polypeptideSequence\"");
-                    foreach (var (name, prop) in VisualisationUtility.GetAllPropertyFields(
-                        node.polypeptideSequence))
-                    {
-                        var color = prop.HasValue ? "green" : "red";
-                        file.WriteLine(
-                            $"{GetId(prop)} [label=\"{name}\" color={color} shape=box];");
-                        FindConnections(prop, connections);
-                    }
-
-                    file.WriteLine("}");
-
-                    file.WriteLine($"subgraph cluster_{GetId(node.secondaryStructure)} {{");
-                    file.WriteLine($"label = \"secondaryStructure\"");
-                    foreach (var (name, prop) in VisualisationUtility.GetAllPropertyFields(
-                        node.secondaryStructure))
-                    {
-                        var color = prop.HasValue ? "green" : "red";
-                        file.WriteLine(
-                            $"{GetId(prop)} [label=\"{name}\" color={color} shape=box];");
-                        FindConnections(prop, connections);
-                    }
-
-                    file.WriteLine("}");
-                }
-
                 file.WriteLine("}");
             }
 

@@ -97,7 +97,7 @@ namespace Narupa.Visualisation.Tests.Node.Adaptor
         
         private static void RemoveOverride(FrameAdaptorOverrideTests test)
         {
-            test.adaptor.RemoveOverrideProperty<Vector3[]>(StandardFrameProperties.ParticlePositions.Key);
+            test.adaptor.RemoveOverrideProperty(StandardFrameProperties.ParticlePositions.Key);
         }
 
         [Test]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Narupa.Core.Math;
+using Narupa.Visualisation;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
 using Narupa.Visualisation.Node.Input;

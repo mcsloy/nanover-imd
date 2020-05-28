@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NarupaIMD.Selection;
+using Narupa.Visualisation;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -31,8 +31,8 @@ namespace NarupaIMD.Tests
         public void TestList3(
             [ValueSource(nameof(List3Parameters))] (object value, Color color) parameter)
         {
-            Assert.IsTrue(VisualiserFactory.TryParseColor(parameter.value,
-                                                          out var color));
+            Assert.IsTrue(VisualisationParser.TryParseColor(parameter.value,
+                                                            out var color));
             Assert.AreEqual(parameter.color, color);
         }
 
@@ -48,8 +48,8 @@ namespace NarupaIMD.Tests
         public void TestHex(
             [ValueSource(nameof(HexParameters))] (string value, Color color) parameter)
         {
-            Assert.IsTrue(VisualiserFactory.TryParseColor(parameter.value,
-                                                          out var color));
+            Assert.IsTrue(VisualisationParser.TryParseColor(parameter.value,
+                                                            out var color));
             Assert.AreEqual(parameter.color, color);
         }
 
@@ -75,8 +75,8 @@ namespace NarupaIMD.Tests
         public void TestName(
             [ValueSource(nameof(NameParameters))] (string value, Color color) parameter)
         {
-            Assert.IsTrue(VisualiserFactory.TryParseColor(parameter.value,
-                                                          out var color));
+            Assert.IsTrue(VisualisationParser.TryParseColor(parameter.value,
+                                                            out var color));
 
             Assert.AreEqual(parameter.color, color);
         }

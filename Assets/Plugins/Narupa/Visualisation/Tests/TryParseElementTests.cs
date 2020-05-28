@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Narupa.Core.Science;
-using NarupaIMD.Selection;
+using Narupa.Visualisation;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -27,8 +27,8 @@ namespace NarupaIMD.Tests
         public void TestAtomicNumber(
             [ValueSource(nameof(AtomicNumberParameters))] (int value, Element element) parameter)
         {
-            Assert.IsTrue(VisualiserFactory.TryParseElement(parameter.value,
-                                                          out var element));
+            Assert.IsTrue(VisualisationParser.TryParseElement(parameter.value,
+                                                              out var element));
             Assert.AreEqual(parameter.element, element);
         }
         
@@ -36,8 +36,8 @@ namespace NarupaIMD.Tests
         public void TestAtomicNumberInvalid(
             [ValueSource(nameof(InvalidAtomicNumberParameters))] int value)
         {
-            Assert.IsFalse(VisualiserFactory.TryParseElement(value,
-                                                            out var element));
+            Assert.IsFalse(VisualisationParser.TryParseElement(value,
+                                                               out var element));
         }
         
         private static IEnumerable<(string value, Element element)> AtomicSymbolParameters()
@@ -68,8 +68,8 @@ namespace NarupaIMD.Tests
         public void TestAtomicSymbol(
             [ValueSource(nameof(AtomicSymbolParameters))] (string value, Element element) parameter)
         {
-            Assert.IsTrue(VisualiserFactory.TryParseElement(parameter.value,
-                                                            out var element));
+            Assert.IsTrue(VisualisationParser.TryParseElement(parameter.value,
+                                                              out var element));
             Assert.AreEqual(parameter.element, element);
         }
         
@@ -77,8 +77,8 @@ namespace NarupaIMD.Tests
         public void TestAtomicNumberInvalid(
             [ValueSource(nameof(InvalidAtomicSymbolParameters))] string value)
         {
-            Assert.IsFalse(VisualiserFactory.TryParseElement(value,
-                                                             out var element));
+            Assert.IsFalse(VisualisationParser.TryParseElement(value,
+                                                               out var element));
         }
     }
 }
