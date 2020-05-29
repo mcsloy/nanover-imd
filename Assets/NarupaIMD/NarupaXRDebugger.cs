@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Narupa.Frame;
 using NarupaXR;
 using UnityEngine;
+using UnityEngine.Windows;
+using File = System.IO.File;
 
 namespace NarupaIMD
 {
@@ -12,23 +16,91 @@ namespace NarupaIMD
         [SerializeField]
         private NarupaXRPrototype prototype;
 
-        public EventLogger FrameReceiving { get; } = new EventLogger();
+        public EventTimer FrameReceiving { get; } = new EventTimer();
         
-        public EventLogger MultiplayerSend { get; } = new EventLogger();
+        public EventTimer MultiplayerSend { get; } = new EventTimer();
 
-        public EventLogger MultiplayerReceive { get; } = new EventLogger();
+        public EventTimer MultiplayerReceive { get; } = new EventTimer();
 
-        public EventLogger MultiplayerPingPong { get; } = new EventLogger();
+        public EventTimer MultiplayerPingPong { get; } = new EventTimer();
+
+        public static EventLogger FrameReceivedLog { get; } = new EventLogger("frame-received");
+        public static EventLogger MultiplayerSentLog { get; } = new EventLogger("mp-sent");
+        public static EventLogger MultiplayerReceivedLog { get; } = new EventLogger("mp-received");
+        public static EventLogger MultiplayerPingPongLog { get; } = new EventLogger("mp-pingpong");
+        public static EventLogger UnityFrameLog { get; } = new EventLogger("unity-update");
+        
+        public EventLogger[] Loggers = new EventLogger[]
+        {
+            FrameReceivedLog,
+            MultiplayerSentLog,
+            MultiplayerReceivedLog,
+            MultiplayerPingPongLog,
+            UnityFrameLog
+        };
 
         private string guid;
-        
+
+        private bool isLogging = false;
+
+        public bool IsLogging => isLogging;
+
+        private void Update()
+        {
+            UnityFrameLog.Log(Time);
+        }
+
+        public void StartLogging()
+        {
+            StopLogging();
+            var guid = Guid.NewGuid().ToString();
+            foreach(var logger in Loggers)
+                logger.StartLogging(guid);
+            isLogging = true;
+        }
+
+        public void StopLogging()
+        {
+            foreach(var logger in Loggers)
+                logger.StopLogging();
+            isLogging = false;
+        }
+
+        private void OnDisable()
+        {
+            StopLogging();
+        }
+
+        private void OnDestroy()
+        {
+            StopLogging();
+        }
+
+        private static Stopwatch watch = new Stopwatch();
+
+        public static float Time => watch.ElapsedMilliseconds / 1000f;
+
         private void Start()
         {
-            guid = new Guid().ToString();
+            watch.Start();
+            
+            guid = Guid.NewGuid().ToString();
             prototype.Sessions.Trajectory.FrameChanged += (frame, changes) => FrameReceiving.AddEvent();
+            prototype.Sessions.Trajectory.FrameChanged += (frame, changes) =>
+            {
+                FrameReceivedLog.Log(Time, prototype.Sessions.Trajectory.CurrentFrameIndex);
+            };
             prototype.Sessions.Multiplayer.BeforeFlushChanges += AddTimestampToSharedState;
             prototype.Sessions.Multiplayer.BeforeFlushChanges += () => MultiplayerSend.AddEvent();
+            prototype.Sessions.Multiplayer.BeforeFlushChanges += () =>
+            {
+                MultiplayerSentLog.Log(Time);
+            };
             prototype.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated += ReceiveMultiplayerKey;
+            prototype.Sessions.Multiplayer.ReceiveUpdate += () =>
+            {
+                MultiplayerReceivedLog.Log(Time);
+            };
             prototype.Sessions.Multiplayer.ReceiveUpdate += () => MultiplayerReceive.AddEvent();
         }
 
@@ -36,18 +108,19 @@ namespace NarupaIMD
         {
             if (key == $"debug.{guid}" && value is double t)
             {
-                var timeDifference = Time.time - t;
+                var timeDifference = Time - t;
                 MultiplayerPingPong.AddTimeDifference((float) timeDifference);
+                MultiplayerPingPongLog.Log(t, Time);
             }
         }
 
         private void AddTimestampToSharedState()
         {
-            prototype.Sessions.Multiplayer.SetSharedState($"debug.{guid}", Time.time);
+            prototype.Sessions.Multiplayer.SetSharedState($"debug.{guid}", Time);
         }
     }
 
-    public class EventLogger
+    public class EventTimer
     {
         private int runningAverageCount = 30;
         private Queue<float> timeSteps = new Queue<float>();
@@ -55,7 +128,7 @@ namespace NarupaIMD
 
         public void AddEvent()
         {
-            AppendTime(Time.time);
+            AppendTime(NarupaXRDebugger.Time);
         }
 
         private void AppendTime(float time)
@@ -91,5 +164,37 @@ namespace NarupaIMD
         }
 
         public float LatestTimeDifference => timeSteps.Last();
+    }
+
+    public class EventLogger
+    {
+        private string suffix;
+        private StreamWriter file;
+
+        public EventLogger(string suffix)
+        {
+            this.suffix = suffix;
+        }
+
+        public void StartLogging(string guid)
+        {
+            var directory = Path.Combine(Application.dataPath, "../Debug");
+            System.IO.Directory.CreateDirectory(directory);
+            var filename = $"{guid}-{suffix}.csv";
+            file = new StreamWriter(Path.Combine(directory, filename));
+        }
+
+        public void Log(params object[] arguments)
+        {
+            if (file == null)
+                return;
+            file.Write(string.Join(", ", arguments) + "\n");
+        }
+
+        public void StopLogging()
+        {
+            file?.Close();
+            file = null;
+        }
     }
 }

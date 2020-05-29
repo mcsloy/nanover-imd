@@ -177,6 +177,17 @@ namespace NarupaXR
 
             GUILayout.Label($"Multiplayer Send Rate: {narupa.Debugger.MultiplayerSend.AverageNumberPerSecond():#.0} /s");
 
+            var currentLogging = narupa.Debugger.IsLogging;
+            var newLogging = GUILayout.Toggle(currentLogging, "Log to File");
+            if (currentLogging != newLogging)
+            {
+                if(newLogging)
+                    narupa.Debugger.StartLogging();
+                else
+                    narupa.Debugger.StopLogging();
+            }
+            
+            
             GUILayout.EndArea();
         }
 
