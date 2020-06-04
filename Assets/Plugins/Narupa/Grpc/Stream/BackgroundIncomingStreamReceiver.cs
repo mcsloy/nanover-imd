@@ -53,9 +53,10 @@ namespace Narupa.Grpc.Trajectory
                 
                 if (hasReceived)
                 {
-                    Callback?.Invoke(receivedData);
-                    hasReceived = false;
+                    var justRecievedData = receivedData;
                     receivedData = new TResponse();
+                    Callback?.Invoke(justRecievedData);
+                    hasReceived = false;
                 }
 
                 await Task.Delay(1, stream.GetCancellationToken());
