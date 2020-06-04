@@ -7,6 +7,7 @@ using Narupa.Frame;
 using NarupaXR;
 using UnityEngine;
 using UnityEngine.Windows;
+using Debug = UnityEngine.Debug;
 using File = System.IO.File;
 
 namespace NarupaIMD
@@ -145,8 +146,8 @@ namespace NarupaIMD
     public class EventTimer
     {
         private int runningAverageCount = 30;
-        private Queue<float> timeSteps = new Queue<float>();
         private float? previousTime;
+        private float average;
 
         public void AddEvent()
         {
@@ -168,24 +169,18 @@ namespace NarupaIMD
 
         public void AddTimeDifference(float td)
         {
-            timeSteps.Enqueue(td);
-            if (timeSteps.Count > runningAverageCount)
-                timeSteps.Dequeue();
+            average += (td - average) / runningAverageCount;
         }
 
         public float AverageTimeDifference()
         {
-            if (timeSteps.Count < runningAverageCount)
-                return float.NaN;
-            return timeSteps.Average();
+            return average;
         }
 
         public float AverageNumberPerSecond()
         {
             return 1f / AverageTimeDifference();
         }
-
-        public float LatestTimeDifference => timeSteps.Last();
     }
 
     public class EventLogger
