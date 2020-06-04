@@ -5,6 +5,7 @@ using System.Linq;
 using Essd;
 using Narupa.Core.Math;
 using Narupa.Frontend.XR;
+using NarupaIMD.Interaction;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR;
@@ -20,8 +21,14 @@ namespace NarupaIMD
     public sealed class NarupaIMDPrototype : MonoBehaviour
     {
 #pragma warning disable 0649
+        
         [SerializeField]
         private NarupaImdSimulation simulation;
+        
+        private InteractableScene interactableScene;
+
+        [SerializeField]
+        private NarupaXRDebugger debugger;
 #pragma warning restore 0649
 
         public NarupaImdSimulation Simulation => simulation;
@@ -37,6 +44,8 @@ namespace NarupaIMD
             isColocationActive = Colocation.IsEnabled();
         }
 
+        public NarupaXRDebugger Debugger => debugger;
+        
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>
