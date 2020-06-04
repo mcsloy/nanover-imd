@@ -7,6 +7,8 @@ using NarupaIMD;
 using UnityEngine;
 using UnityEngine.Events;
 using Text = TMPro.TextMeshProUGUI;
+using NarupaXR.Interaction;
+using UnityEngine.Serialization;
 
 namespace NarupaXR
 {
@@ -18,8 +20,14 @@ namespace NarupaXR
     public sealed class NarupaXRPrototype : MonoBehaviour
     {
 #pragma warning disable 0649
+        
         [SerializeField]
         private NarupaImdSimulation simulation;
+        
+        private InteractableScene interactableScene;
+
+        [SerializeField]
+        private NarupaXRDebugger debugger;
 #pragma warning restore 0649
 
         public NarupaImdSimulation Simulation => simulation;
@@ -34,6 +42,8 @@ namespace NarupaXR
             simulation.ConnectionEstablished += connectionEstablished.Invoke;
         }
 
+        public NarupaXRDebugger Debugger => debugger;
+        
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>

@@ -29,6 +29,7 @@ namespace NarupaXR
         private string multiplayerPort = "38801";
 
         private bool discovery;
+        private bool debugger;
         private ICollection<ServiceHub> knownServiceHubs = new List<ServiceHub>();
 
         public float interactionForceMultiplier = 1000;
@@ -85,6 +86,11 @@ namespace NarupaXR
             GUILayout.Box("Debug");
             xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 
+            if (GUILayout.Button("Debugger"))
+            {
+                debugger = !debugger;
+            }
+            
             GUILayout.Box("Misc");
             if (GUILayout.Button("Quit"))
                 application.Quit();
@@ -93,9 +99,10 @@ namespace NarupaXR
 
             if (directConnect)
                 ShowDirectConnectWindow();
-
-            if (discovery)
+            else if (discovery)
                 ShowServiceDiscoveryWindow();
+            else if (debugger)
+                ShowDebugTimings();
         }
 
         private void ShowDirectConnectWindow()
@@ -161,6 +168,35 @@ namespace NarupaXR
                 }
             }
 
+            GUILayout.EndArea();
+        }
+        
+        private void ShowDebugTimings()
+        {
+            GUILayout.BeginArea(new Rect(192 + 16 * 2, 10, 192 * 2, 512));
+            GUILayout.Box("Debugging");
+
+            GUILayout.Label($"Current Frame Index: {simulation.Trajectory.CurrentFrameIndex}");
+            
+            GUILayout.Label($"Received Frame Rate: {application.Debugger.FrameReceiving.AverageNumberPerSecond():#.0} /s");
+            
+            GUILayout.Label($"Multiplayer Delay: {1000f * application.Debugger.MultiplayerPingPong.AverageTimeDifference():#.0} ms");
+
+            GUILayout.Label($"Multiplayer Recieve Rate: {application.Debugger.MultiplayerReceive.AverageNumberPerSecond():#.0} /s");
+
+            GUILayout.Label($"Multiplayer Send Rate: {application.Debugger.MultiplayerSend.AverageNumberPerSecond():#.0} /s");
+
+            var currentLogging = application.Debugger.IsLogging;
+            var newLogging = GUILayout.Toggle(currentLogging, "Log to File");
+            if (currentLogging != newLogging)
+            {
+                if(newLogging)
+                    application.Debugger.StartLogging();
+                else
+                    application.Debugger.StopLogging();
+            }
+            
+            
             GUILayout.EndArea();
         }
 
