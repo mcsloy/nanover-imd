@@ -98,7 +98,15 @@ namespace Narupa.Session
 
         public event Action BeforeFlushChanges;
 
-        public event Action ReceiveUpdate;
+        /// <summary>
+        /// Event when an update to the shared state is applied, but before the keys are read.
+        /// </summary>
+        public event Action SharedStateUpdated;
+        
+        /// <summary>
+        /// Update when a shared state is received on the background thread
+        /// </summary>
+        public event Action SharedStateUpdateReceived;
 
         public event Action MultiplayerJoined;
 
@@ -179,6 +187,8 @@ namespace Narupa.Session
 
             void MergeResourceUpdates(ResourceValuesUpdate dest, ResourceValuesUpdate src)
             {
+                SharedStateUpdateReceived?.Invoke();
+                
                 if (dest.ResourceValueChanges == null)
                     dest.ResourceValueChanges = new Struct();
 
@@ -268,7 +278,7 @@ namespace Narupa.Session
 
         private void OnResourceValuesUpdateReceived(ResourceValuesUpdate update)
         {
-            ReceiveUpdate?.Invoke();
+            SharedStateUpdated?.Invoke();
             
             if (update.ResourceValueChanges != null)
             {

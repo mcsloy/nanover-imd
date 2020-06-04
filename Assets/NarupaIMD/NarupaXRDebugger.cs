@@ -24,19 +24,27 @@ namespace NarupaIMD
 
         public EventTimer MultiplayerPingPong { get; } = new EventTimer();
 
-        public static EventLogger FrameReceivedLog { get; } = new EventLogger("frame-received");
-        public static EventLogger MultiplayerSentLog { get; } = new EventLogger("mp-sent");
-        public static EventLogger MultiplayerReceivedLog { get; } = new EventLogger("mp-received");
-        public static EventLogger MultiplayerPingPongLog { get; } = new EventLogger("mp-pingpong");
+        public static EventLogger FrameUpdateReceivedLog { get; } = new EventLogger("frame-received");
+        public static EventLogger FrameUpdatedLog { get; } = new EventLogger("frame-updated");
+        public static EventLogger SharedStateSentLog { get; } = new EventLogger("sharedstate-sent");
+        public static EventLogger SharedStateReceivedLog { get; } = new EventLogger("sharedstate-received");
+        public static EventLogger SharedStateUpdatedLog { get; } = new EventLogger("sharedstate-updated");
+        public static EventLogger SharedStatePingPong { get; } = new EventLogger("sharedstate-pingpong");
         public static EventLogger UnityFrameLog { get; } = new EventLogger("unity-update");
+        public static EventLogger AvatarCount { get; } = new EventLogger("avatar-count");
+        public static EventLogger InteractionCount { get; } = new EventLogger("interaction-count");
         
         public EventLogger[] Loggers = new EventLogger[]
         {
-            FrameReceivedLog,
-            MultiplayerSentLog,
-            MultiplayerReceivedLog,
-            MultiplayerPingPongLog,
-            UnityFrameLog
+            FrameUpdateReceivedLog,
+            FrameUpdatedLog,
+            SharedStateSentLog,
+            SharedStateReceivedLog,
+            SharedStateUpdatedLog,
+            SharedStatePingPong,
+            UnityFrameLog,
+            AvatarCount,
+            InteractionCount
         };
 
         private string guid;
@@ -48,6 +56,8 @@ namespace NarupaIMD
         private void Update()
         {
             UnityFrameLog.Log(Time);
+            InteractionCount.Log(Time, prototype.Sessions.Imd.Interactions.Count);
+            AvatarCount.Log(Time, prototype.Sessions.Multiplayer.Avatars.AvatarCount);
         }
 
         public void StartLogging()
@@ -85,23 +95,35 @@ namespace NarupaIMD
             watch.Start();
             
             guid = Guid.NewGuid().ToString();
+            
             prototype.Sessions.Trajectory.FrameChanged += (frame, changes) => FrameReceiving.AddEvent();
             prototype.Sessions.Trajectory.FrameChanged += (frame, changes) =>
             {
-                FrameReceivedLog.Log(Time, prototype.Sessions.Trajectory.CurrentFrameIndex);
+                FrameUpdatedLog.Log(Time, prototype.Sessions.Trajectory.CurrentFrameIndex);
             };
+
+            prototype.Sessions.Trajectory.FrameUpdateReceived += () =>
+            {
+                FrameUpdateReceivedLog.Log(Time);
+            };
+            
             prototype.Sessions.Multiplayer.BeforeFlushChanges += AddTimestampToSharedState;
             prototype.Sessions.Multiplayer.BeforeFlushChanges += () => MultiplayerSend.AddEvent();
             prototype.Sessions.Multiplayer.BeforeFlushChanges += () =>
             {
-                MultiplayerSentLog.Log(Time);
+                SharedStateSentLog.Log(Time);
             };
             prototype.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated += ReceiveMultiplayerKey;
-            prototype.Sessions.Multiplayer.ReceiveUpdate += () =>
+            prototype.Sessions.Multiplayer.SharedStateUpdated += () =>
             {
-                MultiplayerReceivedLog.Log(Time);
+                SharedStateUpdatedLog.Log(Time);
             };
-            prototype.Sessions.Multiplayer.ReceiveUpdate += () => MultiplayerReceive.AddEvent();
+            
+            prototype.Sessions.Multiplayer.SharedStateUpdateReceived += () => MultiplayerReceive.AddEvent();
+            prototype.Sessions.Multiplayer.SharedStateUpdateReceived += () =>
+            {
+                SharedStateReceivedLog.Log(Time);
+            };
         }
 
         private void ReceiveMultiplayerKey(string key, object value)
@@ -110,7 +132,7 @@ namespace NarupaIMD
             {
                 var timeDifference = Time - t;
                 MultiplayerPingPong.AddTimeDifference((float) timeDifference);
-                MultiplayerPingPongLog.Log(t, Time);
+                SharedStatePingPong.Log(t, Time);
             }
         }
 

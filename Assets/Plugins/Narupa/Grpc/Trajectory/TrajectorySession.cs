@@ -29,6 +29,8 @@ namespace Narupa.Grpc.Trajectory
         /// <inheritdoc cref="ITrajectorySnapshot.FrameChanged" />
         public event FrameChanged FrameChanged;
 
+        public event Action FrameUpdateReceived;
+
         /// <summary>
         /// Underlying <see cref="TrajectorySnapshot" /> for tracking
         /// <see cref="CurrentFrame" />.
@@ -70,6 +72,8 @@ namespace Narupa.Grpc.Trajectory
 
             void Merge(GetFrameResponse dest, GetFrameResponse toMerge)
             {
+                FrameUpdateReceived?.Invoke();
+                
                 dest.FrameIndex = toMerge.FrameIndex;
                 if (dest.Frame == null)
                     dest.Frame = new FrameData();

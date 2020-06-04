@@ -85,6 +85,11 @@ namespace Narupa.Grpc.Multiplayer
             avatars.Values.Where(avatar => avatar.ID != multiplayer.PlayerId);
 
         /// <summary>
+        /// The number of avatars currently in the session.
+        /// </summary>
+        public int AvatarCount => avatars.Count;
+
+        /// <summary>
         /// The <see cref="MultiplayerAvatar"/> which is the local player, and hence
         /// not controlled by the shared state dictionary.
         /// </summary>
