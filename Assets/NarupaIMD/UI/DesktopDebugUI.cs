@@ -94,7 +94,7 @@ namespace NarupaXR
             GUILayout.BeginArea(new Rect(192 + 16 * 2, 10, 192, 512));
             GUILayout.Box("Direct Connect");
 
-            GUILayout.Label("Addresss");
+            GUILayout.Label("Address");
             directConnectAddress = GUILayout.TextField(directConnectAddress);
             GUILayout.Label("Trajectory Port");
             trajectoryPort = GUILayout.TextField(trajectoryPort);
