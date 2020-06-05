@@ -22,6 +22,8 @@ namespace NarupaIMD
         public EventTimer MultiplayerSend { get; } = new EventTimer();
 
         public EventTimer MultiplayerReceive { get; } = new EventTimer();
+        public EventTimer InteractionsSend { get; } = new EventTimer();
+        public EventTimer InteractionsReceive { get; } = new EventTimer();
 
         public EventTimer MultiplayerPingPong { get; } = new EventTimer();
 
@@ -34,6 +36,9 @@ namespace NarupaIMD
         public static EventLogger UnityFrameLog { get; } = new EventLogger("unity-update");
         public static EventLogger AvatarCount { get; } = new EventLogger("avatar-count");
         public static EventLogger InteractionCount { get; } = new EventLogger("interaction-count");
+        public static EventLogger InteractionsSentLog { get; } = new EventLogger("interactions-sent");
+        public static EventLogger InteractionsReceivedLog { get; } = new EventLogger("interactions-received");
+        public static EventLogger InteractionsUpdatedLog { get; } = new EventLogger("interactions-updated");
         
         public EventLogger[] Loggers = new EventLogger[]
         {
@@ -45,7 +50,10 @@ namespace NarupaIMD
             SharedStatePingPong,
             UnityFrameLog,
             AvatarCount,
-            InteractionCount
+            InteractionCount,
+            InteractionsSentLog,
+            InteractionsReceivedLog,
+            InteractionsUpdatedLog
         };
 
         private string guid;
@@ -124,6 +132,23 @@ namespace NarupaIMD
             prototype.Sessions.Multiplayer.SharedStateUpdateReceived += () =>
             {
                 SharedStateReceivedLog.Log(Time);
+            };
+
+            prototype.Sessions.Imd.InteractionsReceived += () => InteractionsReceive.AddEvent();
+            prototype.Sessions.Imd.InteractionsReceived += () =>
+            {
+                InteractionsReceivedLog.Log(Time);
+            };
+            
+            prototype.Sessions.Imd.InteractionsSent += () => InteractionsSend.AddEvent();
+            prototype.Sessions.Imd.InteractionsSent += () =>
+            {
+                InteractionsSentLog.Log(Time);
+            };
+            
+            prototype.Sessions.Imd.InteractionsUpdated += () =>
+            {
+                InteractionsUpdatedLog.Log(Time);
             };
         }
 

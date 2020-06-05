@@ -11,6 +11,7 @@ using Narupa.Core.Async;
 using Narupa.Grpc;
 using Narupa.Grpc.Interactive;
 using Narupa.Grpc.Stream;
+using Narupa.Grpc.Trajectory;
 using Narupa.Protocol.Imd;
 using UnityEngine;
 
@@ -47,6 +48,12 @@ namespace Narupa.Session
 
         private Task flushingTask;
 
+        public event Action InteractionsSent;
+
+        public event Action InteractionsReceived;
+
+        public event Action InteractionsUpdated;
+
         /// <summary>
         /// Connect to an IMD service over the given connection. Closes any 
         /// existing client.
@@ -61,8 +68,49 @@ namespace Narupa.Session
                     client.PublishInteractions);
 
             IncomingInteractionsUpdates = client.SubscribeAllInteractions(1 / 30f);
-            IncomingInteractionsUpdates.MessageReceived += OnInteractionsUpdateReceived;
-            IncomingInteractionsUpdates.StartReceiving().AwaitInBackgroundIgnoreCancellation();
+            BackgroundIncomingStreamReceiver<InteractionsUpdate>.Start(IncomingInteractionsUpdates,
+                OnInteractionsUpdateReceived,
+                Merge);
+
+            void Merge(InteractionsUpdate dest, InteractionsUpdate src)
+            {
+                InteractionsReceived?.Invoke();
+                
+                foreach (var update in src.UpdatedInteractions)
+                {
+                    dest.Removals.Remove(update.InteractionId);
+                    var found = false;
+                    for (var i = 0; i < dest.UpdatedInteractions.Count && !found; i++)
+                    {
+                        if (dest.UpdatedInteractions[i].InteractionId == update.InteractionId)
+                        {
+                            found = true;
+                            dest.UpdatedInteractions[i] = update;
+                        }
+                    }
+                    if(!found)
+                        dest.UpdatedInteractions.Add(update);
+                }
+                
+                for (var i = 0; i < dest.UpdatedInteractions.Count; )
+                {
+                    if (src.Removals.Contains(dest.UpdatedInteractions[i].InteractionId))
+                    {
+                        dest.UpdatedInteractions.RemoveAt(i);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+                
+                foreach (var removal in src.Removals)
+                {
+                    if(!dest.Removals.Contains(removal))
+                        dest.Removals.Add(removal);
+                }
+            }
+            
 
             if (flushingTask == null)
             {
@@ -148,6 +196,7 @@ namespace Narupa.Session
         /// </summary>
         public void FlushInteractions()
         {
+            InteractionsSent?.Invoke();
             foreach (var pair in pendingInteractions)
             {
                 var id = pair.Key;
@@ -193,6 +242,8 @@ namespace Narupa.Session
 
         private void OnInteractionsUpdateReceived(InteractionsUpdate update)
         {
+            InteractionsUpdated?.Invoke();
+            
             foreach (var interactionId in update.Removals)
             {
                 Interactions.Remove(interactionId);
