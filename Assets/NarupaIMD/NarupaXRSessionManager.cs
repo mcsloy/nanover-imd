@@ -54,7 +54,6 @@ namespace NarupaXR
             if (multiplayerPort.HasValue)
             {
                 Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
-                Multiplayer.JoinMultiplayer().AwaitInBackgroundIgnoreCancellation();
             }
         }
 
