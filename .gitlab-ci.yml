@@ -46,7 +46,11 @@ variables:
   artifacts:
     paths:
     - $(pwd)/$TEST_PLATFORM-results.xml
+    - $(pwd)/$TEST_PLATFORM-junit-results.xml
+    reports:
+      junit: $(pwd)/$TEST_PLATFORM-junit-results.xml
     when: always
+
 
 test-editmode:
   <<: *test

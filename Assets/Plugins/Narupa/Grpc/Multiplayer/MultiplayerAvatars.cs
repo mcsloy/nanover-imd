@@ -16,8 +16,8 @@ namespace Narupa.Grpc.Multiplayer
         internal MultiplayerAvatars(MultiplayerSession session)
         {
             multiplayer = session;
-            multiplayer.SharedState.KeyUpdated += OnKeyUpdated;
-            multiplayer.SharedState.KeyRemoved += OnKeyRemoved;
+            multiplayer.SharedStateDictionaryKeyUpdated += OnKeyUpdated;
+            multiplayer.SharedStateDictionaryKeyRemoved += OnKeyRemoved;
             multiplayer.MultiplayerJoined += OnMultiplayerJoined;
         }
 
@@ -25,7 +25,7 @@ namespace Narupa.Grpc.Multiplayer
         {
             LocalAvatar = new MultiplayerAvatar()
             {
-                ID = multiplayer.PlayerId
+                ID = multiplayer.AccessToken
             };
         }
 
@@ -82,7 +82,7 @@ namespace Narupa.Grpc.Multiplayer
         /// A list of <see cref="MultiplayerAvatar"/> which are not the current player.
         /// </summary>
         public IEnumerable<MultiplayerAvatar> OtherPlayerAvatars =>
-            avatars.Values.Where(avatar => avatar.ID != multiplayer.PlayerId);
+            avatars.Values.Where(avatar => avatar.ID != multiplayer.AccessToken);
 
         /// <summary>
         /// The <see cref="MultiplayerAvatar"/> which is the local player, and hence
@@ -95,13 +95,13 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public void FlushLocalAvatar()
         {
-            multiplayer.SharedState.SetValue(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
+            multiplayer.SetSharedState(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
         }
 
         internal void CloseClient()
         {
             // Remove the avatar from multiplayer
-            multiplayer.SharedState.RemoveKey(GetAvatarKey(multiplayer.PlayerId));
+            multiplayer.RemoveSharedStateKey(GetAvatarKey(multiplayer.AccessToken));
         }
     }
 }

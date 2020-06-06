@@ -51,19 +51,9 @@ namespace NarupaXR
                 transform => transform.gameObject.SetActive(false)
             );
 
-            StartCoroutine(AutoJoin());
             StartCoroutine(SendAvatars());
         }
-
-        private IEnumerator AutoJoin()
-        {
-            while (!narupa.Sessions.Multiplayer.IsOpen)
-                yield return null;
-
-            narupa.Sessions.Multiplayer.JoinMultiplayer("NarupaXR")
-                  .AwaitInBackground();
-        }
-
+        
         private IEnumerator SendAvatars()
         {
             var leftHand = XRNode.LeftHand.WrapAsPosedObject();
@@ -72,7 +62,7 @@ namespace NarupaXR
 
             while (true)
             {
-                if (narupa.Sessions.Multiplayer.HasPlayer)
+                if (narupa.Sessions.Multiplayer.IsOpen)
                 {
                     narupa.Sessions.Multiplayer.Avatars.LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),

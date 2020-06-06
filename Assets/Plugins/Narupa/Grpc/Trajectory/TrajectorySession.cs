@@ -2,11 +2,15 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Narupa.Core;
 using Narupa.Core.Async;
 using Narupa.Frame;
 using Narupa.Grpc.Frame;
 using Narupa.Grpc.Stream;
 using Narupa.Protocol.Trajectory;
+using UnityEngine;
 
 namespace Narupa.Grpc.Trajectory
 {
@@ -15,7 +19,7 @@ namespace Narupa.Grpc.Trajectory
     /// <see cref="ITrajectorySnapshot" /> where
     /// <see cref="ITrajectorySnapshot.CurrentFrame" /> is the latest received frame.
     /// </summary>
-    public class TrajectorySession : GrpcSession<TrajectoryClient>, ITrajectorySnapshot
+    public class TrajectorySession : ITrajectorySnapshot, IDisposable
     {
         /// <inheritdoc cref="ITrajectorySnapshot.CurrentFrame" />
         public Narupa.Frame.Frame CurrentFrame => trajectorySnapshot.CurrentFrame;
@@ -31,6 +35,11 @@ namespace Narupa.Grpc.Trajectory
         /// </summary>
         private readonly TrajectorySnapshot trajectorySnapshot = new TrajectorySnapshot();
 
+        /// <summary>
+        /// Underlying TrajectoryClient for receiving new frames.
+        /// </summary>
+        private TrajectoryClient trajectoryClient;
+
         private IncomingStream<GetFrameResponse> frameStream;
 
         public TrajectorySession()
@@ -38,62 +47,87 @@ namespace Narupa.Grpc.Trajectory
             trajectorySnapshot.FrameChanged += (sender, args) => FrameChanged?.Invoke(sender, args);
         }
 
-        protected override TrajectoryClient CreateClient(GrpcConnection connection)
+        /// <summary>
+        /// Connect to a trajectory service over the given connection and
+        /// listen in the background for frame changes. Closes any existing
+        /// client.
+        /// </summary>
+        public void OpenClient(GrpcConnection connection)
         {
-            return new TrajectoryClient(connection);
-        }
+            CloseClient();
+            trajectorySnapshot.Clear();
 
-        public override void OpenClient(GrpcConnection connection)
-        {
-            base.OpenClient(connection);
-            
-            frameStream = Client.SubscribeLatestFrames(1f / 30f);
-            frameStream.MessageReceived += Callback;
-            frameStream.StartReceiving().AwaitInBackgroundIgnoreCancellation();
+            trajectoryClient = new TrajectoryClient(connection);
+            frameStream = trajectoryClient.SubscribeLatestFrames(1f / 30f);
+            BackgroundIncomingStreamReceiver<GetFrameResponse>.Start(frameStream, ReceiveFrame, Merge);
 
-            void Callback(GetFrameResponse response)
+            void ReceiveFrame(GetFrameResponse response)
             {
                 var (frame, changes) = FrameConverter.ConvertFrame(response.Frame, CurrentFrame);
                 trajectorySnapshot.SetCurrentFrame(frame, changes);
                 CurrentFrameIndex = (int) response.FrameIndex;
             }
 
+            void Merge(GetFrameResponse dest, GetFrameResponse toMerge)
+            {
+                dest.FrameIndex = toMerge.FrameIndex;
+                if (dest.Frame == null)
+                    dest.Frame = new FrameData();
+                foreach (var (key, array) in toMerge.Frame.Arrays)
+                    dest.Frame.Arrays[key] = array;
+                foreach (var (key, value) in toMerge.Frame.Values)
+                    dest.Frame.Values[key] = value;
+            }
         }
+
+        
+
+        
 
         /// <summary>
         /// Close the current trajectory client.
         /// </summary>
-        public override void CloseClient()
+        public void CloseClient()
         {
-            trajectorySnapshot.Clear();
+            trajectoryClient?.CloseAndCancelAllSubscriptions();
+            trajectoryClient?.Dispose();
+            trajectoryClient = null;
 
             frameStream?.CloseAsync();
             frameStream?.Dispose();
             frameStream = null;
         }
+
+        /// <inheritdoc cref="IDisposable.Dispose" />
+        public void Dispose()
+        {
+            CloseClient();
+        }
         
         /// <inheritdoc cref="TrajectoryClient.CommandPlay"/>
         public void Play()
         {
-            RunCommand(TrajectoryClient.CommandPlay);
+            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandPlay);
         }
         
         /// <inheritdoc cref="TrajectoryClient.CommandPause"/>
         public void Pause()
         {
-            RunCommand(TrajectoryClient.CommandPause);
+            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandPause);
         }
         
         /// <inheritdoc cref="TrajectoryClient.CommandReset"/>
         public void Reset()
         {
-            RunCommand(TrajectoryClient.CommandReset);
+            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandReset);
         }
         
         /// <inheritdoc cref="TrajectoryClient.CommandStep"/>
         public void Step()
         {
-            RunCommand(TrajectoryClient.CommandStep);
+            trajectoryClient?.RunCommandAsync(TrajectoryClient.CommandStep);
         }
+
+        public TrajectoryClient Client => trajectoryClient;
     }
 }

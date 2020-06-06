@@ -10,7 +10,7 @@ namespace Narupa.Grpc.Multiplayer
     /// service.
     /// </summary>
     /// <typeparam name="TValue">The type to interpret the value of this key as.</typeparam>
-    public class SharedStateResource<TValue>
+    public class MultiplayerResource<TValue>
     {
         /// <summary>
         /// Is the current value a local value that is pending being sent to the server.
@@ -30,37 +30,39 @@ namespace Narupa.Grpc.Multiplayer
         /// An optional converter for converting the value
         /// provided to one suitable for serialisation to protobuf.
         /// </param>
-        public SharedStateResource(ClientSharedState sharedState,
-                                   string key)
+        public MultiplayerResource(MultiplayerSession session,
+                                   string key,
+                                   Converter<object, TValue> objectToValue = null,
+                                   Converter<TValue, object> valueToObject = null)
         {
-            this.sharedState = sharedState;
+            this.session = session;
             ResourceKey = key;
             LockState = MultiplayerResourceLockState.Unlocked;
-            sharedState.KeyUpdated += SharedStateDictionaryKeyUpdated;
-            sharedState.KeyRemoved += SharedStateOnKeyRemoved;
+            session.SharedStateDictionaryKeyUpdated += SharedStateDictionaryKeyUpdated;
+            this.objectToValue = objectToValue;
+            this.valueToObject = valueToObject;
+            CopyRemoteValueToLocal();
         }
 
-        public Converter<object, TValue> ObjectToValue { get; set; }
+        private readonly Converter<object, TValue> objectToValue;
 
-        public Converter<TValue, object> ValueToObject { get; set; }
-
-        public TValue DefaultValue { get; set; } = default;
+        private readonly Converter<TValue, object> valueToObject;
 
         /// <summary>
         /// Convert the value provided to one suitable for serialisation to protobuf.
         /// </summary>
-        private object ConvertValueToObject(TValue value)
+        private object ValueToObject(TValue value)
         {
-            return ValueToObject != null ? ValueToObject(value) : value;
+            return valueToObject != null ? valueToObject(value) : value;
         }
 
         /// <summary>
         /// Convert the value in the dictionary to an appropriate value.
         /// </summary>
-        private TValue ConvertObjectToValue(object obj)
+        private TValue ObjectToValue(object obj)
         {
-            if (ObjectToValue != null)
-                return ObjectToValue(obj);
+            if (objectToValue != null)
+                return objectToValue(obj);
             if (obj is TValue v)
                 return v;
             return default;
@@ -99,27 +101,10 @@ namespace Narupa.Grpc.Multiplayer
                 RemoteValueChanged?.Invoke();
             }
         }
-        
-        
-        private void SharedStateOnKeyRemoved(string key)
-        {
-            if (key == ResourceKey)
-            {
-                CopyRemoteValueToLocal();
-                RemoteValueChanged?.Invoke();
-            }
-        }
 
         private TValue GetRemoteValue()
         {
-            if(sharedState.TryGetValue(ResourceKey, out var value))
-                return ConvertObjectToValue(value);
-            return GetDefaultValue();
-        }
-
-        private TValue GetDefaultValue()
-        {
-            return DefaultValue;
+            return ObjectToValue(session.GetSharedState(ResourceKey));
         }
 
         /// <summary>
@@ -127,7 +112,8 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private void CopyLocalValueToRemote()
         {
-            sharedState.SetValue(ResourceKey, ConvertValueToObject(value));
+            sentUpdateIndex = session.NextUpdateIndex;
+            session.SetSharedState(ResourceKey, ValueToObject(value));
         }
         
         private TValue value;
@@ -142,7 +128,9 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public MultiplayerResourceLockState LockState { get; private set; }
 
-        private ClientSharedState sharedState;
+        private MultiplayerSession session;
+
+        private int sentUpdateIndex = -1;
 
         /// <summary>
         /// Value of this resource. Mirrors the value in the remote dictionary, unless a
@@ -170,7 +158,7 @@ namespace Narupa.Grpc.Multiplayer
         private async Task ObtainLockAsync()
         {
             LockState = MultiplayerResourceLockState.Pending;
-            var success = await sharedState.LockKey(ResourceKey, 1f);
+            var success = await session.LockResource(ResourceKey);
             LockState = success
                             ? MultiplayerResourceLockState.Locked
                             : MultiplayerResourceLockState.Unlocked;
@@ -193,6 +181,7 @@ namespace Narupa.Grpc.Multiplayer
         private void OnLockRejected()
         {
             localValuePending = false;
+            sentUpdateIndex = -1;
             CopyRemoteValueToLocal();
             LockRejected?.Invoke();
         }
@@ -205,7 +194,7 @@ namespace Narupa.Grpc.Multiplayer
                 LockState = MultiplayerResourceLockState.Unlocked;
                 CopyRemoteValueToLocal();
                 LockReleased?.Invoke();
-                await sharedState.ReleaseKey(ResourceKey);
+                await session.ReleaseResource(ResourceKey);
             }
         }
 
@@ -242,7 +231,10 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private void CopyRemoteValueToLocal()
         {
-            if (!localValuePending)
+            if (!session.IsOpen)
+                return;
+            // If we don't have a local change, and we are up to date with the server
+            if (!localValuePending && sentUpdateIndex <= session.LastReceivedIndex)
             {
                 value = GetRemoteValue();
                 ValueChanged?.Invoke();
