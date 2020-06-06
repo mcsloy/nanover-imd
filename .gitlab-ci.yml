@@ -42,11 +42,18 @@ variables:
   stage: build
   <<: *unity_before_script
   script:
+  - apt-get update -y
+  - apt-get install -y xsltproc
   - chmod +x ./ci/test.sh && ./ci/test.sh
+  - xsltproc -o $(pwd)/$TEST_PLATFORM-junit-results.xml ./ci/nunit3-junit.xslt $(pwd)/$TEST_PLATFORM-results.xml
   artifacts:
     paths:
     - $(pwd)/$TEST_PLATFORM-results.xml
+    - $(pwd)/$TEST_PLATFORM-junit-results.xml
+    reports:
+      junit: $(pwd)/$TEST_PLATFORM-junit-results.xml
     when: always
+
 
 test-editmode:
   <<: *test
