@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Narupa.Core.Math;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
+using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Properties;
 using Plugins.Narupa.Core;
 using UnityEngine;
@@ -250,7 +251,7 @@ namespace NarupaIMD.Selection
         private void SetupAdaptorAndFilter()
         {
             // Setup any filters so the visualiser only draws this selection.
-            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptorNode>();
             if (filter != null)
             {
                 filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
@@ -261,6 +262,8 @@ namespace NarupaIMD.Selection
             }
         }
 
+        private const string HighlightedParticlesKey = "highlighted.particles";
+
         /// <summary>
         /// Undoes the actions of <see cref="SetupAdaptorAndFilter" />. The act of
         /// unlinking unregisters the appropriate event handlers, preventing memory leaks
@@ -268,7 +271,7 @@ namespace NarupaIMD.Selection
         /// </summary>
         private void StripDownAdaptorAndFilter()
         {
-            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptor>();
+            var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptorNode>();
             filter.ParentAdaptor.UndefineValue();
             if (filter is ParticleFilteredAdaptorNode filtered)
             {

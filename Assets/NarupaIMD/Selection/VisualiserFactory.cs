@@ -472,6 +472,8 @@ namespace NarupaIMD.Selection
             // describes a color subgraph
             FindSubgraph(ScaleKeyword, GetScaleSubgraph);
 
+            subgraphs.Add(GetColorSubgraph("color pulser"));
+
             // Get the render subgraph from the render key
             var renderSubgraph = FindSubgraph(RenderKeyword, GetRenderSubgraph);
             if (renderSubgraph == null)
@@ -519,7 +521,7 @@ namespace NarupaIMD.Selection
                 preAdaptor = visualiser.AddComponent<SecondaryStructureAdaptor>();
             }
 
-            var filterAdaptor = visualiser.AddComponent<FilteredAdaptor>();
+            var filterAdaptor = visualiser.AddComponent<ParticleFilteredAdaptor>();
             if (preAdaptor != null)
             {
                 filterAdaptor.Node.ParentAdaptor.Value = preAdaptor;

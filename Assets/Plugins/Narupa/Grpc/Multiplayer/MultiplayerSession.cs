@@ -9,12 +9,16 @@ using Narupa.Network;
 using UnityEngine;
 using Avatar = Narupa.Protocol.Multiplayer.Avatar;
 using System.Linq;
+using Google.Protobuf.Collections;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Narupa.Core;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Grpc;
 using Narupa.Grpc.Multiplayer;
 using Narupa.Grpc.Stream;
+using Narupa.Grpc.Trajectory;
 using UnityEngine.Profiling;
 
 namespace Narupa.Session
@@ -26,13 +30,14 @@ namespace Narupa.Session
     /// </summary>
     public sealed class MultiplayerSession : IDisposable
     {
-        public const string HeadsetName = "headset";
-        public const string LeftHandName = "hand.left";
-        public const string RightHandName = "hand.right";
         public const string SimulationPoseKey = "scene";
+        
+        public MultiplayerAvatars Avatars { get; }
 
         public MultiplayerSession()
         {
+            Avatars = new MultiplayerAvatars(this);
+            
             SimulationPose =
                 new MultiplayerResource<Transformation>(this, SimulationPoseKey, PoseFromObject,
                                                         PoseToObject);
@@ -42,12 +47,6 @@ namespace Narupa.Session
         /// The transformation of the simulation box.
         /// </summary>
         public readonly MultiplayerResource<Transformation> SimulationPose;
-
-        /// <summary>
-        /// Dictionary of player ids to their last known avatar.
-        /// </summary>
-        public Dictionary<string, MultiplayerAvatar> Avatars { get; }
-            = new Dictionary<string, MultiplayerAvatar>();
 
         /// <summary>
         /// Dictionary of the currently known shared state.
@@ -76,38 +75,47 @@ namespace Narupa.Session
         public string PlayerId { get; private set; }
 
         /// <summary>
-        /// How many milliseconds to put between sending updates to our avatar.
-        /// </summary>
-        public int AvatarPublishInterval { get; set; } = 1000 / 30;
-
-        /// <summary>
         /// How many milliseconds to put between sending our requested value
         /// changes.
         /// </summary>
         public int ValuePublishInterval { get; set; } = 1000 / 30;
 
-        /// <summary>
-        /// The interval at which avatar updates should be sent to this client.
-        /// </summary>
-        public const float AvatarUpdateInterval = 1f / 30f;
-
         private MultiplayerClient client;
 
-        private OutgoingStream<Avatar, StreamEndedResponse> OutgoingAvatar { get; set; }
-        private IncomingStream<Avatar> IncomingAvatars { get; set; }
         private IncomingStream<ResourceValuesUpdate> IncomingValueUpdates { get; set; }
-
-        private Dictionary<string, MultiplayerAvatar> pendingAvatars
-            = new Dictionary<string, MultiplayerAvatar>();
 
         private Dictionary<string, object> pendingValues
             = new Dictionary<string, object>();
 
-        private Task avatarFlushingTask, valueFlushingTask;
+        private List<string> pendingRemovals
+            = new List<string>();
+
+        private Task valueFlushingTask;
 
         public event Action<string, object> SharedStateDictionaryKeyUpdated;
 
         public event Action<string> SharedStateDictionaryKeyRemoved;
+
+        public event Action MultiplayerJoined;
+
+        /// <summary>
+        /// The index of the next update that we will send to the server. A key
+        /// `update.index.{player_id}` will be inserted with this value. By getting this value
+        /// when you've scheduled something to be done to the dictionary, you can then determine
+        /// when a returned update has incorporated your change.
+        /// </summary>
+        public int NextUpdateIndex => nextUpdateIndex;
+
+        /// <summary>
+        /// The index of the latest changes we sent to the server which have been received by us.
+        /// </summary>
+        public int LastReceivedIndex => lastReceivedIndex;
+
+        private int nextUpdateIndex = 0;
+
+        private int lastReceivedIndex = -1;
+
+        private string UpdateIndexKey => $"update.index.{PlayerId}";
 
         /// <summary>
         /// Connect to a Multiplayer service over the given connection. 
@@ -118,12 +126,6 @@ namespace Narupa.Session
             CloseClient();
 
             client = new MultiplayerClient(connection);
-
-            if (avatarFlushingTask == null)
-            {
-                avatarFlushingTask = CallbackInterval(FlushAvatars, AvatarPublishInterval);
-                avatarFlushingTask.AwaitInBackground();
-            }
 
             if (valueFlushingTask == null)
             {
@@ -137,26 +139,19 @@ namespace Narupa.Session
         /// </summary>
         public void CloseClient()
         {
+            Avatars.CloseClient();
+            FlushValues();
+            
             client?.CloseAndCancelAllSubscriptions();
             client?.Dispose();
             client = null;
 
-            IncomingAvatars?.CloseAsync();
-            IncomingAvatars?.Dispose();
-            IncomingAvatars = null;
-
-            OutgoingAvatar?.CloseAsync();
-            OutgoingAvatar?.Dispose();
-            OutgoingAvatar = null;
-
             PlayerName = null;
             PlayerId = null;
 
-            Avatars.Clear();
-            pendingAvatars.Clear();
-
             ClearSharedState();
             pendingValues.Clear();
+            pendingRemovals.Clear();
         }
 
         /// <summary>
@@ -173,75 +168,27 @@ namespace Narupa.Session
             PlayerName = playerName;
             PlayerId = response.PlayerId;
 
-            StartAvatars();
-
             IncomingValueUpdates = client.SubscribeAllResourceValues();
-            IncomingValueUpdates.MessageReceived += OnResourceValuesUpdateReceived;
-            IncomingValueUpdates.StartReceiving().AwaitInBackgroundIgnoreCancellation();
-        }
+            BackgroundIncomingStreamReceiver<ResourceValuesUpdate>.Start(IncomingValueUpdates,
+                OnResourceValuesUpdateReceived,
+                MergeResourceUpdates);
 
-        public void StartAvatars()
-        {
-            try
+            void MergeResourceUpdates(ResourceValuesUpdate dest, ResourceValuesUpdate src)
             {
-                OutgoingAvatar = client.PublishAvatar(PlayerId);
-                IncomingAvatars = client.SubscribeAvatars(updateInterval: AvatarUpdateInterval,
-                                                          ignorePlayerId: PlayerId);
+                if (dest.ResourceValueChanges == null)
+                    dest.ResourceValueChanges = new Struct();
 
-                IncomingAvatars.MessageReceived += OnAvatarReceived;
-
-                OutgoingAvatar.StartSending().AwaitInBackgroundIgnoreCancellation();
-                IncomingAvatars.StartReceiving().AwaitInBackgroundIgnoreCancellation();
+                foreach (var (key, value) in src.ResourceValueChanges.Fields)
+                    dest.ResourceValueChanges.Fields[key] = value;
+                
+                foreach(var removal in src.ResourceValueRemovals)
+                    if(!dest.ResourceValueRemovals.Contains(removal))
+                        dest.ResourceValueRemovals.Add(removal);
             }
-            catch (RpcException e)
-            {
-            }
+
+            MultiplayerJoined?.Invoke();
         }
-
-        /// <summary>
-        /// Set the headset and hand poses of our avatar.
-        /// </summary>
-        public void SetVRAvatar(Transformation? headset = null,
-                                Transformation? leftHand = null,
-                                Transformation? rightHand = null)
-        {
-            var avatar = new MultiplayerAvatar
-            {
-                PlayerId = PlayerId,
-            };
-
-            if (headset is Transformation headsetPose)
-                avatar.Components[HeadsetName] = headsetPose;
-
-            if (leftHand is Transformation leftHandPose)
-                avatar.Components[LeftHandName] = leftHandPose;
-
-            if (rightHand is Transformation rightHandPose)
-                avatar.Components[RightHandName] = rightHandPose;
-
-            SetVRAvatar(avatar);
-        }
-
-        /// <summary>
-        /// Set the headset and hand poses of our avatar.
-        /// </summary>
-        public void SetVRAvatar(MultiplayerAvatar avatar)
-        {
-            Avatars[avatar.PlayerId] = avatar;
-            pendingAvatars[avatar.PlayerId] = avatar;
-        }
-
-        /// <summary>
-        /// Set our avatar to empty.
-        /// </summary>
-        public void SetVRAvatarEmpty()
-        {
-            SetVRAvatar(new MultiplayerAvatar
-            {
-                PlayerId = PlayerId
-            });
-        }
-
+        
         /// <summary>
         /// Set the given key in the shared state dictionary, which will be
         /// sent to the server according in the future according to the publish 
@@ -250,7 +197,20 @@ namespace Narupa.Session
         public void SetSharedState(string key, object value)
         {
             pendingValues[key] = value.ToProtobufValue();
+            pendingRemovals.Remove(key);
         }
+        
+        /// <summary>
+        /// Remove the given key from the shared state dictionary, which will be
+        /// sent to the server according in the future according to the publish 
+        /// interval.
+        /// </summary>
+        public void RemoveSharedStateKey(string key)
+        {
+            pendingValues.Remove(key);
+            pendingRemovals.Add(key);
+        }
+
 
         /// <summary>
         /// Get a key in the shared state dictionary.
@@ -279,20 +239,9 @@ namespace Narupa.Session
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            SetVRAvatarEmpty();
-            FlushAvatars();
             FlushValues();
 
             CloseClient();
-        }
-
-        private void OnAvatarReceived(Avatar avatar)
-        {
-            // ignore remote ideas about our own value
-            if (avatar.PlayerId == PlayerId)
-                return;
-
-            Avatars[avatar.PlayerId] = ProtoAvatarToClientAvatar(avatar);
         }
 
         private void ClearSharedState()
@@ -317,6 +266,13 @@ namespace Narupa.Session
         {
             if (update.ResourceValueChanges != null)
             {
+                if (update.ResourceValueChanges.Fields.ContainsKey(UpdateIndexKey))
+                {
+                    lastReceivedIndex = (int) update.ResourceValueChanges
+                                                    .Fields[UpdateIndexKey]
+                                                    .NumberValue;
+                }
+                
                 foreach (var pair in update.ResourceValueChanges.Fields)
                 {
                     var value = pair.Value.ToObject();
@@ -334,32 +290,30 @@ namespace Narupa.Session
             }
         }
 
-        private void FlushAvatars()
-        {
-            if (!IsOpen || !HasPlayer)
-                return;
-
-            foreach (var avatar in pendingAvatars.Values)
-            {
-                OutgoingAvatar.QueueMessageAsync(ClientAvatarToProtoAvatar(avatar))
-                              .AwaitInBackgroundIgnoreCancellation();
-            }
-
-            pendingAvatars.Clear();
-        }
-
         private void FlushValues()
         {
             if (!IsOpen || !HasPlayer)
                 return;
-
+            
             foreach (var pair in pendingValues)
             {
                 client.SetResourceValue(PlayerId, pair.Key, pair.Value.ToProtobufValue())
                       .AwaitInBackgroundIgnoreCancellation();
             }
+            
+            foreach (var key in pendingRemovals)
+            {
+                client.RemoveResourceKey(PlayerId, key)
+                      .AwaitInBackgroundIgnoreCancellation();
+            }
+            
+            client.SetResourceValue(PlayerId, UpdateIndexKey, nextUpdateIndex.ToProtobufValue())
+                  .AwaitInBackgroundIgnoreCancellation();
 
+            nextUpdateIndex++;
+            
             pendingValues.Clear();
+            pendingRemovals.Clear();
         }
 
         private static async Task CallbackInterval(Action callback, int interval)
@@ -368,65 +322,6 @@ namespace Narupa.Session
             {
                 callback();
                 await Task.Delay(interval);
-            }
-        }
-
-        private static Avatar ClientAvatarToProtoAvatar(MultiplayerAvatar clientAvatar)
-        {
-            var components = clientAvatar
-                             .Components
-                             .Select(pair => ComponentFromPose(pair.Key, pair.Value));
-
-            var protoAvatar = new Avatar
-            {
-                PlayerId = clientAvatar.PlayerId,
-                Components =
-                {
-                    components
-                },
-            };
-
-            return protoAvatar;
-
-            AvatarComponent ComponentFromPose(string name, Transformation? pose)
-            {
-                var component = new AvatarComponent
-                {
-                    Name = name
-                };
-
-                if (pose is Transformation validPose)
-                {
-                    component.Position.PutValues(validPose.Position);
-                    component.Rotation.PutValues(validPose.Rotation);
-                }
-
-                return component;
-            }
-        }
-
-        private static MultiplayerAvatar ProtoAvatarToClientAvatar(Avatar protoAvatar)
-        {
-            var clientAvatar = new MultiplayerAvatar
-            {
-                PlayerId = protoAvatar.PlayerId,
-            };
-
-            foreach (var component in protoAvatar.Components)
-            {
-                clientAvatar.Components[component.Name] = PoseFromComponent(component);
-            }
-
-            return clientAvatar;
-
-            Transformation? PoseFromComponent(AvatarComponent component)
-            {
-                if (component.Position.Count != 3 || component.Rotation.Count != 4)
-                    return null;
-
-                return new Transformation(component.Position.GetVector3(),
-                                          component.Rotation.GetQuaternion(),
-                                          Vector3.one);
             }
         }
 
@@ -446,9 +341,9 @@ namespace Narupa.Session
             if (@object is List<object> list)
             {
                 var values = list.Select(value => Convert.ToSingle(value)).ToList();
-                var position = new Vector3(values[0], values[1], values[2]);
-                var rotation = new Quaternion(values[3], values[4], values[5], values[6]);
-                var scale = new Vector3(values[7], values[8], values[9]);
+                var position = list.GetVector3(0);
+                var rotation = list.GetQuaternion(3);
+                var scale = list.GetVector3(7);
 
                 return new Transformation(position, rotation, scale);
             }
@@ -460,13 +355,5 @@ namespace Narupa.Session
         {
             return new MultiplayerResource<object>(this, key);
         }
-    }
-
-    public sealed class MultiplayerAvatar
-    {
-        public string PlayerId { get; set; }
-
-        public Dictionary<string, Transformation?> Components { get; }
-            = new Dictionary<string, Transformation?>();
     }
 }
