@@ -62,7 +62,7 @@ namespace NarupaXR
 
             while (true)
             {
-                if (narupa.Sessions.Multiplayer.HasPlayer)
+                if (narupa.Sessions.Multiplayer.IsOpen)
                 {
                     narupa.Sessions.Multiplayer.Avatars.LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),
