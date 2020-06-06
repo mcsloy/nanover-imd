@@ -2,6 +2,9 @@
 
 set -x
 
+apt-get update -y
+apt-get install -y xsltproc
+
 echo "Testing for $TEST_PLATFORM"
 
 ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
@@ -39,4 +42,7 @@ else
 fi
 
 cat $(pwd)/$TEST_PLATFORM-results.xml | grep test-run | grep Passed
+
+xsltproc -o $(pwd)/$TEST_PLATFORM-junit-results.xml ./ci/nunit3-junit.xslt $(pwd)/$TEST_PLATFORM-results.xml
+
 exit $UNITY_EXIT_CODE
