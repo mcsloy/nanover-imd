@@ -93,6 +93,9 @@ namespace Narupa.Visualisation.Node.Renderer
 
         [SerializeField]
         private FloatProperty particleScale = new FloatProperty();
+        
+        [SerializeField]
+        private FloatProperty edgeSharpness = new FloatProperty();
 
         [SerializeField]
         private IntArrayProperty bondOrders = new IntArrayProperty();
@@ -103,7 +106,6 @@ namespace Narupa.Visualisation.Node.Renderer
                                           && material.HasNonNullValue()
                                           && bondPairs.HasNonEmptyValue()
                                           && particlePositions.HasNonEmptyValue()
-                                          && bondScale.HasValue
                                           && rendererColor.HasValue
                                           && particleScale.HasValue;
 
@@ -113,27 +115,33 @@ namespace Narupa.Visualisation.Node.Renderer
                                           || material.IsDirty
                                           || rendererColor.IsDirty
                                           || bondScale.IsDirty
-                                          || particleScale.IsDirty
                                           || particlePositions.IsDirty
                                           || particleColors.IsDirty
-                                          || particleScales.IsDirty;
+                                          || particleScales.IsDirty
+                                          || edgeSharpness.IsDirty;
 
         public override void UpdateInput()
         {
             UpdateMeshAndMaterials();
 
-            drawCommand.SetFloat("_EdgeScale", bondScale.Value);
-            drawCommand.SetFloat("_ParticleScale", particleScale.Value);
-            drawCommand.SetFloat("_Scale", particleScale.Value);
-            drawCommand.SetColor("_Color", rendererColor.Value);
-
-            bondScale.IsDirty = false;
-            particleScale.IsDirty = false;
-            rendererColor.IsDirty = false;
+            SetMaterialParameters();
 
             UpdateBuffers();
 
             drawCommand.SetInstanceCount(InstanceCount);
+        }
+
+        protected virtual void SetMaterialParameters()
+        {
+            drawCommand.SetFloat("_EdgeScale", bondScale.HasValue ? bondScale.Value : 1f);
+            drawCommand.SetFloat("_ParticleScale", particleScale.HasValue ? particleScale.Value : 1f);
+            drawCommand.SetFloat("_Scale", particleScale.HasValue ? particleScale.Value : 1f);
+            drawCommand.SetColor("_Color", rendererColor.Value);
+            drawCommand.SetFloat("_EdgeSharpness", edgeSharpness.HasValue ? edgeSharpness.Value : 0f);
+
+            bondScale.IsDirty = false;
+            particleScale.IsDirty = false;
+            rendererColor.IsDirty = false;
         }
 
         protected void UpdateBuffers()

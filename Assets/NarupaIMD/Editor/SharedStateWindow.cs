@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Core;
-using NarupaXR;
 using UnityEditor;
 using UnityEngine;
 
