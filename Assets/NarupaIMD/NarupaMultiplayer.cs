@@ -17,8 +17,6 @@ namespace NarupaIMD
         {
             avatars.enabled = false;
             simulation.Multiplayer.MultiplayerJoined += OnMultiplayerJoined;
-            simulation.Multiplayer.JoinMultiplayer("NarupaXR")
-                      .AwaitInBackground();
         }
 
         private void OnDisable()

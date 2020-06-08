@@ -52,8 +52,7 @@ namespace NarupaXR
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
-            
-            sendAvatarsCoroutine = StartCoroutine(SendAvatars());
+            sendAvatarsCoroutine = StartCoroutine(UpdateLocalAvatar());
         }
 
         private void OnDisable()
@@ -61,7 +60,7 @@ namespace NarupaXR
             StopCoroutine(sendAvatarsCoroutine);
         }
 
-        private IEnumerator SendAvatars()
+        private IEnumerator UpdateLocalAvatar()
         {
             var leftHand = XRNode.LeftHand.WrapAsPosedObject();
             var rightHand = XRNode.RightHand.WrapAsPosedObject();
@@ -69,7 +68,7 @@ namespace NarupaXR
 
             while (true)
             {
-                if (narupa.Multiplayer.HasPlayer)
+                if (narupa.Multiplayer.IsOpen)
                 {
                     narupa.Multiplayer.Avatars.LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),

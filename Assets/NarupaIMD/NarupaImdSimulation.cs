@@ -6,6 +6,7 @@ using Essd;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Grpc;
+using Narupa.Grpc.Multiplayer;
 using Narupa.Grpc.Trajectory;
 using Narupa.Session;
 using Narupa.Visualisation;
