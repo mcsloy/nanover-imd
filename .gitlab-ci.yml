@@ -47,8 +47,10 @@ variables:
     paths:
     - $(pwd)/$TEST_PLATFORM-results.xml
     - $(pwd)/$TEST_PLATFORM-junit-results.xml
+    - $(pwd)/$TEST_PLATFORM-coverage/
     reports:
       junit: $(pwd)/$TEST_PLATFORM-junit-results.xml
+    coverage: /<Linecoverage>(.*?)</Linecoverage>/
     when: always
 
 

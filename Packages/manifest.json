@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "com.alexjbinnie.codecoveragetools": "https://gitlab.com/alexjbinnie/code-coverage-tools.git",
     "com.unity.ext.nunit": "1.0.0",
     "com.unity.ide.rider": "1.1.4",
     "com.unity.ide.vscode": "1.1.4",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.test-framework": "1.1.9",
+    "com.unity.testtools.codecoverage": "0.3.0-preview",
     "com.unity.textmeshpro": "2.0.1",
     "com.unity.ugui": "1.0.0",
     "com.unity.xr.openvr.standalone": "2.0.5",
@@ -40,11 +40,5 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  },
-  "lock": {
-    "com.alexjbinnie.codecoveragetools": {
-      "revision": "HEAD",
-      "hash": "b0f291ed8d1b49c782915b7f135acbb7c03b49c7"
-    }
   }
 }
