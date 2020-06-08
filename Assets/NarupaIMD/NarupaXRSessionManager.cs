@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Essd;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using Narupa.Grpc.Multiplayer;
 
 namespace NarupaXR
 {
@@ -54,7 +55,6 @@ namespace NarupaXR
             if (multiplayerPort.HasValue)
             {
                 Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
-                Multiplayer.JoinMultiplayer("test").AwaitInBackgroundIgnoreCancellation();
             }
         }
 
