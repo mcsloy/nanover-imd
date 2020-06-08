@@ -50,8 +50,8 @@ variables:
     - $(pwd)/$TEST_PLATFORM-coverage/
     reports:
       junit: $(pwd)/$TEST_PLATFORM-junit-results.xml
-    coverage: /<Linecoverage>(.*?)</Linecoverage>/
     when: always
+  coverage: /<Linecoverage>(.*?)</Linecoverage>/
 
 
 test-editmode:
