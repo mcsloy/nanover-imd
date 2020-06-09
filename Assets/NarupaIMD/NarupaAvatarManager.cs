@@ -4,8 +4,6 @@ using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
 using Narupa.Grpc.Multiplayer;
-using Narupa.Session;
-using NarupaIMD;
 using NarupaIMD.UI;
 using UnityEngine;
 using UnityEngine.XR;
@@ -55,37 +53,33 @@ namespace NarupaIMD
                 transform => transform.gameObject.SetActive(false)
             );
             
-            multiplayer.Session.MultiplayerJoined += SessionOnMultiplayerJoined;
             PlayerColor.PlayerColorChanged += PlayerColorOnPlayerColorChanged;
             PlayerName.PlayerNameChanged += PlayerNameOnPlayerNameChanged;
+            
+            simulation.Multiplayer.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
+            simulation.Multiplayer.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
+            
+            sendAvatarsCoroutine = StartCoroutine(UpdateLocalAvatar());
         }
 
         private void PlayerNameOnPlayerNameChanged()
         {
-            multiplayer.Session.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
+            simulation.Multiplayer.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
         }
 
         private void PlayerColorOnPlayerColorChanged()
         {
-            multiplayer.Session.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
+            simulation.Multiplayer.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
         }
-
-        private void SessionOnMultiplayerJoined()
-        {
-            multiplayer.Session.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
-            multiplayer.Session.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
-            sendAvatarsCoroutine = StartCoroutine(SendAvatars());
-        }
-
+        
         private void OnDisable()
         {
             StopCoroutine(sendAvatarsCoroutine);
-            multiplayer.Session.MultiplayerJoined -= SessionOnMultiplayerJoined;
             PlayerColor.PlayerColorChanged -= PlayerColorOnPlayerColorChanged;
             PlayerName.PlayerNameChanged -= PlayerNameOnPlayerNameChanged;
         }
 
-        private IEnumerator SendAvatars()
+        private IEnumerator UpdateLocalAvatar()
         {
             var leftHand = XRNode.LeftHand.WrapAsPosedObject();
             var rightHand = XRNode.RightHand.WrapAsPosedObject();
@@ -93,7 +87,7 @@ namespace NarupaIMD
 
             while (true)
             {
-                if (simulation.Multiplayer.HasPlayer)
+                if (simulation.Multiplayer.IsOpen)
                 {
                     simulation.Multiplayer.Avatars.LocalAvatar.SetTransformations(
                             TransformPoseWorldToCalibrated(headset.Pose),
