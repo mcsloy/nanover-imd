@@ -15,12 +15,6 @@ namespace NarupaIMD
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaMultiplayer multiplayer;
-
-        [SerializeField]
-        private NarupaIMDPrototype application;
-
-        [SerializeField]
         private NarupaImdSimulation simulation;
 
         [SerializeField]
@@ -53,33 +47,29 @@ namespace NarupaIMD
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
-
-            multiplayer.Session.MultiplayerJoined += SessionOnMultiplayerJoined;
+            
             PlayerColor.PlayerColorChanged += PlayerColorOnPlayerColorChanged;
             PlayerName.PlayerNameChanged += PlayerNameOnPlayerNameChanged;
+            
+            simulation.Multiplayer.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
+            simulation.Multiplayer.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
+            
+            sendAvatarsCoroutine = StartCoroutine(SendAvatars());
         }
 
         private void PlayerNameOnPlayerNameChanged()
         {
-            multiplayer.Session.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
+            simulation.Multiplayer.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
         }
 
         private void PlayerColorOnPlayerColorChanged()
         {
-            multiplayer.Session.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
-        }
-
-        private void SessionOnMultiplayerJoined()
-        {
-            multiplayer.Session.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
-            multiplayer.Session.Avatars.LocalAvatar.Name = PlayerName.GetPlayerName();
-            sendAvatarsCoroutine = StartCoroutine(SendAvatars());
+            simulation.Multiplayer.Avatars.LocalAvatar.Color = PlayerColor.GetPlayerColor();
         }
 
         private void OnDisable()
         {
             StopCoroutine(sendAvatarsCoroutine);
-            multiplayer.Session.MultiplayerJoined -= SessionOnMultiplayerJoined;
             PlayerColor.PlayerColorChanged -= PlayerColorOnPlayerColorChanged;
             PlayerName.PlayerNameChanged -= PlayerNameOnPlayerNameChanged;
         }
@@ -91,7 +81,7 @@ namespace NarupaIMD
                 // multiplayer to world transformation
                 var worldToMultiplayer = UnitScaleTransformation
                                          .FromTransformRelativeToWorld(transform).inverse;
-                if (simulation.Multiplayer.HasPlayer)
+                if (simulation.Multiplayer.IsOpen)
                 {
                     var headTransform = XRNode.Head.GetTransformation();
                     var leftHandTransform = XRNode.LeftHand.GetTransformation();
