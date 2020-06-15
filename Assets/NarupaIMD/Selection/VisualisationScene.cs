@@ -67,6 +67,7 @@ namespace NarupaIMD.Selection
                 return layers[ordinal];
             var layer = Instantiate(layerPrefab, transform);
             layer.gameObject.name = $"Layer {ordinal}";
+            layer.Layer = ordinal;
             layer.Removed += () => DestroyLayer(layer);
             layers[ordinal] = layer;
             return layer;
@@ -77,7 +78,8 @@ namespace NarupaIMD.Selection
         /// </summary>
         public void DestroyLayer(VisualisationLayer layer)
         {
-            Destroy(layer);
+            layers.Remove(layer.Layer);
+            Destroy(layer.gameObject);
         }
 
         private const string HighlightedParticlesKey = "highlighted.particles";

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1226528697815849874}
   - component: {fileID: 5399661201713404460}
   m_Layer: 0
-  m_Name: Layer
+  m_Name: Visualisation Layer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78c325d9d22d4e16bc7c5f9ccf092997, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visualisationManager: {fileID: 0}
-  selectionPrefab: {fileID: 8550252092213135298, guid: b3df83adaf6a8784082a4c34367f6a2b,
+  scene: {fileID: 0}
+  layer: 0
+  instancePrefab: {fileID: 8550252092213135298, guid: b3df83adaf6a8784082a4c34367f6a2b,
     type: 3}

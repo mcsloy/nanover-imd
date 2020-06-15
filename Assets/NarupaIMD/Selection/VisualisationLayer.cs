@@ -105,6 +105,7 @@ namespace NarupaIMD.Selection
             }
 
             RecalculateIndices(instance);
+            instance.UpdateVisualiser();
             return instance;
         }
 
@@ -141,7 +142,7 @@ namespace NarupaIMD.Selection
 
         public void RemoveInstance(VisualisationInstance instance)
         {
-            Destroy(instance);
+            Destroy(instance.gameObject);
             currentMembers.Remove(instance);
             if (currentMembers.Count > 0)
                 RecalculateIndices(currentMembers.Last());

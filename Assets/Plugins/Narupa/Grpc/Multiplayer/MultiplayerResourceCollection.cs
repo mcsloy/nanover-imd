@@ -47,7 +47,10 @@ namespace Narupa.Grpc.Multiplayer
                 if(keys.Contains(key))
                     ItemUpdated?.Invoke(key);
                 else
+                {
+                    keys.Add(key);
                     ItemCreated?.Invoke(key);
+                }
             }
         }
         
