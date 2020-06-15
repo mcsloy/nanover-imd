@@ -33,19 +33,19 @@ namespace NarupaIMD.Tests.Selection
         {
             var result = new ThreeSelectionIndices();
 
-            VisualisationSelection.FilterIndices(null,
+            VisualisationInstance.FilterIndices(null,
                                                  third,
                                                  maxCount,
                                                  ref result.ThirdLayerFiltered,
                                                  ref result.ThirdLayerUnfiltered);
 
-            VisualisationSelection.FilterIndices(result.ThirdLayerUnfiltered,
+            VisualisationInstance.FilterIndices(result.ThirdLayerUnfiltered,
                                                  second,
                                                  maxCount,
                                                  ref result.SecondLayerFiltered,
                                                  ref result.SecondLayerUnfiltered);
 
-            VisualisationSelection.FilterIndices(result.SecondLayerUnfiltered,
+            VisualisationInstance.FilterIndices(result.SecondLayerUnfiltered,
                                                  first,
                                                  maxCount,
                                                  ref result.FirstLayerFiltered,

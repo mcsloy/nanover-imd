@@ -16,13 +16,8 @@ namespace NarupaIMD.Selection
     /// Scene representation of a selection, which will render the selection using a
     /// given visualiser.
     /// </summary>
-    public class VisualisationSelection : MonoBehaviour
+    public class VisualisationInstance : MonoBehaviour
     {
-        /// <summary>
-        /// Callback for when the underlying selection has changed.
-        /// </summary>
-        public event Action SelectionUpdated;
-
         /// <summary>
         /// The indices of particles that should be rendered in this selection.
         /// </summary>
@@ -44,7 +39,9 @@ namespace NarupaIMD.Selection
 
         private int[] unfilteredIndices = new int[0];
 
-        private ParticleSelection selection;
+        private ParticleVisualisation visualisation;
+
+        public float Priority => visualisation.Priority;
 
         [SerializeField]
         private VisualisationLayer layer;
@@ -59,23 +56,40 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// The underlying selection that is reflected by this visualisation.
         /// </summary>
-        public ParticleSelection Selection
+        public ParticleVisualisation Visualisation
         {
-            get => selection;
+            get => visualisation;
             set
             {
-                if (selection != null)
-                    selection.SelectionUpdated -= OnSelectionUpdated;
-                selection = value;
-                if (selection != null)
-                    selection.SelectionUpdated += OnSelectionUpdated;
+                if (visualisation != null)
+                {
+                    visualisation.SelectionUpdated -= OnSelectionUpdated;
+                    visualisation.Removed -= OnRemoved;
+                }
+
+                visualisation = value;
+                if (visualisation != null)
+                {
+                    visualisation.SelectionUpdated += OnSelectionUpdated;
+                    visualisation.Removed += OnRemoved;
+                }
             }
+        }
+
+        private void OnDestroy()
+        {
+            Visualisation = null;
         }
 
         private void OnSelectionUpdated()
         {
-            SelectionUpdated?.Invoke();
+            layer.RecalculateIndices(this);
             UpdateVisualiser();
+        }
+
+        private void OnRemoved()
+        {
+            layer.RemoveInstance(this);
         }
 
         /// <summary>
@@ -84,12 +98,12 @@ namespace NarupaIMD.Selection
         /// drawn by this selection and which should be left for another selection further
         /// down the stack.
         /// </summary>
-        public void CalculateFilteredIndices(VisualisationSelection upperSelection, int maxCount)
+        public void CalculateFilteredIndices(VisualisationInstance upperInstance, int maxCount)
         {
-            var indices = upperSelection?.unfilteredIndices;
+            var indices = upperInstance?.unfilteredIndices;
 
             FilterIndices(indices,
-                          Selection.Selection,
+                          visualisation.ParticleIndices,
                           maxCount,
                           ref filteredIndices,
                           ref unfilteredIndices);
@@ -186,7 +200,7 @@ namespace NarupaIMD.Selection
         public void UpdateVisualiser()
         {
             // The hide property turns off any visualiser
-            if (Selection.HideRenderer)
+            if (visualisation.Hide)
             {
                 SetVisualiser(null, false);
                 return;
@@ -196,8 +210,8 @@ namespace NarupaIMD.Selection
             var isPrefab = true;
 
             // Construct a visualiser from any provided renderer info
-            if (Selection.Renderer is object data)
-                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(data);
+            if (visualisation.Visualiser != null)
+                (visualiser, isPrefab) = VisualiserFactory.ConstructVisualiser(visualisation.Visualiser);
 
             // Use the predefined ball and stick renderer as a default
             if (visualiser == null)

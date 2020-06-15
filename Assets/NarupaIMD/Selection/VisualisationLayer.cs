@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Core.Math;
 using Narupa.Visualisation.Property;
 using UnityEngine;
@@ -8,7 +10,7 @@ using UnityEngine;
 namespace NarupaIMD.Selection
 {
     /// <summary>
-    /// A group of <see cref="VisualisationSelection" />s which are mutually exclusive.
+    /// A group of <see cref="VisualisationInstance" />s which are mutually exclusive.
     /// </summary>
     /// <remarks>
     /// Selections within a visualisation layer display an atom precisely once,
@@ -23,6 +25,23 @@ namespace NarupaIMD.Selection
         [SerializeField]
         private VisualisationScene scene;
 
+        [SerializeField]
+        private int layer;
+        
+        private readonly List<VisualisationInstance> currentMembers =
+            new List<VisualisationInstance>();
+
+        public event Action Removed;
+
+        /// <summary>
+        /// The order of this layer.
+        /// </summary>
+        public int Layer
+        {
+            get => layer;
+            set => layer = value;
+        }
+
         /// <summary>
         /// The <see cref="VisualisationScene" /> to which this layer belongs.
         /// </summary>
@@ -33,117 +52,72 @@ namespace NarupaIMD.Selection
         }
 
         /// <summary>
-        /// The set of selections that form this layer.
+        /// The set of visualisations on this layer.
         /// </summary>
-        public IReadOnlyList<VisualisationSelection> Selections => selections;
+        public IReadOnlyList<VisualisationInstance> Members => currentMembers;
 
         private void Awake()
         {
             Scene = GetComponentInParent<VisualisationScene>();
         }
 
-        private readonly List<VisualisationSelection> selections =
-            new List<VisualisationSelection>();
-
         [SerializeField]
-        private VisualisationSelection selectionPrefab;
+        private VisualisationInstance instancePrefab;
 
-        /// <summary>
-        /// Add a selection to this visualisation, based upon a
-        /// <see cref="ParticleSelection" />.
-        /// </summary>
-        public VisualisationSelection AddSelection(ParticleSelection selection)
+        private class PriorityComparer : IComparer
         {
-            var visualisationSelection = Instantiate(selectionPrefab, transform);
-            visualisationSelection.Selection = selection;
-            visualisationSelection.gameObject.name = selection.Name;
-            visualisationSelection.SelectionUpdated +=
-                () => OnSelectionUpdated(visualisationSelection);
-
-            
-            if (selections.Any())
+            public int Compare(object a, object b)
             {
-                var insertIndex = 1;
-                foreach (var existingSelection in selections.Skip(1))
-                    if (string.CompareOrdinal(existingSelection.Selection.ID, selection.ID) <= 0)
+                if (a is ParticleVisualisation vis1 && b is ParticleVisualisation vis2)
+                {
+                    if (vis1.Priority > vis2.Priority)
+                        return 1;
+                    if (vis1.Priority < vis2.Priority)
+                        return -1;
+                }
+
+                return 0;
+            }
+        }
+        
+        private static PriorityComparer priorityComparer = new PriorityComparer();
+        
+        /// <summary>
+        /// Add a visualisation to this layer.
+        /// </summary>
+        public VisualisationInstance AddVisualisation(ParticleVisualisation visualisation)
+        {
+            var instance = Instantiate(instancePrefab, transform);
+            instance.Visualisation = visualisation;
+            instance.gameObject.name = visualisation.DisplayName;
+            
+            if (currentMembers.Any())
+            {
+                var insertIndex = 0;
+                foreach (var existingSelection in currentMembers)
+                    if (priorityComparer.Compare(existingSelection.Visualisation, visualisation) > 0)
                         insertIndex++;
-                selections.Insert(insertIndex, visualisationSelection);
+                currentMembers.Insert(insertIndex, instance);
             }
             else
             {
-                selections.Add(visualisationSelection);
+                currentMembers.Add(instance);
             }
 
-            
-            OnSelectionUpdated(visualisationSelection);
-            return visualisationSelection;
-        }
-
-        /// <summary>
-        /// Refresh all selections that are lower down the layer than the given selection.
-        /// </summary>
-        private void OnSelectionUpdated(VisualisationSelection selection)
-        {
-            var index = selections.IndexOf(selection);
-            if (index < 0)
-                throw new ArgumentException(
-                    "Tried to update selection not in layer.");
-            for (var i = index; i >= 0; i--)
-                selections[i].CalculateFilteredIndices(
-                    i == selections.Count - 1 ? null : selections[i + 1],
-                    Scene.ParticleCount);
-        }
-
-        /// <summary>
-        /// Either update an existing selection with the given key or add a new selection
-        /// with the given key.
-        /// </summary>
-        public void UpdateOrCreateSelection(string key, object value)
-        {
-            if (!(value is Dictionary<string, object> dict))
-                return;
-            foreach (var selection in selections)
-                if (selection.Selection.ID == key)
-                {
-                    if (selection.Selection.ID == ParticleSelection.RootSelectionId)
-                    {
-                        dict.Remove(ParticleSelection.KeySelected);
-                    }
-
-                    selection.Selection.UpdateFromObject(dict);
-                    selection.gameObject.name = selection.Selection.Name;
-                    return;
-                }
-
-            var newSelection = new ParticleSelection(dict);
-            var selec = AddSelection(newSelection);
-            selec.UpdateVisualiser();
-        }
-
-        /// <summary>
-        /// Remove the selection with the given key.
-        /// </summary>
-        public void RemoveSelection(string key)
-        {
-            var selection = selections.FirstOrDefault(s => s.Selection.ID == key);
-            if (selection == null)
-                return;
-
-            Destroy(selection.gameObject);
-            selections.Remove(selection);
-
-            OnSelectionUpdated(selections.Last());
+            RecalculateIndices(instance);
+            return instance;
         }
 
         /// <summary>
         /// Find the selection on this layer which contains the particle of the given
         /// index.
         /// </summary>
-        public VisualisationSelection GetSelectionForParticle(int particleIndex)
+        [CanBeNull]
+        public VisualisationInstance GetSelectionForParticle(int particleIndex)
         {
-            for (var i = selections.Count - 1; i >= 0; i--)
+            for (var i = currentMembers.Count - 1; i >= 0; i--)
             {
-                var selection = selections[i];
+                var selection = currentMembers[i];
                 if (!selection.FilteredIndices.HasNonNullValue())
                     return selection;
                 if (SearchAlgorithms.BinarySearch(particleIndex, selection.FilteredIndices.Value))
@@ -151,6 +125,28 @@ namespace NarupaIMD.Selection
             }
 
             return null;
+        }
+
+        public void RecalculateIndices(VisualisationInstance visualisation)
+        {
+            var index = currentMembers.IndexOf(visualisation);
+            if (index < 0)
+                throw new ArgumentException(
+                    "Tried to update visualisation not in layer.");
+            for (var i = index; i >= 0; i--)
+                currentMembers[i].CalculateFilteredIndices(
+                    i == currentMembers.Count - 1 ? null : currentMembers[i + 1],
+                    Scene.ParticleCount);
+        }
+
+        public void RemoveInstance(VisualisationInstance instance)
+        {
+            Destroy(instance);
+            currentMembers.Remove(instance);
+            if (currentMembers.Count > 0)
+                RecalculateIndices(currentMembers.Last());
+            else
+                Removed?.Invoke();
         }
     }
 }

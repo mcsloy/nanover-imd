@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Narupa.Grpc.Multiplayer;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Property;
@@ -22,7 +23,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// The <see cref="VisualisationLayer" />s that make up this scene.
         /// </summary>
-        private readonly List<VisualisationLayer> layers = new List<VisualisationLayer>();
+        private readonly Dictionary<int, VisualisationLayer> layers = new Dictionary<int, VisualisationLayer>();
 
         [SerializeField]
         private NarupaXRPrototype narupaIMD;
@@ -58,89 +59,69 @@ namespace NarupaIMD.Selection
         public int ParticleCount => frameSource.CurrentFrame?.ParticleCount ?? 0;
 
         /// <summary>
-        /// The root selection of the scene.
+        /// Get or create the visualisation layer with the given index
         /// </summary>
-        private ParticleSelection rootSelection;
-
-        private const string BaseLayerName = "Base Layer";
-
-        private VisualisationLayer BaseLayer => layers[0];
+        public VisualisationLayer GetOrCreateLayer(int ordinal)
+        {
+            if (layers.ContainsKey(ordinal))
+                return layers[ordinal];
+            var layer = Instantiate(layerPrefab, transform);
+            layer.gameObject.name = $"Layer {ordinal}";
+            layer.Removed += () => DestroyLayer(layer);
+            layers[ordinal] = layer;
+            return layer;
+        }
 
         /// <summary>
-        /// Create a visualisation layer with the given name.
+        /// Destroy the given visualisation layer
         /// </summary>
-        public VisualisationLayer AddLayer(string name)
+        public void DestroyLayer(VisualisationLayer layer)
         {
-            var layer = Instantiate(layerPrefab, transform);
-            layer.gameObject.name = name;
-            layers.Add(layer);
-            return layer;
+            Destroy(layer);
         }
 
         private const string HighlightedParticlesKey = "highlighted.particles";
 
+        private MultiplayerResourceCollection<Visualisation> visualisations;
+        private MultiplayerResourceCollection<ParticleSelection> selections;
+
+        private Dictionary<string, ParticleVisualisation> currentVisualisations = new Dictionary<string, ParticleVisualisation>();
+
         private void Start()
         {
+            selections = new MultiplayerResourceCollection<ParticleSelection>(narupaIMD.Sessions.Multiplayer, "selections.");
+            visualisations = new MultiplayerResourceCollection<Visualisation>(narupaIMD.Sessions.Multiplayer, "visualiser.");
+            
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
-            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles; 
+            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles;
 
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated +=
-                MultiplayerOnSharedStateDictionaryKeyChanged;
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved +=
-                MultiplayerOnSharedStateDictionaryKeyRemoved;
-            var baseLayer = AddLayer(BaseLayerName);
-            rootSelection = ParticleSelection.CreateRootSelection();
-            var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
-            baseRenderableSelection.UpdateVisualiser();
+            visualisations.ItemCreated += OnMultiplayerVisualisationCreated;
+            visualisations.ItemUpdated += OnMultiplayerVisualisationUpdated;
+            visualisations.ItemRemoved += OnMultiplayerVisualisationRemoved;
         }
 
-        private void OnDisable()
+        private void OnMultiplayerVisualisationCreated(string key)
         {
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated -=
-                MultiplayerOnSharedStateDictionaryKeyChanged;
-            narupaIMD.Sessions.Multiplayer.SharedStateDictionaryKeyRemoved -=
-                MultiplayerOnSharedStateDictionaryKeyRemoved;
+            var value = visualisations[key].Value;
+            var vis = new ParticleVisualisation(value);
+            if (value.SelectionKey != null)
+                vis.LinkedSelection = selections[value.SelectionKey];
+            currentVisualisations[key] = vis;
+            var layer = GetOrCreateLayer(vis.Layer);
+            layer.AddVisualisation(vis);
         }
-
-        /// <summary>
-        /// Callback for when a key is removed from the multiplayer shared state.
-        /// </summary>
-        private void MultiplayerOnSharedStateDictionaryKeyRemoved(string key)
+        
+        private void OnMultiplayerVisualisationUpdated(string key)
         {
-            if (key == ParticleSelection.RootSelectionId)
-            {
-                rootSelection.UpdateFromObject(new Dictionary<string, object>
-                {
-                    [ParticleSelection.KeyName] = ParticleSelection.RootSelectionName,
-                    [ParticleSelection.KeyId] = ParticleSelection.RootSelectionId
-                });
-            }
-            else if (key.StartsWith(ParticleSelection.SelectionIdPrefix))
-            {
-                // TODO: Work out which layer the selection is on.
-                BaseLayer.RemoveSelection(key);
-            }
+            OnMultiplayerVisualisationRemoved(key);
+            OnMultiplayerVisualisationCreated(key);
         }
-
-        /// <summary>
-        /// Callback for when a key is modified in the multiplayer shared state.
-        /// </summary>
-        private void MultiplayerOnSharedStateDictionaryKeyChanged(string key, object value)
+        
+        private void OnMultiplayerVisualisationRemoved(string key)
         {
-            if (key.StartsWith(ParticleSelection.SelectionIdPrefix))
-            {
-                // TODO: Work out which layer the selection is on.
-                BaseLayer.UpdateOrCreateSelection(key, value);
-            }
-        }
-
-        /// <summary>
-        /// Get the selection in the base layer which contains the particle.
-        /// </summary>
-        public VisualisationSelection GetSelectionForParticle(int particleIndex)
-        {
-            return BaseLayer.GetSelectionForParticle(particleIndex);
+            currentVisualisations[key].Delete();
+            currentVisualisations.Remove(key);
         }
     }
 }

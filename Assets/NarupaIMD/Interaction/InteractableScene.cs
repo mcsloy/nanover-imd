@@ -19,10 +19,6 @@ namespace NarupaXR.Interaction
         [SerializeField]
         private SynchronisedFrameSource frameSource;
 
-        [Header("The object which provides the selection information.")]
-        [SerializeField]
-        private VisualisationScene visualisationScene;
-
         [SerializeField]
         private NarupaXRPrototype prototype;
 
@@ -43,6 +39,16 @@ namespace NarupaXR.Interaction
             interactedParticles.Value = pts.ToArray();
         }
 
+        private InteractionGroup GetGroupForParticle(int index)
+        {
+            return null;
+        }
+
+        private ParticleSelection GetSelection(InteractionGroup group)
+        {
+            return null;
+        }
+
         /// <summary>
         /// Attempt to grab the nearest particle, returning null if no interaction is possible.
         /// </summary>
@@ -54,15 +60,15 @@ namespace NarupaXR.Interaction
             if (!particleIndex.HasValue)
                 return null;
             
-            var selection = visualisationScene.GetSelectionForParticle(particleIndex.Value);
+            var selection = GetGroupForParticle(particleIndex.Value);
 
-            if (selection.Selection.InteractionMethod == ParticleSelection.InteractionMethodNone)
+            if (selection.Method == InteractionGroupMethod.None)
                 return null;
 
             var indices = GetIndicesInSelection(selection, particleIndex.Value);
 
             var grab = new ActiveParticleGrab(indices);
-            if (selection.Selection.ResetVelocities)
+            if (selection.ResetVelocities)
                 grab.ResetVelocities = true;
             return grab;
         }
@@ -70,17 +76,17 @@ namespace NarupaXR.Interaction
         /// <summary>
         /// Get the particle indices to select, given the nearest particle index.
         /// </summary>
-        private IReadOnlyList<int> GetIndicesInSelection(VisualisationSelection selection,
+        private IReadOnlyList<int> GetIndicesInSelection(InteractionGroup instance,
                                                       int particleIndex)
         {
-            switch (selection.Selection.InteractionMethod)
+            switch (instance.Method)
             {
-                case ParticleSelection.InteractionMethodGroup:
-                    if (selection.FilteredIndices == null)
-                        return Enumerable.Range(0, frameSource.CurrentFrame.ParticleCount)
-                                         .ToArray();
+                case InteractionGroupMethod.Group:
+                    var selection = GetSelection(instance);
+                    if (selection == null) 
+                        return Enumerable.Range(0, frameSource.CurrentFrame.ParticleCount).ToArray();
                     else
-                        return selection.FilteredIndices.Value;
+                        return selection.ParticleIds;
                 default:
                     return new[] { particleIndex };
             }

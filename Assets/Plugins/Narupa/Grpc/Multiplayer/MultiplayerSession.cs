@@ -310,5 +310,10 @@ namespace Narupa.Grpc.Multiplayer
         {
             return new MultiplayerResource<object>(this, key);
         }
+
+        public VariableReference<TType> GetReference<TType>(string key)
+        {
+            return new VariableReference<TType>(this, key);
+        }
     }
 }
