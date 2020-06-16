@@ -37,6 +37,8 @@ namespace NarupaXR.Interaction
         private void Update()
         {
             var interactions = prototype.Sessions.Interactions;
+            if (interactions == null)
+                return;
             var pts = new List<int>();
             foreach (var interaction in interactions.Values)
                 pts.AddRange(interaction.Particles);

@@ -31,6 +31,11 @@ namespace NarupaXR
         private Dictionary<string, GrpcConnection> channels
             = new Dictionary<string, GrpcConnection>();
 
+        public NarupaXRSessionManager()
+        {
+            Interactions = new Interactions(Multiplayer);
+        }
+
         /// <summary>
         /// Connect to the host address and attempt to open clients for the
         /// trajectory and IMD services.
@@ -51,8 +56,6 @@ namespace NarupaXR
             {
                 Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
             }
-
-            Interactions = new Interactions(Multiplayer);
         }
 
         /// <summary>
