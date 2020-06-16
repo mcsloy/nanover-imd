@@ -36,10 +36,10 @@ namespace NarupaXR.Interaction
 
         private void Update()
         {
-            var interactions = prototype.Sessions.Imd.Interactions;
+            var interactions = prototype.Sessions.Interactions;
             var pts = new List<int>();
-            foreach (var interaction in interactions)
-                pts.AddRange(interaction.Value.ParticleIds);
+            foreach (var interaction in interactions.Values)
+                pts.AddRange(interaction.Particles);
             interactedParticles.Value = pts.ToArray();
         }
 
@@ -63,7 +63,7 @@ namespace NarupaXR.Interaction
 
             var grab = new ActiveParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
-                grab.ResetVelocities = true;
+                grab.Properties.ResetVelocities = true;
             return grab;
         }
         

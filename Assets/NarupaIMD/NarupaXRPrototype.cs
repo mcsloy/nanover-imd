@@ -109,12 +109,8 @@ namespace NarupaXR
                                                                   Sessions.Multiplayer,
                                                                   this);
 
-            ManipulableParticles = new ManipulableParticles(simulationSpaceTransform,
-                                                            Sessions.Imd,
-                                                            interactableScene);
-            
             ManipulableParticles = new ManipulableParticles(rightHandedSimulationSpace,
-                                                            Sessions.Imd,
+                                                            Sessions.Interactions,
                                                             interactableScene);
             
             SetupVisualisation();
