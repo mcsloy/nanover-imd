@@ -55,7 +55,7 @@ public class SineConnectorRenderer : MonoBehaviour
         var width = this.width / scaling;
         var segmentsPerMeter = Mathf.Clamp(this.segmentsPerMeter * scaling, 1, 10000f);
         
-        int segments = (int)Mathf.Max(2, segmentsPerMeter * dist);
+        int segments = (int) Mathf.Clamp(segmentsPerMeter * dist, 2, 10000f);
 
         var cameraDir = Camera.main.transform.InverseTransformDirection(dir);
         cameraDir.z = 0;
