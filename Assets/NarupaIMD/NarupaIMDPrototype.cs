@@ -23,6 +23,9 @@ namespace NarupaIMD
         private NarupaImdSimulation simulation;
         
         private InteractableScene interactableScene;
+
+        [SerializeField]
+        private NarupaXRDebugger debugger;
 #pragma warning restore 0649
 
         public NarupaImdSimulation Simulation => simulation;
@@ -40,6 +43,8 @@ namespace NarupaIMD
             isColocationActive = Colocation.IsEnabled();
         }
 
+        public NarupaXRDebugger Debugger => debugger;
+        
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>
