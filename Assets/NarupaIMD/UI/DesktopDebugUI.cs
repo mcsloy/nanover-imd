@@ -97,7 +97,6 @@ namespace NarupaIMD.UI
 
             if (directConnect)
                 ShowDirectConnectWindow();
-            
             if (discovery)
                 ShowServiceDiscoveryWindow();
         }
