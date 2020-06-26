@@ -79,6 +79,21 @@ namespace Narupa.Grpc.Multiplayer
         public event Action MultiplayerJoined;
 
         /// <summary>
+        /// Invoked before any state changes are pushed to the server.
+        /// </summary>
+        public event Action BeforeStateChangesSent;
+        
+        /// <summary>
+        /// Invoked when state changes are about to be applied.
+        /// </summary>
+        public event Action BeforeSharedStateUpdate;
+        
+        /// <summary>
+        /// Invoked when state changes have been received on the background thread.
+        /// </summary>
+        public event Action StateUpdateRecieved;
+
+        /// <summary>
         /// The index of the next update that we will send to the server. A key
         /// `update.index.{player_id}` will be inserted with this value. By getting this value
         /// when you've scheduled something to be done to the dictionary, you can then determine
@@ -121,6 +136,8 @@ namespace Narupa.Grpc.Multiplayer
 
             void MergeResourceUpdates(StateUpdate dest, StateUpdate src)
             {
+                StateUpdateRecieved?.Invoke();
+                
                 foreach (var (key, value) in src.ChangedKeys.Fields)
                     dest.ChangedKeys.Fields[key] = value;
             }
@@ -236,6 +253,8 @@ namespace Narupa.Grpc.Multiplayer
                                                 .NumberValue;
             }
 
+            BeforeSharedStateUpdate?.Invoke();
+            
             foreach (var (key, value1) in update.ChangedKeys.Fields)
             {
                 var value = value1.ToObject();
@@ -256,6 +275,8 @@ namespace Narupa.Grpc.Multiplayer
         {
             if (!IsOpen)
                 return;
+            
+            BeforeStateChangesSent?.Invoke();
 
             if (pendingValues.Any() || pendingRemovals.Any())
             {

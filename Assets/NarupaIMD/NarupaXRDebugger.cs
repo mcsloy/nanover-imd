@@ -116,20 +116,20 @@ namespace NarupaIMD
                 FrameUpdateReceivedLog.Log(Time);
             };
             
-            prototype.Sessions.Multiplayer.BeforeFlushChanges += AddTimestampToSharedState;
-            prototype.Sessions.Multiplayer.BeforeFlushChanges += () => MultiplayerSend.AddEvent();
-            prototype.Sessions.Multiplayer.BeforeFlushChanges += () =>
+            prototype.Sessions.Multiplayer.BeforeStateChangesSent += AddTimestampToSharedState;
+            prototype.Sessions.Multiplayer.BeforeStateChangesSent += () => MultiplayerSend.AddEvent();
+            prototype.Sessions.Multiplayer.BeforeStateChangesSent += () =>
             {
                 SharedStateSentLog.Log(Time);
             };
             prototype.Sessions.Multiplayer.SharedStateDictionaryKeyUpdated += ReceiveMultiplayerKey;
-            prototype.Sessions.Multiplayer.SharedStateUpdated += () =>
+            prototype.Sessions.Multiplayer.BeforeSharedStateUpdate += () =>
             {
                 SharedStateUpdatedLog.Log(Time);
             };
             
-            prototype.Sessions.Multiplayer.SharedStateUpdateReceived += () => MultiplayerReceive.AddEvent();
-            prototype.Sessions.Multiplayer.SharedStateUpdateReceived += () =>
+            prototype.Sessions.Multiplayer.StateUpdateRecieved += () => MultiplayerReceive.AddEvent();
+            prototype.Sessions.Multiplayer.StateUpdateRecieved += () =>
             {
                 SharedStateReceivedLog.Log(Time);
             };
