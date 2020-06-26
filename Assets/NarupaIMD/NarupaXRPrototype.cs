@@ -25,9 +25,6 @@ namespace NarupaXR
         private NarupaImdSimulation simulation;
         
         private InteractableScene interactableScene;
-
-        [SerializeField]
-        private NarupaXRDebugger debugger;
 #pragma warning restore 0649
 
         public NarupaImdSimulation Simulation => simulation;
@@ -42,8 +39,6 @@ namespace NarupaXR
             simulation.ConnectionEstablished += connectionEstablished.Invoke;
         }
 
-        public NarupaXRDebugger Debugger => debugger;
-        
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>
