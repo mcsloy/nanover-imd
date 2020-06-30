@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
 using Narupa.Core;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
@@ -32,10 +31,9 @@ namespace Narupa.Grpc.Multiplayer
         public MultiplayerSession()
         {
             Avatars = new MultiplayerAvatars(this);
-            
+
             SimulationPose =
-                new MultiplayerResource<Transformation>(this, SimulationPoseKey, PoseFromObject,
-                                                        PoseToObject);
+                new MultiplayerResource<Transformation>(this, SimulationPoseKey);
         }
 
         /// <summary>
@@ -113,7 +111,7 @@ namespace Narupa.Grpc.Multiplayer
                 valueFlushingTask = CallbackInterval(FlushValues, ValuePublishInterval);
                 valueFlushingTask.AwaitInBackground();
             }
-            
+
             IncomingValueUpdates = client.SubscribeStateUpdates();
             BackgroundIncomingStreamReceiver<StateUpdate>.Start(IncomingValueUpdates,
                                                                 OnResourceValuesUpdateReceived,
@@ -135,11 +133,11 @@ namespace Narupa.Grpc.Multiplayer
         {
             Avatars.CloseClient();
             FlushValues();
-            
+
             client?.CloseAndCancelAllSubscriptions();
             client?.Dispose();
             client = null;
-            
+
             AccessToken = null;
 
             ClearSharedState();
@@ -157,7 +155,7 @@ namespace Narupa.Grpc.Multiplayer
             pendingValues[key] = value.ToProtobufValue();
             pendingRemovals.Remove(key);
         }
-        
+
         /// <summary>
         /// Remove the given key from the shared state dictionary, which will be
         /// sent to the server according in the future according to the publish 
@@ -169,6 +167,13 @@ namespace Narupa.Grpc.Multiplayer
             pendingRemovals.Add(key);
         }
 
+        /// <summary>
+        /// Does the shared state contain an item with the given key?
+        /// </summary>
+        public bool HasSharedState(string key)
+        {
+            return SharedStateDictionary.ContainsKey(key);
+        }
 
         /// <summary>
         /// Get a key in the shared state dictionary.
@@ -195,10 +200,11 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public async Task<bool> ReleaseResource(string id)
         {
-            return await client.UpdateLocks(AccessToken, new Dictionary<string, float>(), new string[]
-            {
-                id
-            });
+            return await client.UpdateLocks(AccessToken, new Dictionary<string, float>(),
+                                            new string[]
+                                            {
+                                                id
+                                            });
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -227,6 +233,18 @@ namespace Narupa.Grpc.Multiplayer
             }
         }
 
+        public void RemoveRemoteValue(string key)
+        {
+            SharedStateDictionary.Remove(key);
+            SharedStateDictionaryKeyRemoved?.Invoke(key);
+        }
+
+        public void UpdateRemoteValue(string key, object value)
+        {
+            SharedStateDictionary[key] = value;
+            SharedStateDictionaryKeyUpdated?.Invoke(key, value);
+        }
+
         private void OnResourceValuesUpdateReceived(StateUpdate update)
         {
             if (update.ChangedKeys.Fields.ContainsKey(UpdateIndexKey))
@@ -241,13 +259,11 @@ namespace Narupa.Grpc.Multiplayer
                 var value = value1.ToObject();
                 if (value == null)
                 {
-                    SharedStateDictionary.Remove(key);
-                    SharedStateDictionaryKeyRemoved?.Invoke(key);
+                    RemoveRemoteValue(key);
                 }
                 else
                 {
-                    SharedStateDictionary[key] = value;
-                    SharedStateDictionaryKeyUpdated?.Invoke(key, value);
+                    UpdateRemoteValue(key, value);
                 }
             }
         }
@@ -280,40 +296,35 @@ namespace Narupa.Grpc.Multiplayer
             }
         }
 
-        private static object PoseToObject(Transformation pose)
+        private Dictionary<string, WeakReference<MultiplayerResource>> multiplayerResources =
+            new Dictionary<string, WeakReference<MultiplayerResource>>();
+
+        /// <summary>
+        /// Get a <see cref="MultiplayerResource"/>, which is a typed wrapper around a value in
+        /// the shared state dictionary that is automatically kept up to date with the remote
+        /// shared state. It also allows its value to be set, and returns this local value until
+        /// the server replies with a more up to date one. The session keeps a weak reference to
+        /// each resource, so a resource with a given key is reused by repeated calls to this
+        /// function. However, when everyone stops listening to the resource it will be deleted.
+        /// </summary>
+        public MultiplayerResource<TType> GetSharedResource<TType>(string key)
         {
-            var data = new object[]
+            TODO - MOVE LOGIC OF SESSION UPDATES TO THIS CLASS, SO MULTIPLAYER RESOURCE DOESN'T BE REFERENCED
+            if (multiplayerResources.TryGetValue(key, out var existingWeakRef))
             {
-                pose.Position.x, pose.Position.y, pose.Position.z, pose.Rotation.x, pose.Rotation.y,
-                pose.Rotation.z, pose.Rotation.w, pose.Scale.x, pose.Scale.y, pose.Scale.z,
-            };
-
-            return data;
-        }
-
-        private static Transformation PoseFromObject(object @object)
-        {
-            if (@object is List<object> list)
-            {
-                var values = list.Select(value => Convert.ToSingle(value)).ToList();
-                var position = list.GetVector3(0);
-                var rotation = list.GetQuaternion(3);
-                var scale = list.GetVector3(7);
-
-                return new Transformation(position, rotation, scale);
+                if (existingWeakRef.TryGetTarget(out var existing))
+                {
+                    if (existing is MultiplayerResource<TType> correctExisting)
+                        return correctExisting;
+                    throw new KeyNotFoundException("Tried getting multiplayer resource with "
+                                                 + $"key {key} and type {typeof(MultiplayerResource<TType>)}, but found"
+                                                 + $"existing incompatible type {existing.GetType()}");
+                }
             }
 
-            throw new ArgumentOutOfRangeException();
-        }
-
-        public MultiplayerResource<object> GetSharedResource(string key)
-        {
-            return new MultiplayerResource<object>(this, key);
-        }
-
-        public VariableReference<TType> GetReference<TType>(string key)
-        {
-            return new VariableReference<TType>(this, key);
+            var added = new MultiplayerResource<TType>(this, key);
+            multiplayerResources[key] = new WeakReference<MultiplayerResource>(added);
+            return added;
         }
     }
 }

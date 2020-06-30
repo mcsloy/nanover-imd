@@ -84,15 +84,15 @@ namespace NarupaIMD.Selection
 
         private const string HighlightedParticlesKey = "highlighted.particles";
 
-        private MultiplayerResourceCollection<Visualisation> visualisations;
-        private MultiplayerResourceCollection<ParticleSelection> selections;
+        private MultiplayerCollection<VisualisationData> visualisations;
+        private MultiplayerCollection<ParticleSelectionData> selections;
 
         private Dictionary<string, ParticleVisualisation> currentVisualisations = new Dictionary<string, ParticleVisualisation>();
 
         private void Start()
         {
-            selections = new MultiplayerResourceCollection<ParticleSelection>(narupaIMD.Sessions.Multiplayer, "selections.");
-            visualisations = new MultiplayerResourceCollection<Visualisation>(narupaIMD.Sessions.Multiplayer, "visualiser.");
+            selections = new MultiplayerCollection<ParticleSelectionData>(narupaIMD.Sessions.Multiplayer, "selections.");
+            visualisations = new MultiplayerCollection<VisualisationData>(narupaIMD.Sessions.Multiplayer, "visualiser.");
             
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;

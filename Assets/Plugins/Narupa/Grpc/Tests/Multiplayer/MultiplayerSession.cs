@@ -102,7 +102,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
         [AsyncTest]
         public async Task ValueChanged_MultiplayerResource()
         {
-            var value = session.GetSharedResource("abc");
+            var value = session.GetSharedResource<double>("abc");
             service.SetValueDirect("abc", 1.2);
 
             void HasReceivedValue() => Assert.AreEqual(1.2, value.Value);
@@ -114,7 +114,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
         public async Task ValueChanged_MultiplayerResourceCallback()
         {
             var callback = Substitute.For<Action>();
-            var value = session.GetSharedResource("abc");
+            var value = session.GetSharedResource<double>("abc");
             value.ValueChanged += callback;
 
             service.SetValueDirect("abc", 1.2);
@@ -128,7 +128,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
         public async Task TryLock_Success()
         {
             server.ReplyLatency = 400;
-            var value = session.GetSharedResource("abc");
+            var value = session.GetSharedResource<double>("abc");
             value.ObtainLock();
             Assert.AreEqual(MultiplayerResourceLockState.Pending, value.LockState);
 
@@ -145,7 +145,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
         [AsyncTest]
         public async Task TryLock_SomeoneElseHasLock()
         {
-            var value2 = session2.GetSharedResource("abc");
+            var value2 = session2.GetSharedResource<double>("abc");
             value2.ObtainLock();
 
             void DoesPlayer2HaveLock() => Assert.IsTrue(service.Locks.TryGetValue("abc", out var v1)
@@ -153,7 +153,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
 
             await AsyncAssert.PassesWithinTimeout(DoesPlayer2HaveLock);
 
-            var value1 = session.GetSharedResource("abc");
+            var value1 = session.GetSharedResource<double>("abc");
             value1.ObtainLock();
 
             Assert.AreEqual(MultiplayerResourceLockState.Pending, value1.LockState);
@@ -169,7 +169,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
         [AsyncTest]
         public async Task TryLock_SomeoneElseHadLockThenReleased()
         {
-            var value2 = session2.GetSharedResource("abc");
+            var value2 = session2.GetSharedResource<double>("abc");
             value2.ObtainLock();
 
             void DoesPlayer2HaveLock() => Assert.IsTrue(service.Locks.TryGetValue("abc", out var v1)
@@ -177,7 +177,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
 
             await AsyncAssert.PassesWithinTimeout(DoesPlayer2HaveLock);
 
-            var value1 = session.GetSharedResource("abc");
+            var value1 = session.GetSharedResource<double>("abc");
             value1.ObtainLock();
 
             Assert.AreEqual(MultiplayerResourceLockState.Pending, value1.LockState);

@@ -27,7 +27,6 @@ namespace Narupa.Grpc.Tests.Multiplayer
             ServerCallContext context)
         {
             var token = request.AccessToken;
-            Debug.Log($"Lock with {token}");
             
             foreach (var requestKey in request.LockKeys.Fields.Keys)
                 if (locks.ContainsKey(requestKey) && locks[requestKey] != token)

@@ -1,82 +1,41 @@
 using System;
 using System.Threading.Tasks;
 using Narupa.Core.Async;
-using Narupa.Session;
 
 namespace Narupa.Grpc.Multiplayer
 {
     /// <summary>
-    /// Represents a multiplayer resource that is shared across the multiplayer
-    /// service.
+    /// Represents a reference to an item in the multiplayer shared state. They can only be created
+    /// by the <see cref="MultiplayerSession"/>, which ensures for a given shared state there is
+    /// exactly one <see cref="MultiplayerResource"/> for each key.
     /// </summary>
-    /// <typeparam name="TValue">The type to interpret the value of this key as.</typeparam>
-    public class MultiplayerResource<TValue>
+    public abstract class MultiplayerResource
     {
         /// <summary>
-        /// Is the current value a local value that is pending being sent to the server.
+        /// Does this multiplayer resource have a value?
         /// </summary>
-        private bool localValuePending = false;
-        
+        public abstract bool HasValue { get; }
+    }
+
+    /// <summary>
+    /// Represents a reference to an item in the multiplayer shared state, which is serialized
+    /// and deserialized into type <typeparamref name="TValue"/>. They can only be created by
+    /// the <see cref="MultiplayerSession"/>, which ensures for a given shared state there is
+    /// exactly one <see cref="MultiplayerResource"/> for each key.
+    /// </summary>
+    /// <typeparam name="TValue">The type to interpret the value of this key as.</typeparam>
+    public class MultiplayerResource<TValue> : MultiplayerResource
+    {
         /// <summary>
-        /// Create a multiplayer resource.
+        /// The multiplayer session that hosts this resource.
         /// </summary>
-        /// <param name="session">The multiplayer session that will provide this value.</param>
-        /// <param name="key">The key that identifies this resource in the dictionary.</param>
-        /// <param name="objectToValue">
-        /// An optional converter for converting the value in
-        /// the dictionary to an appropriate value.
-        /// </param>
-        /// <param name="valueToObject">
-        /// An optional converter for converting the value
-        /// provided to one suitable for serialisation to protobuf.
-        /// </param>
-        public MultiplayerResource(MultiplayerSession session,
-                                   string key,
-                                   Converter<object, TValue> objectToValue = null,
-                                   Converter<TValue, object> valueToObject = null)
-        {
-            this.session = session;
-            ResourceKey = key;
-            LockState = MultiplayerResourceLockState.Unlocked;
-            session.SharedStateDictionaryKeyUpdated += SharedStateDictionaryKeyUpdated;
-            this.objectToValue = objectToValue;
-            this.valueToObject = valueToObject;
-            CopyRemoteValueToLocal();
-        }
-
-        private readonly Converter<object, TValue> objectToValue;
-
-        private readonly Converter<TValue, object> valueToObject;
+        private MultiplayerSession Session { get; }
 
         /// <summary>
-        /// Convert the value provided to one suitable for serialisation to protobuf.
+        /// The full key that this resource will be found in the shared state.
         /// </summary>
-        private object ValueToObject(TValue value)
-        {
-            return valueToObject != null ? valueToObject(value) : value;
-        }
+        public string ResourceKey { get; }
 
-        /// <summary>
-        /// Convert the value in the dictionary to an appropriate value.
-        /// </summary>
-        private TValue ObjectToValue(object obj)
-        {
-            if (objectToValue != null)
-                return objectToValue(obj);
-            if (obj is TValue v)
-                return v;
-            return default;
-        }
-
-        /// <summary>
-        /// Callback for when the shared value is changed.
-        /// </summary>
-        public event Action RemoteValueChanged;
-
-        /// <summary>
-        /// Callback for when the value is changed, either remotely or locally.
-        /// </summary>
-        public event Action ValueChanged;
 
         /// <summary>
         /// Callback for when a lock request is accepted.
@@ -93,50 +52,130 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public event Action LockReleased;
 
-        private void SharedStateDictionaryKeyUpdated(string key, object value)
+        private TValue RemoteValue { get; set; }
+
+        private TValue LocalValue { get; set; }
+
+        private bool HasPendingLocalValue { get; set; }
+
+        public TValue Value
         {
-            if (key == ResourceKey)
+            get
             {
-                CopyRemoteValueToLocal();
-                RemoteValueChanged?.Invoke();
+                if (HasPendingLocalValue)
+                    return LocalValue;
+                return RemoteValue;
             }
         }
 
-        private TValue GetRemoteValue()
-        {
-            return ObjectToValue(session.GetSharedState(ResourceKey));
-        }
+        private bool HasRemoteValue { get; set; }
 
-        /// <summary>
-        /// Copy the locally set version of this value to the multiplayer service.
-        /// </summary>
-        private void CopyLocalValueToRemote()
+        /// <inheritdoc cref="MultiplayerResource.HasValue"/>
+        public override bool HasValue
         {
-            sentUpdateIndex = session.NextUpdateIndex;
-            session.SetSharedState(ResourceKey, ValueToObject(value));
+            get
+            {
+                if (HasPendingLocalValue)
+                    return true;
+                return HasRemoteValue;
+            }
         }
-        
-        private TValue value;
-
-        /// <summary>
-        /// The key which identifies this resource.
-        /// </summary>
-        public readonly string ResourceKey;
 
         /// <summary>
         /// The current state of the lock on this resource.
         /// </summary>
         public MultiplayerResourceLockState LockState { get; private set; }
 
-        private MultiplayerSession session;
-
         private int sentUpdateIndex = -1;
 
         /// <summary>
-        /// Value of this resource. Mirrors the value in the remote dictionary, unless a
-        /// local change is in progress.
+        /// Create a multiplayer resource.
         /// </summary>
-        public TValue Value => value;
+        /// <param name="session">The multiplayer session that will provide this value.</param>
+        /// <param name="key">The key that identifies this resource in the dictionary.</param>
+        /// <param name="objectToValue">
+        /// An optional converter for converting the value in
+        /// the dictionary to an appropriate value.
+        /// </param>
+        /// <param name="valueToObject">
+        /// An optional converter for converting the value
+        /// provided to one suitable for serialisation to protobuf.
+        /// </param>
+        internal MultiplayerResource(MultiplayerSession session, string key)
+        {
+            ResourceKey = key;
+            Session = session;
+            session.SharedStateDictionaryKeyUpdated += OnRemoteKeyUpdated;
+            session.SharedStateDictionaryKeyRemoved += OnRemoteKeyRemoved;
+            HasRemoteValue = session.HasSharedState(key);
+            RemoteValue = Deserialize(session.GetSharedState(key));
+            LockState = MultiplayerResourceLockState.Unlocked;
+        }
+
+        /// <summary>
+        /// Invoked when the value of this resource is updated or removed from the shared state.
+        /// </summary>
+        public event Action RemoteValueChanged;
+
+        /// <summary>
+        /// Invoked when the value of this resource is updated or removed, either remotely or
+        /// locally.
+        /// </summary>
+        public event Action ValueChanged;
+
+        /// <summary>
+        /// Invoked when the value of this resource is updated or removed, either remotely or
+        /// locally.
+        /// </summary>
+        public event Action ValueRemoved;
+
+        /// <summary>
+        /// Invoked when the value of this resource is updated or removed, either remotely or
+        /// locally.
+        /// </summary>
+        public event Action ValueUpdated;
+
+        public void Dispose()
+        {
+            Session.SharedStateDictionaryKeyUpdated -= OnRemoteKeyUpdated;
+            Session.SharedStateDictionaryKeyRemoved -= OnRemoteKeyRemoved;
+        }
+
+        private void OnRemoteKeyUpdated(string key, object value)
+        {
+            if (key == ResourceKey)
+            {
+                RemoteValue = Deserialize(value);
+                HasRemoteValue = true;
+                OnRemoteValueUpdated();
+            }
+        }
+
+        private void OnRemoteKeyRemoved(string key)
+        {
+            if (key == ResourceKey)
+            {
+                RemoteValue = default;
+                HasRemoteValue = false;
+                OnRemoteValueRemoved();
+            }
+        }
+
+        protected TValue Deserialize(object value)
+        {
+            if (value == null)
+                return default;
+            return Serialization.Serialization.FromDataStructure<TValue>(value);
+        }
+
+        /// <summary>
+        /// Copy the locally set version of this value to the multiplayer service.
+        /// </summary>
+        private void SendLocalValueToRemote()
+        {
+            sentUpdateIndex = Session.NextUpdateIndex;
+            Session.SetSharedState(ResourceKey, Serialize(Value));
+        }
 
         /// <summary>
         /// Obtain a lock on this resource.
@@ -151,14 +190,13 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public void ReleaseLock()
         {
-            CopyRemoteValueToLocal();
             ReleaseLockAsync().AwaitInBackground();
         }
 
         private async Task ObtainLockAsync()
         {
             LockState = MultiplayerResourceLockState.Pending;
-            var success = await session.LockResource(ResourceKey);
+            var success = await Session.LockResource(ResourceKey);
             LockState = success
                             ? MultiplayerResourceLockState.Locked
                             : MultiplayerResourceLockState.Unlocked;
@@ -170,19 +208,16 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnLockAccepted()
         {
-            if (localValuePending)
-            {
-                localValuePending = false;
-                CopyLocalValueToRemote();
-            }
+            if (HasPendingLocalValue)
+                SendLocalValueToRemote();
             LockAccepted?.Invoke();
         }
 
         private void OnLockRejected()
         {
-            localValuePending = false;
+            LocalValue = default;
+            HasPendingLocalValue = false;
             sentUpdateIndex = -1;
-            CopyRemoteValueToLocal();
             LockRejected?.Invoke();
         }
 
@@ -190,11 +225,9 @@ namespace Narupa.Grpc.Multiplayer
         {
             if (LockState != MultiplayerResourceLockState.Unlocked)
             {
-                localValuePending = false;
                 LockState = MultiplayerResourceLockState.Unlocked;
-                CopyRemoteValueToLocal();
                 LockReleased?.Invoke();
-                await session.ReleaseResource(ResourceKey);
+                await Session.ReleaseResource(ResourceKey);
             }
         }
 
@@ -205,7 +238,10 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public void UpdateValueWithLock(TValue value)
         {
-            SetLocalValue(value);
+            LocalValue = value;
+            HasPendingLocalValue = true;
+            OnLocalValueUpdated();
+
             switch (LockState)
             {
                 case MultiplayerResourceLockState.Unlocked:
@@ -214,32 +250,56 @@ namespace Narupa.Grpc.Multiplayer
                 case MultiplayerResourceLockState.Pending:
                     return;
                 case MultiplayerResourceLockState.Locked:
-                    CopyLocalValueToRemote();
+                    SendLocalValueToRemote();
                     return;
             }
         }
 
-        private void SetLocalValue(TValue value)
+        protected object Serialize(TValue value)
         {
-            this.value = value;
-            localValuePending = true;
-            ValueChanged?.Invoke();
-        }
-        
-        /// <summary>
-        /// Copy the remote value to this value.
-        /// </summary>
-        private void CopyRemoteValueToLocal()
-        {
-            if (!session.IsOpen)
-                return;
-            // If we don't have a local change, and we are up to date with the server
-            if (!localValuePending && sentUpdateIndex <= session.LastReceivedIndex)
-            {
-                value = GetRemoteValue();
-                ValueChanged?.Invoke();
-            }
+            return Serialization.Serialization.ToDataStructure(value);
         }
 
+        public void SetLocalValue(TValue value)
+        {
+            LocalValue = value;
+            HasPendingLocalValue = true;
+            OnLocalValueUpdated();
+        }
+
+        private void OnRemoteValueUpdated()
+        {
+            // If we are up to date with the server, remove our pending value
+            if (sentUpdateIndex <= Session.LastReceivedIndex)
+            {
+                LocalValue = default;
+                HasPendingLocalValue = false;
+            }
+
+            if (!HasPendingLocalValue)
+            {
+                ValueUpdated?.Invoke();
+                ValueChanged?.Invoke();
+            }
+
+            RemoteValueChanged?.Invoke();
+        }
+
+        private void OnRemoteValueRemoved()
+        {
+            if (!HasPendingLocalValue)
+            {
+                ValueRemoved?.Invoke();
+                ValueChanged?.Invoke();
+            }
+
+            RemoteValueChanged?.Invoke();
+        }
+
+        private void OnLocalValueUpdated()
+        {
+            ValueUpdated?.Invoke();
+            ValueChanged?.Invoke();
+        }
     }
 }

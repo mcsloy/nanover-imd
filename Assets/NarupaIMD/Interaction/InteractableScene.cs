@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
@@ -7,11 +9,16 @@ using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Property;
 using NarupaIMD.Selection;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace NarupaXR.Interaction
 {
     /// <summary>
-    /// Exposes a <see cref="SynchronisedFrameSource"/> that allows particles to be grabbed, accounting for the interaction method of the selections.
+    /// Combines frame information from a  <see cref="SynchronisedFrameSource"/> with
+    /// interaction information for the system. This both exposes the set of interacted particle
+    /// ids as <see cref="InteractedParticles"/> and can provide an <see cref="ActiveParticleGrab"/>
+    /// which accounts for interaction group settings such as group interactions and reset
+    /// velocity flags.
     /// </summary>
     public class InteractableScene : MonoBehaviour, IInteractableParticles
     {
@@ -21,6 +28,14 @@ namespace NarupaXR.Interaction
 
         [SerializeField]
         private NarupaXRPrototype prototype;
+
+        private void Awake()
+        {
+            Assert.IsNotNull(frameSource, $"{nameof(InteractableScene)} is missing " +
+                                          $"{nameof(SynchronisedFrameSource)} {nameof(frameSource)}");
+            Assert.IsNotNull(prototype, $"{nameof(InteractableScene)} is missing " +
+                                        $"{nameof(NarupaXRPrototype)} {nameof(prototype)}");
+        }
 
         /// <inheritdoc cref="InteractedParticles"/>
         private readonly IntArrayProperty interactedParticles = new IntArrayProperty();
@@ -39,12 +54,12 @@ namespace NarupaXR.Interaction
             interactedParticles.Value = pts.ToArray();
         }
 
-        private InteractionGroup GetGroupForParticle(int index)
+        private InteractionGroupData GetInteractionGroupForParticle(int index)
         {
             return null;
         }
 
-        private ParticleSelection GetSelection(InteractionGroup group)
+        private ParticleSelectionData GetSelectionForInteractionGroup(InteractionGroupData group)
         {
             return null;
         }
@@ -59,43 +74,50 @@ namespace NarupaXR.Interaction
 
             if (!particleIndex.HasValue)
                 return null;
-            
-            var selection = GetGroupForParticle(particleIndex.Value);
 
-            if (selection.Method == InteractionGroupMethod.None)
-                return null;
+            var interactionGroup = GetInteractionGroupForParticle(particleIndex.Value);
 
-            var indices = GetIndicesInSelection(selection, particleIndex.Value);
+            var indices = GetIndicesInSelection(interactionGroup, particleIndex.Value);
 
             var grab = new ActiveParticleGrab(indices);
-            if (selection.ResetVelocities)
+            if (interactionGroup.ResetVelocities)
                 grab.ResetVelocities = true;
+
             return grab;
         }
-        
+
         /// <summary>
         /// Get the particle indices to select, given the nearest particle index.
         /// </summary>
-        private IReadOnlyList<int> GetIndicesInSelection(InteractionGroup instance,
-                                                      int particleIndex)
+        private IReadOnlyList<int> GetIndicesInSelection([CanBeNull] InteractionGroupData group,
+                                                         int particleIndex)
         {
-            switch (instance.Method)
+            switch (group?.Method ?? InteractionGroupMethod.Single)
             {
+                case InteractionGroupMethod.None:
+                    return new int[0];
                 case InteractionGroupMethod.Group:
-                    var selection = GetSelection(instance);
-                    if (selection == null) 
-                        return Enumerable.Range(0, frameSource.CurrentFrame.ParticleCount).ToArray();
+                    var selection = GetSelectionForInteractionGroup(group);
+                    if (selection == null)
+                        return Enumerable.Range(0, frameSource.CurrentFrame.ParticleCount)
+                                         .ToArray();
                     else
                         return selection.ParticleIds;
+                case InteractionGroupMethod.Single:
+                    return new[]
+                    {
+                        particleIndex
+                    };
                 default:
-                    return new[] { particleIndex };
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         /// <summary>
         /// Get the closest particle to a given point in world space.
         /// </summary>
-        private int? GetClosestParticleToWorldPosition(Vector3 worldPosition, float cutoff = Mathf.Infinity)
+        private int? GetClosestParticleToWorldPosition(Vector3 worldPosition,
+                                                       float cutoff = Mathf.Infinity)
         {
             var position = transform.InverseTransformPoint(worldPosition);
 

@@ -10,7 +10,7 @@ namespace Narupa.Grpc.Multiplayer
     /// which will be deserialized to <typeparam name="TType"></typeparam>
     /// </summary>
     /// <typeparam name="TType"></typeparam>
-    public class MultiplayerResourceCollection<TType> : IReadOnlyDictionary<string, VariableReference<TType>>, IDisposable
+    public class MultiplayerCollection<TType> : IReadOnlyDictionary<string, MultiplayerResource<TType>>, IDisposable
     {
         private string prefix;
         private MultiplayerSession session;
@@ -23,7 +23,7 @@ namespace Narupa.Grpc.Multiplayer
 
         private List<string> keys = new List<string>();
 
-        public MultiplayerResourceCollection(MultiplayerSession session, string prefix)
+        public MultiplayerCollection(MultiplayerSession session, string prefix)
         {
             this.session = session;
             this.prefix = prefix;
@@ -54,11 +54,11 @@ namespace Narupa.Grpc.Multiplayer
             }
         }
         
-        public IEnumerator<KeyValuePair<string, VariableReference<TType>>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, MultiplayerResource<TType>>> GetEnumerator()
         {
             foreach (var key in keys)
-                yield return new KeyValuePair<string, VariableReference<TType>>(
-                    key, session.GetReference<TType>(key));
+                yield return new KeyValuePair<string, MultiplayerResource<TType>>(
+                    key, session.GetSharedResource<TType>(key));
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -73,7 +73,7 @@ namespace Narupa.Grpc.Multiplayer
             return keys.Contains(key);
         }
 
-        public bool TryGetValue(string key, out VariableReference<TType> value)
+        public bool TryGetValue(string key, out MultiplayerResource<TType> value)
         {
             value = default;
             if (!keys.Contains(key))
@@ -82,11 +82,11 @@ namespace Narupa.Grpc.Multiplayer
             return true;
         }
 
-        public VariableReference<TType> this[string key] => session.GetReference<TType>(key);
+        public MultiplayerResource<TType> this[string key] => session.GetSharedResource<TType>(key);
 
         public IEnumerable<string> Keys => keys;
 
-        public IEnumerable<VariableReference<TType>> Values => Keys.Select(key => this[key]);
+        public IEnumerable<MultiplayerResource<TType>> Values => Keys.Select(key => this[key]);
 
         public void Dispose()
         {

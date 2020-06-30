@@ -66,7 +66,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
 
         public MultiplayerResource<string> GetResource()
         {
-            return new MultiplayerResource<string>(session, Key);
+            return session.GetSharedResource<string>(Key);
         }
 
         [AsyncTest]
