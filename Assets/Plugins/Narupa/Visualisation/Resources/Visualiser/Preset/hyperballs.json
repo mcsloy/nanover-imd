@@ -1,0 +1,12 @@
+{
+  "scale": "covalent",
+  "color": {
+    "type": "cpk",
+    "scheme": "narupa"
+  },
+  "render": {
+    "type": "hyperballs",
+    "scale": 0.1,
+    "tension": 0.5
+  }
+}
