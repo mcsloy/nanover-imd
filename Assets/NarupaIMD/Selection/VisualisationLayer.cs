@@ -68,6 +68,10 @@ namespace NarupaIMD.Selection
         {
             public int Compare(object a, object b)
             {
+                if (a is DefaultVisualisation)
+                    return -1;
+                if (b is DefaultVisualisation)
+                    return 1;
                 if (a is ParticleVisualisation vis1 && b is ParticleVisualisation vis2)
                 {
                     if (vis1.Priority > vis2.Priority)
@@ -85,7 +89,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// Add a visualisation to this layer.
         /// </summary>
-        public VisualisationInstance AddVisualisation(ParticleVisualisation visualisation)
+        public VisualisationInstance AddVisualisation(IParticleVisualisation visualisation)
         {
             var instance = Instantiate(instancePrefab, transform);
             instance.Visualisation = visualisation;

@@ -39,7 +39,7 @@ namespace NarupaIMD.Selection
 
         private int[] unfilteredIndices = new int[0];
 
-        private ParticleVisualisation visualisation;
+        private IParticleVisualisation visualisation;
 
         public float Priority => visualisation.Priority;
 
@@ -56,7 +56,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// The underlying selection that is reflected by this visualisation.
         /// </summary>
-        public ParticleVisualisation Visualisation
+        public IParticleVisualisation Visualisation
         {
             get => visualisation;
             set

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Narupa.Grpc.Multiplayer;
 using Narupa.Visualisation;
@@ -23,7 +22,8 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// The <see cref="VisualisationLayer" />s that make up this scene.
         /// </summary>
-        private readonly Dictionary<int, VisualisationLayer> layers = new Dictionary<int, VisualisationLayer>();
+        private readonly Dictionary<int, VisualisationLayer> layers =
+            new Dictionary<int, VisualisationLayer>();
 
         [SerializeField]
         private NarupaXRPrototype narupaIMD;
@@ -35,8 +35,8 @@ namespace NarupaIMD.Selection
         private InteractableScene interactableScene;
 
         /// <inheritdoc cref="InteractableScene.InteractedParticles"/>
-        public IReadOnlyProperty<int[]> InteractedParticles
-            => interactableScene.InteractedParticles;
+        public IReadOnlyProperty<int[]> InteractedParticles =>
+            interactableScene.InteractedParticles;
 
         /// <inheritdoc cref="FrameAdaptor" />
         /// <remarks>
@@ -87,21 +87,40 @@ namespace NarupaIMD.Selection
         private MultiplayerCollection<VisualisationData> visualisations;
         private MultiplayerCollection<ParticleSelectionData> selections;
 
-        private Dictionary<string, ParticleVisualisation> currentVisualisations = new Dictionary<string, ParticleVisualisation>();
+        private Dictionary<string, ParticleVisualisation> currentVisualisations =
+            new Dictionary<string, ParticleVisualisation>();
 
         private void Start()
         {
-            selections = narupaIMD.Sessions.Multiplayer.GetSharedCollection<ParticleSelectionData>("selections.");
-            visualisations = narupaIMD.Sessions.Multiplayer.GetSharedCollection<VisualisationData>("visualiser.");
-            
+            selections =
+                narupaIMD.Sessions.Multiplayer.GetSharedCollection<ParticleSelectionData>(
+                    "selections.");
+            visualisations =
+                narupaIMD.Sessions.Multiplayer
+                         .GetSharedCollection<VisualisationData>("visualiser.");
+
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
-            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles;
+            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty =
+                InteractedParticles;
 
             visualisations.ItemCreated += OnMultiplayerVisualisationCreated;
             visualisations.ItemUpdated += OnMultiplayerVisualisationUpdated;
             visualisations.ItemRemoved += OnMultiplayerVisualisationRemoved;
+
+            foreach (var visualisation in visualisations.Keys)
+                OnMultiplayerVisualisationCreated(visualisation);
+
+            CreateDefaultVisualiser();
         }
+
+        private void CreateDefaultVisualiser()
+        {
+            var defaultVisualisation = new DefaultVisualisation();
+            var layer = GetOrCreateLayer(defaultVisualisation.Layer);
+            layer.AddVisualisation(defaultVisualisation);
+        }
+
 
         private void OnMultiplayerVisualisationCreated(string key)
         {
@@ -113,17 +132,20 @@ namespace NarupaIMD.Selection
             var layer = GetOrCreateLayer(vis.Layer);
             layer.AddVisualisation(vis);
         }
-        
+
         private void OnMultiplayerVisualisationUpdated(string key)
         {
             OnMultiplayerVisualisationRemoved(key);
             OnMultiplayerVisualisationCreated(key);
         }
-        
+
         private void OnMultiplayerVisualisationRemoved(string key)
         {
             currentVisualisations[key].Delete();
             currentVisualisations.Remove(key);
+
+            if (visualisations.Count == 0)
+                CreateDefaultVisualiser();
         }
     }
 }

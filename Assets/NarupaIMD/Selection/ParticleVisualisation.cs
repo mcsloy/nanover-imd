@@ -11,7 +11,7 @@ namespace NarupaIMD.Selection
     /// watching the corresponding <see cref="ParticleSelectionData"/> for changes in what is
     /// selected.
     /// </summary>
-    public class ParticleVisualisation
+    public class ParticleVisualisation : IParticleVisualisation
     {
         /// <summary>
         /// Invoked when the selection used by this visualisation is altered. This should trigger

@@ -1,12 +1,24 @@
 using System.Collections.Generic;
-using Google.Protobuf.WellKnownTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Narupa.Grpc.Serialization
 {
-    public class Serialization
+    /// <summary>
+    /// Serialization methods for converting to and from serializable C# objects (consisting of
+    /// dictionaries, lists and primitives) using JSON.NET.
+    /// </summary>
+    public static class Serialization
     {
+        private static JsonSerializer Serializer = new JsonSerializer()
+        {
+            Converters =
+            {
+                new Vector3Converter(),
+                new QuaternionConverter()
+            }
+        };
+        
         /// <summary>
         /// Serialize an object from a data structure consisting of
         /// <see cref="Dictionary{TKey,TValue}" />,
@@ -18,8 +30,7 @@ namespace Narupa.Grpc.Serialization
         {
             using (var reader = new CSharpObjectReader(data))
             {
-                var serializer = new JsonSerializer();
-                return serializer.Deserialize<T>(reader);
+                return Serializer.Deserialize<T>(reader);
             }
         }
         
@@ -34,8 +45,7 @@ namespace Narupa.Grpc.Serialization
         {
             using (var reader = new CSharpObjectReader(data))
             {
-                var serializer = new JsonSerializer();
-                serializer.Populate(reader, target);
+                Serializer.Populate(reader, target);
             }
         }
 
@@ -54,8 +64,7 @@ namespace Narupa.Grpc.Serialization
         {
             using (var reader = new CSharpObjectReader(data))
             {
-                var serializer = new JsonSerializer();
-                return serializer.Deserialize(reader);
+                return Serializer.Deserialize(reader);
             }
         }
 
@@ -74,8 +83,7 @@ namespace Narupa.Grpc.Serialization
         {
             using (var writer = new CSharpObjectWriter())
             {
-                var serializer = new JsonSerializer();
-                serializer.Serialize(writer, data);
+                Serializer.Serialize(writer, data);
                 return writer.Object;
             }
         }
