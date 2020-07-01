@@ -232,19 +232,7 @@ namespace Narupa.Grpc.Multiplayer
                 }
             }
         }
-
-        public void RemoveRemoteValue(string key)
-        {
-            SharedStateDictionary.Remove(key);
-            SharedStateDictionaryKeyRemoved?.Invoke(key);
-        }
-
-        public void UpdateRemoteValue(string key, object value)
-        {
-            SharedStateDictionary[key] = value;
-            SharedStateDictionaryKeyUpdated?.Invoke(key, value);
-        }
-
+        
         private void OnResourceValuesUpdateReceived(StateUpdate update)
         {
             if (update.ChangedKeys.Fields.ContainsKey(UpdateIndexKey))
@@ -295,8 +283,33 @@ namespace Narupa.Grpc.Multiplayer
                 await Task.Delay(interval);
             }
         }
+        
+        public void RemoveRemoteValue(string key)
+        {
+            SharedStateDictionary.Remove(key);
+            SharedStateDictionaryKeyRemoved?.Invoke(key);
 
-        private Dictionary<string, WeakReference<MultiplayerResource>> multiplayerResources =
+            if (multiplayerResources.TryGetValue(key, out var weakRef) &&
+                weakRef.TryGetTarget(out var resource))
+            {
+                resource.RemoteValueRemoved();
+            }
+        }
+
+        public void UpdateRemoteValue(string key, object value)
+        {
+            SharedStateDictionary[key] = value;
+            SharedStateDictionaryKeyUpdated?.Invoke(key, value);
+            
+            if (multiplayerResources.TryGetValue(key, out var weakRef) &&
+                weakRef.TryGetTarget(out var resource))
+            {
+                resource.RemoteValueUpdated(value);
+            }
+        }
+
+        
+        internal Dictionary<string, WeakReference<MultiplayerResource>> multiplayerResources =
             new Dictionary<string, WeakReference<MultiplayerResource>>();
 
         /// <summary>
@@ -309,7 +322,6 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public MultiplayerResource<TType> GetSharedResource<TType>(string key)
         {
-            TODO - MOVE LOGIC OF SESSION UPDATES TO THIS CLASS, SO MULTIPLAYER RESOURCE DOESN'T BE REFERENCED
             if (multiplayerResources.TryGetValue(key, out var existingWeakRef))
             {
                 if (existingWeakRef.TryGetTarget(out var existing))

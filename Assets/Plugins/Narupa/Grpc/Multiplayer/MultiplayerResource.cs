@@ -15,6 +15,10 @@ namespace Narupa.Grpc.Multiplayer
         /// Does this multiplayer resource have a value?
         /// </summary>
         public abstract bool HasValue { get; }
+
+        internal abstract void RemoteValueUpdated(object value);
+
+        internal abstract void RemoteValueRemoved();
     }
 
     /// <summary>
@@ -105,8 +109,6 @@ namespace Narupa.Grpc.Multiplayer
         {
             ResourceKey = key;
             Session = session;
-            session.SharedStateDictionaryKeyUpdated += OnRemoteKeyUpdated;
-            session.SharedStateDictionaryKeyRemoved += OnRemoteKeyRemoved;
             HasRemoteValue = session.HasSharedState(key);
             RemoteValue = Deserialize(session.GetSharedState(key));
             LockState = MultiplayerResourceLockState.Unlocked;
@@ -135,30 +137,39 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public event Action ValueUpdated;
 
-        public void Dispose()
+        internal override void RemoteValueUpdated(object value)
         {
-            Session.SharedStateDictionaryKeyUpdated -= OnRemoteKeyUpdated;
-            Session.SharedStateDictionaryKeyRemoved -= OnRemoteKeyRemoved;
+            RemoteValue = Deserialize(value);
+            HasRemoteValue = true;
+            
+            // If we are up to date with the server, remove our pending value
+            if (sentUpdateIndex <= Session.LastReceivedIndex)
+            {
+                LocalValue = default;
+                HasPendingLocalValue = false;
+            }
+
+            if (!HasPendingLocalValue)
+            {
+                ValueUpdated?.Invoke();
+                ValueChanged?.Invoke();
+            }
+
+            RemoteValueChanged?.Invoke();
         }
 
-        private void OnRemoteKeyUpdated(string key, object value)
+        internal override void RemoteValueRemoved()
         {
-            if (key == ResourceKey)
+            RemoteValue = default;
+            HasRemoteValue = false;
+            
+            if (!HasPendingLocalValue)
             {
-                RemoteValue = Deserialize(value);
-                HasRemoteValue = true;
-                OnRemoteValueUpdated();
+                ValueRemoved?.Invoke();
+                ValueChanged?.Invoke();
             }
-        }
 
-        private void OnRemoteKeyRemoved(string key)
-        {
-            if (key == ResourceKey)
-            {
-                RemoteValue = default;
-                HasRemoteValue = false;
-                OnRemoteValueRemoved();
-            }
+            RemoteValueChanged?.Invoke();
         }
 
         protected TValue Deserialize(object value)
@@ -265,35 +276,6 @@ namespace Narupa.Grpc.Multiplayer
             LocalValue = value;
             HasPendingLocalValue = true;
             OnLocalValueUpdated();
-        }
-
-        private void OnRemoteValueUpdated()
-        {
-            // If we are up to date with the server, remove our pending value
-            if (sentUpdateIndex <= Session.LastReceivedIndex)
-            {
-                LocalValue = default;
-                HasPendingLocalValue = false;
-            }
-
-            if (!HasPendingLocalValue)
-            {
-                ValueUpdated?.Invoke();
-                ValueChanged?.Invoke();
-            }
-
-            RemoteValueChanged?.Invoke();
-        }
-
-        private void OnRemoteValueRemoved()
-        {
-            if (!HasPendingLocalValue)
-            {
-                ValueRemoved?.Invoke();
-                ValueChanged?.Invoke();
-            }
-
-            RemoteValueChanged?.Invoke();
         }
 
         private void OnLocalValueUpdated()
