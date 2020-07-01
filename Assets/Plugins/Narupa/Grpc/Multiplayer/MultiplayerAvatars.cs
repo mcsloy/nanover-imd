@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Narupa.Session;
 
 namespace Narupa.Grpc.Multiplayer
 {
@@ -16,9 +14,8 @@ namespace Narupa.Grpc.Multiplayer
         internal MultiplayerAvatars(MultiplayerSession session)
         {
             multiplayer = session;
-            multiplayer.SharedStateRemoteKeyUpdated += OnKeyUpdated;
-            multiplayer.SharedStateRemoteKeyRemoved += OnKeyRemoved;
             multiplayer.MultiplayerJoined += OnMultiplayerJoined;
+            avatars = multiplayer.GetSharedCollection<MultiplayerAvatar>("avatar.");
         }
 
         private void OnMultiplayerJoined()
@@ -29,54 +26,12 @@ namespace Narupa.Grpc.Multiplayer
             };
         }
 
-        private void OnKeyUpdated(string key, object value)
-        {
-            if (IsAvatarKey(key, out var id) && value is Dictionary<string, object> dict)
-            {
-                CreateOrUpdateAvatar(id, dict);
-            }
-        }
-
-        private void OnKeyRemoved(string key)
-        {
-            if(IsAvatarKey(key, out var id))
-                RemoveAvatar(id);
-        }
-
-
         private static string GetAvatarKey(string playerId)
         {
             return $"avatar.{playerId}";
         }
 
-        private static bool IsAvatarKey(string key, out string playerId)
-        {
-            if (key.StartsWith("avatar."))
-            {
-               playerId = key.Substring(7);
-               return true;
-            }
-
-            playerId = default;
-            return false;
-        }
-        
-        private void CreateOrUpdateAvatar(string id, Dictionary<string, object> value = null)
-        {
-            if(!avatars.ContainsKey(id))
-                avatars.Add(id, new MultiplayerAvatar()
-                {
-                    ID = id
-                });
-            avatars[id].FromData(value);
-        }
-
-        private void RemoveAvatar(string id)
-        {
-            avatars.Remove(id);
-        }
-        
-        private Dictionary<string, MultiplayerAvatar> avatars = new Dictionary<string, MultiplayerAvatar>();
+        private MultiplayerCollection<MultiplayerAvatar> avatars;
 
         /// <summary>
         /// A list of <see cref="MultiplayerAvatar"/> which are not the current player.
@@ -95,7 +50,7 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public void FlushLocalAvatar()
         {
-            multiplayer.ScheduleSharedStateUpdate(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
+            avatars[GetAvatarKey(LocalAvatar.ID)] = LocalAvatar;
         }
 
         internal void CloseClient()
