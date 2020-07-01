@@ -16,8 +16,8 @@ namespace Narupa.Grpc.Multiplayer
         internal MultiplayerAvatars(MultiplayerSession session)
         {
             multiplayer = session;
-            multiplayer.SharedStateDictionaryKeyUpdated += OnKeyUpdated;
-            multiplayer.SharedStateDictionaryKeyRemoved += OnKeyRemoved;
+            multiplayer.SharedStateRemoteKeyUpdated += OnKeyUpdated;
+            multiplayer.SharedStateRemoteKeyRemoved += OnKeyRemoved;
             multiplayer.MultiplayerJoined += OnMultiplayerJoined;
         }
 
@@ -95,13 +95,13 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         public void FlushLocalAvatar()
         {
-            multiplayer.SetSharedState(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
+            multiplayer.ScheduleSharedStateUpdate(GetAvatarKey(LocalAvatar.ID), LocalAvatar.ToData());
         }
 
         internal void CloseClient()
         {
             // Remove the avatar from multiplayer
-            multiplayer.RemoveSharedStateKey(GetAvatarKey(multiplayer.AccessToken));
+            multiplayer.ScheduleSharedStateRemoval(GetAvatarKey(multiplayer.AccessToken));
         }
     }
 }

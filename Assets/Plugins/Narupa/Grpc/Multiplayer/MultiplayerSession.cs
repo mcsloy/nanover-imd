@@ -20,7 +20,7 @@ namespace Narupa.Grpc.Multiplayer
     /// local and remote avatars and maintains a copy of the latest values in
     /// the shared key/value store.
     /// </summary>
-    public sealed class MultiplayerSession : IDisposable
+    public sealed class MultiplayerSession : IRemoteSharedState, IDisposable
     {
         public const string SimulationPoseKey = "scene";
 
@@ -42,9 +42,10 @@ namespace Narupa.Grpc.Multiplayer
         public readonly MultiplayerResource<Transformation> SimulationPose;
 
         /// <summary>
-        /// Dictionary of the currently known shared state.
+        /// Dictionary of the shared state as received directly from the server. Local modifications
+        /// are not made to this dictionary.
         /// </summary>
-        public Dictionary<string, object> SharedStateDictionary { get; } =
+        public Dictionary<string, object> RemoteSharedStateDictionary { get; } =
             new Dictionary<string, object>();
 
         /// <summary>
@@ -70,23 +71,16 @@ namespace Narupa.Grpc.Multiplayer
 
         private Task valueFlushingTask;
 
-        public event Action<string, object> SharedStateDictionaryKeyUpdated;
+        public event Action<string, object> SharedStateRemoteKeyUpdated;
 
-        public event Action<string> SharedStateDictionaryKeyRemoved;
+        public event Action<string> SharedStateRemoteKeyRemoved;
 
         public event Action MultiplayerJoined;
 
-        /// <summary>
-        /// The index of the next update that we will send to the server. A key
-        /// `update.index.{player_id}` will be inserted with this value. By getting this value
-        /// when you've scheduled something to be done to the dictionary, you can then determine
-        /// when a returned update has incorporated your change.
-        /// </summary>
+        /// <inheritdoc cref="IRemoteSharedState.NextUpdateIndex"/>
         public int NextUpdateIndex => nextUpdateIndex;
 
-        /// <summary>
-        /// The index of the latest changes we sent to the server which have been received by us.
-        /// </summary>
+        /// <inheritdoc cref="IRemoteSharedState.LastReceivedIndex"/>
         public int LastReceivedIndex => lastReceivedIndex;
 
         private int nextUpdateIndex = 0;
@@ -145,23 +139,15 @@ namespace Narupa.Grpc.Multiplayer
             pendingRemovals.Clear();
         }
 
-        /// <summary>
-        /// Set the given key in the shared state dictionary, which will be
-        /// sent to the server according in the future according to the publish 
-        /// interval.
-        /// </summary>
-        public void SetSharedState(string key, object value)
+        /// <inheritdoc cref="ScheduleSharedStateUpdate"/>
+        public void ScheduleSharedStateUpdate(string key, object value)
         {
             pendingValues[key] = value.ToProtobufValue();
             pendingRemovals.Remove(key);
         }
 
-        /// <summary>
-        /// Remove the given key from the shared state dictionary, which will be
-        /// sent to the server according in the future according to the publish 
-        /// interval.
-        /// </summary>
-        public void RemoveSharedStateKey(string key)
+        /// <inheritdoc cref="ScheduleSharedStateRemoval"/>
+        public void ScheduleSharedStateRemoval(string key)
         {
             pendingValues.Remove(key);
             pendingRemovals.Add(key);
@@ -170,17 +156,17 @@ namespace Narupa.Grpc.Multiplayer
         /// <summary>
         /// Does the shared state contain an item with the given key?
         /// </summary>
-        public bool HasSharedState(string key)
+        public bool HasRemoteSharedStateValue(string key)
         {
-            return SharedStateDictionary.ContainsKey(key);
+            return RemoteSharedStateDictionary.ContainsKey(key);
         }
 
         /// <summary>
         /// Get a key in the shared state dictionary.
         /// </summary>
-        public object GetSharedState(string key)
+        public object GetRemoteSharedStateValue(string key)
         {
-            return SharedStateDictionary.TryGetValue(key, out var value) ? value : null;
+            return RemoteSharedStateDictionary.TryGetValue(key, out var value) ? value : null;
         }
 
         /// <summary>
@@ -217,14 +203,14 @@ namespace Narupa.Grpc.Multiplayer
 
         private void ClearSharedState()
         {
-            var keys = SharedStateDictionary.Keys.ToList();
-            SharedStateDictionary.Clear();
+            var keys = RemoteSharedStateDictionary.Keys.ToList();
+            RemoteSharedStateDictionary.Clear();
 
             foreach (var key in keys)
             {
                 try
                 {
-                    SharedStateDictionaryKeyRemoved?.Invoke(key);
+                    SharedStateRemoteKeyRemoved?.Invoke(key);
                 }
                 catch (Exception e)
                 {
@@ -232,7 +218,7 @@ namespace Narupa.Grpc.Multiplayer
                 }
             }
         }
-        
+
         private void OnResourceValuesUpdateReceived(StateUpdate update)
         {
             if (update.ChangedKeys.Fields.ContainsKey(UpdateIndexKey))
@@ -283,11 +269,11 @@ namespace Narupa.Grpc.Multiplayer
                 await Task.Delay(interval);
             }
         }
-        
+
         public void RemoveRemoteValue(string key)
         {
-            SharedStateDictionary.Remove(key);
-            SharedStateDictionaryKeyRemoved?.Invoke(key);
+            RemoteSharedStateDictionary.Remove(key);
+            SharedStateRemoteKeyRemoved?.Invoke(key);
 
             if (multiplayerResources.TryGetValue(key, out var weakRef) &&
                 weakRef.TryGetTarget(out var resource))
@@ -298,9 +284,9 @@ namespace Narupa.Grpc.Multiplayer
 
         public void UpdateRemoteValue(string key, object value)
         {
-            SharedStateDictionary[key] = value;
-            SharedStateDictionaryKeyUpdated?.Invoke(key, value);
-            
+            RemoteSharedStateDictionary[key] = value;
+            SharedStateRemoteKeyUpdated?.Invoke(key, value);
+
             if (multiplayerResources.TryGetValue(key, out var weakRef) &&
                 weakRef.TryGetTarget(out var resource))
             {
@@ -308,7 +294,7 @@ namespace Narupa.Grpc.Multiplayer
             }
         }
 
-        
+
         internal Dictionary<string, WeakReference<MultiplayerResource>> multiplayerResources =
             new Dictionary<string, WeakReference<MultiplayerResource>>();
 
@@ -336,7 +322,26 @@ namespace Narupa.Grpc.Multiplayer
 
             var added = new MultiplayerResource<TType>(this, key);
             multiplayerResources[key] = new WeakReference<MultiplayerResource>(added);
+            ResourceCreated?.Invoke(key, added);
             return added;
         }
+
+        private Dictionary<string, MultiplayerCollection> collections =
+            new Dictionary<string, MultiplayerCollection>();
+
+        public MultiplayerCollection<TType> GetSharedCollection<TType>(string prefix)
+        {
+            if (collections.TryGetValue(prefix, out var existing))
+                return existing as MultiplayerCollection<TType>;
+            foreach (var existingKey in collections.Keys)
+                if (existingKey.StartsWith(prefix) || prefix.StartsWith(existingKey))
+                    throw new ArgumentException(
+                        $"Conflicting collections with keys {prefix} and {existingKey}");
+            var added = new MultiplayerCollection<TType>(this, prefix);
+            collections[prefix] = added;
+            return added;
+        }
+
+        public event Action<string, MultiplayerResource> ResourceCreated;
     }
 }

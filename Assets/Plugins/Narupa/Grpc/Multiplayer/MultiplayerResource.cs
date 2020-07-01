@@ -33,7 +33,7 @@ namespace Narupa.Grpc.Multiplayer
         /// <summary>
         /// The multiplayer session that hosts this resource.
         /// </summary>
-        private MultiplayerSession Session { get; }
+        private IRemoteSharedState SharedState { get; }
 
         /// <summary>
         /// The full key that this resource will be found in the shared state.
@@ -61,6 +61,8 @@ namespace Narupa.Grpc.Multiplayer
         private TValue LocalValue { get; set; }
 
         private bool HasPendingLocalValue { get; set; }
+        
+        private bool HasPendingLocalRemoval { get; set; }
 
         public TValue Value
         {
@@ -79,6 +81,8 @@ namespace Narupa.Grpc.Multiplayer
         {
             get
             {
+                if (HasPendingLocalRemoval)
+                    return false;
                 if (HasPendingLocalValue)
                     return true;
                 return HasRemoteValue;
@@ -95,7 +99,7 @@ namespace Narupa.Grpc.Multiplayer
         /// <summary>
         /// Create a multiplayer resource.
         /// </summary>
-        /// <param name="session">The multiplayer session that will provide this value.</param>
+        /// <param name="sharedState">The multiplayer session that will provide this value.</param>
         /// <param name="key">The key that identifies this resource in the dictionary.</param>
         /// <param name="objectToValue">
         /// An optional converter for converting the value in
@@ -105,12 +109,15 @@ namespace Narupa.Grpc.Multiplayer
         /// An optional converter for converting the value
         /// provided to one suitable for serialisation to protobuf.
         /// </param>
-        internal MultiplayerResource(MultiplayerSession session, string key)
+        internal MultiplayerResource(IRemoteSharedState sharedState, string key)
         {
             ResourceKey = key;
-            Session = session;
-            HasRemoteValue = session.HasSharedState(key);
-            RemoteValue = Deserialize(session.GetSharedState(key));
+            SharedState = sharedState;
+            HasRemoteValue = sharedState.HasRemoteSharedStateValue(key);
+            if (HasRemoteValue)
+                RemoteValue = Deserialize(sharedState.GetRemoteSharedStateValue(key));
+            else
+                RemoteValue = default;
             LockState = MultiplayerResourceLockState.Unlocked;
         }
 
@@ -143,10 +150,11 @@ namespace Narupa.Grpc.Multiplayer
             HasRemoteValue = true;
             
             // If we are up to date with the server, remove our pending value
-            if (sentUpdateIndex <= Session.LastReceivedIndex)
+            if (sentUpdateIndex <= SharedState.LastReceivedIndex)
             {
                 LocalValue = default;
                 HasPendingLocalValue = false;
+                HasPendingLocalRemoval = false;
             }
 
             if (!HasPendingLocalValue)
@@ -162,6 +170,7 @@ namespace Narupa.Grpc.Multiplayer
         {
             RemoteValue = default;
             HasRemoteValue = false;
+            HasPendingLocalRemoval = false;
             
             if (!HasPendingLocalValue)
             {
@@ -184,8 +193,17 @@ namespace Narupa.Grpc.Multiplayer
         /// </summary>
         private void SendLocalValueToRemote()
         {
-            sentUpdateIndex = Session.NextUpdateIndex;
-            Session.SetSharedState(ResourceKey, Serialize(Value));
+            sentUpdateIndex = SharedState.NextUpdateIndex;
+            SharedState.ScheduleSharedStateUpdate(ResourceKey, Serialize(Value));
+        }
+        
+        /// <summary>
+        /// Inform the multiplayer service that an item has been removed.
+        /// </summary>
+        private void SendLocalRemovalToRemote()
+        {
+            sentUpdateIndex = SharedState.NextUpdateIndex;
+            SharedState.ScheduleSharedStateRemoval(ResourceKey);
         }
 
         /// <summary>
@@ -207,7 +225,7 @@ namespace Narupa.Grpc.Multiplayer
         private async Task ObtainLockAsync()
         {
             LockState = MultiplayerResourceLockState.Pending;
-            var success = await Session.LockResource(ResourceKey);
+            var success = await SharedState.LockResource(ResourceKey);
             LockState = success
                             ? MultiplayerResourceLockState.Locked
                             : MultiplayerResourceLockState.Unlocked;
@@ -228,6 +246,7 @@ namespace Narupa.Grpc.Multiplayer
         {
             LocalValue = default;
             HasPendingLocalValue = false;
+            HasPendingLocalRemoval = false;
             sentUpdateIndex = -1;
             LockRejected?.Invoke();
         }
@@ -238,7 +257,7 @@ namespace Narupa.Grpc.Multiplayer
             {
                 LockState = MultiplayerResourceLockState.Unlocked;
                 LockReleased?.Invoke();
-                await Session.ReleaseResource(ResourceKey);
+                await SharedState.ReleaseResource(ResourceKey);
             }
         }
 
@@ -251,7 +270,10 @@ namespace Narupa.Grpc.Multiplayer
         {
             LocalValue = value;
             HasPendingLocalValue = true;
-            OnLocalValueUpdated();
+            HasPendingLocalRemoval = false;
+            
+            ValueUpdated?.Invoke();
+            ValueChanged?.Invoke();
 
             switch (LockState)
             {
@@ -275,12 +297,24 @@ namespace Narupa.Grpc.Multiplayer
         {
             LocalValue = value;
             HasPendingLocalValue = true;
-            OnLocalValueUpdated();
+            HasPendingLocalRemoval = false;
+            
+            SendLocalValueToRemote();
+
+            ValueUpdated?.Invoke();
+            ValueChanged?.Invoke();
+
         }
 
-        private void OnLocalValueUpdated()
+        public void Remove()
         {
-            ValueUpdated?.Invoke();
+            LocalValue = default;
+            HasPendingLocalValue = false;
+            HasPendingLocalRemoval = true;
+            
+            SendLocalRemovalToRemote();
+            
+            ValueRemoved?.Invoke();
             ValueChanged?.Invoke();
         }
     }

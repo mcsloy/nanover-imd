@@ -91,8 +91,8 @@ namespace NarupaIMD.Selection
 
         private void Start()
         {
-            selections = new MultiplayerCollection<ParticleSelectionData>(narupaIMD.Sessions.Multiplayer, "selections.");
-            visualisations = new MultiplayerCollection<VisualisationData>(narupaIMD.Sessions.Multiplayer, "visualiser.");
+            selections = narupaIMD.Sessions.Multiplayer.GetSharedCollection<ParticleSelectionData>("selections.");
+            visualisations = narupaIMD.Sessions.Multiplayer.GetSharedCollection<VisualisationData>("visualiser.");
             
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
@@ -105,10 +105,10 @@ namespace NarupaIMD.Selection
 
         private void OnMultiplayerVisualisationCreated(string key)
         {
-            var value = visualisations[key].Value;
+            var value = visualisations[key];
             var vis = new ParticleVisualisation(value);
             if (value.SelectionKey != null)
-                vis.LinkedSelection = selections[value.SelectionKey];
+                vis.LinkedSelection = selections.GetReference(value.SelectionKey);
             currentVisualisations[key] = vis;
             var layer = GetOrCreateLayer(vis.Layer);
             layer.AddVisualisation(vis);

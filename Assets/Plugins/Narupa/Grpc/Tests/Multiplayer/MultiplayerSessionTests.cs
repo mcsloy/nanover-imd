@@ -69,7 +69,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
         {
             service.SetValueDirect("abc", 1.2);
 
-            void HasReceivedKey() => CollectionAssert.Contains(session.SharedStateDictionary.Keys,
+            void HasReceivedKey() => CollectionAssert.Contains(session.RemoteSharedStateDictionary.Keys,
                                                                "abc");
 
             await AsyncAssert.PassesWithinTimeout(HasReceivedKey);
@@ -79,7 +79,7 @@ namespace Narupa.Grpc.Tests.Multiplayer
         public async Task ValueChanged_ClientCallback()
         {
             var callback = Substitute.For<Action<string, object>>();
-            session.SharedStateDictionaryKeyUpdated += callback;
+            session.SharedStateRemoteKeyUpdated += callback;
 
             void HasReceivedCallback() =>
                 callback.Received(1).Invoke(Arg.Is("abc"), Arg.Any<object>());
