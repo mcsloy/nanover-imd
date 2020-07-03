@@ -64,7 +64,8 @@ namespace NarupaXR.Interaction
             var indices = GetIndicesInSelection(selection, particleIndex.Value);
 
             var grab = new ActiveParticleGrab(indices);
-
+            if (selection.Selection.ResetVelocities)
+                grab.Properties.ResetVelocities = true;
             return grab;
         }
         
