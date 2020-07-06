@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Narupa.Frontend.Utility;
+using NarupaIMD.Interaction;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -53,7 +54,7 @@ namespace NarupaXR.Interaction
             
             wavePool.MapConfig(interactions.Values, MapConfigToInstance);
             
-            void MapConfigToInstance(Narupa.Grpc.Interactive.ParticleInteraction interaction, 
+            void MapConfigToInstance(ParticleInteraction interaction, 
                                      InteractionWaveRenderer renderer)
             {
                 var particlePositionSim = computeParticleCentroid(interaction.Particles);

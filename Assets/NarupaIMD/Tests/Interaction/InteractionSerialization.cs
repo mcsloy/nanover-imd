@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Narupa.Grpc.Interactive;
+using NarupaIMD.Interaction;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Narupa.Grpc.Tests.Interactive
+namespace NarupaIMD.Tests.Interaction
 {
     public class InteractionSerialization
     {
@@ -24,9 +24,9 @@ namespace Narupa.Grpc.Tests.Interactive
                 InteractionType = "spring"
             };
 
-            var serialized = Serialization.Serialization.ToDataStructure(interaction);
+            var serialized = Narupa.Core.Serialization.Serialization.ToDataStructure(interaction);
             var deserialized =
-                Serialization.Serialization.FromDataStructure<ParticleInteraction>(serialized);
+                Narupa.Core.Serialization.Serialization.FromDataStructure<ParticleInteraction>(serialized);
             
             Assert.AreEqual(interaction.Position, deserialized.Position);
             Assert.AreEqual(interaction.Particles, deserialized.Particles);

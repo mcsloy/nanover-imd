@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Narupa.Core.Serialization;
 using Narupa.Grpc.Multiplayer;
 
-namespace Narupa.Grpc.Interactive
+namespace NarupaIMD.Interaction
 {
     /// <summary>
     /// A collection of interactions involved in iMD.
@@ -20,7 +21,7 @@ namespace Narupa.Grpc.Interactive
         {
             if (value is Dictionary<string, object> dict)
             {
-                parsed = Serialization.Serialization.FromDataStructure<ParticleInteraction>(dict);
+                parsed = Serialization.FromDataStructure<ParticleInteraction>(dict);
                 return true;
             }
 
@@ -31,7 +32,7 @@ namespace Narupa.Grpc.Interactive
         /// <inheritdoc cref="MultiplayerCollection{TItem}.SerializeItem"/>
         protected override object SerializeItem(ParticleInteraction item)
         {
-            return Serialization.Serialization.ToDataStructure(item);
+            return Serialization.ToDataStructure(item);
         }
     }
 }

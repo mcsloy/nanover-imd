@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Core.Math;
-using Narupa.Grpc.Interactive;
+using NarupaIMD.Interaction;
 using UnityEngine;
 
 namespace Narupa.Frontend.Manipulation

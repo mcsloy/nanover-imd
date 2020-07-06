@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using Essd;
 using Newtonsoft.Json.Linq;
 using System.Linq;
-using Narupa.Grpc.Interactive;
 using Narupa.Grpc.Multiplayer;
+using NarupaIMD.Interaction;
 
 namespace NarupaXR
 {
