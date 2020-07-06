@@ -25,15 +25,15 @@ namespace NarupaXR
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
-        
-        public Interactions Interactions { get; private set; }
+
+        public readonly ParticleInteractionCollection Interactions;
 
         private Dictionary<string, GrpcConnection> channels
             = new Dictionary<string, GrpcConnection>();
 
         public NarupaXRSessionManager()
         {
-            Interactions = new Interactions(Multiplayer);
+            Interactions = new ParticleInteractionCollection(Multiplayer);
         }
 
         /// <summary>

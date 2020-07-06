@@ -49,13 +49,11 @@ namespace NarupaXR.Interaction
         private void Update()
         {
             var interactions = narupaXR.Sessions.Interactions;
-            if (interactions == null)
-                return;
             var frame = narupaXR.FrameSynchronizer.CurrentFrame;
             
             wavePool.MapConfig(interactions.Values, MapConfigToInstance);
             
-            void MapConfigToInstance(Narupa.Grpc.Interactive.Interaction interaction, 
+            void MapConfigToInstance(Narupa.Grpc.Interactive.ParticleInteraction interaction, 
                                      InteractionWaveRenderer renderer)
             {
                 var particlePositionSim = computeParticleCentroid(interaction.Particles);
