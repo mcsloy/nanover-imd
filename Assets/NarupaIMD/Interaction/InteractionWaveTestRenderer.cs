@@ -1,13 +1,10 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.Utility;
-using Narupa.Session;
 using NarupaIMD;
+using NarupaIMD.Interaction;
 using UnityEngine;
 
 namespace NarupaXR.Interaction
@@ -53,15 +50,15 @@ namespace NarupaXR.Interaction
 
         private void Update()
         {
-            var interactions = simulation.Imd.Interactions;
+            var interactions = simulation.Interactions;
             var frame = simulation.FrameSynchronizer.CurrentFrame;
             
             wavePool.MapConfig(interactions.Values, MapConfigToInstance);
-            
-            void MapConfigToInstance(ImdSession.InteractionData interaction, 
+
+            void MapConfigToInstance(ParticleInteraction interaction, 
                                      SineConnectorRenderer renderer)
             {
-                var particlePositionSim = computeParticleCentroid(interaction.ParticleIds);
+                var particlePositionSim = computeParticleCentroid(interaction.Particles);
                 var particlePositionWorld = transform.TransformPoint(particlePositionSim);
 
                 renderer.EndPosition = transform.TransformPoint(interaction.Position);

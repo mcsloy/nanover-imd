@@ -61,10 +61,10 @@ namespace NarupaXR.Interaction
 
         private void Update()
         {
-            var interactions = simulation.Imd.Interactions;
+            var interactions = simulation.Interactions;
             var pts = new List<int>();
-            foreach (var interaction in interactions)
-                pts.AddRange(interaction.Value.ParticleIds);
+            foreach (var interaction in interactions.Values)
+                pts.AddRange(interaction.Particles);
             interactedParticles.Value = pts.ToArray();
         }
 

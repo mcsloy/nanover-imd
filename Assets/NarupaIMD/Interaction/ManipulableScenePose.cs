@@ -8,7 +8,6 @@ using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Grpc.Multiplayer;
-using Narupa.Session;
 using UnityEngine;
 
 namespace NarupaXR.Interaction

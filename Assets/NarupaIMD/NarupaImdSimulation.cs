@@ -1,3 +1,6 @@
+// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
+// Licensed under the GPL. See License.txt in the project root for license information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +11,12 @@ using Narupa.Frontend.Manipulation;
 using Narupa.Grpc;
 using Narupa.Grpc.Multiplayer;
 using Narupa.Grpc.Trajectory;
-using Narupa.Session;
 using Narupa.Visualisation;
 using NarupaXR;
 using NarupaXR.Interaction;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using NarupaIMD.Interaction;
 
 namespace NarupaIMD
 {
@@ -42,12 +45,12 @@ namespace NarupaIMD
         private NarupaXRPrototype application;
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
-        public ImdSession Imd { get; } = new ImdSession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
+
+        public ParticleInteractionCollection Interactions;
 
         private Dictionary<string, GrpcConnection> channels
             = new Dictionary<string, GrpcConnection>();
-
 
         /// <summary>
         /// The route through which simulation space can be manipulated with
@@ -80,12 +83,7 @@ namespace NarupaIMD
             {
                 Trajectory.OpenClient(GetChannel(address, trajectoryPort.Value));
             }
-
-            if (imdPort.HasValue)
-            {
-                Imd.OpenClient(GetChannel(address, imdPort.Value));
-            }
-
+            
             if (multiplayerPort.HasValue)
             {
                 Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
@@ -98,12 +96,14 @@ namespace NarupaIMD
 
         private void Awake()
         {
+            Interactions = new ParticleInteractionCollection(Multiplayer);
+            
             ManipulableSimulationSpace = new ManipulableScenePose(simulationSpaceTransform,
                                                                   Multiplayer,
                                                                   application);
 
             ManipulableParticles = new ManipulableParticles(rightHandedSimulationSpace,
-                                                            Imd,
+                                                            Interactions,
                                                             interactableScene);
 
             FrameSynchronizer = gameObject.GetComponent<SynchronisedFrameSource>();
@@ -149,7 +149,6 @@ namespace NarupaIMD
         public async Task CloseAsync()
         {
             Trajectory.CloseClient();
-            Imd.CloseClient();
             Multiplayer.CloseClient();
 
             foreach (var channel in channels.Values)

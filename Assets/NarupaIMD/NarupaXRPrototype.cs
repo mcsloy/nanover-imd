@@ -67,7 +67,7 @@ namespace NarupaXR
         /// Called from UI to quit the application.
         /// </summary>
         public void Quit() => Application.Quit();
-
+        
         private void Update()
         {
             CalibratedSpace.CalibrateFromLighthouses();

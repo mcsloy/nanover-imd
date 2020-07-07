@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
 using Narupa.Grpc.Multiplayer;
-using Narupa.Session;
 using NarupaIMD;
 using UnityEngine;
 using UnityEngine.XR;
