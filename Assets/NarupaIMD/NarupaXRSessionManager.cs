@@ -1,9 +1,7 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using Narupa.Session;
 using System.Threading.Tasks;
-using Narupa.Core.Async;
 using Narupa.Grpc;
 using Narupa.Grpc.Trajectory;
 using UnityEngine;
@@ -12,6 +10,7 @@ using Essd;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using Narupa.Grpc.Multiplayer;
+using NarupaIMD.Interaction;
 
 namespace NarupaXR
 {
@@ -25,11 +24,17 @@ namespace NarupaXR
         private const string MultiplayerServiceName = "multiplayer";
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
-        public ImdSession Imd { get; } = new ImdSession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
+
+        public readonly ParticleInteractionCollection Interactions;
 
         private Dictionary<string, GrpcConnection> channels
             = new Dictionary<string, GrpcConnection>();
+
+        public NarupaXRSessionManager()
+        {
+            Interactions = new ParticleInteractionCollection(Multiplayer);
+        }
 
         /// <summary>
         /// Connect to the host address and attempt to open clients for the
@@ -46,12 +51,7 @@ namespace NarupaXR
             {
                 Trajectory.OpenClient(GetChannel(address, trajectoryPort.Value));
             }
-
-            if (imdPort.HasValue)
-            {
-                Imd.OpenClient(GetChannel(address, imdPort.Value));
-            }
-
+            
             if (multiplayerPort.HasValue)
             {
                 Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
@@ -95,7 +95,6 @@ namespace NarupaXR
         public async Task CloseAsync()
         {
             Trajectory.CloseClient();
-            Imd.CloseClient();
             Multiplayer.CloseClient();
 
             foreach (var channel in channels.Values)
