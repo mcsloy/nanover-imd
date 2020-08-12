@@ -28,7 +28,7 @@ namespace NarupaIMD
 
             var id = $"playarea.{prototype.Multiplayer.AccessToken}";
 
-            var coordinates = new float[]
+            var coordinates = new object[]
             {
                 rect.vCorners0.v0,
                 rect.vCorners0.v1,
