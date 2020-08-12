@@ -28,10 +28,10 @@ namespace NarupaIMD
             foreach (var pose in poses)
             {
                 if (!pose.bDeviceIsConnected)
-                    return;
+                    continue;
 
                 if (!pose.bPoseIsValid)
-                    return;
+                    continue;
                 
                 var xyz = new SteamVR_Utils.RigidTransform(pose.mDeviceToAbsoluteTracking);
                 
