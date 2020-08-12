@@ -45,7 +45,7 @@ namespace NarupaIMD
                 {
                     ["position"] = new object[] {xyz.pos.x, xyz.pos.y, xyz.pos.z},
                     ["rotation"] = new object[] {xyz.rot.x, xyz.rot.y, xyz.rot.z, xyz.rot.w},
-                    ["name"] = name.ToString()
+                    ["name"] = result.ToString()
                 };
                 
                 list.Add(data);
