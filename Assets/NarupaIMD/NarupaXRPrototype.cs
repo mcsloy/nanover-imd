@@ -48,6 +48,7 @@ namespace NarupaXR
         private NarupaXRAvatarManager avatars;
 #pragma warning restore 0649
 
+        public bool ColocateLighthouses { get; set; } = false;
         public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace NarupaXR
 
         private void Update()
         {
-            CalibratedSpace.CalibrateFromLighthouses();
+            if (ColocateLighthouses) CalibratedSpace.CalibrateFromLighthouses();
         }
 
         private async void OnDestroy()
