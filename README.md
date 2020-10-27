@@ -1,16 +1,16 @@
-# Narupa iMD 
+# Narupa iMD
 
-Interactive Molecular Dynamics (iMD) in VR, an application built with the Narupa 
+Interactive Molecular Dynamics (iMD) in VR, an application built with the Narupa
 framework.
 
-This repository is maintained by the Intangible Realities Laboratory, University Of Bristol, 
+This repository is maintained by the Intangible Realities Laboratory, University Of Bristol,
 and distributed under [GPLv3](LICENSE).
 See [the list of contributors](CONTRIBUTORS.md) for the individual authors of the project.
 
 
 # Installation (Windows Only)
 
-If you've not already set up anaconda: 
+If you've not already set up anaconda:
 
 * Install Anaconda (avoid Anaconda 2.7 as it is outdated)
 * Start the "Anaconda Powershell Prompt" where to type the next commands
@@ -40,7 +40,7 @@ NarupaImd
 *  Once installed, navigate to the **Projects** tab and click **Add** in the top right of Unity Hub.
 *  Select the folder which you downloaded the repository to.
 
-Once open in Unity, the main Unity scene can be found in `NarupaIMD/NarupaXR Scene`.
+Once open in Unity, the main Unity scene can be found in `NarupaIMD/Assets/NarupaXR Scene`.
 
 ## Citation, Credits and External Libraries
 
@@ -57,5 +57,3 @@ This project has been made possible by the following projects. We gratefully tha
 * The CIF file importer uses the *Chemical Component Dictionary* provided at http://www.wwpdb.org/data/ccd.
 * [icons8](https://icons8.com) - Provider of icons used in UI.
 * [NSubstitute](https://nsubstitute.github.io/) (BSD) - Mock testing framework.
-
-

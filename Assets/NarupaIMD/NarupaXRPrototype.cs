@@ -29,6 +29,14 @@ namespace NarupaXR
 
         public NarupaImdSimulation Simulation => simulation;
 
+        public bool ColocateLighthouses { get; set; } = false;
+
+        /// <summary>
+        /// The route through which simulation space can be manipulated with
+        /// gestures to perform translation, rotation, and scaling.
+        /// </summary>
+        public ManipulableScenePose ManipulableSimulationSpace { get; private set; }
+
         public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
 
         [SerializeField]
@@ -70,7 +78,7 @@ namespace NarupaXR
         
         private void Update()
         {
-            CalibratedSpace.CalibrateFromLighthouses();
+            if (ColocateLighthouses) CalibratedSpace.CalibrateFromLighthouses();
         }
     }
 }
