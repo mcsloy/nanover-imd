@@ -83,7 +83,7 @@ namespace NarupaXR
             }
             
             GUILayout.Box("Debug");
-            narupa.ColocateLighthouses = GUILayout.Toggle(narupa.ColocateLighthouses, "Colocated Lighthouses");
+            application.ColocateLighthouses = GUILayout.Toggle(application.ColocateLighthouses, "Colocated Lighthouses");
             xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 
             GUILayout.Box("Misc");
