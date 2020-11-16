@@ -5,13 +5,12 @@
       "app_key": "irl.narupaimd.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": ".\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\IT075220-Admin\\Documents\\GIT-repos\\narupa\\narupa-imd\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
-          "name": "Narupa iMD"
+          "name": "Narupa iMD [Testing]"
         }
-      },
-      "image_path": "vr_header.png"
+      }
     }
   ]
 }
