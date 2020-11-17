@@ -5,6 +5,7 @@ using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Property;
+using NarupaIMD;
 using NarupaIMD.Selection;
 using UnityEngine;
 
@@ -24,7 +25,31 @@ namespace NarupaXR.Interaction
         private VisualisationScene visualisationScene;
 
         [SerializeField]
-        private NarupaXRPrototype prototype;
+        private NarupaImdSimulation simulation;
+
+        public enum InteractionTarget
+        {
+            Single,
+            Residue
+        }
+
+        [SerializeField]
+        private InteractionTarget interactionTarget = InteractionTarget.Single;
+
+        public void SetInteractionTarget(InteractionTarget target)
+        {
+            this.interactionTarget = target;
+        }
+
+        public void SetInteractionTargetSingle()
+        {
+            SetInteractionTarget(InteractionTarget.Single);
+        }
+        
+        public void SetInteractionTargetResidue()
+        {
+            SetInteractionTarget(InteractionTarget.Residue);
+        }
 
         /// <inheritdoc cref="InteractedParticles"/>
         private readonly IntArrayProperty interactedParticles = new IntArrayProperty();
@@ -36,9 +61,7 @@ namespace NarupaXR.Interaction
 
         private void Update()
         {
-            var interactions = prototype.Sessions.Interactions;
-            if (interactions == null)
-                return;
+            var interactions = simulation.Interactions;
             var pts = new List<int>();
             foreach (var interaction in interactions.Values)
                 pts.AddRange(interaction.Particles);
@@ -61,14 +84,42 @@ namespace NarupaXR.Interaction
             if (selection.Selection.InteractionMethod == ParticleSelection.InteractionMethodNone)
                 return null;
 
-            var indices = GetIndicesInSelection(selection, particleIndex.Value);
+            var indices = GetInteractionIndices(particleIndex.Value);
 
             var grab = new ActiveParticleGrab(indices);
             if (selection.Selection.ResetVelocities)
                 grab.ResetVelocities = true;
             return grab;
         }
-        
+
+        private IEnumerable<int> GetInteractionIndices(int particleIndex)
+        {
+            switch (interactionTarget)
+            {
+                case InteractionTarget.Single:
+                    yield return particleIndex;
+                    break;
+                case InteractionTarget.Residue:
+                    var frame = simulation.FrameSynchronizer.CurrentFrame;
+                    if (frame.ParticleResidues == null || frame.ParticleResidues.Length == 0)
+                    {
+                        yield return particleIndex;
+                        break;
+                    }
+
+                    var residue = frame.ParticleResidues[particleIndex];
+                    if (residue == -1)
+                    {
+                        yield return particleIndex;
+                        break;
+                    }
+                    for(var i = 0; i < frame.ParticleCount; i++)
+                        if (frame.ParticleResidues[i] == residue)
+                            yield return i;
+                    break;
+            }
+        }
+
         /// <summary>
         /// Get the particle indices to select, given the nearest particle index.
         /// </summary>

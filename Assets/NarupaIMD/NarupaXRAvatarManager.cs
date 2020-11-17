@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
 using Narupa.Grpc.Multiplayer;
+using NarupaIMD;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -13,7 +15,10 @@ namespace NarupaXR
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupa;
+        private NarupaXRPrototype application;
+        
+        [SerializeField]
+        private NarupaImdSimulation narupa;
 
         [SerializeField]
         private Transform headsetPrefab;
@@ -21,21 +26,18 @@ namespace NarupaXR
         [SerializeField]
         private Transform controllerPrefab;
 #pragma warning restore 0649
-
+        
         private IndexedPool<Transform> headsetObjects;
         private IndexedPool<Transform> controllerObjects;
-
-        private void Awake()
-        {
-            Setup();
-        }
+        
+        private Coroutine sendAvatarsCoroutine;
 
         private void Update()
         {
             UpdateRendering();
         }
 
-        private void Setup()
+        private void OnEnable()
         {
             headsetObjects = new IndexedPool<Transform>(
                 () => Instantiate(headsetPrefab),
@@ -48,11 +50,15 @@ namespace NarupaXR
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
-
-            StartCoroutine(SendAvatars());
+            sendAvatarsCoroutine = StartCoroutine(UpdateLocalAvatar());
         }
-        
-        private IEnumerator SendAvatars()
+
+        private void OnDisable()
+        {
+            StopCoroutine(sendAvatarsCoroutine);
+        }
+
+        private IEnumerator UpdateLocalAvatar()
         {
             var leftHand = XRNode.LeftHand.WrapAsPosedObject();
             var rightHand = XRNode.RightHand.WrapAsPosedObject();
@@ -60,14 +66,14 @@ namespace NarupaXR
 
             while (true)
             {
-                if (narupa.Sessions.Multiplayer.IsOpen)
+                if (narupa.Multiplayer.IsOpen)
                 {
-                    narupa.Sessions.Multiplayer.Avatars.LocalAvatar.SetTransformations(
+                    narupa.Multiplayer.Avatars.LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
 
-                    narupa.Sessions.Multiplayer.Avatars.FlushLocalAvatar();
+                    narupa.Multiplayer.Avatars.FlushLocalAvatar();
                 }
 
                 yield return null;
@@ -76,20 +82,19 @@ namespace NarupaXR
 
         private void UpdateRendering()
         {
-            var headsets = narupa.Sessions.Multiplayer
+            var headsets = narupa.Multiplayer
                                  .Avatars.OtherPlayerAvatars
                                  .SelectMany(avatar => avatar.Components, (avatar, component) =>
                                                  (Avatar: avatar, Component: component))
                                  .Where(res => res.Component.Name == MultiplayerAvatar.HeadsetName);
 
 
-            var controllers = narupa.Sessions.Multiplayer
+            var controllers = narupa.Multiplayer
                                     .Avatars.OtherPlayerAvatars
                                     .SelectMany(avatar => avatar.Components, (avatar, component) =>
                                                     (Avatar: avatar, Component: component))
                                     .Where(res => res.Component.Name == MultiplayerAvatar.LeftHandName
                                                || res.Component.Name == MultiplayerAvatar.RightHandName);
-
 
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
@@ -104,7 +109,7 @@ namespace NarupaXR
         public Transformation? TransformPoseCalibratedToWorld(Transformation? pose)
         {
             if (pose is Transformation calibratedPose)
-                return narupa.CalibratedSpace.TransformPoseCalibratedToWorld(calibratedPose);
+                return application.CalibratedSpace.TransformPoseCalibratedToWorld(calibratedPose);
 
             return null;
         }
@@ -112,7 +117,7 @@ namespace NarupaXR
         public Transformation? TransformPoseWorldToCalibrated(Transformation? pose)
         {
             if (pose is Transformation worldPose)
-                return narupa.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
+                return application.CalibratedSpace.TransformPoseWorldToCalibrated(worldPose);
 
             return null;
         }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
+using NarupaIMD;
 using UnityEngine;
 
 namespace NarupaXR
@@ -13,12 +14,12 @@ namespace NarupaXR
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype prototype;
+        private NarupaImdSimulation simulation;
 #pragma warning restore 0649
 
-        public void SendPlayCommand() => prototype.Sessions.Trajectory.Play();
-        public void SendPauseCommand() => prototype.Sessions.Trajectory.Pause();
-        public void SendStepCommand() => prototype.Sessions.Trajectory.Step();
-        public void SendResetCommand() => prototype.Sessions.Trajectory.Reset();
+        public void SendPlayCommand() => simulation.Trajectory.Play();
+        public void SendPauseCommand() => simulation.Trajectory.Pause();
+        public void SendStepCommand() => simulation.Trajectory.Step();
+        public void SendResetCommand() => simulation.Trajectory.Reset();
     }
 }

@@ -51,14 +51,9 @@ namespace Narupa.Frontend.XR
         /// button object that can be used to track a single button state.
         /// </summary>
         public static IButton WrapAsButton(this SteamVR_Action_Boolean buttonAction,
-                                           SteamVR_Input_Sources buttonSource)
+                                                 SteamVR_Input_Sources buttonSource)
         {
-            var wrapper = new DirectButton();
-
-            buttonAction.AddOnStateDownListener((_, __) => wrapper.Press(), buttonSource);
-            buttonAction.AddOnStateUpListener((_, __) => wrapper.Release(), buttonSource);
-
-            return wrapper;
+            return new SteamVrButton(buttonAction, buttonSource);
         }
     }
 }

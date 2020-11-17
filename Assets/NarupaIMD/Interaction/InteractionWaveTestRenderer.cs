@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Narupa.Frontend.Utility;
+using NarupaIMD;
 using NarupaIMD.Interaction;
 using UnityEngine;
 
@@ -17,30 +18,30 @@ namespace NarupaXR.Interaction
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype narupaXR;
+        private NarupaImdSimulation simulation;
         [SerializeField]
-        private InteractionWaveRenderer waveTemplate;
+        private SineConnectorRenderer waveTemplate;
 
-        private IndexedPool<InteractionWaveRenderer> wavePool;
+        private IndexedPool<SineConnectorRenderer> wavePool;
         
 #pragma warning restore 0649
 
         private void Start()
         {
-            wavePool = new IndexedPool<InteractionWaveRenderer>(CreateInstanceCallback, ActivateInstanceCallback, DeactivateInstanceCallback);
+            wavePool = new IndexedPool<SineConnectorRenderer>(CreateInstanceCallback, ActivateInstanceCallback, DeactivateInstanceCallback);
         }
 
-        private void DeactivateInstanceCallback(InteractionWaveRenderer obj)
+        private void DeactivateInstanceCallback(SineConnectorRenderer obj)
         {
             obj.gameObject.SetActive(false);
         }
 
-        private void ActivateInstanceCallback(InteractionWaveRenderer obj)
+        private void ActivateInstanceCallback(SineConnectorRenderer obj)
         {
             obj.gameObject.SetActive(true);
         }
 
-        private InteractionWaveRenderer CreateInstanceCallback()
+        private SineConnectorRenderer CreateInstanceCallback()
         {
             var renderer = Instantiate(waveTemplate, transform, true);
             renderer.gameObject.SetActive(true);
@@ -49,20 +50,19 @@ namespace NarupaXR.Interaction
 
         private void Update()
         {
-            var interactions = narupaXR.Sessions.Interactions;
-            var frame = narupaXR.FrameSynchronizer.CurrentFrame;
+            var interactions = simulation.Interactions;
+            var frame = simulation.FrameSynchronizer.CurrentFrame;
             
             wavePool.MapConfig(interactions.Values, MapConfigToInstance);
-            
+
             void MapConfigToInstance(ParticleInteraction interaction, 
-                                     InteractionWaveRenderer renderer)
+                                     SineConnectorRenderer renderer)
             {
                 var particlePositionSim = computeParticleCentroid(interaction.Particles);
                 var particlePositionWorld = transform.TransformPoint(particlePositionSim);
-                
-                renderer.SetPositionAndForce(transform.TransformPoint(interaction.Position),
-                                             particlePositionWorld, 
-                                             0.5f);
+
+                renderer.EndPosition = transform.TransformPoint(interaction.Position);
+                renderer.StartPosition = particlePositionWorld;
             }
 
             Vector3 computeParticleCentroid(IReadOnlyList<int> particleIds)

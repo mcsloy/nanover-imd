@@ -6,6 +6,7 @@ using Narupa.Frontend.Input;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using Valve.VR;
 
 namespace Narupa.Frontend.UI
 {
@@ -47,20 +48,33 @@ namespace Narupa.Frontend.UI
             StartCoroutine(InitialiseWhenInputModuleReady());
         }
 
+        public static void ClearSelection()
+        {
+            (EventSystem.current.currentInputModule as NarupaInputModule).ClearSelection();
+        }
+
         private void Update()
         {
             Vector3? worldPoint;
             worldPoint = GetProjectedCursorPoint();
 
-            isCursorOnCanvas = worldPoint.HasValue;
+            var newCursorState = worldPoint.HasValue;
+            if (!newCursorState && isCursorOnCanvas)
+            {
+                ClearSelection();
+            }
+            
+            isCursorOnCanvas = newCursorState;
             if (worldPoint.HasValue)
             {
                 screenPosition = camera.WorldToScreenPoint(worldPoint.Value);
             }
 
             previousClickState = currentClickState;
-            currentClickState = mousePresent && clickButton.IsPressed;
+            currentClickState = mousePresent && IsClickPressed;
         }
+
+        public bool IsClickPressed => clickButton != null && clickButton.IsPressed;
 
         /// <summary>
         /// Sets the canvas with an <see cref="IPosedObject" /> to provide the location
@@ -69,7 +83,7 @@ namespace Narupa.Frontend.UI
         /// </summary>
         public static void SetCanvasAndCursor(Canvas canvas,
                                               IPosedObject cursor,
-                                              IButton click)
+                                              IButton click = null)
         {
             Assert.IsNotNull(Instance, $"There is no instance of {nameof(WorldSpaceCursorInput)} in the scene.");
             Instance.canvas = canvas;
@@ -141,6 +155,17 @@ namespace Narupa.Frontend.UI
             {
                 Instance.canvas = null;
                 Instance.cursor = null;
+            }
+        }
+        
+        public static void TriggerClick()
+        {
+            var hovered = (EventSystem.current.currentInputModule as NarupaInputModule)
+                .CurrentHoverTarget;
+            if (hovered != null)
+            {
+                ExecuteEvents.ExecuteHierarchy(hovered, new BaseEventData(EventSystem.current),
+                                               ExecuteEvents.submitHandler);
             }
         }
     }

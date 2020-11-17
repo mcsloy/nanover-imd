@@ -15,7 +15,7 @@ namespace NarupaIMD.Editor
         [MenuItem("Narupa/Commands/Play")]
         public static void PlayServer()
         {
-            Object.FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Play();
+            Object.FindObjectOfType<NarupaXRPrototype>().Simulation.Trajectory?.Play();
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace NarupaIMD.Editor
         [MenuItem("Narupa/Commands/Pause")]
         public static void PauseServer()
         {
-            Object.FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Pause();
+            Object.FindObjectOfType<NarupaXRPrototype>().Simulation.Trajectory?.Pause();
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace NarupaIMD.Editor
         [MenuItem("Narupa/Commands/Reset")]
         public static void ResetServer()
         {
-            Object.FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Reset();
+            Object.FindObjectOfType<NarupaXRPrototype>().Simulation.Trajectory?.Reset();
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace NarupaIMD.Editor
         [MenuItem("Narupa/Commands/Step")]
         public static void StepServer()
         {
-            Object.FindObjectOfType<NarupaXRPrototype>().Sessions.Trajectory?.Step();
+            Object.FindObjectOfType<NarupaXRPrototype>().Simulation.Trajectory?.Step();
         }
     }
 }

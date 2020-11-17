@@ -1,9 +1,32 @@
 {
    "action_manifest_version" : 0,
    "alias_info" : {},
-   "app_key" : "application.generated.unity.narupaxr.exe",
+   "app_key" : "irl.narupaimd.exe",
    "bindings" : {
+      "/actions/application" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [
+            {
+               "output" : "/actions/application/in/pose",
+               "path" : "/user/hand/left/pose/raw"
+            },
+            {
+               "output" : "/actions/application/in/pose",
+               "path" : "/user/hand/right/pose/raw"
+            }
+         ],
+         "skeleton" : [],
+         "sources" : []
+      },
       "/actions/buggy" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/controller" : {
          "chords" : [],
          "haptics" : [],
          "poses" : [],
@@ -17,22 +40,12 @@
          "skeleton" : [],
          "sources" : []
       },
-      "/actions/narupaimd" : {
-         "poses" : [
-            {
-               "output" : "/actions/narupaimd/in/pose",
-               "path" : "/user/hand/left/pose/raw"
-            },
-            {
-               "output" : "/actions/narupaimd/in/pose",
-               "path" : "/user/hand/right/pose/raw"
-            }
-         ],
+      "/actions/fullscreenui" : {
          "sources" : [
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/narupaimd/in/interact"
+                     "output" : "/actions/fullscreenui/in/click"
                   }
                },
                "mode" : "button",
@@ -41,7 +54,29 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/narupaimd/in/interact"
+                     "output" : "/actions/fullscreenui/in/click"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trigger"
+            }
+         ]
+      },
+      "/actions/inappui" : {
+         "sources" : [
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/inappui/in/click"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/inappui/in/click"
                   }
                },
                "mode" : "button",
@@ -49,8 +84,68 @@
             },
             {
                "inputs" : {
+                  "south" : {
+                     "output" : "/actions/inappui/in/quickactions"
+                  }
+               },
+               "mode" : "dpad",
+               "parameters" : {
+                  "sub_mode" : "click"
+               },
+               "path" : "/user/hand/left/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "south" : {
+                     "output" : "/actions/inappui/in/toolactions"
+                  }
+               },
+               "mode" : "dpad",
+               "parameters" : {
+                  "sub_mode" : "click"
+               },
+               "path" : "/user/hand/right/input/trackpad"
+            }
+         ]
+      },
+      "/actions/interactive" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/narupaimd" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/platformer" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/scene" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : []
+      },
+      "/actions/simulation" : {
+         "chords" : [],
+         "haptics" : [],
+         "poses" : [],
+         "skeleton" : [],
+         "sources" : [
+            {
+               "inputs" : {
                   "click" : {
-                     "output" : "/actions/narupaimd/in/grabspace"
+                     "output" : "/actions/simulation/in/grabspace"
                   }
                },
                "mode" : "button",
@@ -59,15 +154,75 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/narupaimd/in/grabspace"
+                     "output" : "/actions/simulation/in/grabspace"
                   }
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/simulation/in/interact"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/simulation/in/interact"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/simulation/in/pausemenu"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/application_menu"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/simulation/in/select"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/simulation/in/select"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "east" : {
+                     "output" : "/actions/simulation/in/increaseinteractionstrength"
+                  },
+                  "west" : {
+                     "output" : "/actions/simulation/in/decreaseinteractionstrength"
+                  }
+               },
+               "mode" : "dpad",
+               "parameters" : {
+                  "sub_mode" : "click"
+               },
+               "path" : "/user/hand/right/input/trackpad"
             }
          ]
       },
-      "/actions/platformer" : {
+      "/actions/ui" : {
          "chords" : [],
          "haptics" : [],
          "poses" : [],

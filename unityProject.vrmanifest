@@ -1,0 +1,17 @@
+{
+  "source": "Unity",
+  "applications": [
+    {
+      "app_key": "irl.narupaimd.exe",
+      "launch_type": "url",
+      "url": "steam://launch/",
+      "action_manifest_path": ".\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "strings": {
+        "en_us": {
+          "name": "Narupa iMD"
+        }
+      },
+      "image_path": "vr_header.png"
+    }
+  ]
+}

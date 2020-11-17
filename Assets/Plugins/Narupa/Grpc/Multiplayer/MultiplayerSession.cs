@@ -76,6 +76,10 @@ namespace Narupa.Grpc.Multiplayer
 
         public event Action<string> SharedStateDictionaryKeyRemoved;
 
+        public event Action BeforeFlushChanges;
+
+        public event Action ReceiveUpdate;
+
         public event Action MultiplayerJoined;
 
         /// <summary>
@@ -229,6 +233,8 @@ namespace Narupa.Grpc.Multiplayer
 
         private void OnResourceValuesUpdateReceived(StateUpdate update)
         {
+            ReceiveUpdate?.Invoke();
+            
             if (update.ChangedKeys.Fields.ContainsKey(UpdateIndexKey))
             {
                 lastReceivedIndex = (int) update.ChangedKeys
