@@ -12,13 +12,11 @@ using Narupa.Grpc;
 using Narupa.Grpc.Multiplayer;
 using Narupa.Grpc.Trajectory;
 using Narupa.Visualisation;
-using NarupaXR;
-using NarupaXR.Interaction;
+using NarupaImd.Interaction;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using NarupaIMD.Interaction;
 
-namespace NarupaIMD
+namespace NarupaImd
 {
     public class NarupaImdSimulation : MonoBehaviour
     {
@@ -42,7 +40,7 @@ namespace NarupaIMD
         private InteractableScene interactableScene;
 
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaImd.NarupaImdApplication application;
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
@@ -181,10 +179,7 @@ namespace NarupaIMD
             await CloseAsync();
         }
 
-        public void Disconnect()
-        {
-            CloseAsync();
-        }
+        public Task Disconnect() => CloseAsync();
 
         public void PlayTrajectory()
         {

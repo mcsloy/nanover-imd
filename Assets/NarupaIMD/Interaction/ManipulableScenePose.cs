@@ -10,7 +10,7 @@ using Narupa.Frontend.Manipulation;
 using Narupa.Grpc.Multiplayer;
 using UnityEngine;
 
-namespace NarupaXR.Interaction
+namespace NarupaImd.Interaction
 {
     /// <summary>
     /// Provides the ability to move the simulation scene, but preventing this
@@ -22,7 +22,7 @@ namespace NarupaXR.Interaction
         private readonly Transform sceneTransform;
         private readonly ManipulableTransform manipulable;
         private readonly MultiplayerSession multiplayer;
-        private readonly NarupaXRPrototype prototype;
+        private readonly NarupaImdApplication prototype;
 
         private readonly HashSet<IActiveManipulation> manipulations
             = new HashSet<IActiveManipulation>();
@@ -31,7 +31,7 @@ namespace NarupaXR.Interaction
 
         public ManipulableScenePose(Transform sceneTransform,
                                     MultiplayerSession multiplayer,
-                                    NarupaXRPrototype prototype)
+                                    NarupaImdApplication prototype)
         {
             this.sceneTransform = sceneTransform;
             this.multiplayer = multiplayer;

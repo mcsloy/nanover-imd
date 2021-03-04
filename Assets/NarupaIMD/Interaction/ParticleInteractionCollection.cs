@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Narupa.Core.Serialization;
 using Narupa.Grpc.Multiplayer;
 
-namespace NarupaIMD.Interaction
+namespace NarupaImd.Interaction
 {
     /// <summary>
     /// A collection of interactions involved in iMD.

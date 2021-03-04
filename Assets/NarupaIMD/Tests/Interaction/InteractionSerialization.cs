@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using NarupaIMD.Interaction;
+using NarupaImd.Interaction;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace NarupaIMD.Tests.Interaction
+namespace NarupaImd.Tests.Interaction
 {
     public class InteractionSerialization
     {

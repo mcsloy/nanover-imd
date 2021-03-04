@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Essd;
 using Narupa.Core.Async;
 using Narupa.Frontend.UI;
-using NarupaXR;
+using NarupaImd;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace NarupaIMD.UI.Scene
+namespace NarupaImd.UI.Scene
 {
     public class DiscoverServers : MonoBehaviour
     {
@@ -22,7 +22,7 @@ namespace NarupaIMD.UI.Scene
         private Sprite remoteServerIcon;
 
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaImd.NarupaImdApplication application;
 
         [SerializeField]
         private DynamicMenu menu;

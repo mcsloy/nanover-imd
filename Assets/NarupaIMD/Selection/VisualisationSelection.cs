@@ -5,12 +5,11 @@ using JetBrains.Annotations;
 using Narupa.Core.Math;
 using Narupa.Visualisation.Components;
 using Narupa.Visualisation.Node.Adaptor;
-using Narupa.Visualisation.Node.Input;
 using Narupa.Visualisation.Properties;
-using Plugins.Narupa.Core;
+using Narupa.Core;
 using UnityEngine;
 
-namespace NarupaIMD.Selection
+namespace NarupaImd.Selection
 {
     /// <summary>
     /// Scene representation of a selection, which will render the selection using a

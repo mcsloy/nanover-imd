@@ -12,7 +12,7 @@ using Narupa.Visualisation.Node.Color;
 using Narupa.Visualisation.Node.Input;
 using UnityEngine;
 
-namespace NarupaIMD.Selection
+namespace NarupaImd.Selection
 {
     /// <summary>
     /// Construction methods for creating visualisers from nested data structures.

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Narupa.Core;
 
-namespace NarupaIMD.Selection
+namespace NarupaImd.Selection
 {
     /// <summary>
     /// A selection containing a group of particles.

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using NarupaIMD.Selection;
+using NarupaImd.Selection;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace NarupaIMD.Tests
+namespace NarupaImd.Tests
 {
     internal class TryParseColorTests
     {

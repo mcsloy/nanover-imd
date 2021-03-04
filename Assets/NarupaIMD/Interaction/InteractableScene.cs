@@ -5,11 +5,11 @@ using Narupa.Frontend.Manipulation;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Properties;
 using Narupa.Visualisation.Property;
-using NarupaIMD;
-using NarupaIMD.Selection;
+using NarupaImd;
+using NarupaImd.Selection;
 using UnityEngine;
 
-namespace NarupaXR.Interaction
+namespace NarupaImd.Interaction
 {
     /// <summary>
     /// Exposes a <see cref="SynchronisedFrameSource"/> that allows particles to be grabbed, accounting for the interaction method of the selections.

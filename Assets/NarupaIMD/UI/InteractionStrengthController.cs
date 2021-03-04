@@ -1,5 +1,5 @@
 ﻿using Narupa.Frontend.Controllers;
-using NarupaIMD;
+using NarupaImd;
 using UnityEngine;
 using Valve.VR;
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace NarupaIMD.UI.Scene
+namespace NarupaImd.UI.Scene
 {
     public class MainMenu : MonoBehaviour
     {

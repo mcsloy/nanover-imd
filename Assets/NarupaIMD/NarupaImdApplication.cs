@@ -3,21 +3,20 @@
 
 using Essd;
 using Narupa.Frontend.XR;
-using NarupaIMD;
+using NarupaImd;
 using UnityEngine;
 using UnityEngine.Events;
-using Text = TMPro.TextMeshProUGUI;
-using NarupaXR.Interaction;
-using UnityEngine.Serialization;
+using NarupaImd.Interaction;
+using System.Threading.Tasks;
 
-namespace NarupaXR
+namespace NarupaImd
 {
     /// <summary>
     /// The entry point to the application, and central location for accessing
     /// shared resources.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class NarupaXRPrototype : MonoBehaviour
+    public sealed class NarupaImdApplication : MonoBehaviour
     {
 #pragma warning disable 0649
         
@@ -50,7 +49,7 @@ namespace NarupaXR
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>
-        public void Connect(string address,
+        public Task Connect(string address,
                             int? trajectoryPort = null,
                             int? imdPort = null,
                             int? multiplayerPort = null) =>
@@ -59,17 +58,17 @@ namespace NarupaXR
         /// <summary>
         /// Connect to the Narupa services described in a given ServiceHub.
         /// </summary>
-        public void Connect(ServiceHub hub) => simulation.Connect(hub);
+        public Task Connect(ServiceHub hub) => simulation.Connect(hub);
 
         /// <summary>
         /// Connect to the first set of Narupa services found via ESSD.
         /// </summary>
-        public void AutoConnect() => simulation.AutoConnect();
+        public Task AutoConnect() => simulation.AutoConnect();
 
         /// <summary>
         /// Disconnect from all Narupa services.
         /// </summary>
-        public void Disconnect() => simulation.CloseAsync();
+        public Task Disconnect() => simulation.CloseAsync();
 
         /// <summary>
         /// Called from UI to quit the application.
