@@ -2,8 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Core.Math;
+using Narupa.Frame;
+using Narupa.Visualisation;
+using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Property;
+using Narupa.Grpc.Frame;
 using UnityEngine;
+using Narupa.Frame.Event;
 
 namespace NarupaIMD.Selection
 {
@@ -18,6 +23,8 @@ namespace NarupaIMD.Selection
     /// [3,4,5] will display atoms [1,2] in the first (lower) selection and atoms
     /// [3,4,5] in the second (upper) selection.
     /// </remarks>
+    /// 
+    
     public class VisualisationLayer : MonoBehaviour
     {
         [SerializeField]
@@ -31,6 +38,8 @@ namespace NarupaIMD.Selection
             get => scene;
             set => scene = value;
         }
+
+        public FrameAdaptor OwnFrameAdaptor { get; set; }
 
         /// <summary>
         /// The set of selections that form this layer.
@@ -47,6 +56,13 @@ namespace NarupaIMD.Selection
 
         [SerializeField]
         private VisualisationSelection selectionPrefab;
+
+        public string Name { get; set; }
+        public int Order { get; set; }
+        public string Alias { get; set; }
+
+        public const string LayerPrefix = "layer.";
+
 
         /// <summary>
         /// Add a selection to this visualisation, based upon a
@@ -151,6 +167,24 @@ namespace NarupaIMD.Selection
             }
 
             return null;
+        }
+
+        public void ApplyAlias(string alias, ITrajectorySnapshot frameSource) 
+        {
+            OwnFrameAdaptor = gameObject.AddComponent<FrameAdaptor>();
+            SynchronisedFrameSource aliasedFrameSource = new SynchronisedFrameSource();
+            TrajectorySnapshot snapshot = new TrajectorySnapshot();
+            var aliasedFrame = AliasedFrameConverter.ApplyAliasToFrame(alias + ".", frameSource.CurrentFrame);
+            snapshot.SetCurrentFrame(aliasedFrame, FrameChanges.All);
+
+            aliasedFrameSource.FrameSource = snapshot;
+            OwnFrameAdaptor.FrameSource = aliasedFrameSource;
+        }
+
+        public void ResetAlias() 
+        {
+            Alias = "";
+            OwnFrameAdaptor = null;
         }
     }
 }

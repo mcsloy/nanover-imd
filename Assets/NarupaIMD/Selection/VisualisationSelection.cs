@@ -254,7 +254,11 @@ namespace NarupaIMD.Selection
             var filter = currentVisualiser.GetVisualisationNode<ParentedAdaptorNode>();
             if (filter != null)
             {
-                filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
+                if (layer.OwnFrameAdaptor is null)
+                    filter.ParentAdaptor.Value = layer.Scene.FrameAdaptor;
+                else
+                    filter.ParentAdaptor.Value = layer.OwnFrameAdaptor;
+
                 if (filter is ParticleFilteredAdaptorNode filtered)
                 {
                     filtered.ParticleFilter.LinkedProperty = FilteredIndices;

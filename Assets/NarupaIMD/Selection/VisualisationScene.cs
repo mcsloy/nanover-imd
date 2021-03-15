@@ -22,7 +22,7 @@ namespace NarupaIMD.Selection
         /// <summary>
         /// The <see cref="VisualisationLayer" />s that make up this scene.
         /// </summary>
-        private readonly List<VisualisationLayer> layers = new List<VisualisationLayer>();
+        private readonly Dictionary<string, VisualisationLayer> layers = new Dictionary<string, VisualisationLayer>();
 
         [SerializeField]
         private NarupaImdSimulation simulation;
@@ -62,9 +62,9 @@ namespace NarupaIMD.Selection
         /// </summary>
         private ParticleSelection rootSelection;
 
-        private const string BaseLayerName = "Base Layer";
+        private const string BaseLayerName = "base";
 
-        private VisualisationLayer BaseLayer => layers[0];
+        private VisualisationLayer BaseLayer => layers[BaseLayerName];
 
         /// <summary>
         /// Create a visualisation layer with the given name.
@@ -73,8 +73,18 @@ namespace NarupaIMD.Selection
         {
             var layer = Instantiate(layerPrefab, transform);
             layer.gameObject.name = name;
-            layers.Add(layer);
+            layers[name] = layer;
+            layer.Name = name;
             return layer;
+        }
+
+        public void DestroyLayer(string name) 
+        {
+            if (layers.ContainsKey(name)) 
+            {
+                Destroy(layers[name].gameObject);
+                layers.Remove(name);
+            }
         }
 
         private const string HighlightedParticlesKey = "highlighted.particles";
@@ -83,7 +93,7 @@ namespace NarupaIMD.Selection
         {
             frameAdaptor = gameObject.AddComponent<FrameAdaptor>();
             frameAdaptor.FrameSource = frameSource;
-            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles; 
+            frameAdaptor.Node.AddOverrideProperty<int[]>(HighlightedParticlesKey).LinkedProperty = InteractedParticles;
 
             simulation.Multiplayer.SharedStateDictionaryKeyUpdated +=
                 MultiplayerOnSharedStateDictionaryKeyChanged;
@@ -101,7 +111,7 @@ namespace NarupaIMD.Selection
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             simulation.Multiplayer.SharedStateDictionaryKeyRemoved -=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
-            
+
             Destroy(frameAdaptor);
         }
 
@@ -110,18 +120,14 @@ namespace NarupaIMD.Selection
         /// </summary>
         private void MultiplayerOnSharedStateDictionaryKeyRemoved(string key)
         {
-            if (key == ParticleSelection.RootSelectionId)
+            if (key.StartsWith(VisualisationLayer.LayerPrefix))
             {
-                rootSelection.UpdateFromObject(new Dictionary<string, object>
-                {
-                    [ParticleSelection.KeyName] = ParticleSelection.RootSelectionName,
-                    [ParticleSelection.KeyId] = ParticleSelection.RootSelectionId
-                });
+                DestroyLayer(key);
             }
-            else if (key.StartsWith(ParticleSelection.SelectionIdPrefix))
+            else if (key.StartsWith(ParticleSelection.SelectionIdPrefix)) 
             {
-                // TODO: Work out which layer the selection is on.
-                BaseLayer.RemoveSelection(key);
+                foreach (string layerName in layers.Keys) 
+                    layers[layerName].RemoveSelection(key);
             }
         }
 
@@ -130,10 +136,42 @@ namespace NarupaIMD.Selection
         /// </summary>
         private void MultiplayerOnSharedStateDictionaryKeyChanged(string key, object value)
         {
-            if (key.StartsWith(ParticleSelection.SelectionIdPrefix))
+            if (key.StartsWith(VisualisationLayer.LayerPrefix))
             {
-                // TODO: Work out which layer the selection is on.
-                BaseLayer.UpdateOrCreateSelection(key, value);
+                ///Add layer to layers dictionary.
+                if (!(value is Dictionary<string, object> dict))
+                    return;
+
+                Dictionary<string, object> layerProperties = (Dictionary<string, object>)value;
+                
+                AddLayer(key);
+
+                ///Set layer properties 
+                layers[key].Name = (string)layerProperties["name"];
+                layers[key].Order = Convert.ToInt32(layerProperties["order"]);
+                layers[key].Alias = (string)layerProperties["alias"];
+
+                ///Apply alias for reading alternative atom data
+                if (layers[key].Alias != "")
+                    layers[key].ApplyAlias(layers[key].Alias, frameSource);
+                else
+                    layers[key].ResetAlias();
+
+                ///Set selections.
+                List<object> selectionIDs = (List<object>)layerProperties["selections"];
+
+                foreach (string selection in selectionIDs)
+                {
+                    if (simulation.Multiplayer.SharedStateDictionary.ContainsKey(selection))
+                    {
+                        var selectionProperties = simulation.Multiplayer.SharedStateDictionary[selection];
+                        layers[key].UpdateOrCreateSelection(selection, selectionProperties);
+                    }
+                }
+                
+                ///Update layer visualisation.
+                foreach (VisualisationSelection selection in layers[key].Selections)
+                    selection.UpdateVisualiser();
             }
         }
 
