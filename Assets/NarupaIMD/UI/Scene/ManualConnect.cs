@@ -8,7 +8,7 @@ namespace NarupaImd.UI.Scene
     public class ManualConnect : MonoBehaviour
     {
         [SerializeField]
-        private NarupaImd.NarupaImdApplication application;
+        private NarupaImdApplication application;
         [SerializeField]
         private TMP_Text hostInputField;
         [SerializeField]

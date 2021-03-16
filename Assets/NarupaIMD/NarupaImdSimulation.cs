@@ -1,10 +1,6 @@
 // Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Essd;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
@@ -14,6 +10,10 @@ using Narupa.Grpc.Trajectory;
 using Narupa.Visualisation;
 using NarupaImd.Interaction;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace NarupaImd
@@ -40,7 +40,7 @@ namespace NarupaImd
         private InteractableScene interactableScene;
 
         [SerializeField]
-        private NarupaImd.NarupaImdApplication application;
+        private NarupaImdApplication application;
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Essd;
 using Narupa.Core.Async;
 using Narupa.Frontend.UI;
-using NarupaImd;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -22,7 +21,7 @@ namespace NarupaImd.UI.Scene
         private Sprite remoteServerIcon;
 
         [SerializeField]
-        private NarupaImd.NarupaImdApplication application;
+        private NarupaImdApplication application;
 
         [SerializeField]
         private DynamicMenu menu;

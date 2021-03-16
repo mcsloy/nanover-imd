@@ -1,5 +1,4 @@
-﻿using NarupaImd;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace NarupaImd.Editor
@@ -15,7 +14,7 @@ namespace NarupaImd.Editor
         [MenuItem("Narupa/Commands/Play")]
         public static void PlayServer()
         {
-            Object.FindObjectOfType<NarupaImd.NarupaImdApplication>().Simulation.Trajectory?.Play();
+            Object.FindObjectOfType<NarupaImdApplication>().Simulation.Trajectory?.Play();
         }
 
         /// <summary>
@@ -24,7 +23,7 @@ namespace NarupaImd.Editor
         [MenuItem("Narupa/Commands/Pause")]
         public static void PauseServer()
         {
-            Object.FindObjectOfType<NarupaImd.NarupaImdApplication>().Simulation.Trajectory?.Pause();
+            Object.FindObjectOfType<NarupaImdApplication>().Simulation.Trajectory?.Pause();
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace NarupaImd.Editor
         [MenuItem("Narupa/Commands/Reset")]
         public static void ResetServer()
         {
-            Object.FindObjectOfType<NarupaImd.NarupaImdApplication>().Simulation.Trajectory?.Reset();
+            Object.FindObjectOfType<NarupaImdApplication>().Simulation.Trajectory?.Reset();
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace NarupaImd.Editor
         [MenuItem("Narupa/Commands/Step")]
         public static void StepServer()
         {
-            Object.FindObjectOfType<NarupaImd.NarupaImdApplication>().Simulation.Trajectory?.Step();
+            Object.FindObjectOfType<NarupaImdApplication>().Simulation.Trajectory?.Step();
         }
     }
 }

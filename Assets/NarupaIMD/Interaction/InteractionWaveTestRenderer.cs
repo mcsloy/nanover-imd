@@ -3,8 +3,6 @@
 
 using System.Collections.Generic;
 using Narupa.Frontend.Utility;
-using NarupaImd;
-using NarupaImd.Interaction;
 using UnityEngine;
 
 namespace NarupaImd.Interaction
