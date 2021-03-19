@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
 using Narupa.Grpc.Multiplayer;
-using NarupaIMD;
+using NarupaImd;
 using UnityEngine;
 using UnityEngine.XR;
 
-namespace NarupaXR
+namespace NarupaImd
 {
-    public class NarupaXRAvatarManager : MonoBehaviour
+    public class NarupaImdAvatarManager : MonoBehaviour
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaImdApplication application;
         
         [SerializeField]
         private NarupaImdSimulation narupa;

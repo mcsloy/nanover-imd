@@ -3,7 +3,7 @@ using System.Linq;
 using Narupa.Frontend.UI;
 using UnityEngine;
 
-namespace NarupaIMD.UI
+namespace NarupaImd.UI
 {
     public class UserInterfaceManager : MonoBehaviour
     {

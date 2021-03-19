@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using NarupaIMD.Selection;
+using NarupaImd.Selection;
 using NUnit.Framework;
 using Struct = System.Collections.Generic.Dictionary<string, object>;
 
-namespace NarupaIMD.Tests.Selection
+namespace NarupaImd.Tests.Selection
 {
     public class ParticleSelectionTests
     {

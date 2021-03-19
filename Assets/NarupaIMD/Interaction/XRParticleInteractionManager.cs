@@ -6,15 +6,14 @@ using Narupa.Frontend.Controllers;
 using Narupa.Frontend.Input;
 using Narupa.Frontend.Manipulation;
 using Narupa.Frontend.XR;
-using NarupaIMD;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Valve.VR;
 
-namespace NarupaXR.Interaction
+namespace NarupaImd.Interaction
 {
     /// <summary>
-    /// Translates XR input into interactions with particles in NarupaXR.
+    /// Translates XR input into interactions with particles in NarupaIMD.
     /// </summary>
     public class XRParticleInteractionManager : MonoBehaviour
     {

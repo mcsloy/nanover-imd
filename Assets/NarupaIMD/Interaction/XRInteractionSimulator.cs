@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using Narupa.Core.Math;
 using Narupa.Frontend.Input;
 using Narupa.Frontend.Manipulation;
-using NarupaIMD;
+using NarupaImd;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace NarupaXR.Interaction
+namespace NarupaImd.Interaction
 {
     /// <summary>
     /// Simulates two randomly moving controllers grabbing and manipulating the

@@ -1,9 +1,9 @@
 using System;
 using Narupa.Core.Async;
-using NarupaXR;
+using NarupaImd;
 using UnityEngine;
 
-namespace NarupaIMD
+namespace NarupaImd
 {
     public class NarupaMultiplayer : MonoBehaviour
     {
@@ -11,7 +11,7 @@ namespace NarupaIMD
         private NarupaImdSimulation simulation;
 
         [SerializeField]
-        private NarupaXRAvatarManager avatars;
+        private NarupaImdAvatarManager avatars;
 
         private void OnEnable()
         {

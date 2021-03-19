@@ -5,7 +5,7 @@ using Narupa.Core.Math;
 using Narupa.Visualisation.Property;
 using UnityEngine;
 
-namespace NarupaIMD.Selection
+namespace NarupaImd.Selection
 {
     /// <summary>
     /// A group of <see cref="VisualisationSelection" />s which are mutually exclusive.

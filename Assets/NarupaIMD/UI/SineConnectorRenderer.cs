@@ -11,7 +11,7 @@ public class SineConnectorRenderer : MonoBehaviour
     private Vector3 endPoint;
 
     [SerializeField]
-    private LineRenderer renderer;
+    private new LineRenderer renderer;
 
     [SerializeField]
     private float segmentsPerMeter;

@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NarupaIMD;
+using NarupaImd;
 using UnityEngine;
 
-namespace NarupaXR
+namespace NarupaImd
 {
     /// <summary>
     /// Unity Immediate Mode GUI for connecting, configuring, etc from the
@@ -14,7 +14,7 @@ namespace NarupaXR
     public class DesktopDebugUI : MonoBehaviour
     {
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaImdApplication application;
         
         [SerializeField]
         private NarupaImdSimulation simulation;
@@ -40,7 +40,7 @@ namespace NarupaXR
 
             GUILayout.Box("Server");
             if (GUILayout.Button("Autoconnect"))
-                simulation.AutoConnect();
+                _ = simulation.AutoConnect();
 
             if (GUILayout.Button("Direct Connect"))
             {

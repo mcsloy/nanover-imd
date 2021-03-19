@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Property;
-using NarupaXR;
-using NarupaXR.Interaction;
+using NarupaImd;
+using NarupaImd.Interaction;
 using UnityEngine;
 
-namespace NarupaIMD.Selection
+namespace NarupaImd.Selection
 {
     /// <summary>
     /// A set of layers and selections that are used to render a frame using multiple

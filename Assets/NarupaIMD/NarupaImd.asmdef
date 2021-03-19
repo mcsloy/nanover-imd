@@ -1,5 +1,5 @@
 {
-    "name": "NarupaXR",
+    "name": "NarupaImd",
     "references": [
         "Narupa.Frontend",
         "SteamVR",
@@ -19,5 +19,6 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Narupa.Core;
-using NarupaXR;
+using NarupaImd;
 using UnityEditor;
 using UnityEngine;
 
-namespace NarupaIMD.Editor
+namespace NarupaImd.Editor
 {
     /// <summary>
     /// Editor Window to display current multiplayer shared state.

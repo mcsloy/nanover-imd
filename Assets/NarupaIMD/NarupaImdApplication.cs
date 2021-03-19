@@ -3,21 +3,20 @@
 
 using Essd;
 using Narupa.Frontend.XR;
-using NarupaIMD;
+using NarupaImd;
 using UnityEngine;
 using UnityEngine.Events;
-using Text = TMPro.TextMeshProUGUI;
-using NarupaXR.Interaction;
-using UnityEngine.Serialization;
+using NarupaImd.Interaction;
+using System.Threading.Tasks;
 
-namespace NarupaXR
+namespace NarupaImd
 {
     /// <summary>
     /// The entry point to the application, and central location for accessing
     /// shared resources.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class NarupaXRPrototype : MonoBehaviour
+    public sealed class NarupaImdApplication : MonoBehaviour
     {
 #pragma warning disable 0649
         
@@ -50,12 +49,16 @@ namespace NarupaXR
         /// <summary>
         /// Connect to remote Narupa services.
         /// </summary>
-        public void Connect(string address,
+        public Task Connect(string address,
                             int? trajectoryPort = null,
                             int? imdPort = null,
                             int? multiplayerPort = null) =>
             simulation.Connect(address, trajectoryPort, imdPort, multiplayerPort);
 
+        // These methods expose the underlying async methods to Unity for use
+        // in the UI so we disable warnings about not awaiting them, and use
+        // void return type instead of Task.
+        #pragma warning disable 4014
         /// <summary>
         /// Connect to the Narupa services described in a given ServiceHub.
         /// </summary>
@@ -75,7 +78,8 @@ namespace NarupaXR
         /// Called from UI to quit the application.
         /// </summary>
         public void Quit() => Application.Quit();
-        
+        #pragma warning restore 4014
+
         private void Update()
         {
             if (ColocateLighthouses) CalibratedSpace.CalibrateFromLighthouses();

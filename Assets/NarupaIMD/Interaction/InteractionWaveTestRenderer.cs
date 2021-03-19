@@ -3,11 +3,9 @@
 
 using System.Collections.Generic;
 using Narupa.Frontend.Utility;
-using NarupaIMD;
-using NarupaIMD.Interaction;
 using UnityEngine;
 
-namespace NarupaXR.Interaction
+namespace NarupaImd.Interaction
 {
     /// <summary>
     /// Manage instances of InteractionWaveRenderer so that all known 

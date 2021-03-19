@@ -1,10 +1,10 @@
 {
-    "name": "NarupaIMD.Tests",
+    "name": "NarupaImd.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "NarupaXR",
-        "Narupa.Core"
+        "Narupa.Core",
+        "NarupaImd"
     ],
     "includePlatforms": [
         "Editor"
@@ -19,5 +19,6 @@
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }

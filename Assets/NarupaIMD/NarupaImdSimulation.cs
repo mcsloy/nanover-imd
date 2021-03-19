@@ -1,10 +1,6 @@
 // Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Essd;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
@@ -12,13 +8,15 @@ using Narupa.Grpc;
 using Narupa.Grpc.Multiplayer;
 using Narupa.Grpc.Trajectory;
 using Narupa.Visualisation;
-using NarupaXR;
-using NarupaXR.Interaction;
+using NarupaImd.Interaction;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
-using NarupaIMD.Interaction;
 
-namespace NarupaIMD
+namespace NarupaImd
 {
     public class NarupaImdSimulation : MonoBehaviour
     {
@@ -42,7 +40,7 @@ namespace NarupaIMD
         private InteractableScene interactableScene;
 
         [SerializeField]
-        private NarupaXRPrototype application;
+        private NarupaImdApplication application;
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
@@ -180,10 +178,10 @@ namespace NarupaIMD
         {
             await CloseAsync();
         }
-
+        
         public void Disconnect()
         {
-            CloseAsync();
+            _ = CloseAsync();
         }
 
         public void PlayTrajectory()

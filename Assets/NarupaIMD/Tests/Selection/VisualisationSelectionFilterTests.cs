@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using NarupaIMD.Selection;
+using NarupaImd.Selection;
 using NUnit.Framework;
 
-namespace NarupaIMD.Tests.Selection
+namespace NarupaImd.Tests.Selection
 {
     internal class VisualisationSelectionFilterTests
     {

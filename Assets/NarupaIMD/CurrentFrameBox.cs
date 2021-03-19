@@ -4,7 +4,7 @@ using Narupa.Visualisation;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace NarupaIMD
+namespace NarupaImd
 {
     /// <summary>
     /// Updates a <see cref="BoxVisualiser" /> with the simulation box of a
