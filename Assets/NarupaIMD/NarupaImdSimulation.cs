@@ -179,7 +179,10 @@ namespace NarupaImd
             await CloseAsync();
         }
 
-        public Task Disconnect() => CloseAsync();
+        public void Disconnect()
+        {
+            CloseAsync();
+        }
 
         public void PlayTrajectory()
         {

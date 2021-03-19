@@ -55,26 +55,31 @@ namespace NarupaImd
                             int? multiplayerPort = null) =>
             simulation.Connect(address, trajectoryPort, imdPort, multiplayerPort);
 
+        // These methods expose the underlying async methods to Unity for use
+        // in the UI so we disable warnings about not awaiting them, and use
+        // void return type instead of Task.
+        #pragma warning disable 4014
         /// <summary>
         /// Connect to the Narupa services described in a given ServiceHub.
         /// </summary>
-        public Task Connect(ServiceHub hub) => simulation.Connect(hub);
+        public void Connect(ServiceHub hub) => simulation.Connect(hub);
 
         /// <summary>
         /// Connect to the first set of Narupa services found via ESSD.
         /// </summary>
-        public Task AutoConnect() => simulation.AutoConnect();
+        public void AutoConnect() => simulation.AutoConnect();
 
         /// <summary>
         /// Disconnect from all Narupa services.
         /// </summary>
-        public Task Disconnect() => simulation.CloseAsync();
+        public void Disconnect() => simulation.CloseAsync();
 
         /// <summary>
         /// Called from UI to quit the application.
         /// </summary>
         public void Quit() => Application.Quit();
-        
+        #pragma warning restore 4014
+
         private void Update()
         {
             if (ColocateLighthouses) CalibratedSpace.CalibrateFromLighthouses();
