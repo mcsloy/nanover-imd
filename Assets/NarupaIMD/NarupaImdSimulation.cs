@@ -178,10 +178,10 @@ namespace NarupaImd
         {
             await CloseAsync();
         }
-
+        
         public void Disconnect()
         {
-            CloseAsync();
+            _ = CloseAsync();
         }
 
         public void PlayTrajectory()
