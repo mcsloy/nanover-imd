@@ -47,7 +47,7 @@ namespace NarupaImd.Interaction
         /// <summary>
         /// Callback for when the simulation pose value is changed in the multiplayer dictionary.
         /// </summary>
-        private void MultiplayerSimulationPoseChanged()
+        public void MultiplayerSimulationPoseChanged()
         {
             // If manipulations are active, then I'm controlling my box position.
             if (!CurrentlyEditingScene)

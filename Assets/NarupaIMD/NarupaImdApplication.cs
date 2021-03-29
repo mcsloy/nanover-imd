@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using NarupaImd.Interaction;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using Narupa.Core.Math;
 
 namespace NarupaImd
 {
@@ -82,7 +84,71 @@ namespace NarupaImd
 
         private void Update()
         {
-            if (ColocateLighthouses) CalibratedSpace.CalibrateFromLighthouses();
+            if (ColocateLighthouses)
+                CalibratedSpace.CalibrateFromLighthouses();
+            else
+                CheckSpaceReposition();
         }
+
+        private UserOrigin? GetUserOrigin()
+        {
+            foreach (var pair in simulation.Multiplayer.SharedStateDictionary)
+            {
+                if (pair.Key.StartsWith("user-origin.") && pair.Key.EndsWith(simulation.Multiplayer.AccessToken))
+                {
+                    return Narupa.Core.Serialization.Serialization.FromDataStructure<UserOrigin>(pair.Value);
+                }
+            }
+
+            return null;
+        }
+
+        private void CheckSpaceReposition()
+        {
+            if (GetUserOrigin() is UserOrigin origin)
+            {
+                var radiusFactor = 0;
+                var RotationCorrection = 0;
+
+                var longest = 0;// Mathf.Max(playareaSize.x, playareaSize.y);
+                var offset = longest * radiusFactor;
+                var playspaceToShared = origin.Transformation.matrix.inverse;
+                var deviceToPlayspace = Matrix4x4.TRS(
+                    Vector3.zero,
+                    Quaternion.AngleAxis(RotationCorrection, Vector3.up),
+                    Vector3.one
+                ) * Matrix4x4.TRS(
+                    Vector3.forward * offset,
+                    Quaternion.identity,
+                    Vector3.one
+                );
+
+                CalibratedSpace.CalibrateFromMatrix(deviceToPlayspace * playspaceToShared);
+                ManipulableSimulationSpace.MultiplayerSimulationPoseChanged();
+            }
+        }
+    }
+
+    [DataContract]
+    public struct UserOrigin
+    {
+        /// <summary>
+        /// The position of the component.
+        /// </summary>
+        [DataMember(Name = "position")]
+        public Vector3 Position;
+
+        /// <summary>
+        /// The rotation of the component.
+        /// </summary>
+        [DataMember(Name = "rotation")]
+        public Quaternion Rotation;
+
+        /// <summary>
+        /// The component as a <see cref="UnitScaleTransformation"/>
+        /// </summary>
+        [IgnoreDataMember]
+        public UnitScaleTransformation Transformation =>
+            new UnitScaleTransformation(Position, Rotation);
     }
 }
