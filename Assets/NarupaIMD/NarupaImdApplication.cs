@@ -10,6 +10,7 @@ using NarupaImd.Interaction;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Narupa.Core.Math;
+using Valve.VR;
 
 namespace NarupaImd
 {
@@ -84,10 +85,31 @@ namespace NarupaImd
 
         private void Update()
         {
+
             if (ColocateLighthouses)
                 CalibratedSpace.CalibrateFromLighthouses();
             else
                 CheckSpaceReposition();
+
+            UpdatePlayArea();
+        }
+
+        private Vector3 playareaSize = Vector3.one;
+
+        private void UpdatePlayArea()
+        {
+            var chaperone = OpenVR.Chaperone;
+            if (chaperone == null)
+                return;
+
+            if (chaperone.GetCalibrationState() != ChaperoneCalibrationState.OK)
+                return;
+
+            var rect = new HmdQuad_t();
+            if (!chaperone.GetPlayAreaRect(ref rect))
+                return;
+
+            chaperone.GetPlayAreaSize(ref playareaSize.x, ref playareaSize.z);
         }
 
         private UserOrigin? GetUserOrigin()
@@ -107,10 +129,10 @@ namespace NarupaImd
         {
             if (GetUserOrigin() is UserOrigin origin)
             {
-                var radiusFactor = 0;
+                var radiusFactor = 0.5;
                 var RotationCorrection = 0;
 
-                var longest = 0;// Mathf.Max(playareaSize.x, playareaSize.y);
+                var longest = Mathf.Max(playareaSize.x, playareaSize.y);
                 var offset = longest * radiusFactor;
                 var playspaceToShared = origin.Transformation.matrix.inverse;
                 var deviceToPlayspace = Matrix4x4.TRS(
@@ -151,4 +173,5 @@ namespace NarupaImd
         public UnitScaleTransformation Transformation =>
             new UnitScaleTransformation(Position, Rotation);
     }
+
 }
