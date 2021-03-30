@@ -39,15 +39,16 @@ namespace NarupaImd.Interaction
             manipulable = new ManipulableTransform(sceneTransform);
             this.multiplayer.SimulationPose.LockRejected += SimulationPoseLockRejected;
             this.multiplayer.SimulationPose.RemoteValueChanged +=
-                MultiplayerSimulationPoseChanged;
+                ResetFromRemoteSimulationPose;
 
             Update().AwaitInBackground();
         }
 
         /// <summary>
-        /// Callback for when the simulation pose value is changed in the multiplayer dictionary.
+        /// Reset the current pose to match the current value of simulation
+        /// pose in the shared state.
         /// </summary>
-        public void MultiplayerSimulationPoseChanged()
+        public void ResetFromRemoteSimulationPose()
         {
             // If manipulations are active, then I'm controlling my box position.
             if (!CurrentlyEditingScene)
