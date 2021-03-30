@@ -94,8 +94,11 @@ namespace NarupaImd
             UpdatePlayArea();
         }
 
-        private Vector3 playareaSize = Vector3.one;
+        private Vector2 playareaSize = Vector2.one;
 
+        /// <summary>
+        /// Determine VR playarea size;
+        /// </summary>
         private void UpdatePlayArea()
         {
             var chaperone = OpenVR.Chaperone;
@@ -111,7 +114,11 @@ namespace NarupaImd
 
             chaperone.GetPlayAreaSize(ref playareaSize.x, ref playareaSize.z);
         }
-
+        
+        /// <summary>
+        /// Return the suggested user origin for the local user, if it exsits
+        /// in the shared multiuser state.
+        /// </summary>
         private UserOrigin? GetUserOrigin()
         {
             foreach (var pair in simulation.Multiplayer.SharedStateDictionary)
@@ -125,6 +132,10 @@ namespace NarupaImd
             return null;
         }
 
+        /// <summary>
+        /// If a suggested origin exists for the local user, apply it to the
+        /// calibrated space.
+        /// </summary>
         private void CheckSpaceReposition()
         {
             if (GetUserOrigin() is UserOrigin origin)
