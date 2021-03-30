@@ -157,7 +157,6 @@ namespace NarupaImd
                 );
 
                 CalibratedSpace.CalibrateFromMatrix(deviceToPlayspace * playspaceToShared);
-                ManipulableSimulationSpace.ResetFromRemoteSimulationPose();
             }
         }
     }

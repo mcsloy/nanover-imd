@@ -1,13 +1,13 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
 using Narupa.Grpc.Multiplayer;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace NarupaImd.Interaction
@@ -22,7 +22,7 @@ namespace NarupaImd.Interaction
         private readonly Transform sceneTransform;
         private readonly ManipulableTransform manipulable;
         private readonly MultiplayerSession multiplayer;
-        private readonly NarupaImdApplication prototype;
+        private readonly NarupaImdApplication application;
 
         private readonly HashSet<IActiveManipulation> manipulations
             = new HashSet<IActiveManipulation>();
@@ -31,24 +31,26 @@ namespace NarupaImd.Interaction
 
         public ManipulableScenePose(Transform sceneTransform,
                                     MultiplayerSession multiplayer,
-                                    NarupaImdApplication prototype)
+                                    NarupaImdApplication application)
         {
             this.sceneTransform = sceneTransform;
             this.multiplayer = multiplayer;
-            this.prototype = prototype;
+            this.application = application;
             manipulable = new ManipulableTransform(sceneTransform);
             this.multiplayer.SimulationPose.LockRejected += SimulationPoseLockRejected;
             this.multiplayer.SimulationPose.RemoteValueChanged +=
-                ResetFromRemoteSimulationPose;
+                RemoteSimulationPoseChanged;
+
+            application.CalibratedSpace.CalibrationChanged +=
+                RemoteSimulationPoseChanged;
 
             Update().AwaitInBackground();
         }
 
         /// <summary>
-        /// Reset the current pose to match the current value of simulation
-        /// pose in the shared state.
+        /// Callback for when the simulation pose value is changed in the multiplayer dictionary.
         /// </summary>
-        public void ResetFromRemoteSimulationPose()
+        private void RemoteSimulationPoseChanged()
         {
             // If manipulations are active, then I'm controlling my box position.
             if (!CurrentlyEditingScene)
@@ -74,7 +76,7 @@ namespace NarupaImd.Interaction
         /// </summary>
         private void CopyMultiplayerPoseToLocal()
         {
-            var worldPose = prototype.CalibratedSpace
+            var worldPose = application.CalibratedSpace
                                      .TransformPoseCalibratedToWorld(multiplayer.SimulationPose
                                                                                 .Value);
             worldPose.CopyToTransformRelativeToParent(sceneTransform);
@@ -119,7 +121,7 @@ namespace NarupaImd.Interaction
                 {
                     var worldPose = Transformation.FromTransformRelativeToParent(sceneTransform);
                     ClampToSensibleValues(worldPose);
-                    var calibPose = prototype.CalibratedSpace
+                    var calibPose = application.CalibratedSpace
                                              .TransformPoseWorldToCalibrated(worldPose);
                     multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
                 }
