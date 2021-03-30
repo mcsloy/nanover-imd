@@ -129,8 +129,8 @@ namespace NarupaImd
         {
             if (GetUserOrigin() is UserOrigin origin)
             {
-                var radiusFactor = 0.5;
-                var RotationCorrection = 0;
+                var radiusFactor = 0.5f;
+                var RotationCorrection = 0f;
 
                 var longest = Mathf.Max(playareaSize.x, playareaSize.y);
                 var offset = longest * radiusFactor;

@@ -80,6 +80,10 @@ namespace NarupaImd
                 
                 if (GUILayout.Button("Reset Box"))
                     simulation.ResetBox();
+
+                if (GUILayout.Button("Radially Orient"))
+                    simulation.RunRadialOrientation();
+                    
             }
             
             GUILayout.Box("Debug");
