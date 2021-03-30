@@ -94,7 +94,7 @@ namespace NarupaImd
             UpdatePlayArea();
         }
 
-        private Vector2 playareaSize = Vector2.one;
+        private Vector3 playareaSize = Vector3.zero;
 
         /// <summary>
         /// Determine VR playarea size;
@@ -143,7 +143,7 @@ namespace NarupaImd
                 var radiusFactor = 0.5f;
                 var RotationCorrection = 0f;
 
-                var longest = Mathf.Max(playareaSize.x, playareaSize.y);
+                var longest = Mathf.Max(playareaSize.x, playareaSize.z);
                 var offset = longest * radiusFactor;
                 var playspaceToShared = origin.Transformation.matrix.inverse;
                 var deviceToPlayspace = Matrix4x4.TRS(
