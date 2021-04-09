@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Narupa.Core.Math;
 using Valve.VR;
+using Narupa.Grpc.Multiplayer;
+using System.Collections.Generic;
+using Narupa.Core.Serialization;
 
 namespace NarupaImd
 {
@@ -41,12 +44,15 @@ namespace NarupaImd
 
         public PhysicallyCalibratedSpace CalibratedSpace { get; } = new PhysicallyCalibratedSpace();
 
+        public PlayareaCollection Playareas { get; private set; }
+
         [SerializeField]
         private UnityEvent connectionEstablished;
 
         private void Awake()
         {
             simulation.ConnectionEstablished += connectionEstablished.Invoke;
+            Playareas = new PlayareaCollection(Simulation.Multiplayer);
         }
 
         /// <summary>
@@ -113,8 +119,27 @@ namespace NarupaImd
                 return;
 
             chaperone.GetPlayAreaSize(ref playareaSize.x, ref playareaSize.z);
+
+            if (simulation.Multiplayer.AccessToken == null)
+                return;
+
+            var area = new PlayArea
+            {
+                A = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners0)).Position,
+                B = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners1)).Position,
+                C = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners2)).Position,
+                D = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners3)).Position,
+            };
+
+            Playareas.UpdateValue(simulation.Multiplayer.AccessToken, area);
+
+            Transformation HmdVectorToTransformation(HmdVector3_t vector)
+            {
+                var position = new Vector3(vector.v0, vector.v1, vector.v2);
+                return new Transformation(position, Quaternion.identity, Vector3.one);
+            }
         }
-        
+
         /// <summary>
         /// Return the suggested user origin for the local user, if it exsits
         /// in the shared multiuser state.
@@ -125,7 +150,7 @@ namespace NarupaImd
             {
                 if (pair.Key.StartsWith("user-origin.") && pair.Key.EndsWith(simulation.Multiplayer.AccessToken))
                 {
-                    return Narupa.Core.Serialization.Serialization.FromDataStructure<UserOrigin>(pair.Value);
+                    return Serialization.FromDataStructure<UserOrigin>(pair.Value);
                 }
             }
 
@@ -184,4 +209,42 @@ namespace NarupaImd
             new UnitScaleTransformation(Position, Rotation);
     }
 
+    [DataContract]
+    public class PlayArea
+    {
+        [DataMember]
+        public Vector3 A;
+        [DataMember]
+        public Vector3 B;
+        [DataMember]
+        public Vector3 C;
+        [DataMember]
+        public Vector3 D;
+    }
+
+    public class PlayareaCollection : MultiplayerCollection<PlayArea>
+    {
+        public PlayareaCollection(MultiplayerSession session) : base(session)
+        {
+        }
+
+        protected override string KeyPrefix => "playarea.";
+
+        protected override bool ParseItem(string key, object value, out PlayArea parsed)
+        {
+            if (value is Dictionary<string, object> dict)
+            {
+                parsed = Serialization.FromDataStructure<PlayArea>(dict);
+                return true;
+            }
+
+            parsed = default;
+            return false;
+        }
+
+        protected override object SerializeItem(PlayArea item)
+        {
+            return Serialization.ToDataStructure(item);
+        }
+    }
 }
