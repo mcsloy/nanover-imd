@@ -176,7 +176,7 @@ namespace NarupaImd
                     Quaternion.AngleAxis(RotationCorrection, Vector3.up),
                     Vector3.one
                 ) * Matrix4x4.TRS(
-                    Vector3.forward * offset,
+                    Vector3.left * offset,
                     Quaternion.identity,
                     Vector3.one
                 );
