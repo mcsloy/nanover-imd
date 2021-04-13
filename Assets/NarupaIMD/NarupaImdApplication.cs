@@ -122,18 +122,19 @@ namespace NarupaImd
 
             var area = new PlayArea
             {
-                A = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners0)).Position,
-                B = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners1)).Position,
-                C = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners2)).Position,
-                D = CalibratedSpace.TransformPoseWorldToCalibrated(HmdVectorToTransformation(rect.vCorners3)).Position,
+                A = TransformCornerPosition(rect.vCorners0),
+                B = TransformCornerPosition(rect.vCorners1),
+                C = TransformCornerPosition(rect.vCorners2),
+                D = TransformCornerPosition(rect.vCorners3),
             };
 
             PlayAreas.UpdateValue(simulation.Multiplayer.AccessToken, area);
 
-            Transformation HmdVectorToTransformation(HmdVector3_t vector)
+            Vector3 TransformCornerPosition(HmdVector3_t corner)
             {
-                var position = new Vector3(vector.v0, vector.v1, vector.v2);
-                return new Transformation(position, Quaternion.identity, Vector3.one);
+                var position = new Vector3(corner.v0, corner.v1, corner.v2);
+                var transform = new Transformation(position, Quaternion.identity, Vector3.one);
+                return CalibratedSpace.TransformPoseWorldToCalibrated(transform).Position;
             }
         }
 
