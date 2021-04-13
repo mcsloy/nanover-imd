@@ -27,7 +27,7 @@ namespace NarupaImd
 
         private void Update()
         {
-            rendererPool.MapConfig(application.Playareas.Values, (playarea, renderer) =>
+            rendererPool.MapConfig(application.PlayAreas.Values, (playarea, renderer) =>
             {
                 renderer.positionCount = 4;
                 renderer.SetPosition(0, TransformPlayAreaPoint(playarea.A));
