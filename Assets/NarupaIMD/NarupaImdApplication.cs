@@ -30,6 +30,8 @@ namespace NarupaImd
         public NarupaImdSimulation Simulation => simulation;
 
         public bool ColocateLighthouses { get; set; } = false;
+        public float PlayAreaRotationCorrection { get; set; } = 0;
+        public float PlayAreaRadialDisplacementFactor { get; set; } = 0;
 
         /// <summary>
         /// The route through which simulation space can be manipulated with
@@ -150,15 +152,12 @@ namespace NarupaImd
             {
                 var origin = PlayOrigins.GetValue(key);
 
-                var radiusFactor = 0.5f;
-                var RotationCorrection = 0f;
-
                 var longest = Mathf.Max(playareaSize.x, playareaSize.z);
-                var offset = longest * radiusFactor;
+                var offset = longest * PlayAreaRadialDisplacementFactor;
                 var playspaceToShared = origin.Transformation.matrix.inverse;
                 var deviceToPlayspace = Matrix4x4.TRS(
                     Vector3.zero,
-                    Quaternion.AngleAxis(RotationCorrection, Vector3.up),
+                    Quaternion.AngleAxis(PlayAreaRotationCorrection, Vector3.up),
                     Vector3.one
                 ) * Matrix4x4.TRS(
                     Vector3.left * offset,
