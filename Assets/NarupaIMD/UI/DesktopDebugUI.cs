@@ -1,4 +1,4 @@
-﻿using Essd;
+using Essd;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +92,7 @@ namespace NarupaImd
                     GUILayout.Label("Radial Displacement");
                     application.PlayAreaRadialDisplacementFactor = GUILayout.HorizontalSlider(application.PlayAreaRadialDisplacementFactor, 0f, 1f);
                     GUILayout.Label("Rotation Correction");
-                    application.PlayAreaRotationCorrection = GUILayout.HorizontalSlider(application.PlayAreaRotationCorrection, 0f, 360f);
+                    application.PlayAreaRotationCorrection = GUILayout.HorizontalSlider(application.PlayAreaRotationCorrection, -180f, 180f);
                 }
             }
             
