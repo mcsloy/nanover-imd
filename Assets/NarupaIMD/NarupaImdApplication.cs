@@ -94,7 +94,7 @@ namespace NarupaImd
             if (ColocateLighthouses)
                 CalibratedSpace.CalibrateFromLighthouses();
             else
-                CheckSpaceReposition();
+                CalibrateFromRemote();
 
             UpdatePlayArea();
         }
@@ -141,33 +141,28 @@ namespace NarupaImd
         }
 
         /// <summary>
-        /// If a suggested origin exists for the local user, apply it to the
-        /// calibrated space.
+        /// Calibrate space from suggested origin in state service, defaulting to world origin.
         /// </summary>
-        private void CheckSpaceReposition()
+        private void CalibrateFromRemote()
         {
             var key = "user-origin." + simulation.Multiplayer.AccessToken;
+            var origin = PlayOrigins.ContainsKey(key) ? PlayOrigins.GetValue(key).Transformation : UnitScaleTransformation.identity;
 
-            if (PlayOrigins.ContainsKey(key))
-            {
-                var origin = PlayOrigins.GetValue(key);
-
-                var longest = Mathf.Max(playareaSize.x, playareaSize.z);
-                var offset = longest * PlayAreaRadialDisplacementFactor;
-                var playspaceToShared = origin.Transformation.matrix.inverse;
-                var deviceToPlayspace = Matrix4x4.TRS(
-                    Vector3.zero,
-                    Quaternion.AngleAxis(PlayAreaRotationCorrection, Vector3.up),
-                    Vector3.one
-                ) * Matrix4x4.TRS(
-                    Vector3.left * offset,
-                    Quaternion.identity,
-                    Vector3.one
-                );
+            var longest = Mathf.Max(playareaSize.x, playareaSize.z);
+            var offset = longest * PlayAreaRadialDisplacementFactor;
+            var playspaceToShared = origin.matrix.inverse;
+            var deviceToPlayspace = Matrix4x4.TRS(
+                Vector3.zero,
+                Quaternion.AngleAxis(PlayAreaRotationCorrection, Vector3.up),
+                Vector3.one
+            ) * Matrix4x4.TRS(
+                Vector3.left * offset,
+                Quaternion.identity,
+                Vector3.one
+            );
 
 
-                CalibratedSpace.CalibrateFromMatrix(deviceToPlayspace * playspaceToShared);
-            }
+            CalibratedSpace.CalibrateFromMatrix(deviceToPlayspace * playspaceToShared);
         }
     }
 }
