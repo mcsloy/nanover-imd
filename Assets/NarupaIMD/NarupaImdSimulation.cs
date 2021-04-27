@@ -24,6 +24,8 @@ namespace NarupaImd
         private const string ImdServiceName = "imd";
         private const string MultiplayerServiceName = "multiplayer";
 
+        private const string CommandRadiallyOrient = "multiuser/radially-orient-origins";
+
         /// <summary>
         /// The transform that represents the box that contains the simulation.
         /// </summary>
@@ -207,6 +209,19 @@ namespace NarupaImd
             var calibPose = application.CalibratedSpace
                                        .TransformPoseWorldToCalibrated(Transformation.Identity);
             Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
+        }
+
+        /// <summary>
+        /// Run the radial orientation command on the server. This generates
+        /// shared state values that suggest relative origin positions for all
+        /// connected users.
+        /// </summary>
+        public void RunRadialOrientation()
+        {
+            Trajectory.RunCommand(
+                CommandRadiallyOrient, 
+                new Dictionary<string, object> { ["radius"] = .01 }
+            );
         }
     }
 }

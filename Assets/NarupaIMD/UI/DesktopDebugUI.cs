@@ -1,4 +1,4 @@
-﻿using Essd;
+using Essd;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace NarupaImd
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(16, 16, 192, 512));
+            GUILayout.BeginArea(new Rect(16, 16, 192, 1024));
             GUILayout.Box("Narupa iMD");
 
             GUILayout.Box("Server");
@@ -80,10 +80,23 @@ namespace NarupaImd
                 
                 if (GUILayout.Button("Reset Box"))
                     simulation.ResetBox();
+
+                GUILayout.Box("Colocation");
+                application.ColocateLighthouses = GUILayout.Toggle(application.ColocateLighthouses, "Colocated Lighthouses");
+
+                if (!application.ColocateLighthouses)
+                {
+                    if (GUILayout.Button("Reset Radial Orientation"))
+                        simulation.RunRadialOrientation();
+
+                    GUILayout.Label("Radial Displacement");
+                    application.PlayAreaRadialDisplacementFactor = GUILayout.HorizontalSlider(application.PlayAreaRadialDisplacementFactor, 0f, 1f);
+                    GUILayout.Label("Rotation Correction");
+                    application.PlayAreaRotationCorrection = GUILayout.HorizontalSlider(application.PlayAreaRotationCorrection, -180f, 180f);
+                }
             }
             
             GUILayout.Box("Debug");
-            application.ColocateLighthouses = GUILayout.Toggle(application.ColocateLighthouses, "Colocated Lighthouses");
             xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 
             GUILayout.Box("Misc");
