@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Property;
@@ -67,6 +68,22 @@ namespace NarupaImd.Selection
         private VisualisationLayer BaseLayer => layers[0];
 
         /// <summary>
+        /// Remove all the visualisation layer.
+        /// </summary>
+        public void ClearLayers()
+        {
+            Debug.Log($"Clearing {layers.Count} layers");
+            while (layers.Count > 0)
+            {
+                var layer = layers[0];
+                layers.RemoveAt(0);
+                Debug.Log($"The layer is: {layer.name}");
+                Destroy(layer.gameObject);
+                Destroy(layer);
+            }
+        }
+        
+        /// <summary>
         /// Create a visualisation layer with the given name.
         /// </summary>
         public VisualisationLayer AddLayer(string name)
@@ -89,6 +106,7 @@ namespace NarupaImd.Selection
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             simulation.Multiplayer.SharedStateDictionaryKeyRemoved +=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
+            ClearLayers();
             var baseLayer = AddLayer(BaseLayerName);
             rootSelection = ParticleSelection.CreateRootSelection();
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
