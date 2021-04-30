@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using Narupa.Visualisation;
 using Narupa.Visualisation.Components.Adaptor;
 using Narupa.Visualisation.Property;
