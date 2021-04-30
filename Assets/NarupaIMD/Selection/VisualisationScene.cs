@@ -75,7 +75,7 @@ namespace NarupaImd.Selection
             {
                 Destroy(layer.gameObject);
             }
-            layers.clear();
+            layers.Clear();
         }
         
         /// <summary>
