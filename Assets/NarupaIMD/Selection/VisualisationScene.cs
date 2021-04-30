@@ -67,6 +67,18 @@ namespace NarupaImd.Selection
         private VisualisationLayer BaseLayer => layers[0];
 
         /// <summary>
+        /// Remove all the visualisation layer.
+        /// </summary>
+        public void ClearLayers()
+        {
+            foreach (var layer in layers)
+            {
+                Destroy(layer.gameObject);
+            }
+            layers.Clear();
+        }
+        
+        /// <summary>
         /// Create a visualisation layer with the given name.
         /// </summary>
         public VisualisationLayer AddLayer(string name)
@@ -89,6 +101,7 @@ namespace NarupaImd.Selection
                 MultiplayerOnSharedStateDictionaryKeyChanged;
             simulation.Multiplayer.SharedStateDictionaryKeyRemoved +=
                 MultiplayerOnSharedStateDictionaryKeyRemoved;
+            ClearLayers();
             var baseLayer = AddLayer(BaseLayerName);
             rootSelection = ParticleSelection.CreateRootSelection();
             var baseRenderableSelection = baseLayer.AddSelection(rootSelection);
