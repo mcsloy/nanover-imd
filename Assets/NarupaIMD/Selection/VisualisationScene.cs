@@ -72,15 +72,11 @@ namespace NarupaImd.Selection
         /// </summary>
         public void ClearLayers()
         {
-            Debug.Log($"Clearing {layers.Count} layers");
-            while (layers.Count > 0)
+            foreach (var layer in layers)
             {
-                var layer = layers[0];
-                layers.RemoveAt(0);
-                Debug.Log($"The layer is: {layer.name}");
                 Destroy(layer.gameObject);
-                Destroy(layer);
             }
+            layers.clear();
         }
         
         /// <summary>
