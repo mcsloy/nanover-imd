@@ -4,6 +4,7 @@
 using Narupa.Core.Async;
 using Narupa.Core.Math;
 using Narupa.Frontend.Manipulation;
+using Narupa.Frontend.XR;
 using Narupa.Grpc.Multiplayer;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace NarupaImd.Interaction
         private readonly Transform sceneTransform;
         private readonly ManipulableTransform manipulable;
         private readonly MultiplayerSession multiplayer;
-        private readonly NarupaImdApplication application;
+        private readonly PhysicallyCalibratedSpace calibratedSpace;
 
         private readonly HashSet<IActiveManipulation> manipulations
             = new HashSet<IActiveManipulation>();
@@ -31,18 +32,17 @@ namespace NarupaImd.Interaction
 
         public ManipulableScenePose(Transform sceneTransform,
                                     MultiplayerSession multiplayer,
-                                    NarupaImdApplication application)
+                                    PhysicallyCalibratedSpace calibratedSpace)
         {
             this.sceneTransform = sceneTransform;
             this.multiplayer = multiplayer;
-            this.application = application;
+            this.calibratedSpace = calibratedSpace;
             manipulable = new ManipulableTransform(sceneTransform);
             this.multiplayer.SimulationPose.LockRejected += SimulationPoseLockRejected;
             this.multiplayer.SimulationPose.RemoteValueChanged +=
                 RemoteSimulationPoseChanged;
 
-            application.CalibratedSpace.CalibrationChanged +=
-                RemoteSimulationPoseChanged;
+            calibratedSpace.CalibrationChanged += RemoteSimulationPoseChanged;
 
             Update().AwaitInBackground();
         }
@@ -86,7 +86,7 @@ namespace NarupaImd.Interaction
                 remotePose = new Transformation(Vector3.zero, Quaternion.identity, Vector3.one);
             }
 
-            var worldPose = application.CalibratedSpace.TransformPoseCalibratedToWorld(remotePose);
+            var worldPose = calibratedSpace.TransformPoseCalibratedToWorld(remotePose);
             worldPose.CopyToTransformRelativeToParent(sceneTransform);
         }
 
@@ -129,8 +129,7 @@ namespace NarupaImd.Interaction
                 {
                     var worldPose = Transformation.FromTransformRelativeToParent(sceneTransform);
                     ClampToSensibleValues(worldPose);
-                    var calibPose = application.CalibratedSpace
-                                             .TransformPoseWorldToCalibrated(worldPose);
+                    var calibPose = calibratedSpace.TransformPoseWorldToCalibrated(worldPose);
                     multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
                 }
 
