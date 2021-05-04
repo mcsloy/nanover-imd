@@ -100,7 +100,7 @@ namespace NarupaImd
             
             ManipulableSimulationSpace = new ManipulableScenePose(simulationSpaceTransform,
                                                                   Multiplayer,
-                                                                  application);
+                                                                  application.CalibratedSpace);
 
             ManipulableParticles = new ManipulableParticles(rightHandedSimulationSpace,
                                                             Interactions,
