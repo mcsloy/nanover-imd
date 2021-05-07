@@ -18,7 +18,7 @@ namespace Narupa.Frontend.Manipulation
         /// <summary>
         /// The force multiplier.
         /// </summary>
-        public float ForceScale { get; set; } = 100f;
+        public float ForceScale { get; set; } = 2500f;
 
         private readonly Transform transform;
         private readonly ParticleInteractionCollection interactions;
