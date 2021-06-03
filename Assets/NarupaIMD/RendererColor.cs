@@ -6,17 +6,26 @@ namespace NarupaImd
     [RequireComponent(typeof(Renderer))]
     public class RendererColor : MonoBehaviour
     {
-        private Material material;
-
-        private void Awake()
+        private Material _material;
+        private Material material
         {
-            material = GetComponent<Renderer>().material;
+            get
+            {
+                if (_material == null)
+                {
+                    var renderer = GetComponent<Renderer>();
+                    _material = new Material(renderer.sharedMaterial);
+                    renderer.sharedMaterial = _material;
+                    _material.color = Color.cyan;
+                }
+                return _material;
+            }
         }
 
         public Color Color
         {
-            get => material.color;
-            set => material.color = value;
+            get => material.GetColor("_EmissionColor");
+            set => material.SetColor("_EmissionColor", value);
         }
     }
 }
