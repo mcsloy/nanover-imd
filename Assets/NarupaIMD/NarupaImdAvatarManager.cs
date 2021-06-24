@@ -8,6 +8,8 @@ using Narupa.Grpc.Multiplayer;
 using UnityEngine;
 using UnityEngine.XR;
 
+using NarupaImd.UI;
+
 namespace NarupaImd
 {
     public class NarupaImdAvatarManager : MonoBehaviour
@@ -30,6 +32,8 @@ namespace NarupaImd
         private IndexedPool<AvatarModel> controllerObjects;
         
         private Coroutine sendAvatarsCoroutine;
+
+        private MultiplayerAvatar LocalAvatar => narupa.Multiplayer.Avatars.LocalAvatar;
 
         private void Update()
         {
@@ -63,20 +67,16 @@ namespace NarupaImd
             var rightHand = XRNode.RightHand.WrapAsPosedObject();
             var headset = XRNode.Head.WrapAsPosedObject();
 
-            // TODO: remove
-            var name = Environment.MachineName;
-            var color = Color.HSVToRGB(UnityEngine.Random.value, .8f, 1f);
-
             while (true)
             {
                 if (narupa.Multiplayer.IsOpen)
                 {
-                    narupa.Multiplayer.Avatars.LocalAvatar.SetTransformations(
+                    LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
-                    narupa.Multiplayer.Avatars.LocalAvatar.Name = name;
-                    narupa.Multiplayer.Avatars.LocalAvatar.Color = color;
+                    LocalAvatar.Name = PlayerName.GetPlayerName();
+                    LocalAvatar.Color = PlayerColor.GetPlayerColor();
                     narupa.Multiplayer.Avatars.FlushLocalAvatar();
                 }
 
