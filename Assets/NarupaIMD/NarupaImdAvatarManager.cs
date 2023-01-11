@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using Narupa.Core.Math;
 using Narupa.Frontend.Utility;
 using Narupa.Frontend.XR;
 using Narupa.Grpc.Multiplayer;
-using NarupaImd;
 using UnityEngine;
 using UnityEngine.XR;
+
+using NarupaImd.UI;
 
 namespace NarupaImd
 {
@@ -20,16 +22,18 @@ namespace NarupaImd
         private NarupaImdSimulation narupa;
 
         [SerializeField]
-        private Transform headsetPrefab;
+        private AvatarModel headsetPrefab;
 
         [SerializeField]
-        private Transform controllerPrefab;
+        private AvatarModel controllerPrefab;
 #pragma warning restore 0649
         
-        private IndexedPool<Transform> headsetObjects;
-        private IndexedPool<Transform> controllerObjects;
+        private IndexedPool<AvatarModel> headsetObjects;
+        private IndexedPool<AvatarModel> controllerObjects;
         
         private Coroutine sendAvatarsCoroutine;
+
+        private MultiplayerAvatar LocalAvatar => narupa.Multiplayer.Avatars.LocalAvatar;
 
         private void Update()
         {
@@ -38,13 +42,13 @@ namespace NarupaImd
 
         private void OnEnable()
         {
-            headsetObjects = new IndexedPool<Transform>(
+            headsetObjects = new IndexedPool<AvatarModel>(
                 () => Instantiate(headsetPrefab),
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
             );
 
-            controllerObjects = new IndexedPool<Transform>(
+            controllerObjects = new IndexedPool<AvatarModel>(
                 () => Instantiate(controllerPrefab),
                 transform => transform.gameObject.SetActive(true),
                 transform => transform.gameObject.SetActive(false)
@@ -67,11 +71,12 @@ namespace NarupaImd
             {
                 if (narupa.Multiplayer.IsOpen)
                 {
-                    narupa.Multiplayer.Avatars.LocalAvatar.SetTransformations(
+                    LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),
                         TransformPoseWorldToCalibrated(leftHand.Pose),
                         TransformPoseWorldToCalibrated(rightHand.Pose));
-
+                    LocalAvatar.Name = PlayerName.GetPlayerName();
+                    LocalAvatar.Color = PlayerColor.GetPlayerColor();
                     narupa.Multiplayer.Avatars.FlushLocalAvatar();
                 }
 
@@ -98,10 +103,12 @@ namespace NarupaImd
             headsetObjects.MapConfig(headsets, UpdateAvatarComponent);
             controllerObjects.MapConfig(controllers, UpdateAvatarComponent);
 
-            void UpdateAvatarComponent((MultiplayerAvatar Avatar, MultiplayerAvatar.Component Component) value, Transform transform)
+            void UpdateAvatarComponent((MultiplayerAvatar Avatar, MultiplayerAvatar.Component Component) value, AvatarModel model)
             {
                 var transformed = TransformPoseCalibratedToWorld(value.Component.Transformation).Value;
-                transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);
+                model.transform.SetPositionAndRotation(transformed.Position, transformed.Rotation);
+                model.SetPlayerColor(value.Avatar.Color);
+                model.SetPlayerName(value.Avatar.Name);
             }
         }
 
