@@ -1,0 +1,3 @@
+[submodule "Assets/Plugins/Narupa"]
+	path = Assets/Plugins/Narupa
+	url = git@github.com:IRL2/NarupaUnityPlugin.git
