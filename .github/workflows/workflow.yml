@@ -38,3 +38,34 @@ jobs:
         with:
           name: Build
           path: build
+
+  nightly:
+    name: Publish the latest Build
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Build
+          path: ./
+      - name: Zip windows build
+        run: |
+          zip -r StandaloneWindows64.zip StandaloneWindows64
+      - name: List files
+        run: ls -rl
+      - name: Update nightly release
+        uses: andelf/nightly-release@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLISH_GH_TOKEN }}
+        with:
+          tag_name: nightly
+          name: 'Latest build from the main branch $$'
+          draft: false
+          prerelease: true
+          body: |
+            This is the latest build from the main branch.
+            It is not an official release. *Use with caution!*
+          files:
+            ./*.zip
