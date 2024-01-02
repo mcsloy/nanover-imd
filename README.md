@@ -7,8 +7,15 @@ This repository is maintained by the Intangible Realities Laboratory, University
 and distributed under [GPLv3](LICENSE).
 See [the list of contributors](CONTRIBUTORS.md) for the individual authors of the project.
 
+# Run the latest development build
 
-# Installation (Windows Only)
+To run Narupa iMD, you need [SteamVR](https://www.steamvr.com/) installed.
+
+* Download the [latest Windows build](https://github.com/IRL2/narupa-imd/releases/download/nightly/StandaloneWindows64.zip) from the [nightly release](https://github.com/IRL2/narupa-imd/releases/tag/nightly).
+* Extract the downloaded zip file.
+* In the extracted directory, launch `StandaloneWindows64.exe`. Windows will likely prompt you with a warning about the executable not being signed. If it happens, click on the "More info" button, then "Run anyway". You will also likely be prompted by the Windows firewall, allow Narupa to access the network.
+
+# Installation with conda
 
 If you've not already set up anaconda:
 
