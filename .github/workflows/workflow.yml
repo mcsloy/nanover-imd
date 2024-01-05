@@ -76,7 +76,7 @@ jobs:
     runs-on: windows-latest
     needs: [build]
     steps:
-      # We need to download the source code to get the version numbersince
+      # We need to download the source code to get the version number
       # since we define it from the number of commits.
       # We really only get the history to count commits, no need for LFS content
       # nor for the submodules. However, we need all the commits and not just the last one.
@@ -119,3 +119,47 @@ jobs:
         with:
           name: conda-bld
           path: C:\Miniconda3\envs\test\conda-bld
+
+  publish-conda:
+    name: Publish the conda package on Anaconda cloud
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: conda
+    defaults:
+      run:
+        # This is necessary for the conda action. It replaces `conda init` as
+        # the shell does not load ,profile or .bashrc.
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          # WARNING! On the contrary to all the other places where we install
+          # conda, we install miniconda and NOT miniforge!
+          # This is because we do not need packages to RUN narupa, but packages
+          # from the default (anaconda) channel to upload to anaconda.
+          miniconda-version: latest
+      - name: Retrieve conda packages
+        uses: actions/download-artifact@v3
+        with:
+          name: conda-bld
+          path: ./conda-bld
+      - run: |
+          ls
+          ls conda-bld
+          ls conda-bld/win-64
+      - name: Install Anaconda
+        # We temporarilly ignore failure here. See #31.
+        run: conda install -y anaconda-client || echo "Fail?"
+      - name: Connect to Anaconda cloud
+        # The login token may be used by a failed build already. If we are asked
+        # if we want it back, we say yes. Hence the echo Y.
+        run: echo Y | anaconda login --username irl_bot --password ${{ secrets.ANACONDA_PASSWORD }}
+      - name: Upload packages
+        # Anaconda will complain if the given version of a package is already
+        # there. Until we have some versioning, we force the upload.
+        run: anaconda  upload --user irl conda-bld/win-64/narupa-*.tar.bz2 --force
+      - name: Disconnect from Anaconda cloud
+        #  Do not fail the build if we cannot logout.
+        run: anaconda logout || echo "Could not logout. Too bad."
