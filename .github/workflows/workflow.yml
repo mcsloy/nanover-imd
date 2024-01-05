@@ -32,6 +32,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
+          buildName: 'Narupa iMD'
 
       # Output
       - uses: actions/upload-artifact@v3
@@ -69,3 +70,96 @@ jobs:
             It is not an official release. *Use with caution!*
           files:
             ./*.zip
+
+  conda:
+    name: Build the conda Packages
+    runs-on: windows-latest
+    needs: [build]
+    steps:
+      # We need to download the source code to get the version number
+      # since we define it from the number of commits.
+      # We really only get the history to count commits, no need for LFS content
+      # nor for the submodules. However, we need all the commits and not just the last one.
+      - name: Checkout repository ⬇️
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+          submodules: false
+          fetch-depth: 0
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Build
+          path: ./conda/artifacts
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          miniforge-version: latest
+      - name: Get version number
+        id: set_version
+        run: |
+          echo "build_number=$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
+          echo "frontend_version=0.1.$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
+          echo "NARUPA_LICENSE_PATH=$env:GITHUB_WORKSPACE\LICENSE" >> $env:GITHUB_ENV
+      - name: Access version number
+        id: get_version
+        run: |
+          echo "build_number: $env:build_number"
+          echo "frontend_version: $env:frontend_version"
+          echo "NARUPA_LICENSE_PATH: $env:NARUPA_LICENSE_PATH"
+      - name: Install dependencies
+        run: conda install -y conda-build conda-verify
+      - name: Build conda package
+        run: |
+          ls -R conda
+          echo "build_number: $env:build_number"
+          echo "frontend_version: $env:frontend_version"
+          conda build --numpy 1.11 --no-anaconda-upload --no-test .\conda
+      - uses: actions/upload-artifact@v3
+        with:
+          name: conda-bld
+          path: C:\Miniconda3\envs\test\conda-bld
+
+  publish-conda:
+    name: Publish the conda package on Anaconda cloud
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: conda
+    defaults:
+      run:
+        # This is necessary for the conda action. It replaces `conda init` as
+        # the shell does not load ,profile or .bashrc.
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          # WARNING! On the contrary to all the other places where we install
+          # conda, we install miniconda and NOT miniforge!
+          # This is because we do not need packages to RUN narupa, but packages
+          # from the default (anaconda) channel to upload to anaconda.
+          miniconda-version: latest
+      - name: Retrieve conda packages
+        uses: actions/download-artifact@v3
+        with:
+          name: conda-bld
+          path: ./conda-bld
+      - run: |
+          ls
+          ls conda-bld
+          ls conda-bld/win-64
+      - name: Install Anaconda
+        # We temporarilly ignore failure here. See #31.
+        run: conda install -y anaconda-client || echo "Fail?"
+      - name: Connect to Anaconda cloud
+        # The login token may be used by a failed build already. If we are asked
+        # if we want it back, we say yes. Hence the echo Y.
+        run: echo Y | anaconda login --username irl_bot --password ${{ secrets.ANACONDA_PASSWORD }}
+      - name: Upload packages
+        # Anaconda will complain if the given version of a package is already
+        # there. Until we have some versioning, we force the upload.
+        run: anaconda  upload --user irl conda-bld/win-64/narupa-*.tar.bz2 --force
+      - name: Disconnect from Anaconda cloud
+        #  Do not fail the build if we cannot logout.
+        run: anaconda logout || echo "Could not logout. Too bad."
