@@ -80,6 +80,7 @@ jobs:
     name: Build the conda Packages
     runs-on: windows-latest
     needs: [build]
+    if: github.ref == 'refs/heads/master'
     steps:
       # We need to download the source code to get the version number
       # since we define it from the number of commits.
