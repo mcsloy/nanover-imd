@@ -1,6 +1,11 @@
 name: Actions 😎
 
-on: push
+on:
+  push:
+    # `on: push` triggers on pushes to both branches and tags,
+    # We do not want to trigger this workflow on tags, especially not on the 'nightly' tag.
+    branches:
+      - "**"
 
 jobs:
   build:
@@ -75,6 +80,7 @@ jobs:
     name: Build the conda Packages
     runs-on: windows-latest
     needs: [build]
+    if: github.ref == 'refs/heads/master'
     steps:
       # We need to download the source code to get the version number
       # since we define it from the number of commits.
