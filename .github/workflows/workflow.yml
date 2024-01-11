@@ -80,13 +80,6 @@ jobs:
           name: Test results
           path: artifacts
 
-      - name: Upload coverage
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: Coverage results
-          path: ${{ steps.run_tests.outputs.coveragePath }}
-
   nightly:
     name: Publish the latest Build
     runs-on: ubuntu-latest
