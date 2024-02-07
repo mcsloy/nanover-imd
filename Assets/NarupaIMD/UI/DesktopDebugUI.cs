@@ -2,10 +2,10 @@ using Essd;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NarupaImd;
+using NanoverImd;
 using UnityEngine;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     /// <summary>
     /// Unity Immediate Mode GUI for connecting, configuring, etc from the
@@ -14,10 +14,10 @@ namespace NarupaImd
     public class DesktopDebugUI : MonoBehaviour
     {
         [SerializeField]
-        private NarupaImdApplication application;
+        private NanoverImdApplication application;
         
         [SerializeField]
-        private NarupaImdSimulation simulation;
+        private NanoverImdSimulation simulation;
 
         [SerializeField]
         private GameObject xrSimulatorContainer;
@@ -36,7 +36,7 @@ namespace NarupaImd
         private void OnGUI()
         {
             GUILayout.BeginArea(new Rect(16, 16, 192, 1024));
-            GUILayout.Box("Narupa iMD");
+            GUILayout.Box("Nanover iMD");
 
             GUILayout.Box("Server");
             if (GUILayout.Button("Autoconnect"))

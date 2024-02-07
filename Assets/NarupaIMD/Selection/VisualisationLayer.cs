@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Narupa.Core.Math;
-using Narupa.Visualisation.Property;
+using Nanover.Core.Math;
+using Nanover.Visualisation.Property;
 using UnityEngine;
 
-namespace NarupaImd.Selection
+namespace NanoverImd.Selection
 {
     /// <summary>
     /// A group of <see cref="VisualisationSelection" />s which are mutually exclusive.

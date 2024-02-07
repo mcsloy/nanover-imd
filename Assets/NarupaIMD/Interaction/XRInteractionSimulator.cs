@@ -4,14 +4,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Narupa.Core.Math;
-using Narupa.Frontend.Input;
-using Narupa.Frontend.Manipulation;
-using NarupaImd;
+using Nanover.Core.Math;
+using Nanover.Frontend.Input;
+using Nanover.Frontend.Manipulation;
+using NanoverImd;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace NarupaImd.Interaction
+namespace NanoverImd.Interaction
 {
     /// <summary>
     /// Simulates two randomly moving controllers grabbing and manipulating the
@@ -21,7 +21,7 @@ namespace NarupaImd.Interaction
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaImdSimulation simulation;
+        private NanoverImdSimulation simulation;
 #pragma warning restore 0649
 
         private List<Manipulator> manipulators = new List<Manipulator>();

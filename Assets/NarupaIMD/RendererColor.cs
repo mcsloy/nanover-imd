@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     [SerializeField]
     [RequireComponent(typeof(Renderer))]

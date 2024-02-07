@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using Narupa.Core.Math;
-using Narupa.Frontend.Utility;
-using Narupa.Frontend.XR;
-using Narupa.Grpc.Multiplayer;
+using Nanover.Core.Math;
+using Nanover.Frontend.Utility;
+using Nanover.Frontend.XR;
+using Nanover.Grpc.Multiplayer;
 using UnityEngine;
 using UnityEngine.XR;
 
-using NarupaImd.UI;
+using NanoverImd.UI;
 
-namespace NarupaImd
+namespace NanoverImd
 {
-    public class NarupaImdAvatarManager : MonoBehaviour
+    public class NanoverImdAvatarManager : MonoBehaviour
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaImdApplication application;
+        private NanoverImdApplication application;
         
         [SerializeField]
-        private NarupaImdSimulation narupa;
+        private NanoverImdSimulation nanover;
 
         [SerializeField]
         private AvatarModel headsetPrefab;
@@ -33,7 +33,7 @@ namespace NarupaImd
         
         private Coroutine sendAvatarsCoroutine;
 
-        private MultiplayerAvatar LocalAvatar => narupa.Multiplayer.Avatars.LocalAvatar;
+        private MultiplayerAvatar LocalAvatar => nanover.Multiplayer.Avatars.LocalAvatar;
 
         private void Update()
         {
@@ -69,7 +69,7 @@ namespace NarupaImd
 
             while (true)
             {
-                if (narupa.Multiplayer.IsOpen)
+                if (nanover.Multiplayer.IsOpen)
                 {
                     LocalAvatar.SetTransformations(
                         TransformPoseWorldToCalibrated(headset.Pose),
@@ -77,7 +77,7 @@ namespace NarupaImd
                         TransformPoseWorldToCalibrated(rightHand.Pose));
                     LocalAvatar.Name = PlayerName.GetPlayerName();
                     LocalAvatar.Color = PlayerColor.GetPlayerColor();
-                    narupa.Multiplayer.Avatars.FlushLocalAvatar();
+                    nanover.Multiplayer.Avatars.FlushLocalAvatar();
                 }
 
                 yield return null;
@@ -86,14 +86,14 @@ namespace NarupaImd
 
         private void UpdateRendering()
         {
-            var headsets = narupa.Multiplayer
+            var headsets = nanover.Multiplayer
                                  .Avatars.OtherPlayerAvatars
                                  .SelectMany(avatar => avatar.Components, (avatar, component) =>
                                                  (Avatar: avatar, Component: component))
                                  .Where(res => res.Component.Name == MultiplayerAvatar.HeadsetName);
 
 
-            var controllers = narupa.Multiplayer
+            var controllers = nanover.Multiplayer
                                     .Avatars.OtherPlayerAvatars
                                     .SelectMany(avatar => avatar.Components, (avatar, component) =>
                                                     (Avatar: avatar, Component: component))

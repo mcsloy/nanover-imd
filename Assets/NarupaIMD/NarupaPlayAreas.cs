@@ -1,11 +1,11 @@
-﻿using Narupa.Core.Math;
-using Narupa.Core.Serialization;
-using Narupa.Grpc.Multiplayer;
+﻿using Nanover.Core.Math;
+using Nanover.Core.Serialization;
+using Nanover.Grpc.Multiplayer;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     /// <summary>
     /// Tracks play areas of a multiuser session i.e user-reported corners for

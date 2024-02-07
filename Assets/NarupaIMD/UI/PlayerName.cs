@@ -1,15 +1,15 @@
 using System;
 using System.Text.RegularExpressions;
-using NarupaImd.Selection;
+using NanoverImd.Selection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace NarupaImd.UI
+namespace NanoverImd.UI
 {
     public class PlayerName : MonoBehaviour
     {
-        private static string NameKey = "narupa.player.name";
+        private static string NameKey = "nanover.player.name";
 
         [SerializeField]
         private TMP_Text text;

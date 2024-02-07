@@ -2893,7 +2893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   application: {fileID: 544060994}
-  narupa: {fileID: 431384315}
+  nanover: {fileID: 431384315}
   headsetPrefab: {fileID: 224434382}
   controllerPrefab: {fileID: 521551389}
 --- !u!1 &983909124 stripped
@@ -3350,7 +3350,7 @@ GameObject:
   - component: {fileID: 1310147623}
   - component: {fileID: 1310147622}
   m_Layer: 0
-  m_Name: Narupa EventSystem
+  m_Name: Nanover EventSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6047,7 +6047,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1391474368386691779, guid: 667cc4daec5d5a44cb6c3ec450d505ab,
         type: 3}
-      propertyPath: narupaIMD
+      propertyPath: nanoverIMD
       value: 
       objectReference: {fileID: 544060994}
     - target: {fileID: 1391474368386691779, guid: 667cc4daec5d5a44cb6c3ec450d505ab,

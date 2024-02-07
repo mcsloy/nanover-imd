@@ -1,11 +1,11 @@
 {
-    "name": "NarupaImd.Tests",
+    "name": "NanoverImd.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Narupa.Core",
-        "Narupa.Frontend",
-        "NarupaImd"
+        "Nanover.Core",
+        "Nanover.Frontend",
+        "NanoverImd"
     ],
     "includePlatforms": [
         "Editor"

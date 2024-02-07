@@ -1,17 +1,17 @@
 using System;
-using Narupa.Core.Async;
-using NarupaImd;
+using Nanover.Core.Async;
+using NanoverImd;
 using UnityEngine;
 
-namespace NarupaImd
+namespace NanoverImd
 {
-    public class NarupaMultiplayer : MonoBehaviour
+    public class NanoverMultiplayer : MonoBehaviour
     {
         [SerializeField]
-        private NarupaImdSimulation simulation;
+        private NanoverImdSimulation simulation;
 
         [SerializeField]
-        private NarupaImdAvatarManager avatars;
+        private NanoverImdAvatarManager avatars;
 
         private void OnEnable()
         {

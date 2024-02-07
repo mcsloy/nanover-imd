@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     public class AvatarModel : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace NarupaImd.Interaction
+namespace NanoverImd.Interaction
 {
     /// <summary>
     /// An interaction with an iMD enabled simulation.

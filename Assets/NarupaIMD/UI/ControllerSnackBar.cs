@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace NarupaImd.UI
+namespace NanoverImd.UI
 {
     public class ControllerSnackBar : MonoBehaviour
     {

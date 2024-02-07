@@ -1,6 +1,6 @@
 # Contributors 
 
-The project is maintained by the Narupa developers at the 
+The project is maintained by the Nanover developers at the 
 Intangible Realities Laboratory, University Of Bristol.
 
 The following people have made contributions to this project that are gratefully received. The repository
@@ -17,4 +17,4 @@ Mark Wonnacott (Intangible Realities Laboratory, University of Bristol, U.K.)
 
 ## Logo 
 
-The Narupa iMD logo was designed by Alex Jamieson-Binnie, licensed under CC-BY-SA.
+The Nanover iMD logo was designed by Alex Jamieson-Binnie, licensed under CC-BY-SA.

@@ -1,11 +1,11 @@
-using Narupa.Frontend.Controllers;
-using Narupa.Frontend.UI;
-using NarupaImd.UI;
+using Nanover.Frontend.Controllers;
+using Nanover.Frontend.UI;
+using NanoverImd.UI;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Valve.VR;
 
-namespace NarupaImd.UI
+namespace NanoverImd.UI
 {
     /// <summary>
     /// A <see cref="UserInterfaceManager"/> that only shows the UI while a cursor is held down.

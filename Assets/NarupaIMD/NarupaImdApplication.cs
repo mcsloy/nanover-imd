@@ -2,32 +2,32 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using Essd;
-using Narupa.Frontend.XR;
+using Nanover.Frontend.XR;
 using UnityEngine;
 using UnityEngine.Events;
-using NarupaImd.Interaction;
+using NanoverImd.Interaction;
 using System.Threading.Tasks;
-using Narupa.Core.Math;
+using Nanover.Core.Math;
 using Valve.VR;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     /// <summary>
     /// The entry point to the application, and central location for accessing
     /// shared resources.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class NarupaImdApplication : MonoBehaviour
+    public sealed class NanoverImdApplication : MonoBehaviour
     {
 #pragma warning disable 0649
         
         [SerializeField]
-        private NarupaImdSimulation simulation;
+        private NanoverImdSimulation simulation;
         
         private InteractableScene interactableScene;
 #pragma warning restore 0649
 
-        public NarupaImdSimulation Simulation => simulation;
+        public NanoverImdSimulation Simulation => simulation;
 
         public bool ColocateLighthouses { get; set; } = false;
         public float PlayAreaRotationCorrection { get; set; } = 0;
@@ -55,7 +55,7 @@ namespace NarupaImd
         }
 
         /// <summary>
-        /// Connect to remote Narupa services.
+        /// Connect to remote Nanover services.
         /// </summary>
         public Task Connect(string address,
                             int? trajectoryPort = null,
@@ -68,17 +68,17 @@ namespace NarupaImd
         // void return type instead of Task.
         #pragma warning disable 4014
         /// <summary>
-        /// Connect to the Narupa services described in a given ServiceHub.
+        /// Connect to the Nanover services described in a given ServiceHub.
         /// </summary>
         public void Connect(ServiceHub hub) => simulation.Connect(hub);
 
         /// <summary>
-        /// Connect to the first set of Narupa services found via ESSD.
+        /// Connect to the first set of Nanover services found via ESSD.
         /// </summary>
         public void AutoConnect() => simulation.AutoConnect();
 
         /// <summary>
-        /// Disconnect from all Narupa services.
+        /// Disconnect from all Nanover services.
         /// </summary>
         public void Disconnect() => simulation.CloseAsync();
 

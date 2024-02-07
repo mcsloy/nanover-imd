@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
 // Licensed under the GPL. See License.txt in the project root for license information.
 
-using NarupaImd;
+using NanoverImd;
 using UnityEngine;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     /// <summary>
     /// Component that exposes the trajectory playback commands to Unity UI
@@ -14,7 +14,7 @@ namespace NarupaImd
     {
 #pragma warning disable 0649
         [SerializeField]
-        private NarupaImdSimulation simulation;
+        private NanoverImdSimulation simulation;
 #pragma warning restore 0649
 
         public void SendPlayCommand() => simulation.Trajectory.Play();

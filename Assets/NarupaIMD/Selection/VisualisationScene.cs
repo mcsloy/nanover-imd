@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Narupa.Visualisation;
-using Narupa.Visualisation.Components.Adaptor;
-using Narupa.Visualisation.Property;
-using NarupaImd;
-using NarupaImd.Interaction;
+using Nanover.Visualisation;
+using Nanover.Visualisation.Components.Adaptor;
+using Nanover.Visualisation.Property;
+using NanoverImd;
+using NanoverImd.Interaction;
 using UnityEngine;
 
-namespace NarupaImd.Selection
+namespace NanoverImd.Selection
 {
     /// <summary>
     /// A set of layers and selections that are used to render a frame using multiple
@@ -25,7 +25,7 @@ namespace NarupaImd.Selection
         private readonly List<VisualisationLayer> layers = new List<VisualisationLayer>();
 
         [SerializeField]
-        private NarupaImdSimulation simulation;
+        private NanoverImdSimulation simulation;
 
         [SerializeField]
         private SynchronisedFrameSource frameSource;

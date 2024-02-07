@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Narupa.Frontend.UI;
+using Nanover.Frontend.UI;
 using UnityEngine;
 
-namespace NarupaImd.UI
+namespace NanoverImd.UI
 {
     public class UserInterfaceManager : MonoBehaviour
     {

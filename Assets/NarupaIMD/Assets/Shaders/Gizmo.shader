@@ -3,7 +3,7 @@
 
 // Simple shader for a transparent ringed sphere, used for tool cursors.
 
-Shader "Narupa iMD/Gizmo"
+Shader "Nanover iMD/Gizmo"
 {
     Properties
     {

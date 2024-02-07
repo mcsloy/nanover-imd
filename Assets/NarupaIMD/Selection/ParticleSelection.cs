@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Narupa.Core;
+using Nanover.Core;
 
-namespace NarupaImd.Selection
+namespace NanoverImd.Selection
 {
     /// <summary>
     /// A selection containing a group of particles.
@@ -40,10 +40,10 @@ namespace NarupaImd.Selection
         public const string KeySelected = "selected";
         public const string KeyParticleIds = "particle_ids";
 
-        public const string KeyHideProperty = "narupa.rendering.hide";
-        public const string KeyRendererProperty = "narupa.rendering.renderer";
-        public const string KeyInteractionMethod = "narupa.interaction.method";
-        public const string KeyResetVelocities = "narupa.interaction.velocity_reset";
+        public const string KeyHideProperty = "nanover.rendering.hide";
+        public const string KeyRendererProperty = "nanover.rendering.renderer";
+        public const string KeyInteractionMethod = "nanover.interaction.method";
+        public const string KeyResetVelocities = "nanover.interaction.velocity_reset";
 
         public const string InteractionMethodSingle = "single";
         public const string InteractionMethodGroup = "group";

@@ -3,11 +3,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Narupa.Core.Math;
-using NarupaImd.Interaction;
+using Nanover.Core.Math;
+using NanoverImd.Interaction;
 using UnityEngine;
 
-namespace Narupa.Frontend.Manipulation
+namespace Nanover.Frontend.Manipulation
 {
     /// <summary>
     /// Situates and IMD simulation in a Unity transform and allows grab

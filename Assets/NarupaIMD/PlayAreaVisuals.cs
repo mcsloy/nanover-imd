@@ -1,16 +1,16 @@
-﻿using Narupa.Core.Math;
-using Narupa.Frontend.Utility;
+﻿using Nanover.Core.Math;
+using Nanover.Frontend.Utility;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     public class PlayAreaVisuals : MonoBehaviour
     {
         [SerializeField]
-        private NarupaImdApplication application;
+        private NanoverImdApplication application;
         [SerializeField]
         private LineRenderer rendererTemplate;
 

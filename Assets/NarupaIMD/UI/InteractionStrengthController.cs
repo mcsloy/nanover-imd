@@ -1,12 +1,12 @@
-﻿using Narupa.Frontend.Controllers;
-using NarupaImd;
+﻿using Nanover.Frontend.Controllers;
+using NanoverImd;
 using UnityEngine;
 using Valve.VR;
 
 public class InteractionStrengthController : MonoBehaviour
 {
     [SerializeField]
-    private NarupaImdSimulation simulation;
+    private NanoverImdSimulation simulation;
 
     [SerializeField]
     private VrController controller;

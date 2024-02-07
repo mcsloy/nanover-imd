@@ -1,14 +1,14 @@
-﻿using NarupaImd;
+﻿using NanoverImd;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace NarupaImd.UI.Scene
+namespace NanoverImd.UI.Scene
 {
     public class ManualConnect : MonoBehaviour
     {
         [SerializeField]
-        private NarupaImdApplication application;
+        private NanoverImdApplication application;
         [SerializeField]
         private TMP_Text hostInputField;
         [SerializeField]

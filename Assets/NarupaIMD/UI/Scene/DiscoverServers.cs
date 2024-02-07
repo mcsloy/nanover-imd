@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Essd;
-using Narupa.Core.Async;
-using Narupa.Frontend.UI;
+using Nanover.Core.Async;
+using Nanover.Frontend.UI;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace NarupaImd.UI.Scene
+namespace NanoverImd.UI.Scene
 {
     public class DiscoverServers : MonoBehaviour
     {
@@ -21,7 +21,7 @@ namespace NarupaImd.UI.Scene
         private Sprite remoteServerIcon;
 
         [SerializeField]
-        private NarupaImdApplication application;
+        private NanoverImdApplication application;
 
         [SerializeField]
         private DynamicMenu menu;

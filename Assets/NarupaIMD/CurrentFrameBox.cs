@@ -1,10 +1,10 @@
-using Narupa.Frame;
-using Narupa.Frame.Event;
-using Narupa.Visualisation;
+using Nanover.Frame;
+using Nanover.Frame.Event;
+using Nanover.Visualisation;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace NarupaImd
+namespace NanoverImd
 {
     /// <summary>
     /// Updates a <see cref="BoxVisualiser" /> with the simulation box of a

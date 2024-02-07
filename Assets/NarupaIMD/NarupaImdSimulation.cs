@@ -2,13 +2,13 @@
 // Licensed under the GPL. See License.txt in the project root for license information.
 
 using Essd;
-using Narupa.Core.Math;
-using Narupa.Frontend.Manipulation;
-using Narupa.Grpc;
-using Narupa.Grpc.Multiplayer;
-using Narupa.Grpc.Trajectory;
-using Narupa.Visualisation;
-using NarupaImd.Interaction;
+using Nanover.Core.Math;
+using Nanover.Frontend.Manipulation;
+using Nanover.Grpc;
+using Nanover.Grpc.Multiplayer;
+using Nanover.Grpc.Trajectory;
+using Nanover.Visualisation;
+using NanoverImd.Interaction;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -16,9 +16,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace NarupaImd
+namespace NanoverImd
 {
-    public class NarupaImdSimulation : MonoBehaviour
+    public class NanoverImdSimulation : MonoBehaviour
     {
         private const string TrajectoryServiceName = "trajectory";
         private const string ImdServiceName = "imd";
@@ -42,7 +42,7 @@ namespace NarupaImd
         private InteractableScene interactableScene;
 
         [SerializeField]
-        private NarupaImdApplication application;
+        private NanoverImdApplication application;
 
         public TrajectorySession Trajectory { get; } = new TrajectorySession();
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();

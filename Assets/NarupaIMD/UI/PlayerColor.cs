@@ -1,13 +1,13 @@
 ﻿using System;
-using NarupaImd.Selection;
+using NanoverImd.Selection;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace NarupaImd.UI
+namespace NanoverImd.UI
 {
     public class PlayerColor : MonoBehaviour
     {
-        private static string ColorKey = "narupa.player.color";
+        private static string ColorKey = "nanover.player.color";
 
         private static Color DefaultColor = new Color(255, 102, 0);
 

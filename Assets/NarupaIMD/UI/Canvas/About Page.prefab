@@ -209,7 +209,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Narupa iMD
+  m_text: Nanover iMD
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5a19f4193fe2bf64089ade0b38163199, type: 2}
   m_sharedMaterial: {fileID: 21566619404874456, guid: 5a19f4193fe2bf64089ade0b38163199,
@@ -1287,7 +1287,7 @@ PrefabInstance:
     - target: {fileID: 2057347383211027327, guid: 32ace6ad35e5f564a94594ebaa4fd3b8,
         type: 3}
       propertyPath: inputAction.actionPath
-      value: /actions/NarupaIMD/in/Interact
+      value: /actions/NanoverIMD/in/Interact
       objectReference: {fileID: 0}
     - target: {fileID: 2057347383211027327, guid: 32ace6ad35e5f564a94594ebaa4fd3b8,
         type: 3}

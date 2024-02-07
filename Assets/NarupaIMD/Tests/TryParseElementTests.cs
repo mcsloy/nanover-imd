@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Narupa.Core.Science;
-using NarupaImd.Selection;
+using Nanover.Core.Science;
+using NanoverImd.Selection;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace NarupaImd.Tests
+namespace NanoverImd.Tests
 {
     internal class TryParseElementTests
     {

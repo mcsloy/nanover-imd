@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Narupa.Core;
-using NarupaImd;
+using Nanover.Core;
+using NanoverImd;
 using UnityEditor;
 using UnityEngine;
 
-namespace NarupaImd.Editor
+namespace NanoverImd.Editor
 {
     /// <summary>
     /// Editor Window to display current multiplayer shared state.
     /// </summary>
     public class SharedStateWindow : EditorWindow
     {
-        [MenuItem("Narupa/Windows/Multiplayer Shared State")]
-        [MenuItem("Window/Narupa/Multiplayer Shared State")]
+        [MenuItem("Nanover/Windows/Multiplayer Shared State")]
+        [MenuItem("Window/Nanover/Multiplayer Shared State")]
         private static void Init()
         {
             var window = (SharedStateWindow) GetWindow(typeof(SharedStateWindow));
@@ -25,7 +25,7 @@ namespace NarupaImd.Editor
         private Vector2 scrollPos;
         private HashSet<string> expanded = new HashSet<string>();
 
-        private NarupaImdSimulation simulation;
+        private NanoverImdSimulation simulation;
 
         private void OnGUI()
         {
@@ -37,7 +37,7 @@ namespace NarupaImd.Editor
 
             if (simulation == null)
             {
-                simulation = FindObjectOfType<NarupaImdSimulation>();
+                simulation = FindObjectOfType<NanoverImdSimulation>();
                 if (simulation != null)
                     OnConnectToSession();
             }

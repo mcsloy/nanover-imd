@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Narupa.Core.Serialization;
-using Narupa.Grpc.Multiplayer;
+using Nanover.Core.Serialization;
+using Nanover.Grpc.Multiplayer;
 
-namespace NarupaImd.Interaction
+namespace NanoverImd.Interaction
 {
     /// <summary>
     /// A collection of interactions involved in iMD.

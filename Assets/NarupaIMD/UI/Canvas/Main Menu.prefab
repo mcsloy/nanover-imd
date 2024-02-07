@@ -867,7 +867,7 @@ PrefabInstance:
     - target: {fileID: 2057347383211027327, guid: 32ace6ad35e5f564a94594ebaa4fd3b8,
         type: 3}
       propertyPath: inputAction.actionPath
-      value: /actions/NarupaIMD/in/Interact
+      value: /actions/NanoverIMD/in/Interact
       objectReference: {fileID: 0}
     - target: {fileID: 2057347383211027327, guid: 32ace6ad35e5f564a94594ebaa4fd3b8,
         type: 3}
