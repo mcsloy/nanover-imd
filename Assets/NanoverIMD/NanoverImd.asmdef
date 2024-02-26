@@ -7,7 +7,8 @@
         "Unity.TextMeshPro",
         "Nanover.Grpc",
         "Nanover.Frame",
-        "Nanover.Core"
+        "Nanover.Core",
+        "SteamVRStub"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

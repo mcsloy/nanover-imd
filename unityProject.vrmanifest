@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.nanoverimd.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\trash\\dev\\narupa-imd-gh\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\mark\\Documents\\REPOS\\narupa-imd\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "Nanover iMD [Testing]"

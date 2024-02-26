@@ -1,7 +1,7 @@
 ﻿using Nanover.Frontend.Controllers;
 using NanoverImd;
+using SteamVRStub;
 using UnityEngine;
-using Valve.VR;
 
 public class InteractionStrengthController : MonoBehaviour
 {

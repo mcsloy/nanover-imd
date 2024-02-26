@@ -8,7 +8,7 @@ using UnityEngine.Events;
 using NanoverImd.Interaction;
 using System.Threading.Tasks;
 using Nanover.Core.Math;
-using Valve.VR;
+using SteamVRStub;
 
 namespace NanoverImd
 {

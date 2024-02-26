@@ -1,9 +1,9 @@
 using Nanover.Frontend.Controllers;
 using Nanover.Frontend.UI;
 using NanoverImd.UI;
+using SteamVRStub;
 using UnityEngine;
 using UnityEngine.Assertions;
-using Valve.VR;
 
 namespace NanoverImd.UI
 {
