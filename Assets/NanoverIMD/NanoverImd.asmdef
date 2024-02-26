@@ -1,8 +1,8 @@
 {
     "name": "NanoverImd",
+    "rootNamespace": "",
     "references": [
         "Nanover.Frontend",
-        "SteamVR",
         "Nanover.Visualisation",
         "Unity.TextMeshPro",
         "Nanover.Grpc",
