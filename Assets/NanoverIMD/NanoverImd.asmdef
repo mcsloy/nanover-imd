@@ -1,0 +1,24 @@
+{
+    "name": "NanoverImd",
+    "references": [
+        "Nanover.Frontend",
+        "SteamVR",
+        "Nanover.Visualisation",
+        "Unity.TextMeshPro",
+        "Nanover.Grpc",
+        "Nanover.Frame",
+        "Nanover.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Essd.dll",
+        "Newtonsoft.Json.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

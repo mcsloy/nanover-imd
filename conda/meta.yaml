@@ -1,5 +1,5 @@
 package:
-    name: narupa-imd
+    name: nanover-imd
     version: {{ frontend_version }}
 
 source:
@@ -15,17 +15,17 @@ build:
       - NARUPA_LICENSE_PATH
 
 app:
-  entry: NarupaImd.bat
-  summary: "Narupa iMD virtual reality frontend."
+  entry: NanoverImd.bat
+  summary: "Nanover iMD virtual reality frontend."
   type: desk
 
 about:
-  home: https://narupa.readthedocs.io
+  home: https://nanover.readthedocs.io
   license: GPL 3
   license_file: {{ NARUPA_LICENSE_PATH }}
-  summary: Virtual reality frontend for Narupa.
+  summary: Virtual reality frontend for Nanover.
   description: |
-    Narupa is a framework for interactive molecular dynamics simulation in
+    Nanover is a framework for interactive molecular dynamics simulation in
     virtual reality. This package provides the virtual reality frontend.
-  doc_url: https://narupa.readthedocs.io
-  dev_url: https://gitlab.com/intangiblerealities/narupa-applications/narupa-imd
+  doc_url: https://nanover.readthedocs.io
+  dev_url: https://gitlab.com/intangiblerealities/nanover-applications/nanover-imd

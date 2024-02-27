@@ -37,7 +37,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
-          buildName: 'Narupa iMD'
+          buildName: 'Nanover iMD'
 
       # Output
       - uses: actions/upload-artifact@v3
@@ -178,7 +178,7 @@ jobs:
           auto-update-conda: true
           # WARNING! On the contrary to all the other places where we install
           # conda, we install miniconda and NOT miniforge!
-          # This is because we do not need packages to RUN narupa, but packages
+          # This is because we do not need packages to RUN nanover, but packages
           # from the default (anaconda) channel to upload to anaconda.
           miniconda-version: latest
       - name: Retrieve conda packages
@@ -200,7 +200,7 @@ jobs:
       - name: Upload packages
         # Anaconda will complain if the given version of a package is already
         # there. Until we have some versioning, we force the upload.
-        run: anaconda  upload --user irl conda-bld/win-64/narupa-*.tar.bz2 --force
+        run: anaconda  upload --user irl conda-bld/win-64/nanover-*.tar.bz2 --force
       - name: Disconnect from Anaconda cloud
         #  Do not fail the build if we cannot logout.
         run: anaconda logout || echo "Could not logout. Too bad."

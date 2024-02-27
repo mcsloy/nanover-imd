@@ -1,6 +1,6 @@
-# Narupa iMD
+# Nanover iMD
 
-Interactive Molecular Dynamics (iMD) in VR, an application built with the Narupa
+Interactive Molecular Dynamics (iMD) in VR, an application built with the Nanover
 framework.
 
 This repository is maintained by the Intangible Realities Laboratory, University Of Bristol,
@@ -9,11 +9,11 @@ See [the list of contributors](CONTRIBUTORS.md) for the individual authors of th
 
 # Run the latest development build
 
-To run Narupa iMD, you need [SteamVR](https://www.steamvr.com/) installed.
+To run Nanover iMD, you need [SteamVR](https://www.steamvr.com/) installed.
 
-* Download the [latest Windows build](https://github.com/IRL2/narupa-imd/releases/download/nightly/StandaloneWindows64.zip) from the [nightly release](https://github.com/IRL2/narupa-imd/releases/tag/nightly).
+* Download the [latest Windows build](https://github.com/IRL2/nanover-imd/releases/download/nightly/StandaloneWindows64.zip) from the [nightly release](https://github.com/IRL2/nanover-imd/releases/tag/nightly).
 * Extract the downloaded zip file.
-* In the extracted directory, launch `StandaloneWindows64.exe`. Windows will likely prompt you with a warning about the executable not being signed. If it happens, click on the "More info" button, then "Run anyway". You will also likely be prompted by the Windows firewall, allow Narupa to access the network.
+* In the extracted directory, launch `StandaloneWindows64.exe`. Windows will likely prompt you with a warning about the executable not being signed. If it happens, click on the "More info" button, then "Run anyway". You will also likely be prompted by the Windows firewall, allow Nanover to access the network.
 
 # Installation with conda
 
@@ -21,21 +21,21 @@ If you've not already set up anaconda:
 
 * Install Anaconda (avoid Anaconda 2.7 as it is outdated)
 * Start the "Anaconda Powershell Prompt" where to type the next commands
-* Create a conda environment (here we call the environment "narupa"): `conda create -n narupa "python>3.6"`
-* Activate the conda environment: `conda activate narupa`
+* Create a conda environment (here we call the environment "nanover"): `conda create -n nanover "python>3.6"`
+* Activate the conda environment: `conda activate nanover`
 
 Then:
 
-* Install the Narupa IMD package:
+* Install the Nanover IMD package:
 
 ```
-conda install -c irl narupa-imd
+conda install -c irl nanover-imd
 ```
 
 Run it! In the powershell prompt (Start Menu integration coming soon):
 
 ```
-NarupaImd
+NanoverImd
 ```
 
 # Installation for Development
@@ -47,7 +47,7 @@ NarupaImd
 *  Once installed, navigate to the **Projects** tab and click **Add** in the top right of Unity Hub.
 *  Select the folder which you downloaded the repository to.
 
-Once open in Unity, the main Unity scene can be found in `NarupaIMD/Assets/NarupaXR Scene`.
+Once open in Unity, the main Unity scene can be found in `NanoverIMD/Assets/NanoverXR Scene`.
 
 ## Citation, Credits and External Libraries
 

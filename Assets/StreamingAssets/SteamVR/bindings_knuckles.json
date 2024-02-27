@@ -1,7 +1,7 @@
 {
    "action_manifest_version" : 0,
    "alias_info" : {},
-   "app_key" : "irl.narupaimd.exe",
+   "app_key" : "irl.nanoverimd.exe",
    "bindings" : {
       "/actions/application" : {
          "chords" : [],
@@ -115,7 +115,7 @@
          "skeleton" : [],
          "sources" : []
       },
-      "/actions/narupaimd" : {
+      "/actions/nanoverimd" : {
          "chords" : [],
          "haptics" : [],
          "poses" : [],
@@ -233,7 +233,7 @@
    "category" : "steamvr_input",
    "controller_type" : "knuckles",
    "description" : "",
-   "name" : "Narupa iMD [Valve Index]",
+   "name" : "Nanover iMD [Valve Index]",
    "options" : {},
    "simulated_actions" : []
 }

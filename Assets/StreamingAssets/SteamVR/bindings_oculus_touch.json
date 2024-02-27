@@ -1,5 +1,5 @@
 {
-  "app_key": "application.generated.unity.narupaimd.exe",
+  "app_key": "application.generated.unity.nanoverimd.exe",
   "bindings": {
     "/actions/application": {
       "chords": [],
@@ -111,14 +111,14 @@
       ],
       "skeleton": []
     },
-    "/actions/narupa": {
+    "/actions/nanover": {
       "chords": [],
       "poses": [],
       "haptics": [],
       "sources": [],
       "skeleton": []
     },
-    "/actions/narupaimd": {
+    "/actions/nanoverimd": {
       "chords": [],
       "poses": [],
       "haptics": [],
@@ -238,5 +238,5 @@
   },
   "controller_type": "oculus_touch",
   "description": "",
-  "name": "Narupa iMD [Oculus Touch]"
+  "name": "Nanover iMD [Oculus Touch]"
 }

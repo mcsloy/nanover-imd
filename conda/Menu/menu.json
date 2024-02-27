@@ -1,10 +1,10 @@
 {
-    "menu_name": "Narupa",
+    "menu_name": "Nanover",
     "menu_items":
         [
             {
-                "script": "${PREFIX}/Scripts/NarupaImd.bat",
-                "name": "Narupa iMD",
+                "script": "${PREFIX}/Scripts/NanoverImd.bat",
+                "name": "Nanover iMD",
                 "workdir": "${PREFIX}",
                 "icon": "${MENU_DIR}/icon.png",
                 "desktop": true,
