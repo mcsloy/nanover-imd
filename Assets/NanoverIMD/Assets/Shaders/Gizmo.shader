@@ -1,6 +1,3 @@
-﻿// Copyright (c) 2019 Intangible Realities Lab. All rights reserved.
-// Licensed under the GPL. See License.txt in the project root for license information.
-
 // Simple shader for a transparent ringed sphere, used for tool cursors.
 
 Shader "Nanover iMD/Gizmo"
