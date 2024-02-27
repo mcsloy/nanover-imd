@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "com.cysharp.yetanotherhttphandler": "1.0.0",
+    "org.nuget.system.io.pipelines": "7.0.0",
     "com.alexjbinnie.codecoveragetools": "https://gitlab.com/alexjbinnie/code-coverage-tools.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ext.nunit": "1.0.6",
@@ -41,5 +43,21 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "Unity NuGet",
+      "url": "https://unitynuget-registry.azurewebsites.net",
+      "scopes": [
+        "org.nuget"
+      ]
+    },
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.cysharp.yetanotherhttphandler"
+      ]
+    }
+  ]
 }
