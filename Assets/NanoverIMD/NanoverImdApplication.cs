@@ -83,7 +83,18 @@ namespace NanoverImd
         /// Called from UI to quit the application.
         /// </summary>
         public void Quit() => Application.Quit();
-        #pragma warning restore 4014
+#pragma warning restore 4014
+
+        private void Start()
+        {
+            Test();
+
+            async Task Test()
+            {
+                await simulation.AutoConnect();
+                GetComponentInChildren<XRInteractionSimulator>(true).gameObject.SetActive(true);
+            }            
+        }
 
         private void Update()
         {
