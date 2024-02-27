@@ -2,3 +2,6 @@
 	path = Assets/Plugins/Nanover
 	url = git@github.com:IRL2/NarupaUnityPlugin.git
 	branch = main
+[submodule "NanoverUnityPlugin"]
+	path = NanoverUnityPlugin
+	url = git@github.com:IRL2/NanoverUnityPlugin.git
