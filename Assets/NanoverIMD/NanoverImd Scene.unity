@@ -1261,9 +1261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb6007d037b849ffb353011648f81a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimalMode: 0
-  text: 
-  currentText: 
 --- !u!1 &463132928
 GameObject:
   m_ObjectHideFlags: 0
@@ -2255,6 +2252,7 @@ MonoBehaviour:
   clickOnMenuClosed: 1
   controllers: {fileID: 2074532958}
   mode: {fileID: 2026753915}
+  characteristics: 256
 --- !u!4 &685640420
 Transform:
   m_ObjectHideFlags: 0
@@ -3202,6 +3200,7 @@ MonoBehaviour:
   clickOnMenuClosed: 1
   controllers: {fileID: 2074532958}
   mode: {fileID: 1849161467}
+  characteristics: 512
 --- !u!4 &1196289479
 Transform:
   m_ObjectHideFlags: 0

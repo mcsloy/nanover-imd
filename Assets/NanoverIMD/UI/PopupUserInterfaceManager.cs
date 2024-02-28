@@ -24,11 +24,14 @@ namespace NanoverImd.UI
         [SerializeField]
         private UiInputMode mode;
 
+        [SerializeField]
+        private InputDeviceCharacteristics characteristics;
+
         private void Start()
         {
             Assert.IsNotNull(menuPrefab, "Missing menu prefab");
 
-            var openMenu = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.menuButton);
+            var openMenu = characteristics.WrapUsageAsButton(CommonUsages.secondaryButton);
 
             openMenu.Pressed += ShowMenu;
             openMenu.Released += CloseMenu;
