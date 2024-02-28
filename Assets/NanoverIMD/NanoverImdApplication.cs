@@ -86,14 +86,6 @@ namespace NanoverImd
         public void Quit() => Application.Quit();
 #pragma warning restore 4014
 
-        private void Start()
-        {
-            var primary = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.primaryButton);
-            var simulator = GetComponentInChildren<XRInteractionSimulator>(true).gameObject;
-            
-            primary.Pressed += () => simulator.SetActive(!simulator.activeSelf);
-        }
-
         private void Update()
         {
 
