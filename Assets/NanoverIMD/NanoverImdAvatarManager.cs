@@ -94,7 +94,7 @@ namespace NanoverImd
 
 
             var controllers = nanover.Multiplayer
-                                    .Avatars.Values
+                                    .Avatars.OtherPlayerAvatars
                                     .SelectMany(avatar => avatar.Components, (avatar, component) =>
                                                     (Avatar: avatar, Component: component))
                                     .Where(res => res.Component.Name == MultiplayerAvatar.LeftHandName
