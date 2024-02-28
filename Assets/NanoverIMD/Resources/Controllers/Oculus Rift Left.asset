@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 147d743152d75b346866ef0a4600e9ae, type: 3}
-  m_Name: Oculus Rift
+  m_Name: Oculus Rift Left
   m_EditorClassIdentifier: 
-  controllerId: oculus_touch
+  controllerId: Oculus Touch Controller - Left
   leftController:
     prefab: {fileID: 2543036398859962509, guid: 5c0b8b9861f24c64888a21f4f580cfc1,
       type: 3}

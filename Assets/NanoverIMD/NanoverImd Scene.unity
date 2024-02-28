@@ -2730,6 +2730,7 @@ GameObject:
   m_Component:
   - component: {fileID: 749223558}
   - component: {fileID: 749223559}
+  - component: {fileID: 749223560}
   m_Layer: 0
   m_Name: Controller Dummy 1 (1)
   m_TagString: Untagged
@@ -2765,6 +2766,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderModel: {fileID: 2755186920189134820}
+--- !u!114 &749223560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749223557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b2f95e6be7b40559d5f9b7f5f46b2f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characteristics: 256
+  prefabRoot: {fileID: 749223558}
+  controller: {fileID: 749223559}
 --- !u!1 &765365844
 GameObject:
   m_ObjectHideFlags: 0
@@ -5092,6 +5108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1864058545}
   - component: {fileID: 1864058546}
+  - component: {fileID: 1864058547}
   m_Layer: 0
   m_Name: Controller Dummy 2 (1)
   m_TagString: Untagged
@@ -5127,6 +5144,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderModel: {fileID: 8408915055558765984}
+--- !u!114 &1864058547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864058544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b2f95e6be7b40559d5f9b7f5f46b2f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characteristics: 512
+  prefabRoot: {fileID: 1864058545}
+  controller: {fileID: 1864058546}
 --- !u!4 &1865951357 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4991043161427722009, guid: 667cc4daec5d5a44cb6c3ec450d505ab,
@@ -6558,6 +6590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2f95e6be7b40559d5f9b7f5f46b2f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characteristics: 0
   prefabRoot: {fileID: 0}
   controller: {fileID: 3529211918885865407}
 --- !u!114 &3529211918885865401
@@ -6572,6 +6605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2f95e6be7b40559d5f9b7f5f46b2f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characteristics: 0
   prefabRoot: {fileID: 0}
   controller: {fileID: 3529211918885865402}
 --- !u!114 &3529211918885865402

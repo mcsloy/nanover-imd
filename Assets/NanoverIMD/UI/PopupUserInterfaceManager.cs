@@ -4,6 +4,7 @@ using NanoverImd.UI;
 using SteamVRStub;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.XR;
 
 namespace NanoverImd.UI
 {
@@ -36,13 +37,13 @@ namespace NanoverImd.UI
         }
 
         private void VisualiserMenuActionOnStateUp(SteamVR_Action_Boolean fromaction,
-                                                   SteamVR_Input_Sources fromsource)
+                                                   InputDevice fromsource)
         {
             CloseMenu();
         }
 
         private void VisualiserMenuActionOnStateDown(SteamVR_Action_Boolean fromaction,
-                                                     SteamVR_Input_Sources fromsource)
+                                                     InputDevice fromsource)
         {
             ShowMenu();
         }
