@@ -1,7 +1,6 @@
 using Nanover.Frontend.Controllers;
 using Nanover.Frontend.UI;
-using NanoverImd.UI;
-using SteamVRStub;
+using Nanover.Frontend.XR;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.XR;
@@ -17,9 +16,6 @@ namespace NanoverImd.UI
         private GameObject menuPrefab;
 
         [SerializeField]
-        private SteamVR_Action_Boolean openMenuAction;
-
-        [SerializeField]
         private bool clickOnMenuClosed = true;
 
         [SerializeField]
@@ -31,21 +27,11 @@ namespace NanoverImd.UI
         private void Start()
         {
             Assert.IsNotNull(menuPrefab, "Missing menu prefab");
-            Assert.IsNotNull(openMenuAction, "Missing action to trigger menu");
-            openMenuAction.onStateDown += VisualiserMenuActionOnStateDown;
-            openMenuAction.onStateUp += VisualiserMenuActionOnStateUp;
-        }
 
-        private void VisualiserMenuActionOnStateUp(SteamVR_Action_Boolean fromaction,
-                                                   InputDevice fromsource)
-        {
-            CloseMenu();
-        }
+            var openMenu = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.primaryButton);
 
-        private void VisualiserMenuActionOnStateDown(SteamVR_Action_Boolean fromaction,
-                                                     InputDevice fromsource)
-        {
-            ShowMenu();
+            openMenu.Pressed += ShowMenu;
+            openMenu.Released += CloseMenu;
         }
 
         private GameObject menu;

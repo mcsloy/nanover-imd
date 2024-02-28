@@ -1151,54 +1151,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6cbbc06ceb9a9794299a1e06a17c86b2, type: 3}
---- !u!1 &418898940
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 418898941}
-  - component: {fileID: 418898942}
-  m_Layer: 0
-  m_Name: Interaction Mode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &418898941
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 418898940}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 431384313}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &418898942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 418898940}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86b2806aa7ad4ee3bd432dd1a5a3362c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controllers: {fileID: 2074532958}
-  gizmo: {fileID: 3640672610816993193, guid: 1c71c146c52b75b40b044e66de75be8e, type: 3}
-  actionSets: []
-  priority: 0
 --- !u!1 &431384312
 GameObject:
   m_ObjectHideFlags: 0
@@ -1230,7 +1182,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 418898941}
   - {fileID: 185265282}
   - {fileID: 1042607094}
   - {fileID: 507066173}
@@ -1311,6 +1262,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minimalMode: 0
+  text: 
+  currentText: 
 --- !u!1 &463132928
 GameObject:
   m_ObjectHideFlags: 0
@@ -1379,6 +1332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllers: {fileID: 2074532958}
+  inputSource: 256
 --- !u!223 &463132933
 Canvas:
   m_ObjectHideFlags: 0
@@ -2281,7 +2235,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &685640419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3228,7 +3182,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1196289478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4134,10 +4088,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   left: {fileID: 749223559}
   right: {fileID: 1864058546}
-  leftPrefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
-    type: 3}
-  rightPrefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
-    type: 3}
 --- !u!1001 &1592066142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5096,7 +5046,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controllers: {fileID: 2074532958}
   gizmo: {fileID: 6469026284909248119, guid: db7711c7495a561469a596e18cb6a74b, type: 3}
-  actionSets: []
   priority: 2
 --- !u!1 &1864058544
 GameObject:
@@ -5401,6 +5350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllers: {fileID: 2074532958}
+  inputSource: 256
 --- !u!223 &1933834827
 Canvas:
   m_ObjectHideFlags: 0
@@ -5486,9 +5436,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1946000297}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.044972893, y: -0.07480009, z: -0.35702327, w: 0.93000907}
-  m_LocalPosition: {x: 0.2487601, y: -1.8906777, z: -0.29752347}
-  m_LocalScale: {x: 1.041631, y: 1.0416313, z: 1.0416313}
+  m_LocalRotation: {x: 0.46505374, y: -0.097243205, z: 0.075093895, w: -0.87671536}
+  m_LocalPosition: {x: 0.06270632, y: 0.8763368, z: 0.37330657}
+  m_LocalScale: {x: 0.02708972, y: 0.027089745, z: 0.02708971}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 92531328}
@@ -5540,7 +5490,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controllers: {fileID: 2074532958}
   gizmo: {fileID: 6469026284909248119, guid: db7711c7495a561469a596e18cb6a74b, type: 3}
-  actionSets: []
   priority: 5
 --- !u!1 &1993867512 stripped
 GameObject:
@@ -5654,7 +5603,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controllers: {fileID: 2074532958}
   gizmo: {fileID: 6469026284909248119, guid: db7711c7495a561469a596e18cb6a74b, type: 3}
-  actionSets: []
   priority: 2
 --- !u!850595691 &2040703500
 LightingSettings:
@@ -5775,6 +5723,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllers: {fileID: 2074532958}
+  inputSource: 512
 --- !u!223 &2068727163
 Canvas:
   m_ObjectHideFlags: 0
@@ -5850,6 +5799,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftController: {fileID: 749223559}
   rightController: {fileID: 1864058546}
+  dominantHand: 0
 --- !u!4 &2074532959
 Transform:
   m_ObjectHideFlags: 0
@@ -6489,30 +6439,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 667cc4daec5d5a44cb6c3ec450d505ab, type: 3}
---- !u!114 &114000009550450929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8408915055558765983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ef5e4a61250f774786a140bce49ce5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114000010362900345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2755186920189134819}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ef5e4a61250f774786a140bce49ce5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &114544608483496602
 Transform:
   m_ObjectHideFlags: 0
@@ -6541,7 +6467,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6161563952697520254}
-  - component: {fileID: 114000010362900345}
   - component: {fileID: 2755186920189134820}
   m_Layer: 0
   m_Name: Render Model Dummy 1
@@ -6704,7 +6629,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2855137165730190010}
-  - component: {fileID: 114000009550450929}
   - component: {fileID: 8408915055558765984}
   m_Layer: 0
   m_Name: Render Model Dummy 2

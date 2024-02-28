@@ -3,7 +3,6 @@ using Nanover.Frontend.Controllers;
 using Nanover.Frontend.Input;
 using Nanover.Frontend.Manipulation;
 using Nanover.Frontend.XR;
-using SteamVRStub;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.XR;
