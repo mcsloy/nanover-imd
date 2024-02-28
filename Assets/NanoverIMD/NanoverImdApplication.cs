@@ -92,12 +92,15 @@ namespace NanoverImd
         {
             Test();
 
+            var primary = InputDeviceCharacteristics.Right.WrapUsageAsButton(CommonUsages.primaryButton);
+            var simulator = GetComponentInChildren<XRInteractionSimulator>(true).gameObject;
+            
+            primary.Pressed += () => simulator.SetActive(!simulator.activeSelf);
+
             async Task Test()
             {
                 await Task.Delay(1000);
-                await simulation.AutoConnect();
-                //if (simulation.Trajectory.CurrentFrame != null)
-                //    GetComponentInChildren<XRInteractionSimulator>(true).gameObject.SetActive(true);
+                await simulation.AutoConnect();   
             }
         }
 
