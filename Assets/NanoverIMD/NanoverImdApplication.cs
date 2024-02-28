@@ -6,6 +6,9 @@ using NanoverImd.Interaction;
 using System.Threading.Tasks;
 using Nanover.Core.Math;
 using SteamVRStub;
+using UnityEngine.XR;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NanoverImd
 {
@@ -91,9 +94,11 @@ namespace NanoverImd
 
             async Task Test()
             {
+                await Task.Delay(1000);
                 await simulation.AutoConnect();
-                GetComponentInChildren<XRInteractionSimulator>(true).gameObject.SetActive(true);
-            }            
+                if (simulation.Trajectory.CurrentFrame != null)
+                    GetComponentInChildren<XRInteractionSimulator>(true).gameObject.SetActive(true);
+            }
         }
 
         private void Update()
