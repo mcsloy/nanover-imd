@@ -96,8 +96,8 @@ namespace NanoverImd
             {
                 await Task.Delay(1000);
                 await simulation.AutoConnect();
-                if (simulation.Trajectory.CurrentFrame != null)
-                    GetComponentInChildren<XRInteractionSimulator>(true).gameObject.SetActive(true);
+                //if (simulation.Trajectory.CurrentFrame != null)
+                //    GetComponentInChildren<XRInteractionSimulator>(true).gameObject.SetActive(true);
             }
         }
 
@@ -145,9 +145,8 @@ namespace NanoverImd
 
             PlayAreas.UpdateValue(simulation.Multiplayer.AccessToken, area);
 
-            Vector3 TransformCornerPosition(HmdVector3_t corner)
+            Vector3 TransformCornerPosition(Vector3 position)
             {
-                var position = new Vector3(corner.v0, corner.v1, corner.v2);
                 var transform = new Transformation(position, Quaternion.identity, Vector3.one);
                 return CalibratedSpace.TransformPoseWorldToCalibrated(transform).Position;
             }
