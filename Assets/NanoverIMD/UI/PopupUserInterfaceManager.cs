@@ -28,7 +28,7 @@ namespace NanoverImd.UI
         {
             Assert.IsNotNull(menuPrefab, "Missing menu prefab");
 
-            var openMenu = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.primaryButton);
+            var openMenu = InputDeviceCharacteristics.Left.WrapUsageAsButton(CommonUsages.menuButton);
 
             openMenu.Pressed += ShowMenu;
             openMenu.Released += CloseMenu;
