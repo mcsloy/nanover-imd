@@ -23,8 +23,10 @@ public class InteractionStrengthController : MonoBehaviour
 
     private void Update()
     {
-        var increase = InputDeviceCharacteristics.Left.GetFirstDevice().GetButtonPressed(CommonUsages.secondaryButton) ?? false;
-        var decrease = InputDeviceCharacteristics.Left.GetFirstDevice().GetButtonPressed(CommonUsages.primaryButton) ?? false;
+        var joystick = InputDeviceCharacteristics.Left.GetFirstDevice().GetJoystickValue(CommonUsages.primary2DAxis) ?? Vector2.zero;
+
+        var increase = joystick.y > .5f;
+        var decrease = joystick.y < -.5f;
 
         var change = 0f;
         if (increase)
