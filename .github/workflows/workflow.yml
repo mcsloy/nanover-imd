@@ -19,7 +19,6 @@ jobs:
         with:
           lfs: true
           submodules: true
-          token: ${{ secrets.GH_TOKEN }}
 
       # Cache
       - uses: actions/cache@v3
@@ -51,7 +50,6 @@ jobs:
         with:
           lfs: true
           submodules: true
-          token: ${{ secrets.GH_TOKEN }}
 
       # Cache
       - uses: actions/cache@v3
@@ -88,7 +86,6 @@ jobs:
         with:
           lfs: true
           submodules: true
-          token: ${{ secrets.GH_TOKEN }}
 
       # Cache
       - uses: actions/cache@v3
@@ -131,8 +128,6 @@ jobs:
         run: ls -rl
       - name: Update nightly release
         uses: andelf/nightly-release@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.PUBLISH_GH_TOKEN }}
         with:
           tag_name: nightly
           name: 'Latest build from the main branch $$'
