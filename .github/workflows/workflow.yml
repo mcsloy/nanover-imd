@@ -147,7 +147,7 @@ jobs:
   conda:
     name: Build the conda Packages
     runs-on: windows-latest
-    needs: [build, tests]
+    needs: [artefact-build, tests]
     if: github.ref == 'refs/heads/master'
     steps:
       # We need to download the source code to get the version number
