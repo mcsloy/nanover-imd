@@ -38,7 +38,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
-          buildName: 'Nanover iMD'
+          buildName: 'NanoVer iMD'
 
   artefact-build:
     name: Build my project with artefact ✨
@@ -70,7 +70,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
-          buildName: 'Nanover iMD'
+          buildName: 'NanoVer iMD'
 
       # Output
       - uses: actions/upload-artifact@v3
