@@ -117,7 +117,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Build
           path: ./
@@ -158,7 +158,7 @@ jobs:
           submodules: false
           fetch-depth: 0
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Build
           path: ./conda/artifacts
@@ -212,7 +212,7 @@ jobs:
           # from the default (anaconda) channel to upload to anaconda.
           miniconda-version: latest
       - name: Retrieve conda packages
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: conda-bld
           path: ./conda-bld
