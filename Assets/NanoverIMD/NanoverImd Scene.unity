@@ -497,6 +497,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2253513765031439021, guid: 76606180d238bce479bacd070fe282ba,
         type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2253513765031439021, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -570,6 +575,26 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3865156548398210370, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3865156548398210370, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3865156548398210370, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 304
+      objectReference: {fileID: 0}
+    - target: {fileID: 3865156548398210370, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 4154513587008866836, guid: 76606180d238bce479bacd070fe282ba,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -625,6 +650,26 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.GameObject, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 5400798464249899871, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400798464249899871, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400798464249899871, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 208
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400798464249899871, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 6923897554492791984, guid: 76606180d238bce479bacd070fe282ba,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -673,7 +718,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7830743740537945159, guid: 76606180d238bce479bacd070fe282ba,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2071645736}
   m_SourcePrefab: {fileID: 100100000, guid: 76606180d238bce479bacd070fe282ba, type: 3}
 --- !u!224 &157940992 stripped
 RectTransform:
@@ -727,6 +776,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   simulation: {fileID: 431384315}
   controllerManager: {fileID: 2074532958}
+  vrShim: {fileID: 1534800857}
 --- !u!114 &224434382 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1241460323, guid: b978683a078f8b742a406dd44b368f3a,
@@ -3131,6 +3181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   simulation: {fileID: 431384315}
   controllerManager: {fileID: 2074532958}
+  vrShim: {fileID: 1534800857}
 --- !u!1 &1050288293
 GameObject:
   m_ObjectHideFlags: 0
@@ -4063,7 +4114,7 @@ GameObject:
   - component: {fileID: 1534800856}
   - component: {fileID: 1534800857}
   m_Layer: 0
-  m_Name: SteamVR
+  m_Name: ShimVR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4100,6 +4151,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   left: {fileID: 749223559}
   right: {fileID: 1864058546}
+  uiCanvases:
+  - {fileID: 1933834825}
+  - {fileID: 2068727160}
+  - {fileID: 463132928}
 --- !u!1001 &1592066142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5758,6 +5813,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2071645730 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7830743740537945159, guid: 76606180d238bce479bacd070fe282ba,
+    type: 3}
+  m_PrefabInstance: {fileID: 108607806}
+  m_PrefabAsset: {fileID: 0}
+--- !u!225 &2071645736
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071645730}
+  m_Enabled: 1
+  m_Alpha: 0.2
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2074532957
 GameObject:
   m_ObjectHideFlags: 0
@@ -5789,7 +5862,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftController: {fileID: 749223559}
   rightController: {fileID: 1864058546}
-  dominantHand: 0
+  dominantHand: 512
 --- !u!4 &2074532959
 Transform:
   m_ObjectHideFlags: 0

@@ -20,6 +20,9 @@ namespace NanoverImd.Interaction
 
         [SerializeField]
         private ControllerManager controllerManager;
+
+        [SerializeField]
+        private VrControllerShim vrShim;
 #pragma warning restore 0649
 
         private AttemptableManipulator leftManipulator;
@@ -83,7 +86,7 @@ namespace NanoverImd.Interaction
             var toolPoser = controller.CursorPose;
             manipulator = new AttemptableManipulator(toolPoser, AttemptGrabObject);
 
-            button = characteristics.WrapUsageAsButton(CommonUsages.triggerButton);
+            button = characteristics.WrapUsageAsButton(CommonUsages.triggerButton, () => !vrShim.UiIsVisible);
             button.Pressed += manipulator.AttemptManipulation;
             button.Released += manipulator.EndActiveManipulation;
         }
