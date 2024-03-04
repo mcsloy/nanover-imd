@@ -1338,7 +1338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllers: {fileID: 2074532958}
-  inputSource: 256
+  inputSource: 512
 --- !u!223 &463132933
 Canvas:
   m_ObjectHideFlags: 0
