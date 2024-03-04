@@ -34,6 +34,14 @@ namespace Nanover.Frontend.Manipulation
             this.InteractableParticles = interactableParticles;
         }
 
+        public void ClearAllGrabs()
+        {
+            foreach (var grab in activeGrabs.ToList())
+            {
+                EndParticleGrab(grab);
+            }
+        }
+
         /// <summary>
         /// Start a particle grab on whatever particle falls close to the position
         /// of the given grabber. Return either the manipulation or null if there was
