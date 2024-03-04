@@ -1232,6 +1232,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 846736390}
   - {fileID: 185265282}
   - {fileID: 1042607094}
   - {fileID: 507066173}
@@ -3078,6 +3079,54 @@ MonoBehaviour:
   nanover: {fileID: 431384315}
   headsetPrefab: {fileID: 224434382}
   controllerPrefab: {fileID: 521551389}
+--- !u!1 &846736389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 846736390}
+  - component: {fileID: 846736391}
+  m_Layer: 0
+  m_Name: UI Mode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &846736390
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846736389}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 431384313}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &846736391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846736389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 710f1504e2584f11b11bdbaaec455f24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controllers: {fileID: 2074532958}
+  gizmo: {fileID: 3640672610816993193, guid: 1c71c146c52b75b40b044e66de75be8e, type: 3}
+  priority: 0
+  bothHands: 1
 --- !u!1 &983909124 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3288549822030033708, guid: 76606180d238bce479bacd070fe282ba,
@@ -5069,6 +5118,7 @@ MonoBehaviour:
   controllers: {fileID: 2074532958}
   gizmo: {fileID: 6469026284909248119, guid: db7711c7495a561469a596e18cb6a74b, type: 3}
   priority: 2
+  bothHands: 0
 --- !u!1 &1864058544
 GameObject:
   m_ObjectHideFlags: 0
@@ -5491,6 +5541,7 @@ MonoBehaviour:
   controllers: {fileID: 2074532958}
   gizmo: {fileID: 6469026284909248119, guid: db7711c7495a561469a596e18cb6a74b, type: 3}
   priority: 5
+  bothHands: 0
 --- !u!1 &1993867512 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3554680301404756693, guid: 0bf113c3f9570c14ebe1e71ad0c6b164,
@@ -5604,6 +5655,7 @@ MonoBehaviour:
   controllers: {fileID: 2074532958}
   gizmo: {fileID: 6469026284909248119, guid: db7711c7495a561469a596e18cb6a74b, type: 3}
   priority: 2
+  bothHands: 0
 --- !u!850595691 &2040703500
 LightingSettings:
   m_ObjectHideFlags: 0
