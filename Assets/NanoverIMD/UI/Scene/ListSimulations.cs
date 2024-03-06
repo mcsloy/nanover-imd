@@ -14,12 +14,6 @@ namespace NanoverImd.UI.Scene
         private List<string> simulations = new List<string>();
 
         [SerializeField]
-        private Sprite localServerIcon;
-
-        [SerializeField]
-        private Sprite remoteServerIcon;
-
-        [SerializeField]
         private NanoverImdApplication application;
 
         [SerializeField]
@@ -30,25 +24,16 @@ namespace NanoverImd.UI.Scene
             Refresh();
         }
 
-        [SerializeField]
-        private UnityEvent startSearch;
-
-        [SerializeField]
-        private UnityEvent endSearch;
-
         public void Refresh()
         {
             GetListing();
 
             async void GetListing()
             {
-                startSearch?.Invoke();
                 var listing = await application.Simulation.Trajectory.GetSimulationListing();
 
                 simulations.Clear();
                 simulations.AddRange(listing);
-
-                endSearch?.Invoke();
 
                 RefreshHubs();
             }
@@ -62,7 +47,7 @@ namespace NanoverImd.UI.Scene
                 var index = i;
 
                 menu.AddItem(simulations[i], 
-                             localServerIcon, 
+                             null, 
                              () => application.Simulation.Trajectory.SetSimulationIndex(index));
             }
         }
