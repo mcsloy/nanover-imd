@@ -136,9 +136,7 @@ PlayerSettings:
   vulkanEnableCommandBufferRecycling: 1
   loadStoreDebugModeEnabled: 0
   bundleVersion: 0.1
-  preloadedAssets:
-  - {fileID: -6958804082401874132, guid: ad3324068df68814683a44b50fc28263, type: 2}
-  - {fileID: 4193257388741910478, guid: 7742c5e845711bc41b0bc8fb7a81b4a3, type: 2}
+  preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -159,6 +157,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.IntangibleRealitiesLaboratory.NanoVeriMD
+    Standalone: com.Intangible-Realities-Laboratory.NanoVer-iMD
   buildNumber:
     Standalone: 0
     VisionOS: 0
