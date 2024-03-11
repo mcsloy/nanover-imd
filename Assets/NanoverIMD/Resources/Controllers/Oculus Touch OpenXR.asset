@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 147d743152d75b346866ef0a4600e9ae, type: 3}
   m_Name: Oculus Touch OpenXR
   m_EditorClassIdentifier: 
-  controllerId: Oculus Touch Controller OpenXR
+  controllerIdRegex: Oculus Touch Controller = OpenXR
   leftController:
     prefab: {fileID: 2543036398859962509, guid: b84bfe87481c00d43b8e66146cc2c89d,
       type: 3}
