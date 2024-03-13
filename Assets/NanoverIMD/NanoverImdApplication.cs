@@ -104,8 +104,6 @@ namespace NanoverImd
         /// </summary>
         private void UpdatePlayArea()
         {
-            // TODO: this doesn't work for Oculus and there may be no way to do
-            // it. needs to be tested for other platforms also
             var system = InputDeviceCharacteristics.HeadMounted.GetFirstDevice().subsystem;
 
             if (system == null)
