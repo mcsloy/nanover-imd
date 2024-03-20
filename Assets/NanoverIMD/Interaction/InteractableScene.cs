@@ -148,6 +148,9 @@ namespace NanoverImd.Interaction
 
             var frame = frameSource.CurrentFrame;
 
+            if (frame == null)
+                return null;
+
             var bestSqrDistance = cutoff * cutoff;
             int? bestParticleIndex = null;
 

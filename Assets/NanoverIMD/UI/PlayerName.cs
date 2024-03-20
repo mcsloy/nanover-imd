@@ -1,9 +1,10 @@
 using System;
 using System.Text.RegularExpressions;
 using NanoverImd.Selection;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
+using Text = TMPro.TextMeshProUGUI;
 
 namespace NanoverImd.UI
 {
@@ -12,7 +13,10 @@ namespace NanoverImd.UI
         private static string NameKey = "nanover.player.name";
 
         [SerializeField]
-        private TMP_Text text;
+        private Keyboard keyboard;
+
+        [SerializeField]
+        private Text text;
         
         public static string GetPlayerName()
         {
@@ -42,6 +46,11 @@ namespace NanoverImd.UI
             return "User";
         }
         
+        public void StartEdit()
+        {
+            keyboard.OpenForTarget(text, SetPlayerName);
+        }
+
         public void SetPlayerName(string name)
         {
             PlayerPrefs.SetString(NameKey, name);

@@ -1,13 +1,14 @@
 {
     "name": "NanoverImd",
+    "rootNamespace": "",
     "references": [
         "Nanover.Frontend",
-        "SteamVR",
         "Nanover.Visualisation",
         "Unity.TextMeshPro",
         "Nanover.Grpc",
         "Nanover.Frame",
-        "Nanover.Core"
+        "Nanover.Core",
+        "SteamVRStub"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -5,7 +5,8 @@ using UnityEngine.Events;
 using NanoverImd.Interaction;
 using System.Threading.Tasks;
 using Nanover.Core.Math;
-using Valve.VR;
+using UnityEngine.XR;
+using System.Collections.Generic;
 
 namespace NanoverImd
 {
@@ -83,7 +84,7 @@ namespace NanoverImd
         /// Called from UI to quit the application.
         /// </summary>
         public void Quit() => Application.Quit();
-        #pragma warning restore 4014
+#pragma warning restore 4014
 
         private void Update()
         {
@@ -103,35 +104,33 @@ namespace NanoverImd
         /// </summary>
         private void UpdatePlayArea()
         {
-            var chaperone = OpenVR.Chaperone;
-            if (chaperone == null)
+            var system = InputDeviceCharacteristics.HeadMounted.GetFirstDevice().subsystem;
+
+            if (system == null)
                 return;
 
-            if (chaperone.GetCalibrationState() != ChaperoneCalibrationState.OK)
+            var points = new List<Vector3>();
+            if (!system.TryGetBoundaryPoints(points) || points.Count != 4)
                 return;
 
-            var rect = new HmdQuad_t();
-            if (!chaperone.GetPlayAreaRect(ref rect))
-                return;
-
-            chaperone.GetPlayAreaSize(ref playareaSize.x, ref playareaSize.z);
+            playareaSize.x = (points[0] - points[1]).magnitude;
+            playareaSize.z = (points[0] - points[3]).magnitude;
 
             if (simulation.Multiplayer.AccessToken == null)
                 return;
 
             var area = new PlayArea
             {
-                A = TransformCornerPosition(rect.vCorners0),
-                B = TransformCornerPosition(rect.vCorners1),
-                C = TransformCornerPosition(rect.vCorners2),
-                D = TransformCornerPosition(rect.vCorners3),
+                A = TransformCornerPosition(points[0]),
+                B = TransformCornerPosition(points[1]),
+                C = TransformCornerPosition(points[2]),
+                D = TransformCornerPosition(points[3]),
             };
 
             PlayAreas.UpdateValue(simulation.Multiplayer.AccessToken, area);
 
-            Vector3 TransformCornerPosition(HmdVector3_t corner)
+            Vector3 TransformCornerPosition(Vector3 position)
             {
-                var position = new Vector3(corner.v0, corner.v1, corner.v2);
                 var transform = new Transformation(position, Quaternion.identity, Vector3.one);
                 return CalibratedSpace.TransformPoseWorldToCalibrated(transform).Position;
             }

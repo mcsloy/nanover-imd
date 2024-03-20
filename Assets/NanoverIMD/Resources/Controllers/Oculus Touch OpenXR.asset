@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 147d743152d75b346866ef0a4600e9ae, type: 3}
-  m_Name: Fallback
+  m_Name: Oculus Touch OpenXR
   m_EditorClassIdentifier: 
-  controllerIdRegex: null
+  controllerIdRegex: Oculus Touch Controller OpenXR
   leftController:
-    prefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
+    prefab: {fileID: 2543036398859962509, guid: b84bfe87481c00d43b8e66146cc2c89d,
       type: 3}
     hideSteamVrModel: 1
   rightController:
-    prefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
+    prefab: {fileID: 2543036398859962509, guid: 705f064d568aab5468eae1cb8333e07c,
       type: 3}
     hideSteamVrModel: 1

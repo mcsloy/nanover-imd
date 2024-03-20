@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 147d743152d75b346866ef0a4600e9ae, type: 3}
-  m_Name: Fallback
+  m_Name: Oculus Touch Oculus
   m_EditorClassIdentifier: 
-  controllerIdRegex: null
+  controllerIdRegex: Oculus Touch Controller - (Left|Right)
   leftController:
-    prefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
+    prefab: {fileID: 2543036398859962509, guid: ff8e1adf19ec7c441ae097b1cf203af2,
       type: 3}
     hideSteamVrModel: 1
   rightController:
-    prefab: {fileID: 6054607360830509457, guid: 273de8ffe15e34c4081f7af86e3a4de7,
+    prefab: {fileID: 2543036398859962509, guid: e7f3e9b294e13104b9b30bf9bee6e59e,
       type: 3}
     hideSteamVrModel: 1

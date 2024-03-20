@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/NanoverIMD/NanoverIMD Scene.unity
+    path: Assets/NanoverIMD/NanoverImd Scene.unity
     guid: 9004003917e9e3c41867ba1a880c5401
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: adfdc8356a040c444aff18aaf515aedd,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: ad3324068df68814683a44b50fc28263,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 7742c5e845711bc41b0bc8fb7a81b4a3,
+      type: 2}

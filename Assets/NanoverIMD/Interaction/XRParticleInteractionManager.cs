@@ -5,7 +5,7 @@ using Nanover.Frontend.Manipulation;
 using Nanover.Frontend.XR;
 using UnityEngine;
 using UnityEngine.Assertions;
-using Valve.VR;
+using UnityEngine.XR;
 
 namespace NanoverImd.Interaction
 {
@@ -18,12 +18,11 @@ namespace NanoverImd.Interaction
         [SerializeField]
         private NanoverImdSimulation simulation;
 
-        [Header("Controller Actions")]
-        [SerializeField]
-        private SteamVR_Action_Boolean grabObjectAction;
-
         [SerializeField]
         private ControllerManager controllerManager;
+
+        [SerializeField]
+        private ControllerInputMode targetMode;
 #pragma warning restore 0649
 
         private AttemptableManipulator leftManipulator;
@@ -36,7 +35,6 @@ namespace NanoverImd.Interaction
         {
             Assert.IsNotNull(simulation);
             Assert.IsNotNull(controllerManager);
-            Assert.IsNotNull(grabObjectAction);
 
             controllerManager.LeftController.ControllerReset += SetupLeftManipulator;
             controllerManager.RightController.ControllerReset += SetupRightManipulator;
@@ -57,7 +55,7 @@ namespace NanoverImd.Interaction
             CreateManipulator(ref leftManipulator, 
                               ref leftButton,
                               controllerManager.LeftController,
-                              SteamVR_Input_Sources.LeftHand);
+                              InputDeviceCharacteristics.Left);
         }
 
         private void SetupRightManipulator()
@@ -65,13 +63,13 @@ namespace NanoverImd.Interaction
             CreateManipulator(ref rightManipulator, 
                               ref rightButton,
                               controllerManager.RightController,
-                              SteamVR_Input_Sources.RightHand);
+                              InputDeviceCharacteristics.Right);
         }
         
         private void CreateManipulator(ref AttemptableManipulator manipulator,
                                        ref IButton button,
                                        VrController controller,
-                                       SteamVR_Input_Sources source)
+                                       InputDeviceCharacteristics characteristics)
         {
             // End manipulations if controller has been removed/replaced
             if (manipulator != null)
@@ -84,11 +82,11 @@ namespace NanoverImd.Interaction
 
             if (!controller.IsControllerActive)
                 return;
-            
+
             var toolPoser = controller.CursorPose;
             manipulator = new AttemptableManipulator(toolPoser, AttemptGrabObject);
 
-            button = grabObjectAction.WrapAsButton(source);
+            button = characteristics.WrapUsageAsButton(CommonUsages.triggerButton, () => controllerManager.CurrentInputMode == targetMode);
             button.Pressed += manipulator.AttemptManipulation;
             button.Released += manipulator.EndActiveManipulation;
         }

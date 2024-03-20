@@ -1,7 +1,8 @@
 ﻿using Nanover.Frontend.Controllers;
+using Nanover.Frontend.XR;
 using NanoverImd;
 using UnityEngine;
-using Valve.VR;
+using UnityEngine.XR;
 
 public class InteractionStrengthController : MonoBehaviour
 {
@@ -10,12 +11,6 @@ public class InteractionStrengthController : MonoBehaviour
 
     [SerializeField]
     private VrController controller;
-
-    [SerializeField]
-    private SteamVR_Action_Boolean increaseInteractionStrength;
-
-    [SerializeField]
-    private SteamVR_Action_Boolean decreaseInteractionStrength;
 
     [SerializeField]
     private float maximumInteractionStrength;
@@ -28,10 +23,15 @@ public class InteractionStrengthController : MonoBehaviour
 
     private void Update()
     {
+        var joystick = InputDeviceCharacteristics.Right.GetFirstDevice().GetJoystickValue(CommonUsages.primary2DAxis) ?? Vector2.zero;
+
+        var increase = joystick.x > .5f;
+        var decrease = joystick.x < -.5f;
+
         var change = 0f;
-        if (increaseInteractionStrength.state)
+        if (increase)
             change++;
-        if (decreaseInteractionStrength.state)
+        if (decrease)
             change--;
         if (change != 0)
         {

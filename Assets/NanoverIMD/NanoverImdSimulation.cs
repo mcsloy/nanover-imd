@@ -145,6 +145,9 @@ namespace NanoverImd
         /// </summary>
         public async Task CloseAsync()
         {
+            ManipulableParticles.ClearAllGrabs();
+            Multiplayer.SimulationPose.ReleaseLock();
+
             Trajectory.CloseClient();
             Multiplayer.CloseClient();
 

@@ -63,9 +63,9 @@ namespace NanoverImd
 
         private IEnumerator UpdateLocalAvatar()
         {
-            var leftHand = XRNode.LeftHand.WrapAsPosedObject();
-            var rightHand = XRNode.RightHand.WrapAsPosedObject();
-            var headset = XRNode.Head.WrapAsPosedObject();
+            var leftHand = InputDeviceCharacteristics.Left.WrapAsPosedObject();
+            var rightHand = InputDeviceCharacteristics.Right.WrapAsPosedObject();
+            var headset = InputDeviceCharacteristics.HeadMounted.WrapAsPosedObject();
 
             while (true)
             {

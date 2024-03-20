@@ -111,7 +111,7 @@ namespace NanoverImd.Interaction
         {
             manipulations.Remove(manipulation);
             // If manipulations are over, then release the lock.
-            if (!CurrentlyEditingScene)
+            if (!CurrentlyEditingScene && multiplayer.IsOpen)
             {
                 multiplayer.SimulationPose.ReleaseLock();
                 CopyMultiplayerPoseToLocal();
@@ -122,7 +122,7 @@ namespace NanoverImd.Interaction
         {
             while (true)
             {
-                if (CurrentlyEditingScene)
+                if (CurrentlyEditingScene && multiplayer.IsOpen)
                 {
                     var worldPose = Transformation.FromTransformRelativeToParent(sceneTransform);
                     ClampToSensibleValues(worldPose);

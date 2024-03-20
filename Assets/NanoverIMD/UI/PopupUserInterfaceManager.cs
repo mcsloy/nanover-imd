@@ -1,9 +1,12 @@
+using Nanover.Core.Async;
 using Nanover.Frontend.Controllers;
+using Nanover.Frontend.Input;
 using Nanover.Frontend.UI;
-using NanoverImd.UI;
+using Nanover.Frontend.XR;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
-using Valve.VR;
+using UnityEngine.XR;
 
 namespace NanoverImd.UI
 {
@@ -16,9 +19,6 @@ namespace NanoverImd.UI
         private GameObject menuPrefab;
 
         [SerializeField]
-        private SteamVR_Action_Boolean openMenuAction;
-
-        [SerializeField]
         private bool clickOnMenuClosed = true;
 
         [SerializeField]
@@ -27,27 +27,36 @@ namespace NanoverImd.UI
         [SerializeField]
         private UiInputMode mode;
 
+        [SerializeField]
+        private InputDeviceCharacteristics characteristics;
+
         private void Start()
         {
             Assert.IsNotNull(menuPrefab, "Missing menu prefab");
-            Assert.IsNotNull(openMenuAction, "Missing action to trigger menu");
-            openMenuAction.onStateDown += VisualiserMenuActionOnStateDown;
-            openMenuAction.onStateUp += VisualiserMenuActionOnStateUp;
-        }
 
-        private void VisualiserMenuActionOnStateUp(SteamVR_Action_Boolean fromaction,
-                                                   SteamVR_Input_Sources fromsource)
-        {
-            CloseMenu();
-        }
+            var openMenu = new DirectButton();
 
-        private void VisualiserMenuActionOnStateDown(SteamVR_Action_Boolean fromaction,
-                                                     SteamVR_Input_Sources fromsource)
-        {
-            ShowMenu();
-        }
+            UpdatePressedInBackground().AwaitInBackground();
 
-        private GameObject menu;
+            async Task UpdatePressedInBackground()
+            {
+                while (true)
+                {
+                    var joystick = characteristics.GetFirstDevice().GetJoystickValue(CommonUsages.primary2DAxis) ?? Vector2.zero;
+                    var pressed = Mathf.Abs(joystick.y) > .5f;
+
+                    if (pressed && !openMenu.IsPressed)
+                        openMenu.Press();
+                    else if (!pressed && openMenu.IsPressed)
+                        openMenu.Release();
+
+                    await Task.Delay(1);
+                }
+            }
+
+            openMenu.Pressed += ShowMenu;
+            openMenu.Released += CloseMenu;
+        }
 
         private void ShowMenu()
         {
