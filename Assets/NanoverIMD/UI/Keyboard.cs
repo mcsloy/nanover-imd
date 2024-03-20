@@ -1,5 +1,6 @@
 ﻿using Nanover.Frontend.UI;
 using Nanover.Frontend.XR;
+using System;
 using UnityEngine;
 using UnityEngine.XR;
 using Text = TMPro.TextMeshProUGUI;
@@ -24,6 +25,7 @@ namespace NanoverImd.UI
         private Text currentInput;
 
         private Text target;
+        private Action<string> onComplete;
 
         private string[] rows = new string[]
         {
@@ -67,12 +69,19 @@ namespace NanoverImd.UI
 
         public void OpenForTarget(Text target)
         {
+            OpenForTarget(target, null);
+        }
+
+        public void OpenForTarget(Text target, Action<string> onComplete = null)
+        {
             this.target = target;
             currentInput.text = target.text;
 
             canvasOverride.blocksRaycasts = false;
             canvasOverride.alpha = .01f;
             gameObject.SetActive(true);
+
+            this.onComplete = onComplete;
         }
 
         public void Close()
@@ -80,6 +89,8 @@ namespace NanoverImd.UI
             canvasOverride.blocksRaycasts = true;
             canvasOverride.alpha = 1f;
             gameObject.SetActive(false);
+
+            onComplete?.Invoke(currentInput.text);
         }
     }
 }
