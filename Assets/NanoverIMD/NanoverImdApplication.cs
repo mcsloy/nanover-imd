@@ -21,8 +21,6 @@ namespace NanoverImd
         
         [SerializeField]
         private NanoverImdSimulation simulation;
-        
-        private InteractableScene interactableScene;
 #pragma warning restore 0649
 
         public NanoverImdSimulation Simulation => simulation;
@@ -59,7 +57,7 @@ namespace NanoverImd
                             int? trajectoryPort = null,
                             int? imdPort = null,
                             int? multiplayerPort = null) =>
-            simulation.Connect(address, trajectoryPort, imdPort, multiplayerPort);
+            simulation.Connect(address, trajectoryPort, multiplayerPort);
 
         // These methods expose the underlying async methods to Unity for use
         // in the UI so we disable warnings about not awaiting them, and use

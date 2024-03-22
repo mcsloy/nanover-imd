@@ -19,8 +19,8 @@ namespace NanoverImd
         [SerializeField]
         private NanoverImdSimulation simulation;
 
-        [SerializeField]
-        private GameObject xrSimulatorContainer;
+        //[SerializeField]
+        //private GameObject xrSimulatorContainer;
 
         private bool directConnect;
         private string directConnectAddress = "localhost";
@@ -59,11 +59,12 @@ namespace NanoverImd
 
             if (simulation.gameObject.activeSelf)
             {
-                GUILayout.Box("User");
-                GUILayout.Label(
-                    $"Interaction Force: {simulation.ManipulableParticles.ForceScale:0.}x");
-                simulation.ManipulableParticles.ForceScale =
-                    GUILayout.HorizontalSlider(simulation.ManipulableParticles.ForceScale, 0, 5000);
+                //GUILayout.Box("User");
+                //GUILayout.Label("DISABLED");
+                //GUILayout.Label(
+                //    $"Interaction Force: {simulation.ManipulableParticles.ForceScale:0.}x");
+                //simulation.ManipulableParticles.ForceScale =
+                //    GUILayout.HorizontalSlider(simulation.ManipulableParticles.ForceScale, 0, 5000);
 
                 GUILayout.Box("Simulation");
                 if (GUILayout.Button("Play"))
@@ -96,8 +97,9 @@ namespace NanoverImd
                 }
             }
             
-            GUILayout.Box("Debug");
-            xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
+            //GUILayout.Box("Debug");
+            //GUILayout.Label("DISABLED");
+            //xrSimulatorContainer.SetActive(GUILayout.Toggle(xrSimulatorContainer.activeSelf, "Simulate Controllers"));
 
             GUILayout.Box("Misc");
             if (GUILayout.Button("Quit"))

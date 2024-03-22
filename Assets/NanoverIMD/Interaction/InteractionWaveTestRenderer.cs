@@ -43,32 +43,32 @@ namespace NanoverImd.Interaction
             return renderer;
         }
 
-        private void Update()
-        {
-            var interactions = simulation.Interactions;
-            var frame = simulation.FrameSynchronizer.CurrentFrame;
+        //private void Update()
+        //{
+        //    var interactions = simulation.Interactions;
+        //    var frame = simulation.FrameSynchroniser.CurrentFrame;
             
-            wavePool.MapConfig(interactions.Values, MapConfigToInstance);
+        //    wavePool.MapConfig(interactions.Values, MapConfigToInstance);
 
-            void MapConfigToInstance(ParticleInteraction interaction, 
-                                     SineConnectorRenderer renderer)
-            {
-                var particlePositionSim = computeParticleCentroid(interaction.Particles);
-                var particlePositionWorld = transform.TransformPoint(particlePositionSim);
+        //    void MapConfigToInstance(ParticleInteraction interaction, 
+        //                             SineConnectorRenderer renderer)
+        //    {
+        //        var particlePositionSim = computeParticleCentroid(interaction.Particles);
+        //        var particlePositionWorld = transform.TransformPoint(particlePositionSim);
 
-                renderer.EndPosition = transform.TransformPoint(interaction.Position);
-                renderer.StartPosition = particlePositionWorld;
-            }
+        //        renderer.EndPosition = transform.TransformPoint(interaction.Position);
+        //        renderer.StartPosition = particlePositionWorld;
+        //    }
 
-            Vector3 computeParticleCentroid(IReadOnlyList<int> particleIds)
-            {
-                var centroid = Vector3.zero;
+        //    Vector3 computeParticleCentroid(IReadOnlyList<int> particleIds)
+        //    {
+        //        var centroid = Vector3.zero;
 
-                for (int i = 0; i < particleIds.Count; ++i)
-                    centroid += frame.ParticlePositions[particleIds[i]];
+        //        for (int i = 0; i < particleIds.Count; ++i)
+        //            centroid += frame.ParticlePositions[particleIds[i]];
 
-                return centroid / particleIds.Count;
-            }
-        }
+        //        return centroid / particleIds.Count;
+        //    }
+        //}
     }
 }

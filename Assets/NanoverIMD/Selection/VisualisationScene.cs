@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using Nanover.Visualisation;
 using Nanover.Visualisation.Components.Adaptor;
 using Nanover.Visualisation.Property;
+using Nanover.Frontend.InputControlSystem.InputHandlers;
 using NanoverImd;
 using NanoverImd.Interaction;
 using UnityEngine;
+using NanoverImd.InputHandlers;
+using Nanover.Visualisation.Properties;
 
 namespace NanoverImd.Selection
 {
@@ -30,12 +33,9 @@ namespace NanoverImd.Selection
         [SerializeField]
         private SynchronisedFrameSource frameSource;
 
-        [SerializeField]
-        private InteractableScene interactableScene;
+        private readonly IntArrayProperty interactedParticles = new IntArrayProperty();
 
-        /// <inheritdoc cref="InteractableScene.InteractedParticles"/>
-        public IReadOnlyProperty<int[]> InteractedParticles
-            => interactableScene.InteractedParticles;
+        public IReadOnlyProperty<int[]> InteractedParticles => interactedParticles;
 
         /// <inheritdoc cref="FrameAdaptor" />
         /// <remarks>
@@ -88,6 +88,27 @@ namespace NanoverImd.Selection
             layers.Add(layer);
             return layer;
         }
+
+        
+        
+        private void UpdateHighlightedParticlesArray()
+        {
+            ParticleInteractionCollection interactionCollection = ImpulseMonoInputInputHandler.interactionCollection;
+
+            if (interactionCollection != null)
+            {
+                var particles = new List<int>();
+                foreach (var interaction in interactionCollection.Values)
+                    particles.AddRange(interaction.Particles);
+                interactedParticles.Value = particles.ToArray();
+            }
+        }
+
+        void Update()
+        {
+            UpdateHighlightedParticlesArray();
+        }
+
 
         private const string HighlightedParticlesKey = "highlighted.particles";
 
