@@ -1,4 +1,5 @@
 using Essd;
+using Nanover.Core.Async;
 using Nanover.Core.Math;
 using Nanover.Frontend.Manipulation;
 using Nanover.Grpc;
@@ -74,15 +75,16 @@ namespace NanoverImd
         {
             await CloseAsync();
 
+            Task trajectory = Task.CompletedTask;
+            Task multiplayer = Task.CompletedTask;
+
             if (trajectoryPort.HasValue)
-            {
-                Trajectory.OpenClient(GetChannel(address, trajectoryPort.Value));
-            }
+                trajectory = Trajectory.OpenClient(GetChannel(address, trajectoryPort.Value));
             
             if (multiplayerPort.HasValue)
-            {
-                Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
-            }
+                multiplayer = Multiplayer.OpenClient(GetChannel(address, multiplayerPort.Value));
+
+            await Task.WhenAll(trajectory, multiplayer);
 
             gameObject.SetActive(true);
 
@@ -143,10 +145,10 @@ namespace NanoverImd
         public async Task CloseAsync()
         {
             ManipulableParticles.ClearAllGrabs();
-            Multiplayer.SimulationPose.ReleaseLock();
 
-            Trajectory.CloseClient();
-            Multiplayer.CloseClient();
+            await Task.WhenAll(
+                Trajectory.CloseClient(), 
+                Multiplayer.CloseClient());
 
             foreach (var channel in channels.Values)
             {
