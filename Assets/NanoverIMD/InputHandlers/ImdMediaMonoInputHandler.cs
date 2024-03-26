@@ -18,13 +18,7 @@ namespace NanoverImd.InputHandlers
     /// </remarks>
     public class ImdMediaMonoInputHandler : MonoInputHandler, IUserSelectableInputHandler, ITrajectorySessionDependentInputHandler
     {
-        /* Developer's Notes:
-         * Currently the "Show Main Menu" option in the in the radial menu is not hooked up to anything
-         * as the GUI has not yet been reimplemented. This will need to be done once the GUI has been
-         * hooked back up again.
-         */
-
-
+        
         /// <summary>
         /// User friendly name that uniquely identifies the impulse handler.
         /// </summary>
@@ -97,8 +91,8 @@ namespace NanoverImd.InputHandlers
             radialMenu.Initialise(Controller, Controller.InputActionMap.FindAction("Primary Button"), menuName: "Media Options");
             string path = "UI/Icons/InputHandlers";
             radialMenu.ConfigureMenuElements(
-                new[] {$"{path}/Play", $"{path}/Pause", $"{path}/Restart", $"{path}/Menu"},
-                new[] {"Play", "Pause", "Restart", "Menu"});
+                new[] {$"{path}/Play", $"{path}/Pause", $"{path}/Restart"},
+                new[] {"Play", "Pause", "Restart"});
 
             // The selecting and option in the radial menu will trigger a call to `RadialMenuCallback`
             radialMenu.OptionSelected += RadialMenuCallback;
@@ -131,9 +125,6 @@ namespace NanoverImd.InputHandlers
                 case 2:
                     // Reset trajectory playback back to the first frame.
                     trajectory.Reset();
-                    break;
-                case 3:
-                    // Show the main menu. This will be implemented once the GUI has been hooked up.
                     break;
             }
         }

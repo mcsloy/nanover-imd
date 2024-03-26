@@ -102,6 +102,16 @@ namespace NanoverImd.InputHandlers
         /// through OpenXR.
         /// </remarks>
         public float forceScaleFactorMaxRate = 50f;
+        
+        /// <summary>
+        /// The minimum increment by which the force scale factor can be adjusted.
+        /// </summary>
+        /// <remarks>
+        /// This setting controls the granularity of adjustments to the force scale factor, ensuring
+        /// that changes occur in discrete steps. A value of 1, for example, restricts adjustments
+        /// to whole numbers, facilitating more predictable and manageable scaling.
+        /// </remarks>
+        public float forceScaleFactorStep = 1f;
 
         /// <summary>
         /// Name of the input action which will provide the analogue input used to modify the force
@@ -486,24 +496,27 @@ namespace NanoverImd.InputHandlers
         /// </remarks>
         private void ModifyScale(InputAction.CallbackContext context)
         {
-
-            // Set the position relative to the controller. This approach to updating the window's
-            // position will be a little laggy, but should be tolerable.
-            scaleTextRectTransform.rotation = Controller.transform.rotation;
-            scaleTextRectTransform.position = Controller.transform.position;
+            // Get the position of the thumbstick along the x & y axes over the domain [-1, 1]
+            Vector2 xy = context.ReadValue<Vector2>();
+            float y = xy.y;
+            float x = xy.x;
 
             // If this callback represents the start or continuation of a thumbstick input event
             // then update the force scale factor accordingly and display the feedback panel.
-            if (context.phase == InputActionPhase.Performed)
+            // Thumbstick movement is only considered to be intentional if the deflection along
+            // the y-axis is greater than that along the x-axis.
+            if ((context.phase == InputActionPhase.Performed) && (MathF.Abs(y) >= MathF.Abs(x)))
             {
                 if (lastForceScaleFactorUpdateTime == 0f)
                 {
                     lastForceScaleFactorUpdateTime = Time.time;
                     return;
                 }
-                
-                // Get the position of the thumbstick along the y axis over the domain [-1, 1]
-                float y = context.ReadValue<Vector2>().y;
+
+                // Set the position relative to the controller. This approach to updating the window's
+                // position will be a little laggy, but should be tolerable.
+                scaleTextRectTransform.rotation = Controller.transform.rotation;
+                scaleTextRectTransform.position = Controller.transform.position;
 
                 // Transform from linear to non-linear scaling. This allows for both fine grained
                 // control as well as larger movements. That is to say the further the analogue
@@ -513,27 +526,36 @@ namespace NanoverImd.InputHandlers
                 // Work out the time elapsed since the last update (in seconds)
                 float t = Time.time - lastForceScaleFactorUpdateTime;
 
-                // Record when this function was last called to allow for the time elapsed to be
-                // calculated next call.
-                lastForceScaleFactorUpdateTime = Time.time;
+                // Work out how much by which the scale factor is to be increased or decreased
+                float delta = t * forceScaleFactorMaxRate * y;
+
+                // Round the change to the nearest integer multiple of `forceScaleFactorStep`
+                float deltaRounded = Mathf.Round(delta / forceScaleFactorStep) * forceScaleFactorStep;
+
+                // If the amount of change gets rounded to zero then abort the scale attempt & allow
+                // more time to pass so that a greater degree of change may accumulate.
+                if (Mathf.Abs(deltaRounded) < forceScaleFactorStep) return;
 
                 // Scale the force multiplier appropriately, while ensuring that the value remains
                 // within the domain of [forceScaleFactorLowerBounds, forceScaleFactorUpperBounds]
                 forceScaleFactor = Mathf.Clamp(
-                    forceScaleFactor + t * forceScaleFactorMaxRate * y,
+                    forceScaleFactor + deltaRounded,
                     forceScaleFactorLowerBounds, forceScaleFactorUpperBounds);
 
                 // Update the text displayed in the feedback panel to show the updated force
-                scaleText.text = $"{forceScaleFactor:000.00}";
+                scaleText.text = $"{forceScaleFactor:000.0}";
+
+                // Record when this function was last called to allow for the time elapsed to be
+                // calculated next call.
+                lastForceScaleFactorUpdateTime = Time.time;
 
                 // Ensure that the feedback panel is active
                 scaleTextPanel.SetActive(true);
-
             }
 
-            // Otherwise if this the input event session coming to an end (i.e. the thumbstick is
-            // released) then hide the feedback panel.
-            else if (context.phase == InputActionPhase.Canceled)
+            // Otherwise if this the input event session coming to an end, i.e. the thumbstick is
+            // released or is no longer clearly pushed up/down, then hide the feedback panel.
+            else
             {
                 // Disable the feedback panel
                 scaleTextPanel.SetActive(false);
