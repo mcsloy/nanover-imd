@@ -11,7 +11,7 @@ using Nanover.Grpc.Multiplayer;
 using Nanover.Visualisation;
 using Nanover.Frontend.InputControlSystem.Utilities;
 using UnityEngine.InputSystem;
-
+using Nanover.Core.Math;
 
 
 
@@ -50,6 +50,11 @@ namespace NanoverImd
     /// </remarks>
     public class NanoverImdSimulation : MonoBehaviour, IMultiplayerSessionSource, ITrajectorySessionSource
     {
+
+        /// <summary> Backlink to the Nanover IMD Application component.</summary>
+        [SerializeField]
+        private NanoverImdApplication application;
+
         /// <summary>
         /// Trajectory session entity from which geometry "frame data" can be sourced.
         /// </summary>
@@ -296,39 +301,16 @@ namespace NanoverImd
 
         public void Disconnect() => _ = CloseAsync();
 
-        ///// <summary>
-        ///// Play/resume trajectory playback.
-        ///// </summary>
-        //public void PlayTrajectory() => Trajectory.Play();
-
-        ///// <summary>
-        ///// Pause trajectory playback.
-        ///// </summary>
-        //public void PauseTrajectory() => Trajectory.Pause();
-
-        ///// <summary>
-        ///// Reset trajectory playback back to the first frame.
-        ///// </summary>
-        //public void ResetTrajectory() => Trajectory.Reset();
-
-
-
-        ///// <summary>
-        ///// Reset the box to the unit position.
-        ///// </summary>
-        //public void ResetBox()
-        //{
-        //    // var calibPose = application.CalibratedSpace
-        //    //                            .TransformPoseWorldToCalibrated(Transformation.Identity);
-        //    // Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
-        //}
-
-
-        // This is a nullop for the time being.
+        /// <summary>
+        /// Reset the box to the unit position.
+        /// </summary>
         public void ResetBox()
         {
-
+            var calibPose = application.CalibratedSpace.TransformPoseWorldToCalibrated(Transformation.Identity);
+            Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
         }
+
+
 
 
         /// <summary>

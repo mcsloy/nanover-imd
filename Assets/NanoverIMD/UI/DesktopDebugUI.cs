@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NanoverImd;
 using UnityEngine;
+using NanoverImd.InputHandlers;
 
 namespace NanoverImd
 {
@@ -59,12 +60,14 @@ namespace NanoverImd
 
             if (simulation.gameObject.activeSelf)
             {
-                //GUILayout.Box("User");
-                //GUILayout.Label("DISABLED");
-                //GUILayout.Label(
-                //    $"Interaction Force: {simulation.ManipulableParticles.ForceScale:0.}x");
-                //simulation.ManipulableParticles.ForceScale =
-                //    GUILayout.HorizontalSlider(simulation.ManipulableParticles.ForceScale, 0, 5000);
+                GUILayout.Box("User");
+                GUILayout.Label(
+                    $"Interaction Force: {ImpulseMonoInputInputHandler.ForceScaleFactor:0.}x");
+                ImpulseMonoInputInputHandler.ForceScaleFactor =
+                    GUILayout.HorizontalSlider(
+                        ImpulseMonoInputInputHandler.ForceScaleFactor,
+                        ImpulseMonoInputInputHandler.forceScaleFactorLowerBounds,
+                        ImpulseMonoInputInputHandler.forceScaleFactorUpperBounds);
 
                 GUILayout.Box("Simulation");
                 if (GUILayout.Button("Play"))

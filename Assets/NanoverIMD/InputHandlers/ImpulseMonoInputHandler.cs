@@ -26,7 +26,7 @@ namespace NanoverImd.InputHandlers
     public class ImpulseMonoInputInputHandler : SelectorMonoInputInputHandler, IUserSelectableInputHandler, IMultiplayerSessionDependentInputHandler
     {
 
-        /* Developer's notes:
+        /* Developer's Notes:
          * i  ) A limit should be placed on the maximum distance (in world space) that an atom can be
          *      from the controller and still be actioned. That is to say, if the controller is very
          *      far away from all of the atoms then depressing the trigger should have no effect.
@@ -36,6 +36,15 @@ namespace NanoverImd.InputHandlers
          * iii) An outline should be used to highlight the atoms and residues as this will
          *      provide a more obvious highlighting effect.
          */
+
+        /* Implementation Note:
+         * It is worth mentioning that fields pertaining to the force scale factor have all been
+         * made static so that all <c>ImpulseMonoInputInputHandler</c> instances share a common
+         * force scale factor value. While this deviates somewhat from the expected behaviour of
+         * mono-form input handlers, the decision was made by project management team to priorities
+         * feature consistency with older versions of the code to help ensure project progression.
+         */
+
 
         /// <summary>
         /// User friendly name that uniquely identifies the impulse handler.
@@ -58,7 +67,7 @@ namespace NanoverImd.InputHandlers
         /// The amount of force applied to the selected target will increase with increasing
         /// <code>forceScaleFactor</code>, this defaults to a value of 50.
         /// </summary>
-        private float forceScaleFactor = 50f;
+        private static float forceScaleFactor = 50f;
 
         /// <summary>
         /// Force multiplier for the impulse interaction.
@@ -67,7 +76,7 @@ namespace NanoverImd.InputHandlers
         /// <code>forceScaleFactor</code>. Provided values will be automatically clammed to within
         /// the domain of [<c>forceScaleFactorLowerBounds</c>, <c>forceScaleFactorUpperBounds</c>].
         /// </summary>
-        public float ForceScaleFactor
+        public static float ForceScaleFactor
         {
             set => forceScaleFactor = Mathf.Clamp(value, forceScaleFactorLowerBounds, forceScaleFactorUpperBounds);
             get => forceScaleFactor;
@@ -81,7 +90,7 @@ namespace NanoverImd.InputHandlers
         /// selecting a value that could lead to instant thermalisation upon application. Such a
         /// precaution helps in safeguarding the user experience.
         /// </remarks>
-        public float forceScaleFactorUpperBounds = 200f;
+        public static float forceScaleFactorUpperBounds = 200f;
 
         /// <summary>
         /// The minimum value to which the force scale factor can be set.
@@ -90,7 +99,7 @@ namespace NanoverImd.InputHandlers
         /// Generally this should be set to zero. However, selecting a negative value permits push
         /// type interactions, rather than the default pull type.
         /// </remarks>
-        public float forceScaleFactorLowerBounds = 0f;
+        public static float forceScaleFactorLowerBounds = 0f;
 
         /// <summary>
         /// The maximum rate at which the force scale factor is allowed to change per second.
@@ -101,7 +110,7 @@ namespace NanoverImd.InputHandlers
         /// remains controlled and does not react excessively to each hardware update signal received
         /// through OpenXR.
         /// </remarks>
-        public float forceScaleFactorMaxRate = 50f;
+        public static float forceScaleFactorMaxRate = 50f;
         
         /// <summary>
         /// The minimum increment by which the force scale factor can be adjusted.
@@ -111,7 +120,7 @@ namespace NanoverImd.InputHandlers
         /// that changes occur in discrete steps. A value of 1, for example, restricts adjustments
         /// to whole numbers, facilitating more predictable and manageable scaling.
         /// </remarks>
-        public float forceScaleFactorStep = 1f;
+        public static float forceScaleFactorStep = 1f;
 
         /// <summary>
         /// Name of the input action which will provide the analogue input used to modify the force
@@ -532,6 +541,9 @@ namespace NanoverImd.InputHandlers
                 // Round the change to the nearest integer multiple of `forceScaleFactorStep`
                 float deltaRounded = Mathf.Round(delta / forceScaleFactorStep) * forceScaleFactorStep;
 
+                // Ensure that the feedback panel is active (even if we do not end up changing the value)
+                scaleTextPanel.SetActive(true);
+
                 // If the amount of change gets rounded to zero then abort the scale attempt & allow
                 // more time to pass so that a greater degree of change may accumulate.
                 if (Mathf.Abs(deltaRounded) < forceScaleFactorStep) return;
@@ -549,8 +561,6 @@ namespace NanoverImd.InputHandlers
                 // calculated next call.
                 lastForceScaleFactorUpdateTime = Time.time;
 
-                // Ensure that the feedback panel is active
-                scaleTextPanel.SetActive(true);
             }
 
             // Otherwise if this the input event session coming to an end, i.e. the thumbstick is
