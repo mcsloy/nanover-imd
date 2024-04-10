@@ -327,7 +327,6 @@ namespace NanoverImd.InputHandlers
                 ResidueSelectionModeIsActive = true;
             else
                 throw new ArgumentOutOfRangeException(nameof(index), "Index must be 0 or 1");
-            
         }
 
         void Update()
@@ -359,7 +358,6 @@ namespace NanoverImd.InputHandlers
 
                 radialMenu.OptionSelected += SetSelectionMode;
                 radialMenu.Finalise();
-
             }
 
             // If the handler is currently engaged and a closest atom has been identified
@@ -376,7 +374,7 @@ namespace NanoverImd.InputHandlers
                     timeOfLastImpulseMessage = DateTime.Now;
 
                     // Get the position of the controller in the local coordinate system of the simulation space
-                    Vector3 cursorPosition = simulationGameObject.transform.InverseTransformPoint(Controller.transform.position);
+                    Vector3 cursorPosition = simulationTransform.InverseTransformPoint(Controller.transform.position);
 
                     // List of atoms to which an impulse force should be applied.
                     List<int> targetAtoms = new List<int>();
@@ -432,8 +430,8 @@ namespace NanoverImd.InputHandlers
                     //  - vec3: Position of the closest atom
                     Vector3[] positions = GetPositions();
 
-                    Vector3 vec3 = simulationGameObject.transform.TransformPoint(positions[closestAtomIndex]);
-                    Vector3 vec2 = simulationGameObject.transform.TransformPoint(
+                    Vector3 vec3 = simulationTransform.TransformPoint(positions[closestAtomIndex]);
+                    Vector3 vec2 = simulationTransform.TransformPoint(
                         positions[closestAtomIndex] +
                         getVelocity());
                     Vector3 vec0 = Controller.transform.position;

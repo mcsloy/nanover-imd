@@ -12,7 +12,8 @@ using Nanover.Visualisation;
 using Nanover.Frontend.InputControlSystem.Utilities;
 using UnityEngine.InputSystem;
 using Nanover.Core.Math;
-
+using Nanover.Frontend.XR;
+using static UnityEngine.InputSystem.HID.HID;
 
 
 /* Developer's Notes
@@ -48,12 +49,46 @@ namespace NanoverImd
     /// Note that this class and its documentation still require much work before it is suitable for
     /// production level use.
     /// </remarks>
-    public class NanoverImdSimulation : MonoBehaviour, IMultiplayerSessionSource, ITrajectorySessionSource
+    public class NanoverImdSimulation : MonoBehaviour, IMultiplayerSessionSource, ITrajectorySessionSource, IPhysicallyCalibratedSpaceSource, ISimulationSpaceTransformSource
     {
 
         /// <summary> Backlink to the Nanover IMD Application component.</summary>
         [SerializeField]
         private NanoverImdApplication application;
+
+        /// <summary>
+        /// The <see cref="UnityEngine.Transform">transform</see> representing the simulation's
+        /// "<i>outer</i>" space within the virtual environment.
+        /// </summary>
+        /// <remarks>
+        /// This transform defines the overall location, orientation, and scale of the simulation
+        /// within the virtual space. This may be freely manipulated as needed in the manner that
+        /// one would expect of an objects transform. However, care must be taken to ensure that
+        /// local changes made to this transform are synced with the server using the appropriate
+        /// multiplayer resource.
+        /// </remarks>
+        [SerializeField]
+        private Transform outerSimulationSpaceTransform;
+
+        /// <summary>
+        /// The <see cref="UnityEngine.Transform">transform</see> representing the simulation's
+        /// "<i>inner</i>" space. 
+        /// </summary>
+        /// <remarks>
+        /// Molecular simulation packages often adopt the right-hand coordinate system, in contrast
+        /// to Unity's left-handed system. This discrepancy results in the rendering of molecular
+        /// systems as mirror images, with R-enantiomers appearing as S-enantiomers. To address this,
+        /// an inner simulation space with a scale value of [-1, 1, 1] is employed to accurately
+        /// reflect the simulation. Therefore, to obtain the correct controller position within the
+        /// simulation space, this transform must be used. It is crucial to note that, unlike the
+        /// <see cref="outerSimulationSpaceTransform">outer transform</see>, the inner transform
+        /// should <u>never</u> be manipulated directly. Within the legacy Narupa code this vaw
+        /// formally known as <c>rightHandedSimulationSpace</c>.
+        /// </remarks>
+        [SerializeField]
+        private Transform innerSimulationSpaceTransform;
+        
+        public (Transform, Transform) SimulationSpaceTransforms => (outerSimulationSpaceTransform, innerSimulationSpaceTransform);
 
         /// <summary>
         /// Trajectory session entity from which geometry "frame data" can be sourced.
@@ -65,6 +100,18 @@ namespace NanoverImd
         /// engaging in "multiplayer activities".
         /// </summary>
         public MultiplayerSession Multiplayer { get; } = new MultiplayerSession();
+
+        /// <summary>
+        /// The <see cref="PhysicallyCalibratedSpace">physically calibrated space</see> entity that
+        /// represents the shared coordinate space which the users inhabit.
+        /// </summary>
+        /// <remarks>
+        /// This is needed to allow for positions be converted from client-side coordinate space
+        /// to an abstract virtual shared server space. Without this translation layer each client
+        /// would see objects at different positions in physical space. This is only important when
+        /// users occupy the same real world physical space (i.e. are in the same room).
+        /// </remarks>
+        public PhysicallyCalibratedSpace PhysicallyCalibratedSpace => application.CalibratedSpace;
 
         /// <summary>
         /// A collection of gRPC channels, each uniquely identified by a socket address.
@@ -166,6 +213,8 @@ namespace NanoverImd
             {
                 // TODO: Implement error handling for cases where 'services' is missing or improperly formatted.
             }
+
+            //CopyRemoteTransformToLocal();
         }
 
         /// <summary>
@@ -252,9 +301,11 @@ namespace NanoverImd
 
             // and set the frame source of the frame synchroniser.
             FrameSynchroniser.FrameSource = Trajectory;
+
+            // If the system's transform is changed by the server or another agent then a call to
+            // `CopyRemoteTransformToLocal` is made to apply that change to the local game object.
+            Multiplayer.SimulationPose.RemoteValueChanged += CopyRemoteTransformToLocalWithGuard;
         }
-
-
 
 
         /// <summary>
@@ -306,8 +357,13 @@ namespace NanoverImd
         /// </summary>
         public void ResetBox()
         {
-            var calibPose = application.CalibratedSpace.TransformPoseWorldToCalibrated(Transformation.Identity);
+            var calibPose = PhysicallyCalibratedSpace.TransformPoseWorldToCalibrated(Transformation.Identity);
             Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
+            CopyRemoteTransformToLocal();
+            // TODO: There are some possible issues here that need to be looked at:
+            // - Is the lock actually released?
+            // - CopyRemoteTransformToLocal will not actually do anything as the lock will indicate
+            //   that it should not perform an update.
         }
 
 
@@ -325,6 +381,45 @@ namespace NanoverImd
                 new Dictionary<string, object> { ["radius"] = .01 }
             );
         }
-        
+
+
+        private void CopyRemoteTransformToLocalWithGuard()
+        {
+            // Do not respond to local changes as these will be applied by the entity responsible.
+            // Note that the `Locked` state only indicates if a local lock has been acquired thus
+            // not additional checks are required.
+            if (Multiplayer.SimulationPose.LockState != MultiplayerResourceLockState.Locked)
+                CopyRemoteTransformToLocal();
+
+        }
+
+        private void CopyRemoteTransformToLocal()
+        {
+
+            Debug.Log("Updating");
+
+            // Fetch the new transform from the shared multiplayer resource entity.
+            var calibratedTransformation = Multiplayer.SimulationPose.Value;
+
+            /* Developer's Notes;
+             * This check is a holdover from the original code and the rationed given is as follows:
+             * "This is necessary because the default value of multiplayer.SimulationPose is
+             *  degenerate (0 scale) and there seems to be no way to tell if the remote value has
+             *  been set yet or is default."
+             */
+            if (calibratedTransformation.Scale.x <= 0.001f)
+                calibratedTransformation = new Transformation(Vector3.zero, Quaternion.identity, Vector3.one);
+
+            // Convert from common user-agnostic "calibrated space" to client-side world space.
+            // Note that this "world space" is not the same "world space" that Unity recognises.
+            var worldTransformation = PhysicallyCalibratedSpace.TransformPoseCalibratedToWorld(calibratedTransformation);
+
+            // Set the local position, orientation, and scale of the target `Transform` equal to
+            // those within `worldTransformation`.
+            worldTransformation.CopyToTransformRelativeToParent(outerSimulationSpaceTransform);
+            
+        }
+
+
     }
 }
