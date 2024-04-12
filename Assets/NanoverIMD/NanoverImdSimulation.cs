@@ -147,9 +147,26 @@ namespace NanoverImd
         /// </summary>
         public SynchronisedFrameSource FrameSynchroniser { get; private set; }
 
+        /// <summary>
+        /// Structure for providing information about active particle interactions with the server.
+        /// </summary>
+        /// <remarks>
+        /// This provides continent access to the <c>ParticleInteractionCollection</c> entity used
+        /// by <c>ImpulseMonoInputInputHandler</c> instances to store impulse interaction events.
+        /// This is mostly here to maintain some semblance of consistency with the original code.
+        /// However, shared resources such as these, which are needed in various parts of the code
+        /// might be better placed in a common globally accessible singleton class application layer.
+        /// </remarks>
         public ParticleInteractionCollection InteractionCollection
         {
-            get => ImpulseMonoInputInputHandler.interactionCollection;
+            get
+            {
+                // Ensure that an interaction collection actually exists.
+                if (ImpulseMonoInputInputHandler.interactionCollection == null)
+                    ImpulseMonoInputInputHandler.interactionCollection = new ParticleInteractionCollection(Multiplayer);
+
+                return ImpulseMonoInputInputHandler.interactionCollection;
+            }
             set => ImpulseMonoInputInputHandler.interactionCollection = value;
         }
 
