@@ -1,14 +1,15 @@
-﻿using Nanover.Frontend.InputControlSystem.InputControllers;
-using Nanover.Frontend.InputControlSystem.InputHandlers;
-using NanoverImd.Interaction;
-using System;
-using Nanover.Frontend.UI.ContextMenus;
-using TMPro;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Vector3 = UnityEngine.Vector3;
-using System.Collections.Generic;
+using TMPro;
+using Nanover.Frontend.InputControlSystem.InputControllers;
+using Nanover.Frontend.InputControlSystem.InputHandlers;
+using Nanover.Frontend.UI.ContextMenus;
+using NanoverImd.Interaction;
 using Nanover.Grpc.Multiplayer;
+using Nanover.Core.Utility;
 
 namespace NanoverImd.InputHandlers
 {
@@ -136,7 +137,7 @@ namespace NanoverImd.InputHandlers
         /// <summary>
         /// A unique ID for interactions performed by this input handler.
         /// </summary>
-        private string ID = Guid.NewGuid().ToString();
+        public readonly string ID = $"{GlobalSettings.ApplicationGUID}.{Guid.NewGuid()}";
 
         /// <summary>
         /// Structure for providing information about active particle interactions with the server.
@@ -181,12 +182,21 @@ namespace NanoverImd.InputHandlers
         /// ensure that the rate at which the force scale factor changes is invariant to poll rate
         /// and frame rate.
         /// </remarks>
-        private float lastForceScaleFactorUpdateTime = 0.0f;
+        private float lastForceScaleFactorUpdateTime;
 
         /// <summary>
         /// Used to draw a linking line between the controller and the entity that is being actioned.
         /// </summary>
         private LineRenderer lineRenderer;
+
+        /// <summary>
+        /// The sine wave renderer for creating the wave like visual effect.
+        /// </summary>
+        /// <remarks>
+        /// This is responsible for manipulating and updating the line renderer so that it creates
+        /// a sine wave like pulse wave between the controller and the target.
+        /// </remarks>
+        private SineConnectorRenderer waveRenderer;
 
         /// <summary>
         /// Maximum rate at which impulse request messages can be sent.
@@ -237,14 +247,6 @@ namespace NanoverImd.InputHandlers
         /// possible conflicts if other menu systems are added to this handler in the future. 
         /// </remarks>
         private GameObject radialGameObject;
-
-
-        // Temporary stuff to do with the current way in which the line tenderer is drawn. These
-        // components will be removed prior to pushing this branch into production.
-        private Mixer mixer;
-        private Vector3 oldPosition;
-        private float oldTime;
-        private Vector3 oldVelocity = Vector3.zero;
 
         /// <summary>
         /// Set the required multiplayer session.
@@ -364,6 +366,7 @@ namespace NanoverImd.InputHandlers
             if (isEngaged && closestAtomIndex != -1)
             {
 
+
                 // Ensue that impulse message are constructed and sent to the server at a reasonable
                 // rate to avoid spamming the server with messages.
                 if ((DateTime.Now - timeOfLastImpulseMessage).TotalSeconds >= maxImpulseMessageFrequency)
@@ -399,8 +402,7 @@ namespace NanoverImd.InputHandlers
                             if (frame.ParticleResidues[i] == targetResidue)
                                 targetAtoms.Add(i);
                     }
-
-
+                    
                     // Provide information to the server that an impulse action is being performed.
                     interactionCollection.UpdateValue(ID, new ParticleInteraction()
                     {
@@ -411,43 +413,12 @@ namespace NanoverImd.InputHandlers
                         ResetVelocities = false
                     });
 
-                    // This method is a little overly complicated and should be replaced with the old
-                    // line render until a more ascetically pleasing approach can be created.
+                    // Position of the closest atom.
+                    waveRenderer.StartPosition = simulationTransform.TransformPoint(GetPositions()[closestAtomIndex]);
 
-                    // Now that an impulse command has been sent to the server a visual cue must be
-                    // provided to the user so that they know which atoms they are interacting with.
-                    // Specifically in the form of a line render. Note that atom highlighting takes
-                    // place elsewhere in the code-base. Currently the line render takes the form of
-                    // a cubic Bezier curve, the command points of which are used to indicate the
-                    // amount of force being applied.
-                    // Vectors:
-                    //  - vec0: Position of the controller.
-                    //  - vec1: Position of the first quartile along the vector between the
-                    //          controller and the atom. In the future this will be modified so
-                    //          that it moves further along the vector as the force scale factor
-                    //          is increased.
-                    //  - vec2: Position of the closest atom + velocity
-                    //  - vec3: Position of the closest atom
-                    Vector3[] positions = GetPositions();
+                    // Position of the controller.
+                    waveRenderer.EndPosition = Controller.transform.position;
 
-                    Vector3 vec3 = simulationTransform.TransformPoint(positions[closestAtomIndex]);
-                    Vector3 vec2 = simulationTransform.TransformPoint(
-                        positions[closestAtomIndex] +
-                        getVelocity());
-                    Vector3 vec0 = Controller.transform.position;
-                    Vector3 vec1 = Vector3.Lerp(vec0, vec3, 0.9f);
-
-                    // Construct the cubic Bezier curve
-                    Vector3[] points = CubicBezier(vec0, vec1, vec2, vec3, Linspace(0f, 1f, 50));
-
-                    // Smooth out the Bezier curve
-                    Vector3[] mixedPoints = mixer.Mix(points);
-
-                    // The first and last positions should not undergo smoothing.
-                    (mixedPoints[0], mixedPoints[^1]) = (points[0], points[^1]);
-
-                    lineRenderer.positionCount = points.Length;
-                    lineRenderer.SetPositions(mixedPoints);
                 }
 
             }
@@ -465,6 +436,9 @@ namespace NanoverImd.InputHandlers
 
             // Show the line tenderer
             lineRenderer.enabled = true;
+
+            // Enable the wave renderer.
+            waveRenderer.enabled = true;
 
             // Signal that the handler is now engaged. This is used to indicate to other parts
             // of the handler that they should now act.
@@ -486,10 +460,13 @@ namespace NanoverImd.InputHandlers
 
             // Hide the line tenderer
             lineRenderer.enabled = false;
-            mixer.Reset();
+
+            // Disable the wave renderer.
+            waveRenderer.enabled = false;
 
             // Flush the interaction collection
             interactionCollection.RemoveValue(ID);
+            
         }
 
         /// <summary>
@@ -596,13 +573,20 @@ namespace NanoverImd.InputHandlers
         void Awake()
         {
 
-            // Set up the line renderer 
+            // Set up the sine wave line renderer.
             lineRenderer = gameObject.AddComponent<LineRenderer>();
+            waveRenderer = gameObject.AddComponent<SineConnectorRenderer>();
+
+            lineRenderer.material = Resources.Load("Interaction") as Material;
+            lineRenderer.colorGradient = GenerateColourGradient();
+
+            lineRenderer.startWidth = 0.02f;
+            lineRenderer.endWidth = 0.02f;
+            
+            waveRenderer.Renderer = lineRenderer;
+
             lineRenderer.enabled = false;
-            lineRenderer.material = Resources.Load("PulseMaterial") as Material;
-            lineRenderer.startWidth = 0.005f;
-            lineRenderer.endWidth = 0.005f;
-            mixer = new Mixer(6, 50);
+            waveRenderer.enabled = false;
 
 
             // # Text Panel Setup
@@ -667,153 +651,27 @@ namespace NanoverImd.InputHandlers
 
         public override void UnbindController(InputController controller) { }
 
-
-        // All functionality in the file falling below this point is temporary and wil be removed.
-
-        private Vector3 getVelocity()
+        /// <summary>
+        /// Returns a gradient like that used in the previous "Narupa" code.
+        /// </summary>
+        /// <returns></returns>
+        private Gradient GenerateColourGradient()
         {
-            Vector3 newPosition = GetPositions()[closestAtomIndex];
+            var gradient = new Gradient();
+            var colours = new GradientColorKey[2];
+            colours[0] = new GradientColorKey(new Color(1f, 0.52f, 0f), 0f);
+            colours[1] = new GradientColorKey(new Color(0.95f, 0.85f, 0.56f), 0.5f);
 
-            if (newPosition == oldPosition)
-            {
-                return oldVelocity;
-            }
-
-            Vector3 distance = newPosition - oldPosition;
-
-            float newTime = (float)DateTime.Now.TimeOfDay.TotalSeconds;
-            float time = newTime - oldTime;
-
-            Vector3 velocity = distance / time;
-
-            Vector3 smoothed = (velocity + oldVelocity) / 2f;
-
-            oldPosition = newPosition;
-            oldTime = newTime;
-            oldVelocity = velocity;
-
-            return smoothed;
-        }
-
-        private float[] Linspace(float start, float end, int num)
-        {
-            float[] result = new float[num];
-            float step = (end - start) / (num - 1);
-
-            for (int i = 0; i < num; i++)
-            {
-                result[i] = start + (i * step);
-            }
-
-            return result;
-        }
-
-        private Vector3[] CubicBezier(
-            Vector3 p0, Vector3 p1,
-            Vector3 p2, Vector3 p3,
-            float[] tValues)
-        {
-
-            Vector3[] points = new Vector3[tValues.Length];
-
-            for (int i = 0; i < tValues.Length; i++)
-            {
-                float t = tValues[i];
-                float oneLessT = 1f - t;
-
-                points[i] = oneLessT * oneLessT * oneLessT * p0 +
-                            3f * oneLessT * oneLessT * t * p1 +
-                            3f * oneLessT * t * t * p2 +
-                            t * t * t * p3;
-            }
-
-            return points;
-        }
-
-
-
-    }
-
-    internal class Mixer
-    {
-
-        private Vector3[,] history;
-        private int count = 0;
-        private int n;
-        private int m;
-
-
-        public Mixer(int n, int m)
-        {
-            history = new Vector3[n, m];
-            this.n = n;
-            this.m = m;
-        }
-
-        public Vector3[] Mix(Vector3[] newArray)
-        {
-            count += 1;
-            RollArray(newArray);
-            Vector3[] mixedArray = SumColumns(history);
-
-            float x = MathF.Min(n, count);
-            for (int i = 0; i < m; i++)
-            {
-                mixedArray[i] /= x;
-            }
-
+            var alphas = new GradientAlphaKey[4];
+            alphas[0] = new GradientAlphaKey(0.0f, 0f);
+            alphas[1] = new GradientAlphaKey(0.1f, 1f);
+            alphas[2] = new GradientAlphaKey(0.9f, 1f);
+            alphas[3] = new GradientAlphaKey(1.0f, 0f);
             
-            return mixedArray;
+            gradient.SetKeys(colours, alphas);
+            return gradient;
+
         }
-
-
-        public void RollArray(Vector3[] newRow)
-        {
-            int rows = history.GetLength(0);
-            int cols = history.GetLength(1);
-
-            // Shift rows down
-            for (int row = rows - 1; row > 0; row--)
-            {
-                for (int col = 0; col < cols; col++)
-                {
-                    history[row, col] = history[row - 1, col];
-                }
-            }
-
-            // Insert the new row at the top
-            for (int col = 0; col < cols; col++)
-            {
-                history[0, col] = newRow[col];
-            }
-        }
-
-
-        public Vector3[] SumColumns(Vector3[,] array)
-        {
-            int rows = array.GetLength(0);
-            int cols = array.GetLength(1);
-            Vector3[] columnSums = new Vector3[cols];
-
-            for (int col = 0; col < cols; col++)
-            {
-                Vector3 sum = new Vector3(0, 0, 0);
-                for (int row = 0; row < rows; row++)
-                {
-                    sum += array[row, col];
-                }
-                columnSums[col] = sum;
-            }
-
-            return columnSums;
-        }
-
-        public void Reset()
-        {
-            history = new Vector3[n, m];
-            count = 0;
-        }
-
     }
 
 }

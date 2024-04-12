@@ -4,7 +4,7 @@ Shader "Unlit/Pulse"
     {
         _PulseColor("Pulse Color", Color) = (0,1,0,1)
         _PulseWidth("Pulse Width", Range(0, 1)) = 0.01
-        _Duration("Duration (sec)", Float) = -2.0
+        _Duration("Duration (sec)", Float) = -0.5
         _PulseCount("Pulse Count", Int) = 3
         _SmoothingIntensity("Smoothing Intensity", Float) = 1.0
     }

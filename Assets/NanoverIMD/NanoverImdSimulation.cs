@@ -13,6 +13,8 @@ using Nanover.Frontend.InputControlSystem.Utilities;
 using UnityEngine.InputSystem;
 using Nanover.Core.Math;
 using Nanover.Frontend.XR;
+using NanoverImd.InputHandlers;
+using NanoverImd.Interaction;
 using static UnityEngine.InputSystem.HID.HID;
 
 
@@ -144,6 +146,12 @@ namespace NanoverImd
         /// Entity through which frame data can be sourced synchronously.
         /// </summary>
         public SynchronisedFrameSource FrameSynchroniser { get; private set; }
+
+        public ParticleInteractionCollection InteractionCollection
+        {
+            get => ImpulseMonoInputInputHandler.interactionCollection;
+            set => ImpulseMonoInputInputHandler.interactionCollection = value;
+        }
 
         /// <summary>
         /// Positions of the atoms.
@@ -360,10 +368,8 @@ namespace NanoverImd
             var calibPose = PhysicallyCalibratedSpace.TransformPoseWorldToCalibrated(Transformation.Identity);
             Multiplayer.SimulationPose.UpdateValueWithLock(calibPose);
             CopyRemoteTransformToLocal();
-            // TODO: There are some possible issues here that need to be looked at:
-            // - Is the lock actually released?
-            // - CopyRemoteTransformToLocal will not actually do anything as the lock will indicate
-            //   that it should not perform an update.
+            // TODO: Is the lock actually released here?
+
         }
 
 
@@ -395,8 +401,6 @@ namespace NanoverImd
 
         private void CopyRemoteTransformToLocal()
         {
-
-            Debug.Log("Updating");
 
             // Fetch the new transform from the shared multiplayer resource entity.
             var calibratedTransformation = Multiplayer.SimulationPose.Value;

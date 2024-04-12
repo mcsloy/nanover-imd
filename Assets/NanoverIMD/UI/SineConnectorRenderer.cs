@@ -4,6 +4,7 @@ using UnityEngine;
 [ExecuteAlways]
 public class SineConnectorRenderer : MonoBehaviour
 {
+
     [SerializeField]
     private Vector3 startPoint;
 
@@ -14,16 +15,16 @@ public class SineConnectorRenderer : MonoBehaviour
     private new LineRenderer renderer;
 
     [SerializeField]
-    private float segmentsPerMeter;
+    private float segmentsPerMeter = 250f;
 
     [SerializeField]
-    private float frequency;
+    private float frequency = 80f;
 
     [SerializeField]
-    private float speed;
+    private float speed = 15f;
 
     [SerializeField]
-    private float amplitude;
+    private float amplitude = 0.015f;
 
     [SerializeField]
     private float width = 0.02f;
@@ -31,17 +32,15 @@ public class SineConnectorRenderer : MonoBehaviour
     [SerializeField]
     private float scaling = 0.1f;
 
-    public Vector3 StartPosition
-    {
-        get => startPoint;
-        set => startPoint = value;
-    }
-    
-    public Vector3 EndPosition
-    {
-        get => endPoint;
-        set => endPoint = value;
-    }
+    public Vector3 StartPosition { get => startPoint; set => startPoint = value; }
+    public Vector3 EndPosition { get => endPoint; set => endPoint = value; }
+    public LineRenderer Renderer { get => renderer; set => renderer = value; }
+    public float SegmentsPerMeter { get => segmentsPerMeter; set => segmentsPerMeter = value; }
+    public float Frequency { get => frequency; set => frequency = value; }
+    public float Speed { get => speed; set => speed = value; }
+    public float Amplitude { get => amplitude; set => amplitude = value; }
+    public float Width { get => width; set => width = value; }
+    public float Scaling { get => scaling; set => scaling = value; }
 
     private void Update()
     {
