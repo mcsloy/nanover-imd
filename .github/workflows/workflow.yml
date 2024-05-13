@@ -11,7 +11,7 @@ jobs:
   build:
     name: Build my project ✨
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/master'
+    if: github.ref != 'refs/heads/main'
     concurrency:
       group: needs-license
     steps:
@@ -44,7 +44,7 @@ jobs:
   artefact-build:
     name: Build my project with artefact ✨
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     concurrency:
       group: needs-license
     steps:
@@ -120,7 +120,7 @@ jobs:
     name: Publish the latest Build
     runs-on: ubuntu-latest
     needs: [artefact-build, tests]
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -151,7 +151,7 @@ jobs:
     name: Build the conda Packages
     runs-on: windows-latest
     needs: [artefact-build, tests]
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       # We need to download the source code to get the version number
       # since we define it from the number of commits.
@@ -199,7 +199,7 @@ jobs:
 
   publish-conda:
     name: Publish the conda package on Anaconda cloud
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: conda
     defaults:
