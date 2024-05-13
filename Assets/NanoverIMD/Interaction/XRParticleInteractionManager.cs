@@ -3,6 +3,7 @@ using Nanover.Frontend.Controllers;
 using Nanover.Frontend.Input;
 using Nanover.Frontend.Manipulation;
 using Nanover.Frontend.XR;
+using Nanover.Grpc.Multiplayer;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.XR;
@@ -55,7 +56,8 @@ namespace NanoverImd.Interaction
             CreateManipulator(ref leftManipulator, 
                               ref leftButton,
                               controllerManager.LeftController,
-                              InputDeviceCharacteristics.Left);
+                              InputDeviceCharacteristics.Left,
+                              MultiplayerAvatar.LeftHandName);
         }
 
         private void SetupRightManipulator()
@@ -63,13 +65,15 @@ namespace NanoverImd.Interaction
             CreateManipulator(ref rightManipulator, 
                               ref rightButton,
                               controllerManager.RightController,
-                              InputDeviceCharacteristics.Right);
+                              InputDeviceCharacteristics.Right,
+                              MultiplayerAvatar.RightHandName);
         }
         
         private void CreateManipulator(ref AttemptableManipulator manipulator,
                                        ref IButton button,
                                        VrController controller,
-                                       InputDeviceCharacteristics characteristics)
+                                       InputDeviceCharacteristics characteristics,
+                                       string label = default)
         {
             // End manipulations if controller has been removed/replaced
             if (manipulator != null)
@@ -84,7 +88,7 @@ namespace NanoverImd.Interaction
                 return;
 
             var toolPoser = controller.CursorPose;
-            manipulator = new AttemptableManipulator(toolPoser, AttemptGrabObject);
+            manipulator = new AttemptableManipulator(toolPoser, (pose) => AttemptGrabObjectUser(pose, label));
 
             button = characteristics.WrapUsageAsButton(CommonUsages.triggerButton, () => controllerManager.CurrentInputMode == targetMode);
             button.Pressed += manipulator.AttemptManipulation;
@@ -95,6 +99,16 @@ namespace NanoverImd.Interaction
         {
             // there is presently only one grabbable set of objects
             return simulation.ManipulableParticles.StartParticleGrab(grabberPose);
+        }
+
+        private IActiveManipulation AttemptGrabObjectUser(UnitScaleTransformation grabberPose, string label)
+        {
+            // there is presently only one grabbable set of objects
+            var grab = simulation.ManipulableParticles.StartParticleGrab(grabberPose);
+            grab.OwnerId = simulation.Multiplayer.AccessToken;
+            grab.Label = label;
+
+            return grab;
         }
     }
 }
