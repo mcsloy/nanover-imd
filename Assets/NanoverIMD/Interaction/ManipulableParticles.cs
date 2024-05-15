@@ -47,7 +47,7 @@ namespace Nanover.Frontend.Manipulation
         /// of the given grabber. Return either the manipulation or null if there was
         /// nothing grabbable.
         /// </summary>
-        public IActiveManipulation StartParticleGrab(UnitScaleTransformation grabberPose)
+        public ActiveParticleGrab StartParticleGrab(UnitScaleTransformation grabberPose)
         {
             if (InteractableParticles.GetParticleGrab(grabberPose) is ActiveParticleGrab grab)
                 return StartParticleGrab(grabberPose, grab);
@@ -69,13 +69,20 @@ namespace Nanover.Frontend.Manipulation
         {
             var position = transform.InverseTransformPoint(grab.GrabPosition);
 
+            var other = new Dictionary<string, object>();
+            if (grab.OwnerId != null)
+                other["owner.id"] = grab.OwnerId;
+            if (grab.Label != null)
+                other["label"] = grab.Label;
+
             interactions.UpdateValue(grab.Id, new ParticleInteraction()
             {
                 Particles = grab.ParticleIndices.ToList(),
                 Position = position,
                 Scale = ForceScale,
                 InteractionType = "spring",
-                ResetVelocities = grab.ResetVelocities
+                ResetVelocities = grab.ResetVelocities,
+                Other = other.Count > 0 ? other : null,
             });
         }
 
